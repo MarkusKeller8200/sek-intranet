@@ -1,0 +1,61 @@
+import type { LucideIcon } from 'lucide-react';
+import {
+    BookOpen,
+    CalendarCheck,
+    CalendarClock,
+    CalendarDays,
+    CalendarOff,
+    Circle,
+    Database,
+    FileStack,
+    FileText,
+    GraduationCap,
+    KeyRound,
+    LayoutGrid,
+    ListChecks,
+    Megaphone,
+    Palette,
+    Phone,
+    Plug,
+    StickyNote,
+    Tablet,
+    Trophy,
+    Users,
+    UsersRound,
+    UserX,
+    Vote,
+} from 'lucide-react';
+
+/**
+ * Symbole der Module. Der Name steht in config/intranet.php → modules → icon.
+ * Neue Module: Symbol hier eintragen, sonst erscheint ein Kreis.
+ */
+const icons: Record<string, LucideIcon> = {
+    BookOpen,
+    CalendarCheck,
+    CalendarClock,
+    CalendarDays,
+    CalendarOff,
+    Database,
+    FileStack,
+    FileText,
+    GraduationCap,
+    KeyRound,
+    LayoutGrid,
+    ListChecks,
+    Megaphone,
+    Palette,
+    Phone,
+    Plug,
+    StickyNote,
+    Tablet,
+    Trophy,
+    Users,
+    UsersRound,
+    UserX,
+    Vote,
+};
+
+export function moduleIcon(name: string): LucideIcon {
+    return icons[name] ?? Circle;
+}

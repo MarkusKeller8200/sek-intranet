@@ -12,3 +12,30 @@ export type NavItem = {
     icon?: LucideIcon | null;
     isActive?: boolean;
 };
+
+/** Modul in der Seitenleiste (config/intranet.php → modules). */
+export type ModuleNavItem = {
+    key: string;
+    title: string;
+    icon: string;
+    href: string;
+    /** Noch nicht umgesetzt – führt auf die Platzhalterseite. */
+    planned: boolean;
+};
+
+export type ModuleNavGroup = {
+    key: string;
+    title: string;
+    items: ModuleNavItem[];
+};
+
+/** Geplantes Modul auf der Platzhalterseite. */
+export type PlannedModule = {
+    key: string;
+    title: string;
+    icon: string;
+    group: string;
+    description: string;
+    features: string[];
+    plugin: string | null;
+};

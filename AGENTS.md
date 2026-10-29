@@ -16,6 +16,9 @@ Projekt: SekBülach Intranet, Prototyp. Stack und Konventionen wie IDA.
 - Anbindungen anderer Systeme nur als Plugin unter `plugins/<Ordner>/` (siehe `PLUGINS.md`), nie
   direkt in Controllern. Endpunkte nur aus der Hersteller-Doku; Unbestätigtes als `partial` markieren.
   Zugangsdaten nur über `password`-Einstellungen (verschlüsselt), nie in Code, Logs oder Tests im Klartext.
+- Module und Navigation nur in `config/intranet.php` → `modules` pflegen. Geplante Module ohne `href`
+  (erscheinen als Platzhalter unter `/module/<schlüssel>`); beim Umsetzen `href` setzen. Symbol in
+  `resources/js/lib/module-icons.ts` eintragen.
 - Wird ein Schlüssel einer Auswahlliste umbenannt, Umstellung unter `renames` eintragen
   (`php artisan intranet:upgrade` stellt bestehende Daten beim Start um).
 
@@ -37,6 +40,6 @@ Frontend-Format korrigieren: `npm run check:fix`. PHP-Format korrigieren: `compo
 | `app/Data/SchemaInspector.php`              | Vergleich Schema ↔ gespeicherte Daten                                          |
 | `app/Auth`                                  | Login-Benutzer und UserProvider auf Basis des UserRepository                   |
 | `app/Providers/IntranetServiceProvider.php` | Bindung Schnittstelle → Umsetzung, Gates                                       |
-| `config/intranet.php`                       | Speicher, Auswahllisten, Datenschema                                           |
+| `config/intranet.php`                       | Speicher, Auswahllisten, Module/Navigation, Datenschema                        |
 | `resources/js/pages`                        | Inertia-Seiten (React)                                                         |
 | `tests`                                     | Jeder Test startet mit frischen Demo-Daten in `storage/framework/testing/data` |

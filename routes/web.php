@@ -6,6 +6,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DataStructureController;
 use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\EventController;
+use App\Http\Controllers\ModuleController;
 use App\Http\Controllers\PersonController;
 use App\Http\Controllers\PluginController;
 use Illuminate\Support\Facades\Route;
@@ -21,6 +22,7 @@ Route::post('abmelden', [AuthController::class, 'destroy'])->middleware('auth')-
 Route::middleware('auth')->group(function () {
     Route::redirect('/', '/start')->name('home');
     Route::get('start', DashboardController::class)->name('dashboard');
+    Route::get('module/{key}', [ModuleController::class, 'show'])->where('key', '[a-z0-9-]+')->name('modules.show');
 
     // Mitteilungen
     Route::middleware('can:manage-content')->group(function () {

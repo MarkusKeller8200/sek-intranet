@@ -1,16 +1,6 @@
 import { Link, usePage } from '@inertiajs/react';
-import {
-    CalendarDays,
-    Database,
-    FileText,
-    LayoutGrid,
-    Megaphone,
-    Palette,
-    Plug,
-    Users,
-} from 'lucide-react';
 import AppLogo from '@/components/app-logo';
-import { NavMain } from '@/components/nav-main';
+import { NavModules } from '@/components/nav-modules';
 import { NavUser } from '@/components/nav-user';
 import {
     Sidebar,
@@ -21,24 +11,9 @@ import {
     SidebarMenuButton,
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
-import type { NavItem } from '@/types';
-
-const mainNavItems: NavItem[] = [
-    { title: 'Start', href: '/start', icon: LayoutGrid },
-    { title: 'Mitteilungen', href: '/mitteilungen', icon: Megaphone },
-    { title: 'Termine', href: '/termine', icon: CalendarDays },
-    { title: 'Dokumente & Links', href: '/dokumente', icon: FileText },
-    { title: 'Personen', href: '/personen', icon: Users },
-];
-
-const adminNavItems: NavItem[] = [
-    { title: 'Plugins', href: '/plugins', icon: Plug },
-    { title: 'Datenstrukturen', href: '/datenstrukturen', icon: Database },
-    { title: 'Farbkonzept', href: '/farbkonzept', icon: Palette },
-];
 
 export function AppSidebar() {
-    const { auth, store } = usePage().props;
+    const { navigation, store } = usePage().props;
 
     return (
         <Sidebar collapsible="icon" variant="inset">
@@ -55,10 +30,7 @@ export function AppSidebar() {
             </SidebarHeader>
 
             <SidebarContent>
-                <NavMain items={mainNavItems} label="Intranet" />
-                {auth.can.manageUsers && (
-                    <NavMain items={adminNavItems} label="Prototyp" />
-                )}
+                <NavModules groups={navigation} />
             </SidebarContent>
 
             <SidebarFooter>

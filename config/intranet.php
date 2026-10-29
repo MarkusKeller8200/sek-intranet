@@ -96,6 +96,159 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Module und Navigation
+    |--------------------------------------------------------------------------
+    | Gruppen erscheinen in der Seitenleiste ein- und ausklappbar. Ein Modul mit
+    | «href» ist umgesetzt; ohne «href» ist es ein Platzhalter (/module/<schlüssel>)
+    | mit Beschreibung und geplanten Funktionen. «can» blendet Gruppe oder Modul
+    | nur mit dieser Berechtigung ein (Gate). «icon» = Name eines Lucide-Symbols,
+    | muss in resources/js/lib/module-icons.ts eingetragen sein.
+    | Bewusst nicht vorgesehen: Noten, Zeugnisse, Förderplanung – das bleibt im
+    | Schulverwaltungssystem (besonders schützenswerte Personendaten).
+    */
+
+    'modules' => [
+        'kommunikation' => [
+            'title' => 'Kommunikation',
+            'items' => [
+                'start' => ['title' => 'Start', 'icon' => 'LayoutGrid', 'href' => '/start'],
+                'mitteilungen' => ['title' => 'Mitteilungen', 'icon' => 'Megaphone', 'href' => '/mitteilungen'],
+                'termine' => ['title' => 'Termine', 'icon' => 'CalendarDays', 'href' => '/termine'],
+                'pinnwand' => [
+                    'title' => 'Pinnwand',
+                    'icon' => 'StickyNote',
+                    'description' => 'Digitales schwarzes Brett für kurze Hinweise, Fundsachen und Suche/Biete im Kollegium.',
+                    'features' => ['Beiträge mit Ablaufdatum', 'Kommentare', 'Filter nach Schulhaus'],
+                ],
+                'umfragen' => [
+                    'title' => 'Umfragen',
+                    'icon' => 'Vote',
+                    'description' => 'Kurze Abfragen im Kollegium, zum Beispiel Terminfindung oder Anmeldung für Weiterbildungen.',
+                    'features' => ['Einfach- und Mehrfachauswahl', 'Anonym oder namentlich', 'Auswertung als Liste'],
+                ],
+            ],
+        ],
+        'wissen' => [
+            'title' => 'Wissen & Ablage',
+            'items' => [
+                'dokumente' => ['title' => 'Dokumente & Links', 'icon' => 'FileText', 'href' => '/dokumente'],
+                'handbuch' => [
+                    'title' => 'Handbuch',
+                    'icon' => 'BookOpen',
+                    'description' => 'Schulhandbuch mit Abläufen, Zuständigkeiten und Weisungen, durchsuchbar und versioniert.',
+                    'features' => ['Kapitel und Unterseiten', 'Volltextsuche', 'Änderungsverlauf', 'Verantwortliche je Kapitel'],
+                ],
+                'vorlagen' => [
+                    'title' => 'Vorlagen',
+                    'icon' => 'FileStack',
+                    'description' => 'Briefe und Formulare mit Schullogo, die mit Daten aus dem Intranet befüllt werden (Serienbriefe).',
+                    'features' => ['Word-Vorlagen mit Platzhaltern', 'PDF-Ausgabe', 'Vorlagen je Schulhaus'],
+                ],
+            ],
+        ],
+        'organisation' => [
+            'title' => 'Personen & Organisation',
+            'items' => [
+                'personen' => ['title' => 'Personen', 'icon' => 'Users', 'href' => '/personen'],
+                'klassen' => [
+                    'title' => 'Klassen & Gruppen',
+                    'icon' => 'UsersRound',
+                    'description' => 'Klassen, Fachgruppen und Teams mit Zuständigkeiten (Klassenlehrperson, Fachlehrpersonen).',
+                    'features' => ['Klassen je Schuljahr und Schulhaus', 'Arbeitsgruppen und Teams', 'Abgleich mit Microsoft 365 über das Entra-Plugin'],
+                    'plugin' => 'entra',
+                ],
+                'abwesenheiten' => [
+                    'title' => 'Abwesenheiten & Vertretungen',
+                    'icon' => 'CalendarOff',
+                    'description' => 'Abwesenheiten von Mitarbeitenden melden und Vertretungen planen.',
+                    'features' => ['Meldung durch Mitarbeitende', 'Vertretungsplan je Tag', 'Übersicht für die Schulleitung'],
+                ],
+                'telefonliste' => [
+                    'title' => 'Telefonliste',
+                    'icon' => 'Phone',
+                    'description' => 'Aktuelle Telefon- und Alarmliste des Personals, als PDF zum Ausdrucken.',
+                    'features' => ['Gefiltert nach Schulhaus und Funktion', 'PDF- und Excel-Export', 'Notfallnummern'],
+                ],
+            ],
+        ],
+        'unterricht' => [
+            'title' => 'Unterricht',
+            'items' => [
+                'stundenplan' => [
+                    'title' => 'Stundenpläne',
+                    'icon' => 'CalendarClock',
+                    'description' => 'Stundenpläne von Klassen, Lehrpersonen und Räumen anzeigen.',
+                    'features' => ['Ansicht je Klasse, Person und Raum', 'Stundenplanänderungen', 'Import aus dem Stundenplanprogramm'],
+                ],
+                'absenzen' => [
+                    'title' => 'Absenzen',
+                    'icon' => 'UserX',
+                    'description' => 'Absenzen von Schülerinnen und Schülern – im Intranet nur Verweis auf das Schulverwaltungssystem.',
+                    'features' => ['Direktlink ins Schulverwaltungssystem', 'Keine Speicherung von Schülerdaten im Intranet'],
+                ],
+                'checklisten' => [
+                    'title' => 'Checklisten',
+                    'icon' => 'ListChecks',
+                    'description' => 'Wiederkehrende Abläufe als Checkliste, etwa Schuljahresbeginn, Klassenlager oder Eintritt neuer Lehrpersonen.',
+                    'features' => ['Vorlagen für Abläufe', 'Abhaken und teilen', 'Fälligkeiten'],
+                ],
+            ],
+        ],
+        'ressourcen' => [
+            'title' => 'Räume & Geräte',
+            'items' => [
+                'reservationen' => [
+                    'title' => 'Reservationen',
+                    'icon' => 'CalendarCheck',
+                    'description' => 'Räume, Geräte und Fahrzeuge reservieren (Aula, Turnhalle, iPad-Koffer, Beamer).',
+                    'features' => ['Kalender je Ressource', 'Konflikte erkennen', 'Freigabe durch Hauswartung'],
+                ],
+                'geraete' => [
+                    'title' => 'Geräte',
+                    'icon' => 'Tablet',
+                    'description' => 'Geräte je Person und Klasse, Daten aus Jamf und Inventory360 über die Plugins.',
+                    'features' => ['Meine Geräte', 'Geräte je Klasse', 'Defekt melden'],
+                    'plugin' => 'jamf',
+                ],
+                'lizenzen' => [
+                    'title' => 'Lizenzen',
+                    'icon' => 'KeyRound',
+                    'description' => 'Software-Lizenzen und Bestellungen, später aus IDA.',
+                    'features' => ['Übersicht je Person und Klasse', 'Bestellung beantragen', 'Anbindung über das IDA-Plugin'],
+                    'plugin' => 'ida',
+                ],
+            ],
+        ],
+        'anlaesse' => [
+            'title' => 'Anlässe & Angebote',
+            'items' => [
+                'sporttag' => [
+                    'title' => 'Sporttag',
+                    'icon' => 'Trophy',
+                    'description' => 'Sporttag und Projektwochen organisieren: Posten, Einteilung der Helferinnen und Helfer, Ranglisten.',
+                    'features' => ['Posten und Zeitplan', 'Helfereinsatz', 'Ranglisten'],
+                ],
+                'kurse' => [
+                    'title' => 'Kurse & Wahlfächer',
+                    'icon' => 'GraduationCap',
+                    'description' => 'Freifächer, Wahlfächer und interne Weiterbildungen mit Anmeldung.',
+                    'features' => ['Kursangebot', 'Anmeldung und Wartelisten', 'Teilnehmerlisten'],
+                ],
+            ],
+        ],
+        'prototyp' => [
+            'title' => 'Prototyp',
+            'can' => 'manage-users',
+            'items' => [
+                'plugins' => ['title' => 'Plugins', 'icon' => 'Plug', 'href' => '/plugins'],
+                'datenstrukturen' => ['title' => 'Datenstrukturen', 'icon' => 'Database', 'href' => '/datenstrukturen'],
+                'farbkonzept' => ['title' => 'Farbkonzept', 'icon' => 'Palette', 'href' => '/farbkonzept'],
+            ],
+        ],
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
     | Farben je Auswahlwert (Farbkonzept, siehe /farbkonzept)
     |--------------------------------------------------------------------------
     | Erlaubte Farben: brand, slate, sky, cyan, teal, emerald, amber, orange,
