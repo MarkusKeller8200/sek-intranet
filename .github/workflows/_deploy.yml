@@ -1,0 +1,62 @@
+name: deploy-steps
+
+# Gemeinsame Deployment-Schritte, aufgerufen von deploy.yml und deploy-quick.yml.
+on:
+  workflow_call:
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    concurrency:
+      group: deploy-production
+      cancel-in-progress: false
+    environment:
+      name: production
+      url: https://${{ vars.INTRANET_HOST || 'intranet.sekbuelach.ch' }}
+    env:
+      HOST: ${{ vars.VPS_HOST || secrets.VPS_HOST || '76.13.156.138' }}
+      INTRANET_HOST: ${{ vars.INTRANET_HOST || 'intranet.sekbuelach.ch' }}
+      TARGET: /docker/intranet
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: SSH vorbereiten
+        env:
+          SSH_KEY: ${{ secrets.VPS_SSH_KEY }}
+          KNOWN_HOSTS: ${{ secrets.VPS_KNOWN_HOSTS }}
+        run: |
+          test -n "$SSH_KEY" || { echo "Secret VPS_SSH_KEY fehlt"; exit 1; }
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "$SSH_KEY" > ~/.ssh/id_deploy
+          chmod 600 ~/.ssh/id_deploy
+          printf '%s\n' "$KNOWN_HOSTS" > ~/.ssh/known_hosts
+          printf 'Host vps\n  HostName %s\n  User root\n  IdentityFile ~/.ssh/id_deploy\n  IdentitiesOnly yes\n' "$HOST" > ~/.ssh/config
+
+      - name: Quellcode übertragen
+        run: |
+          ssh vps "mkdir -p $TARGET && rm -rf $TARGET/src.new && mkdir $TARGET/src.new"
+          git archive --format=tar HEAD | ssh vps "tar -x -C $TARGET/src.new"
+          ssh vps "cd $TARGET && rm -rf src.old && { [ -d src ] && mv src src.old || true; } && mv src.new src && cp src/docker/compose.prod.yaml docker-compose.yml"
+
+      - name: Bauen und starten
+        run: |
+          ssh vps "cd $TARGET && touch .env && grep -q '^INTRANET_HOST=' .env || echo 'INTRANET_HOST=$INTRANET_HOST' >> .env"
+          ssh vps "cd $TARGET && docker compose up -d --build --remove-orphans && docker image prune -f"
+
+      - name: Erreichbarkeit prüfen
+        run: |
+          for i in $(seq 1 30); do
+            if curl -fsS "https://$INTRANET_HOST/up" > /dev/null; then
+              echo "Online: https://$INTRANET_HOST"; exit 0
+            fi
+            sleep 5
+          done
+          echo "Seite nicht erreichbar. Logs:"
+          ssh vps "cd $TARGET && docker compose logs --tail=80 app"
+          exit 1

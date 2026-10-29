@@ -38,6 +38,7 @@ RUN docker-php-ext-install opcache \
     && a2enmod rewrite headers \
     && sed -ri 's!/var/www/html!/var/www/html/public!g' /etc/apache2/sites-available/000-default.conf \
     && printf '%s\n' \
+        'ServerName localhost' \
         'ServerTokens Prod' \
         'ServerSignature Off' \
         '<Directory /var/www/html/public>' \

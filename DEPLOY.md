@@ -103,6 +103,17 @@ git push
 ```
 
 Der Fortschritt ist unter GitHub → Actions sichtbar. Schlägt «ci» fehl, wird nichts veröffentlicht.
+Änderungen nur an Markdown-Dateien (`*.md`) lösen kein Deployment aus.
+
+**Schnell ohne Tests** (für Experimente): GitHub → Actions → **deploy-quick** → «Run workflow»,
+im Feld «ja» eintippen. Baut und veröffentlicht den aktuellen Stand von `main` ohne `ci`.
+
+| Workflow           | Auslöser                                    | Prüfung             | Zweck                          |
+| ------------------ | ------------------------------------------- | ------------------- | ------------------------------ |
+| `deploy.yml`       | Push auf `main`, oder von Hand              | `composer ci:check` | Standardweg                    |
+| `deploy-quick.yml` | nur von Hand, mit «ja»                      | keine               | schnelle Experimente           |
+| `tests.yml`        | Pull Request                                | `composer ci:check` | Prüfung vor dem Zusammenführen |
+| `_deploy.yml`      | wird von beiden Deploy-Workflows aufgerufen | –                   | gemeinsame Deployment-Schritte |
 
 ## Gemeinsames Passwort aktivieren
 

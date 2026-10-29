@@ -1,0 +1,29 @@
+name: deploy-quick
+
+# Schnelles Deployment ohne Tests, nur von Hand: GitHub → Actions → deploy-quick → Run workflow.
+# Für Experimente (Farben, Texte). Der Standardweg bleibt deploy.yml mit Prüfung.
+on:
+  workflow_dispatch:
+    inputs:
+      confirm:
+        description: 'Ohne Tests veröffentlichen? «ja» eintippen'
+        required: true
+        default: ''
+
+permissions:
+  contents: read
+
+jobs:
+  check-input:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Bestätigung prüfen
+        env:
+          CONFIRM: ${{ inputs.confirm }}
+        run: |
+          test "$CONFIRM" = "ja" || { echo "Abgebrochen – bitte «ja» eintippen."; exit 1; }
+
+  deploy:
+    needs: check-input
+    uses: ./.github/workflows/_deploy.yml
+    secrets: inherit
