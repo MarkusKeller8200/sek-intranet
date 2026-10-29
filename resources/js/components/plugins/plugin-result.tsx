@@ -21,6 +21,14 @@ const changeColors: Record<string, string> = {
     'fehlt dort': 'border-warning/30 bg-warning-soft text-warning',
 };
 
+function rowKey(row: Record<string, unknown>, fallback = ''): string {
+    const key = row._key;
+
+    return typeof key === 'string' || typeof key === 'number'
+        ? String(key)
+        : fallback;
+}
+
 function cell(value: unknown): string {
     if (value === null || value === undefined || value === '') {
         return '–';
@@ -28,11 +36,15 @@ function cell(value: unknown): string {
     if (typeof value === 'boolean') {
         return value ? 'ja' : 'nein';
     }
-    if (typeof value === 'object') {
-        return JSON.stringify(value);
+    if (
+        typeof value === 'string' ||
+        typeof value === 'number' ||
+        typeof value === 'bigint'
+    ) {
+        return String(value);
     }
 
-    return String(value);
+    return JSON.stringify(value) ?? '–';
 }
 
 /** Ergebnis einer Plugin-Aktion: Meldung, Tabelle, Vorschau mit Auswahl, Protokoll. */
@@ -52,7 +64,7 @@ export default function PluginResultView({
         (r) => r._selectable !== false && Boolean(r._key),
     );
     const [selected, setSelected] = useState<string[]>(() =>
-        selectable.map((r) => String(r._key)),
+        selectable.map((r) => rowKey(r)),
     );
     const [showLog, setShowLog] = useState(false);
     const preview = result.preview === true && onApply !== undefined;
@@ -98,7 +110,7 @@ export default function PluginResultView({
                                                 setSelected(
                                                     c === true
                                                         ? selectable.map((r) =>
-                                                              String(r._key),
+                                                              rowKey(r),
                                                           )
                                                         : [],
                                                 )
@@ -113,7 +125,7 @@ export default function PluginResultView({
                         </TableHeader>
                         <TableBody>
                             {rows.map((row, i) => {
-                                const key = String(row._key ?? i);
+                                const key = rowKey(row, String(i));
                                 const canSelect =
                                     row._selectable !== false &&
                                     Boolean(row._key);
