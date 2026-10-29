@@ -48,7 +48,7 @@ jobs:
       name: production
       url: https://${{ vars.INTRANET_HOST || 'intranet.sekbuelach.ch' }}
     env:
-      HOST: ${{ vars.VPS_HOST }}
+      HOST: ${{ vars.VPS_HOST || secrets.VPS_HOST || '76.13.156.138' }}
       INTRANET_HOST: ${{ vars.INTRANET_HOST || 'intranet.sekbuelach.ch' }}
       TARGET: /docker/intranet
     steps:
