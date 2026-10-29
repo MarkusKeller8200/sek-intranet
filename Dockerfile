@@ -34,7 +34,11 @@ RUN composer dump-autoload --no-dev --optimize --classmap-authoritative \
 # ---------- Laufzeit ----------
 FROM php:8.4-apache AS app
 
-RUN docker-php-ext-install opcache \
+# zip: Excel-Dateien (.xlsx) im Escola-Import lesen
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends libzip-dev \
+    && rm -rf /var/lib/apt/lists/* \
+    && docker-php-ext-install opcache zip \
     && a2enmod rewrite headers \
     && sed -ri 's!/var/www/html!/var/www/html/public!g' /etc/apache2/sites-available/000-default.conf \
     && printf '%s\n' \

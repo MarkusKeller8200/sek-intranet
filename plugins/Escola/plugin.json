@@ -1,0 +1,42 @@
+{
+    "id": "escola",
+    "name": "Escola (Datei-Import)",
+    "version": "0.1",
+    "api": 1,
+    "category": "school",
+    "author": "SekBülach Intranet",
+    "description": "Übernimmt Mitarbeitende aus der Escola-Adressliste (Excel oder CSV). Ohne API: Liste in Escola exportieren und hier hochladen. Gelesen werden nur Name, Geschäfts-E-Mail, Geschäftstelefon, Funktion, Rollen und Status – alle anderen Spalten werden verworfen. Die Datei wird nicht gespeichert.",
+    "service": {
+        "name": "Escola",
+        "home": "https://www.escola.ch",
+        "docs": "https://support.escola.ch/support/solutions/articles/3000100777-exporte-synchronisationen-%C3%BCbersicht",
+        "auth": { "type": "none" },
+        "auth_note": "Keine Verbindung zu Escola. Export in Escola: Verwaltung → Personen → Liste markieren → Export «Adressliste» (Excel).",
+        "endpoints": []
+    },
+    "settings": [],
+    "actions": [
+        {
+            "id": "import-file",
+            "label": "Mitarbeitende aus Escola-Adressliste übernehmen",
+            "kind": "import",
+            "description": "Datei wählen und Vorschau anzeigen. Schlüssel ist die Geschäfts-E-Mail. Personen ohne Geschäfts-E-Mail werden ausgelassen. Neue Personen erhalten die Rolle Mitarbeitende; Rollen im Intranet werden nie aus Escola übernommen. Gelöscht wird nie.",
+            "options": [
+                {
+                    "key": "file",
+                    "type": "file",
+                    "label": "Escola-Adressliste (.xlsx oder .csv)",
+                    "accept": ".xlsx,.csv",
+                    "required": true
+                },
+                {
+                    "key": "include_authorities",
+                    "type": "check",
+                    "label": "Auch Schulbehörde und RPK übernehmen",
+                    "help": "Standard: nur Personal der Schule.",
+                    "default": false
+                }
+            ]
+        }
+    ]
+}

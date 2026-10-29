@@ -409,9 +409,13 @@ function ActionRunner({
     const [options, setOptions] = useState<FieldValues>(
         initialValues(action.options ?? []),
     );
+    const [files, setFiles] = useState<Record<string, File>>({});
     const [result, setResult] = useState<PluginResult | null>(null);
     const [busy, setBusy] = useState(false);
     const [confirmOpen, setConfirmOpen] = useState(false);
+    const missingFile = (action.options ?? []).some(
+        (o) => o.type === 'file' && o.required === true && !files[o.key],
+    );
     const [pendingSelection, setPendingSelection] = useState<string[] | null>(
         null,
     );
@@ -425,6 +429,7 @@ function ActionRunner({
                 apply,
                 selected,
             },
+            files,
         );
         setResult(res);
         setBusy(false);
@@ -457,12 +462,23 @@ function ActionRunner({
                         onChange={(key, value) =>
                             setOptions((o) => ({ ...o, [key]: value }))
                         }
+                        onFile={(key, file) => {
+                            setResult(null);
+                            setFiles((current) => ({
+                                ...Object.fromEntries(
+                                    Object.entries(current).filter(
+                                        ([k]) => k !== key,
+                                    ),
+                                ),
+                                ...(file ? { [key]: file } : {}),
+                            }));
+                        }}
                     />
                 )}
 
                 <div className="flex flex-wrap items-center gap-3">
                     <Button
-                        disabled={!ready || busy}
+                        disabled={!ready || busy || missingFile}
                         onClick={start}
                         variant={
                             action.kind === 'write' ? 'destructive' : 'default'

@@ -7,8 +7,11 @@ export type PluginField = {
         | 'select'
         | 'check'
         | 'number'
-        | 'textarea';
+        | 'textarea'
+        | 'file';
     label: string;
+    /** Nur «file»: erlaubte Endungen, z. B. ".xlsx,.csv" */
+    accept?: string;
     help?: string;
     required?: boolean;
     default?: string | number | boolean | null;

@@ -7,6 +7,7 @@ use App\Plugins\PluginManager;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\UploadedFile;
 use Inertia\Inertia;
 use Inertia\Response;
 use InvalidArgumentException;
@@ -103,9 +104,19 @@ class PluginController extends Controller
 
     public function action(Request $request, string $id, string $action): JsonResponse
     {
-        $options = (array) $request->input('options', []);
-        $options['_apply'] = $request->boolean('apply');
-        $options['_selected'] = array_values(array_map('strval', (array) $request->input('selected', [])));
+        // Mit Datei: multipart, übrige Angaben als JSON in «payload», Dateien als «file_<schlüssel>».
+        $payload = $request->has('payload')
+            ? (array) json_decode((string) $request->input('payload'), true)
+            : $request->all();
+
+        $options = (array) ($payload['options'] ?? []);
+        foreach ($request->allFiles() as $name => $file) {
+            if (str_starts_with((string) $name, 'file_') && $file instanceof UploadedFile) {
+                $options[substr((string) $name, 5)] = $file;
+            }
+        }
+        $options['_apply'] = filter_var($payload['apply'] ?? false, FILTER_VALIDATE_BOOL);
+        $options['_selected'] = array_values(array_map('strval', (array) ($payload['selected'] ?? [])));
 
         return $this->json(fn (): array => $this->plugins->runAction($id, $action, $options, $this->user($request)));
     }

@@ -15,12 +15,15 @@ export default function PluginFields({
     onChange,
     secretsSet = [],
     prefix,
+    onFile,
 }: {
     fields: PluginField[];
     values: FieldValues;
     onChange: (key: string, value: string | number | boolean | null) => void;
     secretsSet?: string[];
     prefix: string;
+    /** Nur für Aktionen mit Feld «file»: Datei bleibt im Browser, bis sie gesendet wird. */
+    onFile?: (key: string, file: File | null) => void;
 }) {
     return (
         <div className="grid gap-4 md:grid-cols-2">
@@ -50,6 +53,30 @@ export default function PluginFields({
                                 )}
                             </div>
                         </div>
+                    );
+                }
+
+                if (field.type === 'file') {
+                    return (
+                        <FormField
+                            key={field.key}
+                            id={id}
+                            label={field.label + (field.required ? ' *' : '')}
+                            hint={field.help}
+                            className="md:col-span-2"
+                        >
+                            <Input
+                                id={id}
+                                type="file"
+                                accept={field.accept}
+                                onChange={(e) =>
+                                    onFile?.(
+                                        field.key,
+                                        e.target.files?.[0] ?? null,
+                                    )
+                                }
+                            />
+                        </FormField>
                     );
                 }
 
@@ -119,9 +146,11 @@ export default function PluginFields({
 
 export function initialValues(fields: PluginField[]): FieldValues {
     return Object.fromEntries(
-        fields.map((f) => [
-            f.key,
-            f.default ?? (f.type === 'check' ? false : ''),
-        ]),
+        fields
+            .filter((f) => f.type !== 'file')
+            .map((f) => [
+                f.key,
+                f.default ?? (f.type === 'check' ? false : ''),
+            ]),
     );
 }
