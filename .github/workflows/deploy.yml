@@ -1,0 +1,93 @@
+name: deploy
+
+# Jede Änderung auf main wird geprüft und danach automatisch auf den Server gebracht.
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@eb7c497e18156a6bbabfef1d3a82760b9eda3962 # v2
+        with:
+          php-version: '8.4'
+          tools: composer:v2
+          coverage: none
+
+      - name: Setup Node
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: '22'
+
+      - name: Setup Application
+        run: composer setup
+
+      - name: Run CI Checks
+        run: composer ci:check
+
+  deploy:
+    needs: ci
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+      url: https://${{ vars.INTRANET_HOST || 'intranet.sekbuelach.ch' }}
+    env:
+      HOST: ${{ vars.VPS_HOST }}
+      INTRANET_HOST: ${{ vars.INTRANET_HOST || 'intranet.sekbuelach.ch' }}
+      TARGET: /docker/intranet
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: SSH vorbereiten
+        env:
+          SSH_KEY: ${{ secrets.VPS_SSH_KEY }}
+          KNOWN_HOSTS: ${{ secrets.VPS_KNOWN_HOSTS }}
+        run: |
+          test -n "$HOST" || { echo "Variable VPS_HOST fehlt"; exit 1; }
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "$SSH_KEY" > ~/.ssh/id_deploy
+          chmod 600 ~/.ssh/id_deploy
+          printf '%s\n' "$KNOWN_HOSTS" > ~/.ssh/known_hosts
+          printf 'Host vps\n  HostName %s\n  User root\n  IdentityFile ~/.ssh/id_deploy\n  IdentitiesOnly yes\n' "$HOST" > ~/.ssh/config
+
+      - name: Quellcode übertragen
+        run: |
+          ssh vps "mkdir -p $TARGET && rm -rf $TARGET/src.new && mkdir $TARGET/src.new"
+          git archive --format=tar HEAD | ssh vps "tar -x -C $TARGET/src.new"
+          ssh vps "cd $TARGET && rm -rf src.old && { [ -d src ] && mv src src.old || true; } && mv src.new src && cp src/docker/compose.prod.yaml docker-compose.yml"
+
+      - name: Bauen und starten
+        run: |
+          ssh vps "cd $TARGET && touch .env && grep -q '^INTRANET_HOST=' .env || echo 'INTRANET_HOST=$INTRANET_HOST' >> .env"
+          ssh vps "cd $TARGET && docker compose up -d --build --remove-orphans && docker image prune -f"
+
+      - name: Erreichbarkeit prüfen
+        run: |
+          for i in $(seq 1 30); do
+            if curl -fsS "https://$INTRANET_HOST/up" > /dev/null; then
+              echo "Online: https://$INTRANET_HOST"; exit 0
+            fi
+            sleep 5
+          done
+          echo "Seite nicht erreichbar. Logs:"
+          ssh vps "cd $TARGET && docker compose logs --tail=80 app"
+          exit 1

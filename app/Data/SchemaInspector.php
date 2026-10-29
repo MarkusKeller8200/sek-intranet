@@ -1,0 +1,110 @@
+<?php
+
+namespace App\Data;
+
+use App\Data\Store\JsonStore;
+
+/**
+ * Vergleicht das in config/intranet.php beschriebene Schema mit den
+ * tatsächlich gespeicherten Datensätzen. Grundlage für die Seite
+ * «Datenstrukturen» und für die spätere Datenbank-Migration.
+ */
+final class SchemaInspector
+{
+    /**
+     * Vorschlag für PostgreSQL-Spaltentypen je Schema-Typ.
+     */
+    private const POSTGRES_TYPES = [
+        'uuid' => 'uuid',
+        'string' => 'varchar(255)',
+        'text' => 'text',
+        'email' => 'varchar(255)',
+        'url' => 'varchar(2048)',
+        'bool' => 'boolean',
+        'int' => 'bigint',
+        'date' => 'date',
+        'datetime' => 'timestamptz',
+        'enum' => 'varchar(50) + CHECK',
+        'ref' => 'uuid (FK)',
+    ];
+
+    public function __construct(private readonly JsonStore $store) {}
+
+    /**
+     * @return list<array<string, mixed>>
+     */
+    public function inspect(): array
+    {
+        /** @var array<string, array<string, mixed>> $schema */
+        $schema = config('intranet.schema', []);
+        $result = [];
+
+        foreach ($schema as $collection => $definition) {
+            $records = $this->store->all($collection);
+            /** @var array<string, array<string, mixed>> $fields */
+            $fields = $definition['fields'] ?? [];
+            $known = array_merge(['id', 'created_at', 'updated_at'], array_keys($fields));
+
+            $fieldRows = [];
+
+            foreach ($fields as $name => $field) {
+                $type = is_string($field['type'] ?? null) ? $field['type'] : 'string';
+                $filled = count(array_filter($records, fn (array $r): bool => ($r[$name] ?? null) !== null && ($r[$name] ?? '') !== ''));
+
+                $fieldRows[] = [
+                    'name' => $name,
+                    'label' => $field['label'] ?? $name,
+                    'type' => $type,
+                    'required' => ($field['required'] ?? false) === true,
+                    'unique' => ($field['unique'] ?? false) === true,
+                    'references' => $field['references'] ?? null,
+                    'values' => $this->values($field['values'] ?? null),
+                    'postgres' => self::POSTGRES_TYPES[$type] ?? 'text',
+                    'filled' => $filled,
+                ];
+            }
+
+            $unknown = [];
+
+            foreach ($records as $record) {
+                foreach (array_keys($record) as $key) {
+                    if (! in_array($key, $known, true)) {
+                        $unknown[$key] = ($unknown[$key] ?? 0) + 1;
+                    }
+                }
+            }
+
+            $result[] = [
+                'name' => $collection,
+                'label' => $definition['label'] ?? $collection,
+                'description' => $definition['description'] ?? null,
+                'file' => $this->relative($this->store->filePath($collection)),
+                'exists' => $this->store->exists($collection),
+                'count' => count($records),
+                'fields' => $fieldRows,
+                'unknown_fields' => $unknown,
+            ];
+        }
+
+        return $result;
+    }
+
+    /**
+     * @return list<string>
+     */
+    private function values(mixed $values): array
+    {
+        if (is_string($values)) {
+            $values = config("intranet.{$values}", []);
+        }
+
+        return is_array($values) ? array_map('strval', array_keys($values)) : [];
+    }
+
+    private function relative(string $path): string
+    {
+        $base = rtrim(base_path(), DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR;
+
+        return str_starts_with($path, $base) ? substr($path, strlen($base)) : $path;
+    }
+}

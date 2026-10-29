@@ -1,0 +1,90 @@
+import { Head, Link, usePage } from '@inertiajs/react';
+import { ArrowLeft, Clock, Pencil, Pin } from 'lucide-react';
+import DeleteButton from '@/components/delete-button';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { label, useOptions } from '@/hooks/use-options';
+import { formatDateTime } from '@/lib/format';
+import type { Announcement } from '@/types';
+
+export default function AnnouncementShow({
+    announcement,
+}: {
+    announcement: Announcement;
+}) {
+    const { auth } = usePage().props;
+    const options = useOptions();
+
+    return (
+        <>
+            <Head title={announcement.title} />
+            <article className="flex max-w-3xl flex-1 flex-col gap-6 p-4 md:p-6">
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                    <Button variant="ghost" size="sm" asChild>
+                        <Link href="/mitteilungen">
+                            <ArrowLeft /> Alle Mitteilungen
+                        </Link>
+                    </Button>
+                    {auth.can.manageContent && (
+                        <div className="flex gap-2">
+                            <Button variant="outline" size="sm" asChild>
+                                <Link
+                                    href={`/mitteilungen/${announcement.id}/bearbeiten`}
+                                >
+                                    <Pencil /> Bearbeiten
+                                </Link>
+                            </Button>
+                            <DeleteButton
+                                url={`/mitteilungen/${announcement.id}`}
+                                title="Mitteilung löschen?"
+                            />
+                        </div>
+                    )}
+                </div>
+
+                <header className="space-y-3">
+                    <div className="flex flex-wrap gap-2">
+                        {announcement.pinned && (
+                            <Badge className="gap-1">
+                                <Pin /> Angeheftet
+                            </Badge>
+                        )}
+                        <Badge variant="secondary">
+                            {label(
+                                options.announcementCategories,
+                                announcement.category,
+                            )}
+                        </Badge>
+                        <Badge variant="outline">
+                            {label(options.audiences, announcement.audience)}
+                        </Badge>
+                        {announcement.scheduled && (
+                            <Badge
+                                variant="outline"
+                                className="gap-1 border-amber-500 text-amber-700 dark:text-amber-400"
+                            >
+                                <Clock /> geplant
+                            </Badge>
+                        )}
+                    </div>
+                    <h1 className="text-2xl font-semibold tracking-tight md:text-3xl">
+                        {announcement.title}
+                    </h1>
+                    <p className="text-sm text-muted-foreground">
+                        {formatDateTime(announcement.published_at)}
+                        {announcement.author_name &&
+                            ` · ${announcement.author_name}`}
+                    </p>
+                </header>
+
+                <div className="leading-relaxed whitespace-pre-line">
+                    {announcement.body}
+                </div>
+            </article>
+        </>
+    );
+}
+
+AnnouncementShow.layout = {
+    breadcrumbs: [{ title: 'Mitteilungen', href: '/mitteilungen' }],
+};

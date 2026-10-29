@@ -1,0 +1,30 @@
+# Produktion auf dem Hostinger-VPS (Traefik läuft bereits als eigenes Projekt «traefik»).
+# Liegt auf dem Server als /docker/intranet/docker-compose.yml, der Quellcode in ./src.
+# Wird bei jedem Deployment von GitHub Actions überschrieben – Einstellungen in ./.env ändern.
+
+name: intranet
+
+services:
+  app:
+    build:
+      context: ./src
+    image: sekbuelach-intranet:latest
+    restart: unless-stopped
+    env_file:
+      - path: ./.env
+        required: false
+    environment:
+      APP_URL: https://${INTRANET_HOST:-intranet.sekbuelach.ch}
+      APP_NAME: SekBülach Intranet
+      INTRANET_DEMO_LOGIN: ${INTRANET_DEMO_LOGIN:-true}
+    volumes:
+      - intranet-storage:/var/www/html/storage
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.intranet.rule=Host(`${INTRANET_HOST:-intranet.sekbuelach.ch}`)
+      - traefik.http.routers.intranet.entrypoints=websecure
+      - traefik.http.routers.intranet.tls.certresolver=letsencrypt
+      - traefik.http.services.intranet.loadbalancer.server.port=80
+
+volumes:
+  intranet-storage:
