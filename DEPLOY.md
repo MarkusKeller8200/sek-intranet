@@ -28,14 +28,14 @@ composer ci:check       # muss grün sein, sonst bricht das Deployment ab
 
 ### 2. GitHub-Repository anlegen
 
-Auf GitHub in der Organisation `sekbuelach` ein **privates** Repository `intranet` anlegen
+Repository: **`MarkusKeller8200/sek-intranet`** (privat). Für einen neuen Klon ein leeres Repository anlegen
 (ohne README). Dann:
 
 ```powershell
 git init -b main
 git add .
 git commit -m "IDA-Stack Intranet-Prototyp"
-git remote add origin https://github.com/sekbuelach/intranet.git
+git remote add origin https://github.com/MarkusKeller8200/sek-intranet.git
 git push -u origin main
 ```
 
