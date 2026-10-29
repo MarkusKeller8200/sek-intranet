@@ -9,12 +9,12 @@ git push ─► GitHub Actions: composer ci:check ─► Code per SSH auf VPS �
 Browser ─► intranet.sekbuelach.ch ─► Traefik (HTTPS) ─► Container «intranet» ─► Volume (JSON-Daten, Uploads)
 ```
 
-| Was | Wert |
-| --- | --- |
-| Server | Hostinger VPS srv1807739, IP `76.13.156.138` |
-| Ordner auf dem Server | `/docker/intranet` (Compose-Datei, `.env`, Quellcode in `src/`) |
-| Daten | Docker-Volume `intranet_intranet-storage` – bleibt bei jedem Deployment erhalten |
-| Prüfadresse | `https://intranet.sekbuelach.ch/up` |
+| Was                   | Wert                                                                             |
+| --------------------- | -------------------------------------------------------------------------------- |
+| Server                | Hostinger VPS srv1807739, IP `76.13.156.138`                                     |
+| Ordner auf dem Server | `/docker/intranet` (Compose-Datei, `.env`, Quellcode in `src/`)                  |
+| Daten                 | Docker-Volume `intranet_intranet-storage` – bleibt bei jedem Deployment erhalten |
+| Prüfadresse           | `https://intranet.sekbuelach.ch/up`                                              |
 
 ## Einmalige Einrichtung (ca. 30–60 Minuten)
 
@@ -71,20 +71,20 @@ ssh-keyscan 76.13.156.138 > $HOME\.ssh\intranet-known-hosts
 
 Repository → Settings → Secrets and variables → Actions:
 
-| Typ | Name | Inhalt |
-| --- | --- | --- |
-| Secret | `VPS_SSH_KEY` | ganzer Inhalt von `intranet-deploy` |
-| Secret | `VPS_KNOWN_HOSTS` | ganzer Inhalt von `intranet-known-hosts` |
-| Variable | `VPS_HOST` | `76.13.156.138` |
-| Variable | `INTRANET_HOST` | `intranet.sekbuelach.ch` |
+| Typ      | Name              | Inhalt                                   |
+| -------- | ----------------- | ---------------------------------------- |
+| Secret   | `VPS_SSH_KEY`     | ganzer Inhalt von `intranet-deploy`      |
+| Secret   | `VPS_KNOWN_HOSTS` | ganzer Inhalt von `intranet-known-hosts` |
+| Variable | `VPS_HOST`        | `76.13.156.138`                          |
+| Variable | `INTRANET_HOST`   | `intranet.sekbuelach.ch`                 |
 
 ### 5. DNS bei Cloudflare
 
 Zone `sekbuelach.ch` → DNS → Eintrag hinzufügen:
 
-| Typ | Name | Inhalt | Proxy-Status |
-| --- | --- | --- | --- |
-| A | `intranet` | `76.13.156.138` | **Nur DNS** (graue Wolke) |
+| Typ | Name       | Inhalt          | Proxy-Status              |
+| --- | ---------- | --------------- | ------------------------- |
+| A   | `intranet` | `76.13.156.138` | **Nur DNS** (graue Wolke) |
 
 «Nur DNS», damit Traefik das Let's-Encrypt-Zertifikat direkt beziehen kann.
 Später kann auf Cloudflare Tunnel/Access umgestellt werden (IDA ADR-005).
@@ -122,14 +122,14 @@ Zeile in `.env` löschen, `docker compose up -d`.
 
 ## Betrieb
 
-| Aufgabe | Befehl auf dem Server (`cd /docker/intranet`) |
-| --- | --- |
-| Status | `docker compose ps` |
-| Logs | `docker compose logs -f app` |
-| Neu starten | `docker compose up -d` |
-| Demo-Daten zurücksetzen (**löscht alle Daten**) | `docker compose exec app php artisan intranet:seed --force` |
-| Datensicherung | `docker run --rm -v intranet_intranet-storage:/d -v $PWD:/b alpine tar czf /b/backup-$(date +%F).tgz -C /d .` |
-| Letzte Version zurückholen | `rm -rf src && mv src.old src && docker compose up -d --build` |
+| Aufgabe                                         | Befehl auf dem Server (`cd /docker/intranet`)                                                                 |
+| ----------------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
+| Status                                          | `docker compose ps`                                                                                           |
+| Logs                                            | `docker compose logs -f app`                                                                                  |
+| Neu starten                                     | `docker compose up -d`                                                                                        |
+| Demo-Daten zurücksetzen (**löscht alle Daten**) | `docker compose exec app php artisan intranet:seed --force`                                                   |
+| Datensicherung                                  | `docker run --rm -v intranet_intranet-storage:/d -v $PWD:/b alpine tar czf /b/backup-$(date +%F).tgz -C /d .` |
+| Letzte Version zurückholen                      | `rm -rf src && mv src.old src && docker compose up -d --build`                                                |
 
 Die Daten (JSON-Dateien, Uploads, `APP_KEY`) liegen im Volume, nicht im Quellcode.
 Ein Deployment überschreibt sie nie.

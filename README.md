@@ -10,14 +10,14 @@ PostgreSQL darunter gebaut, ohne Controller oder Oberfläche anzufassen.
 
 ## Stack (wie IDA, ADR-001 bis ADR-005)
 
-| Schicht | Technologie |
-| --- | --- |
-| Backend | Laravel 13 (PHP 8.3+, empfohlen 8.4) |
-| Frontend | React 19 + TypeScript, Inertia 3, shadcn/ui, Tailwind 4 |
-| Listen | TanStack Table (Personen), Kartenansicht auf Mobile |
+| Schicht  | Technologie                                                   |
+| -------- | ------------------------------------------------------------- |
+| Backend  | Laravel 13 (PHP 8.3+, empfohlen 8.4)                          |
+| Frontend | React 19 + TypeScript, Inertia 3, shadcn/ui, Tailwind 4       |
+| Listen   | TanStack Table (Personen), Kartenansicht auf Mobile           |
 | Speicher | **JSON-Dateien** (`storage/app/data/*.json`) statt PostgreSQL |
-| Login | Demo-Auswahl (Prototyp) statt OIDC Entra ID / Edulog |
-| Tests | PHPUnit, PHPStan Level 7 (Larastan), Pint |
+| Login    | Demo-Auswahl (Prototyp) statt OIDC Entra ID / Edulog          |
+| Tests    | PHPUnit, PHPStan Level 7 (Larastan), Pint                     |
 
 Bewusst weggelassen gegenüber dem Starterkit: Fortify (Passwörter, 2FA,
 Passkeys, Registrierung) – das Intranet meldet später über das Schulkonto an.
@@ -34,11 +34,11 @@ composer dev       # App unter http://localhost:8000
 
 Anmelden: eine der Demo-Personen wählen. Rollen zum Testen:
 
-| Person | Rolle | darf |
-| --- | --- | --- |
-| Andrea Muster | Administration | alles, inkl. Personen und «Datenstrukturen» |
-| Beat Beispiel, Claudia Demo | Redaktion | Mitteilungen, Termine, Dokumente bearbeiten |
-| übrige | Mitarbeitende | lesen |
+| Person                      | Rolle          | darf                                        |
+| --------------------------- | -------------- | ------------------------------------------- |
+| Andrea Muster               | Administration | alles, inkl. Personen und «Datenstrukturen» |
+| Beat Beispiel, Claudia Demo | Redaktion      | Mitteilungen, Termine, Dokumente bearbeiten |
+| übrige                      | Mitarbeitende  | lesen                                       |
 
 Prüfen wie in CI: `composer ci:check`. Frontend-Format und -Lint automatisch
 korrigieren: `npm run check:fix`.

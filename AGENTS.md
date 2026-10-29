@@ -21,14 +21,14 @@ Frontend-Format korrigieren: `npm run check:fix`. PHP-Format korrigieren: `compo
 
 ## Aufbau
 
-| Pfad | Inhalt |
-| --- | --- |
-| `app/Data/Store/JsonStore.php` | Dateispeicher (Sperren, atomares Schreiben, UUID v7) |
-| `app/Data/Contracts` | Repository-Schnittstellen (bleiben beim Wechsel auf PostgreSQL) |
-| `app/Data/Json` | JSON-Umsetzungen der Repositories |
-| `app/Data/SchemaInspector.php` | Vergleich Schema ↔ gespeicherte Daten |
-| `app/Auth` | Login-Benutzer und UserProvider auf Basis des UserRepository |
-| `app/Providers/IntranetServiceProvider.php` | Bindung Schnittstelle → Umsetzung, Gates |
-| `config/intranet.php` | Speicher, Auswahllisten, Datenschema |
-| `resources/js/pages` | Inertia-Seiten (React) |
-| `tests` | Jeder Test startet mit frischen Demo-Daten in `storage/framework/testing/data` |
+| Pfad                                        | Inhalt                                                                         |
+| ------------------------------------------- | ------------------------------------------------------------------------------ |
+| `app/Data/Store/JsonStore.php`              | Dateispeicher (Sperren, atomares Schreiben, UUID v7)                           |
+| `app/Data/Contracts`                        | Repository-Schnittstellen (bleiben beim Wechsel auf PostgreSQL)                |
+| `app/Data/Json`                             | JSON-Umsetzungen der Repositories                                              |
+| `app/Data/SchemaInspector.php`              | Vergleich Schema ↔ gespeicherte Daten                                          |
+| `app/Auth`                                  | Login-Benutzer und UserProvider auf Basis des UserRepository                   |
+| `app/Providers/IntranetServiceProvider.php` | Bindung Schnittstelle → Umsetzung, Gates                                       |
+| `config/intranet.php`                       | Speicher, Auswahllisten, Datenschema                                           |
+| `resources/js/pages`                        | Inertia-Seiten (React)                                                         |
+| `tests`                                     | Jeder Test startet mit frischen Demo-Daten in `storage/framework/testing/data` |
