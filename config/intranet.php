@@ -42,7 +42,8 @@ return [
     |--------------------------------------------------------------------------
     | Stammwerte (Auswahllisten)
     |--------------------------------------------------------------------------
-    | Platzhalter, bitte an die Sekundarschule Bülach anpassen.
+    | Schlüssel (links) werden gespeichert, Bezeichnungen (rechts) angezeigt.
+    | Schlüssel nur ändern, wenn unter «renames» eine Umstellung eingetragen ist.
     */
 
     'roles' => [
@@ -53,8 +54,8 @@ return [
 
     'schools' => [
         'gesamt' => 'Gesamte Schule',
-        'schulhaus-a' => 'Schulhaus A',
-        'schulhaus-b' => 'Schulhaus B',
+        'hinterbirch' => 'Schulhaus Hinterbirch',
+        'mettmenriet' => 'Schulhaus Mettmenriet',
         'verwaltung' => 'Schulverwaltung',
     ],
 
@@ -87,6 +88,73 @@ return [
         'it' => 'IT-Anleitungen',
         'unterricht' => 'Unterricht',
         'links' => 'Wichtige Links',
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Farben je Auswahlwert (Farbkonzept, siehe /farbkonzept)
+    |--------------------------------------------------------------------------
+    | Erlaubte Farben: brand, slate, sky, cyan, teal, emerald, amber, orange,
+    | rose, violet, indigo. Fehlt ein Wert, wird «slate» verwendet.
+    | Innerhalb einer Liste jede Farbe nur einmal verwenden.
+    */
+
+    'colors' => [
+        'schools' => [
+            'gesamt' => 'brand',
+            'hinterbirch' => 'teal',
+            'mettmenriet' => 'violet',
+            'verwaltung' => 'slate',
+        ],
+        'roles' => [
+            'admin' => 'rose',
+            'redaktion' => 'indigo',
+            'mitarbeitende' => 'slate',
+        ],
+        'audiences' => [
+            'alle' => 'brand',
+            'lehrpersonen' => 'emerald',
+            'verwaltung' => 'slate',
+            'schulleitung' => 'indigo',
+        ],
+        'announcement_categories' => [
+            'allgemein' => 'slate',
+            'schulleitung' => 'indigo',
+            'it' => 'cyan',
+            'personal' => 'rose',
+            'anlass' => 'amber',
+        ],
+        'event_categories' => [
+            'schulanlass' => 'sky',
+            'konferenz' => 'indigo',
+            'weiterbildung' => 'emerald',
+            'ferien' => 'amber',
+            'termin' => 'slate',
+        ],
+        'document_categories' => [
+            'reglemente' => 'indigo',
+            'formulare' => 'amber',
+            'it' => 'cyan',
+            'unterricht' => 'emerald',
+            'links' => 'sky',
+        ],
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Umstellungen gespeicherter Werte (läuft bei jedem Start, idempotent)
+    |--------------------------------------------------------------------------
+    | Wird ein Schlüssel einer Auswahlliste umbenannt, stellt
+    | «php artisan intranet:upgrade» vorhandene Datensätze um.
+    | Format: [Sammlung, Feld, alter Wert, neuer Wert].
+    | Später werden daraus Datenbank-Migrationen.
+    */
+
+    'renames' => [
+        ['users', 'school', 'schulhaus-a', 'hinterbirch'],
+        ['users', 'school', 'schulhaus-b', 'mettmenriet'],
+        ['events', 'school', 'schulhaus-a', 'hinterbirch'],
+        ['events', 'school', 'schulhaus-b', 'mettmenriet'],
     ],
 
     /*

@@ -10,6 +10,11 @@ Projekt: SekBülach Intranet, Prototyp. Stack und Konventionen wie IDA.
 - Jede neue oder geänderte Sammlung zuerst im Schema `config/intranet.php` nachführen.
 - Dateien und Daten nie ohne Rückfrage löschen; `intranet:seed --force` nur in Tests.
 - UI-Texte Deutsch (Schweiz): «ss» statt «ß».
+- Farben nur über das Farbkonzept: Tokens in `resources/css/app.css`, Farben je Auswahlwert in
+  `config/intranet.php` → `colors`, Badges über `OptionBadge`. Keine festen Farbwerte in Seiten.
+  Text und Buttons in `primary` (Kontrast AA), Logo-Blau `brand` nur für Linien und Symbole.
+- Wird ein Schlüssel einer Auswahlliste umbenannt, Umstellung unter `renames` eintragen
+  (`php artisan intranet:upgrade` stellt bestehende Daten beim Start um).
 
 ## Vor jedem Commit
 

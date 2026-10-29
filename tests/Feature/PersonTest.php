@@ -32,7 +32,7 @@ class PersonTest extends TestCase
 
         $this->post('/personen', [
             'name' => 'Ina Neu', 'email' => ' Ina.Neu@SekBuelach.example ', 'role' => 'mitarbeitende',
-            'school' => 'schulhaus-a', 'active' => true,
+            'school' => 'hinterbirch', 'active' => true,
         ])->assertRedirect('/personen');
 
         $this->assertNotNull(app(UserRepository::class)->findByEmail('ina.neu@sekbuelach.example'));

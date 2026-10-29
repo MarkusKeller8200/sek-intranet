@@ -62,6 +62,7 @@ Route::middleware('auth')->group(function () {
         Route::delete('personen/{id}', [PersonController::class, 'destroy'])->name('people.destroy');
 
         Route::get('datenstrukturen', DataStructureController::class)->name('data-structures');
+        Route::inertia('farbkonzept', 'color-concept')->name('color-concept');
     });
     Route::get('personen', [PersonController::class, 'index'])->name('people.index');
 

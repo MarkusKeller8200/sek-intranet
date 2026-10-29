@@ -20,6 +20,9 @@ fi
 # Konfiguration, Routen und Views für Produktion vorbereiten.
 php artisan optimize --no-ansi
 
+# Umbenannte Auswahlwerte in bestehenden Daten nachführen (idempotent).
+php artisan intranet:upgrade --no-ansi
+
 # Demo-Daten nur anlegen, wenn noch keine Daten vorhanden sind (überschreibt nie).
 php artisan intranet:seed --no-interaction --no-ansi
 

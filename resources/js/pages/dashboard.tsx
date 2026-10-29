@@ -8,8 +8,8 @@ import {
     Pin,
     Users,
 } from 'lucide-react';
+import OptionBadge from '@/components/option-badge';
 import EmptyState from '@/components/empty-state';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
     Card,
@@ -18,7 +18,6 @@ import {
     CardHeader,
     CardTitle,
 } from '@/components/ui/card';
-import { label, useOptions } from '@/hooks/use-options';
 import { formatDate, formatEventRange } from '@/lib/format';
 import type { Announcement, DocumentItem, IntranetEvent } from '@/types';
 
@@ -41,7 +40,6 @@ export default function Dashboard({
     stats,
 }: Props) {
     const { auth } = usePage().props;
-    const options = useOptions();
     const firstName = auth.user.name.split(' ')[0];
 
     const tiles = [
@@ -126,17 +124,15 @@ export default function Dashboard({
                                 >
                                     <div className="flex flex-wrap items-center gap-2">
                                         {item.pinned && (
-                                            <Pin className="size-4 text-amber-600" />
+                                            <Pin className="size-4 text-brand" />
                                         )}
                                         <span className="font-medium">
                                             {item.title}
                                         </span>
-                                        <Badge variant="secondary">
-                                            {label(
-                                                options.announcementCategories,
-                                                item.category,
-                                            )}
-                                        </Badge>
+                                        <OptionBadge
+                                            list="announcementCategories"
+                                            value={item.category}
+                                        />
                                     </div>
                                     <p className="line-clamp-2 text-sm text-muted-foreground">
                                         {item.body}

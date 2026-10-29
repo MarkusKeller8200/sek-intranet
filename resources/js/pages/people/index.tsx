@@ -23,6 +23,7 @@ import {
 import { useMemo, useState } from 'react';
 import DeleteButton from '@/components/delete-button';
 import EmptyState from '@/components/empty-state';
+import OptionBadge from '@/components/option-badge';
 import PageHeader from '@/components/page-header';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -89,6 +90,13 @@ export default function PeopleIndex({ people }: { people: Person[] }) {
                 id: 'school',
                 accessorFn: (person) => label(options.schools, person.school),
                 header: sortable('Schulhaus'),
+                cell: ({ row }) => (
+                    <OptionBadge
+                        list="schools"
+                        value={row.original.school}
+                        dot
+                    />
+                ),
             },
             {
                 accessorKey: 'email',
@@ -119,6 +127,9 @@ export default function PeopleIndex({ people }: { people: Person[] }) {
                 id: 'role',
                 accessorFn: (person) => label(options.roles, person.role),
                 header: sortable('Rolle'),
+                cell: ({ row }) => (
+                    <OptionBadge list="roles" value={row.original.role} />
+                ),
             },
             {
                 id: 'actions',
@@ -256,16 +267,14 @@ export default function PeopleIndex({ people }: { people: Person[] }) {
                                 <div>
                                     <p className="font-medium">{person.name}</p>
                                     <p className="text-sm text-muted-foreground">
-                                        {[
-                                            person.function,
-                                            label(
-                                                options.schools,
-                                                person.school,
-                                            ),
-                                        ]
-                                            .filter(Boolean)
-                                            .join(' · ')}
+                                        {person.function}
                                     </p>
+                                    <OptionBadge
+                                        list="schools"
+                                        value={person.school}
+                                        dot
+                                        className="mt-1"
+                                    />
                                 </div>
                                 {canManage && (
                                     <Button variant="ghost" size="icon" asChild>

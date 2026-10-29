@@ -14,7 +14,7 @@ import PageHeader from '@/components/page-header';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { useOptions } from '@/hooks/use-options';
+import { useColor, useOptions } from '@/hooks/use-options';
 import { formatFileSize } from '@/lib/format';
 import type { DocumentItem } from '@/types';
 
@@ -25,6 +25,7 @@ export default function DocumentsIndex({
 }) {
     const { auth } = usePage().props;
     const options = useOptions();
+    const color = useColor();
     const [query, setQuery] = useState('');
 
     const groups = useMemo(() => {
@@ -86,7 +87,13 @@ export default function DocumentsIndex({
                     {groups.map((group) => (
                         <Card key={group.key}>
                             <CardHeader>
-                                <CardTitle>{group.text}</CardTitle>
+                                <CardTitle className="flex items-center gap-2">
+                                    <span
+                                        className={`size-2.5 rounded-full ${color('documentCategories', group.key).classes.dot}`}
+                                        aria-hidden
+                                    />
+                                    {group.text}
+                                </CardTitle>
                             </CardHeader>
                             <CardContent className="grid gap-1">
                                 {group.items.map((doc) => (

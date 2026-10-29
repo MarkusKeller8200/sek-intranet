@@ -44,6 +44,7 @@ class HandleInertiaRequests extends Middleware
                 'announcementCategories' => config('intranet.announcement_categories'),
                 'eventCategories' => config('intranet.event_categories'),
                 'documentCategories' => config('intranet.document_categories'),
+                'colors' => config('intranet.colors'),
             ],
             'store' => config('intranet.store'),
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',

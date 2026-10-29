@@ -1,9 +1,9 @@
 import { Head, Link, usePage } from '@inertiajs/react';
 import { ArrowLeft, Clock, Pencil, Pin } from 'lucide-react';
 import DeleteButton from '@/components/delete-button';
+import OptionBadge from '@/components/option-badge';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { label, useOptions } from '@/hooks/use-options';
 import { formatDateTime } from '@/lib/format';
 import type { Announcement } from '@/types';
 
@@ -13,7 +13,6 @@ export default function AnnouncementShow({
     announcement: Announcement;
 }) {
     const { auth } = usePage().props;
-    const options = useOptions();
 
     return (
         <>
@@ -49,19 +48,19 @@ export default function AnnouncementShow({
                                 <Pin /> Angeheftet
                             </Badge>
                         )}
-                        <Badge variant="secondary">
-                            {label(
-                                options.announcementCategories,
-                                announcement.category,
-                            )}
-                        </Badge>
-                        <Badge variant="outline">
-                            {label(options.audiences, announcement.audience)}
-                        </Badge>
+                        <OptionBadge
+                            list="announcementCategories"
+                            value={announcement.category}
+                        />
+                        <OptionBadge
+                            list="audiences"
+                            value={announcement.audience}
+                            dot
+                        />
                         {announcement.scheduled && (
                             <Badge
                                 variant="outline"
-                                className="gap-1 border-amber-500 text-amber-700 dark:text-amber-400"
+                                className="gap-1 border-warning/30 bg-warning-soft text-warning"
                             >
                                 <Clock /> geplant
                             </Badge>

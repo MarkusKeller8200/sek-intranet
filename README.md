@@ -57,6 +57,8 @@ bei jedem Push auf `main`: siehe [DEPLOY.md](DEPLOY.md).
 - **Personen**: Verzeichnis mit Suche und Sortierung; Verwaltung nur Administration
 - **Datenstrukturen** (Administration): alle Sammlungen mit Feldern, Füllgrad,
   PostgreSQL-Typvorschlag und Warnung bei Feldern ausserhalb des Schemas
+- **Farbkonzept** (Administration, `/farbkonzept`): Farben und Logo aus dem Auftritt von
+  sekbuelach.ch, Farben je Kategorie, Schulhaus, Zielgruppe und Rolle, Statusfarben
 - Hell/Dunkel, responsive, deutsche Validierungsmeldungen
 
 ## So funktioniert der Dateispeicher
@@ -112,7 +114,6 @@ Wenn Funktionen und Datenstrukturen stabil sind:
 
 ## Offene Punkte
 
-- Schulhäuser, Kategorien und Rollen in `config/intranet.php` sind Platzhalter.
-- Logo ist ein Platzhalter (`resources/js/components/app-logo-icon.tsx`).
+- Kategorien und Rollen in `config/intranet.php` sind Vorschläge und können angepasst werden.
 - Zugriffsschutz vorerst über ein gemeinsames Passwort (`INTRANET_ACCESS_PASSWORD`), später OIDC.
 - Keine Volltextsuche über alle Bereiche, keine Benachrichtigungen, keine PWA – bewusst für später.

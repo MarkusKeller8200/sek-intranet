@@ -1,8 +1,8 @@
 import { Head, useForm } from '@inertiajs/react';
 import { LogIn, ShieldAlert } from 'lucide-react';
 import InputError from '@/components/input-error';
+import OptionBadge from '@/components/option-badge';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { useInitials } from '@/hooks/use-initials';
 
@@ -11,12 +11,6 @@ type DemoUser = {
     name: string;
     function: string | null;
     role: string;
-};
-
-const roleLabels: Record<string, string> = {
-    admin: 'Administration',
-    redaktion: 'Redaktion',
-    mitarbeitende: 'Mitarbeitende',
 };
 
 export default function Login({
@@ -57,7 +51,7 @@ export default function Login({
                             disabled={form.processing}
                             onClick={() => signIn(user.id)}
                         >
-                            <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-muted text-xs font-semibold">
+                            <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-info-soft text-xs font-semibold text-primary">
                                 {getInitials(user.name)}
                             </span>
                             <span className="grid flex-1 leading-tight">
@@ -66,9 +60,7 @@ export default function Login({
                                     {user.function}
                                 </span>
                             </span>
-                            <Badge variant="secondary">
-                                {roleLabels[user.role] ?? user.role}
-                            </Badge>
+                            <OptionBadge list="roles" value={user.role} />
                             <LogIn className="text-muted-foreground" />
                         </Button>
                     ))}

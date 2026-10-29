@@ -2,12 +2,13 @@ import { Head, Link, usePage } from '@inertiajs/react';
 import { Clock, Megaphone, Pin, Plus, Search } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import EmptyState from '@/components/empty-state';
+import OptionBadge from '@/components/option-badge';
 import PageHeader from '@/components/page-header';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import SelectField from '@/components/select-field';
-import { label, useOptions } from '@/hooks/use-options';
+import { useOptions } from '@/hooks/use-options';
 import { formatDate } from '@/lib/format';
 import type { Announcement } from '@/types';
 
@@ -96,29 +97,26 @@ export default function AnnouncementsIndex({
                                 <div className="flex flex-wrap items-center gap-2">
                                     {item.pinned && (
                                         <Pin
-                                            className="size-4 text-amber-600"
+                                            className="size-4 text-brand"
                                             aria-label="Angeheftet"
                                         />
                                     )}
                                     <h2 className="font-medium">
                                         {item.title}
                                     </h2>
-                                    <Badge variant="secondary">
-                                        {label(
-                                            options.announcementCategories,
-                                            item.category,
-                                        )}
-                                    </Badge>
-                                    <Badge variant="outline">
-                                        {label(
-                                            options.audiences,
-                                            item.audience,
-                                        )}
-                                    </Badge>
+                                    <OptionBadge
+                                        list="announcementCategories"
+                                        value={item.category}
+                                    />
+                                    <OptionBadge
+                                        list="audiences"
+                                        value={item.audience}
+                                        dot
+                                    />
                                     {item.scheduled && (
                                         <Badge
                                             variant="outline"
-                                            className="gap-1 border-amber-500 text-amber-700 dark:text-amber-400"
+                                            className="gap-1 border-warning/30 bg-warning-soft text-warning"
                                         >
                                             <Clock /> geplant
                                         </Badge>

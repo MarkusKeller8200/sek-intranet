@@ -3,22 +3,14 @@ import { CalendarDays, MapPin, Pencil, Plus } from 'lucide-react';
 import { useMemo } from 'react';
 import DeleteButton from '@/components/delete-button';
 import EmptyState from '@/components/empty-state';
+import OptionBadge from '@/components/option-badge';
 import PageHeader from '@/components/page-header';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
-import { label, useOptions } from '@/hooks/use-options';
+import { useColor } from '@/hooks/use-options';
 import { formatEventRange, formatMonth } from '@/lib/format';
 import type { IntranetEvent } from '@/types';
-
-const categoryColors: Record<string, string> = {
-    schulanlass: 'bg-sky-500',
-    konferenz: 'bg-violet-500',
-    weiterbildung: 'bg-emerald-500',
-    ferien: 'bg-amber-500',
-    termin: 'bg-slate-400',
-};
 
 export default function EventsIndex({
     events,
@@ -28,7 +20,7 @@ export default function EventsIndex({
     showPast: boolean;
 }) {
     const { auth } = usePage().props;
-    const options = useOptions();
+    const color = useColor();
 
     // Nach Monat gruppieren (Reihenfolge kommt sortiert vom Server).
     const months = useMemo(() => {
@@ -89,29 +81,22 @@ export default function EventsIndex({
                         {items.map((event) => (
                             <div
                                 key={event.id}
-                                className="flex gap-3 rounded-xl border bg-card p-4"
+                                className={`flex gap-3 rounded-xl border border-l-4 bg-card p-4 ${color('eventCategories', event.category).classes.bar}`}
                             >
-                                <span
-                                    className={`mt-1.5 size-2.5 shrink-0 rounded-full ${categoryColors[event.category] ?? 'bg-slate-400'}`}
-                                    aria-hidden
-                                />
                                 <div className="grid flex-1 gap-1">
                                     <div className="flex flex-wrap items-center gap-2">
                                         <span className="font-medium">
                                             {event.title}
                                         </span>
-                                        <Badge variant="secondary">
-                                            {label(
-                                                options.eventCategories,
-                                                event.category,
-                                            )}
-                                        </Badge>
-                                        <Badge variant="outline">
-                                            {label(
-                                                options.schools,
-                                                event.school,
-                                            )}
-                                        </Badge>
+                                        <OptionBadge
+                                            list="eventCategories"
+                                            value={event.category}
+                                        />
+                                        <OptionBadge
+                                            list="schools"
+                                            value={event.school}
+                                            dot
+                                        />
                                     </div>
                                     <p className="text-sm">
                                         {formatEventRange(

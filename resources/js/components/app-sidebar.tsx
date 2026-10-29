@@ -5,6 +5,7 @@ import {
     FileText,
     LayoutGrid,
     Megaphone,
+    Palette,
     Users,
 } from 'lucide-react';
 import AppLogo from '@/components/app-logo';
@@ -31,6 +32,7 @@ const mainNavItems: NavItem[] = [
 
 const adminNavItems: NavItem[] = [
     { title: 'Datenstrukturen', href: '/datenstrukturen', icon: Database },
+    { title: 'Farbkonzept', href: '/farbkonzept', icon: Palette },
 ];
 
 export function AppSidebar() {

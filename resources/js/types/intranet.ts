@@ -12,6 +12,8 @@ export type Options = {
     announcementCategories: Record<string, string>;
     eventCategories: Record<string, string>;
     documentCategories: Record<string, string>;
+    /** config/intranet.php → colors: Liste → Wert → Farbname */
+    colors: Record<string, Record<string, string>>;
 };
 
 export type Announcement = StoredRecord & {
