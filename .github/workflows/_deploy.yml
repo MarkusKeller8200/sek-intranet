@@ -49,14 +49,27 @@ jobs:
           ssh vps "cd $TARGET && touch .env && grep -q '^INTRANET_HOST=' .env || echo 'INTRANET_HOST=$INTRANET_HOST' >> .env"
           ssh vps "cd $TARGET && docker compose up -d --build --remove-orphans && docker image prune -f"
 
+      # Massgebend ist die Prüfung auf dem Server selbst (Traefik, Zertifikat, App).
+      # Der Aufruf von GitHub aus kann an Netz-/Firewall-Regeln scheitern und gibt nur eine Warnung.
       - name: Erreichbarkeit prüfen
         run: |
-          for i in $(seq 1 30); do
-            if curl -fsS "https://$INTRANET_HOST/up" > /dev/null; then
-              echo "Online: https://$INTRANET_HOST"; exit 0
+          ok=
+          for i in $(seq 1 36); do
+            if ssh vps "curl -fsS -o /dev/null --max-time 10 --resolve $INTRANET_HOST:443:127.0.0.1 https://$INTRANET_HOST/up" 2> check-error.txt; then
+              ok=1; break
             fi
             sleep 5
           done
-          echo "Seite nicht erreichbar. Logs:"
-          ssh vps "cd $TARGET && docker compose logs --tail=80 app"
-          exit 1
+          if [ -z "$ok" ]; then
+            ssh vps "cd $TARGET && docker compose ps && docker compose logs --tail=60 app" > app-logs.txt 2>&1 || true
+            cat check-error.txt app-logs.txt
+            cat check-error.txt app-logs.txt > failure.txt
+            .github/scripts/report-failure.sh failure.txt 'Intranet startet nicht'
+            exit 1
+          fi
+          echo "Online auf dem Server: https://$INTRANET_HOST"
+          if curl -4 -fsS -o /dev/null --max-time 15 "https://$INTRANET_HOST/up" 2> outside-error.txt; then
+            echo "Auch von aussen erreichbar."
+          else
+            echo "::warning title=Von GitHub aus nicht erreichbar::$(tr '\n' ' ' < outside-error.txt)"
+          fi
