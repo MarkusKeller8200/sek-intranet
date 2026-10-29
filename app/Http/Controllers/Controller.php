@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Auth\IntranetUser;
+use App\Plugins\PluginManager;
 use Carbon\CarbonImmutable;
 use Inertia\Inertia;
 
@@ -13,6 +15,18 @@ abstract class Controller
     protected function toast(string $message, string $type = 'success'): void
     {
         Inertia::flash('toast', ['type' => $type, 'message' => $message]);
+    }
+
+    /**
+     * Meldet ein Ereignis an die eingeschalteten Plugins (nach der eigentlichen Änderung).
+     *
+     * @param  array<string, mixed>  $data
+     */
+    protected function pluginEvent(string $event, array $data): void
+    {
+        $user = request()->user();
+
+        app(PluginManager::class)->dispatch($event, $data, $user instanceof IntranetUser ? $user : null);
     }
 
     /**

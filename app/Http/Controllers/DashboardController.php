@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Auth\IntranetUser;
 use App\Data\Contracts\AnnouncementRepository;
 use App\Data\Contracts\DocumentRepository;
 use App\Data\Contracts\EventRepository;
 use App\Data\Contracts\UserRepository;
+use App\Plugins\PluginManager;
+use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -16,6 +19,8 @@ class DashboardController extends Controller
         EventRepository $events,
         DocumentRepository $documents,
         UserRepository $users,
+        PluginManager $plugins,
+        Request $request,
     ): Response {
         $names = $users->names();
 
@@ -29,6 +34,8 @@ class DashboardController extends Controller
                 $documents->sorted(),
                 fn (array $d): bool => ($d['category'] ?? null) === 'links',
             )), 0, 6),
+            // Kacheln der Plugins: nachgeladen, damit langsame Dienste die Startseite nicht bremsen.
+            'widgets' => Inertia::defer(fn (): array => $plugins->widgets($request->user() instanceof IntranetUser ? $request->user() : null)),
             'stats' => [
                 'announcements' => $announcements->count(),
                 'events' => count($events->upcoming()),

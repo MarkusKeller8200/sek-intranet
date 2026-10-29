@@ -1,0 +1,96 @@
+{
+    "id": "demo",
+    "name": "Demo-Dienst",
+    "version": "1.0",
+    "api": 1,
+    "class": "Tests\\Fixtures\\DemoPlugin",
+    "category": "other",
+    "description": "Test-Plugin für die automatischen Tests.",
+    "service": {
+        "name": "Demo-API",
+        "base": "https://demo.example.test/{tenant}",
+        "auth": {
+            "type": "oauth2_client_credentials",
+            "token_url": "https://login.example.test/{tenant}/token",
+            "scope": "api://demo/.default",
+            "client_id_setting": "client_id",
+            "client_secret_setting": "client_secret"
+        },
+        "endpoints": [
+            {
+                "id": "ping",
+                "method": "GET",
+                "path": "/ping",
+                "label": "Ping",
+                "status": "full"
+            },
+            {
+                "id": "people",
+                "method": "GET",
+                "path": "/people",
+                "label": "Personen",
+                "status": "full",
+                "params": [{ "name": "top", "default": "5" }]
+            },
+            {
+                "id": "person",
+                "method": "GET",
+                "path": "/people/{id}",
+                "label": "Eine Person",
+                "status": "full",
+                "params": [{ "name": "id", "required": true }]
+            },
+            {
+                "id": "tag",
+                "method": "POST",
+                "path": "/people/{id}/tag",
+                "label": "Markieren",
+                "status": "full",
+                "danger": true,
+                "params": [{ "name": "id", "required": true }]
+            },
+            {
+                "id": "future",
+                "method": "GET",
+                "path": "/future",
+                "label": "Später",
+                "status": "planned"
+            }
+        ]
+    },
+    "settings": [
+        {
+            "key": "tenant",
+            "type": "text",
+            "label": "Tenant",
+            "required": true
+        },
+        {
+            "key": "client_id",
+            "type": "text",
+            "label": "Client-ID",
+            "required": true
+        },
+        {
+            "key": "client_secret",
+            "type": "password",
+            "label": "Client-Secret",
+            "required": true
+        }
+    ],
+    "actions": [
+        {
+            "id": "import-people",
+            "label": "Personen übernehmen",
+            "kind": "import"
+        },
+        {
+            "id": "tag",
+            "label": "Markieren",
+            "kind": "write",
+            "options": [{ "key": "id", "type": "text", "label": "ID" }]
+        }
+    ],
+    "widgets": [{ "id": "count", "label": "Demo-Personen", "audience": "all" }],
+    "events": ["person.created"]
+}

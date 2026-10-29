@@ -7,6 +7,7 @@ use App\Http\Controllers\DataStructureController;
 use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\PersonController;
+use App\Http\Controllers\PluginController;
 use Illuminate\Support\Facades\Route;
 
 // Anmeldung (Prototyp: Demo-Auswahl; später OIDC Entra ID / Edulog)
@@ -63,6 +64,18 @@ Route::middleware('auth')->group(function () {
 
         Route::get('datenstrukturen', DataStructureController::class)->name('data-structures');
         Route::inertia('farbkonzept', 'color-concept')->name('color-concept');
+
+        // Plugins (Anbindung anderer Systeme per API)
+        Route::get('plugins', [PluginController::class, 'index'])->name('plugins.index');
+        Route::get('plugins/{id}', [PluginController::class, 'show'])->name('plugins.show');
+        Route::post('plugins/{id}/schalter', [PluginController::class, 'toggle'])->name('plugins.toggle');
+        Route::put('plugins/{id}/einstellungen', [PluginController::class, 'settings'])->name('plugins.settings');
+        Route::middleware('throttle:60,1')->group(function () {
+            Route::post('plugins/{id}/test', [PluginController::class, 'test'])->name('plugins.test');
+            Route::post('plugins/{id}/aktion/{action}', [PluginController::class, 'action'])->name('plugins.action');
+            Route::post('plugins/{id}/api', [PluginController::class, 'api'])->name('plugins.api');
+            Route::post('plugins/{id}/zugriff', [PluginController::class, 'access'])->name('plugins.access');
+        });
     });
     Route::get('personen', [PersonController::class, 'index'])->name('people.index');
 

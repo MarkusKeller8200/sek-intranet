@@ -31,7 +31,8 @@ class PersonController extends Controller
 
     public function store(Request $request): RedirectResponse
     {
-        $this->users->create($this->validated($request));
+        $person = $this->users->create($this->validated($request));
+        $this->pluginEvent('person.created', $person);
         $this->toast('Person gespeichert.');
 
         return redirect()->route('people.index');
@@ -51,7 +52,8 @@ class PersonController extends Controller
             return back()->withErrors(['role' => 'Die eigene Administrationsrolle kann nicht entfernt werden.']);
         }
 
-        $this->users->update($id, $data);
+        $person = $this->users->update($id, $data);
+        $this->pluginEvent('person.updated', $person);
         $this->toast('Person aktualisiert.');
 
         return redirect()->route('people.index');
@@ -61,8 +63,9 @@ class PersonController extends Controller
     {
         abort_if($id === (string) $request->user()?->getAuthIdentifier(), 422, 'Das eigene Konto kann nicht gelöscht werden.');
 
-        $this->users->findOrFail($id);
+        $person = $this->users->findOrFail($id);
         $this->users->delete($id);
+        $this->pluginEvent('person.deleted', $person);
         $this->toast('Person gelöscht.');
 
         return redirect()->route('people.index');

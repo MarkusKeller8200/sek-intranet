@@ -1,0 +1,234 @@
+{
+    "id": "jamf",
+    "name": "Jamf Pro",
+    "version": "1.0",
+    "api": 1,
+    "category": "devices",
+    "author": "SekBülach Intranet",
+    "description": "iPads und Macs aus Jamf Pro: Geräte einer Person anzeigen, Geräteübersicht, Inventar aktualisieren und Gerät einer Person zuweisen. Kachel mit Geräteanzahl.",
+    "data_notice": "Jamf liefert Seriennummern und zugewiesene Personen.",
+    "service": {
+        "name": "Jamf Pro API",
+        "home": "https://www.jamf.com/products/jamf-pro/",
+        "docs": "https://developer.jamf.com/jamf-pro/docs/jamf-pro-api-overview",
+        "auth": {
+            "type": "oauth2_client_credentials",
+            "token_url": "{token_path}",
+            "client_id_setting": "client_id",
+            "client_secret_setting": "client_secret"
+        },
+        "auth_note": "Jamf Pro → Einstellungen → API-Rollen und -Clients: Client mit Rolle «Read Mobile Devices», «Read Computers» anlegen; für schreibende Aktionen zusätzlich «Update Mobile Devices» und die Berechtigung für MDM-Befehle. Client-Secret wird verschlüsselt gespeichert.",
+        "endpoints": [
+            {
+                "id": "version",
+                "method": "GET",
+                "path": "/api/v1/jamf-pro-version",
+                "label": "Jamf-Pro-Version",
+                "status": "full",
+                "use": "Testen",
+                "permission": "keine"
+            },
+            {
+                "id": "mobile-devices",
+                "method": "GET",
+                "path": "/api/v2/mobile-devices/detail",
+                "label": "Mobilgeräte (iPads)",
+                "status": "full",
+                "use": "Übersicht, Geräte einer Person, Kachel",
+                "permission": "Read Mobile Devices",
+                "note": "Filter in RSQL, z. B. username==\"vorname.name\" oder emailAddress==\"…\".",
+                "params": [
+                    {
+                        "name": "section",
+                        "default": "GENERAL",
+                        "help": "GENERAL, HARDWARE, USER_AND_LOCATION …"
+                    },
+                    { "name": "page", "default": "0" },
+                    { "name": "page-size", "default": "100" },
+                    { "name": "sort", "default": "displayName:asc" },
+                    {
+                        "name": "filter",
+                        "example": "emailAddress==\"vorname.name@schule.ch\""
+                    }
+                ]
+            },
+            {
+                "id": "mobile-device",
+                "method": "GET",
+                "path": "/api/v2/mobile-devices/{id}/detail",
+                "label": "Ein Mobilgerät",
+                "status": "partial",
+                "use": "API-Tester",
+                "permission": "Read Mobile Devices",
+                "note": "Lage von managementId in der Antwort nicht verifiziert.",
+                "params": [{ "name": "id", "required": true }]
+            },
+            {
+                "id": "computers",
+                "method": "GET",
+                "path": "/api/v1/computers-inventory",
+                "label": "Computer (Macs, v1)",
+                "status": "partial",
+                "use": "Geräte einer Person, Kachel",
+                "permission": "Read Computers",
+                "note": "v1 ist bei Jamf als veraltet markiert; Nachfolger v4 noch nicht umgesetzt.",
+                "params": [
+                    { "name": "section", "default": "GENERAL" },
+                    { "name": "page", "default": "0" },
+                    { "name": "page-size", "default": "100" },
+                    { "name": "sort", "default": "general.name:asc" },
+                    {
+                        "name": "filter",
+                        "example": "userAndLocation.email==\"vorname.name@schule.ch\""
+                    }
+                ]
+            },
+            {
+                "id": "computers-v4",
+                "method": "GET",
+                "path": "/api/v4/computers-inventory",
+                "label": "Computer (v4)",
+                "status": "planned",
+                "use": "später: Ersatz für v1",
+                "permission": "Read Computers"
+            },
+            {
+                "id": "mobile-device-update",
+                "method": "PATCH",
+                "path": "/api/v2/mobile-devices/{id}",
+                "label": "Mobilgerät ändern (Zuweisung)",
+                "status": "partial",
+                "danger": true,
+                "use": "Aktion «Gerät zuweisen»",
+                "permission": "Update Mobile Devices",
+                "note": "Aufbau von «location» aus Fremdquelle (ruby-jss), bei Jamf zu bestätigen.",
+                "params": [{ "name": "id", "required": true }],
+                "body": {
+                    "location": {
+                        "username": "vorname.name",
+                        "realName": "Vorname Name",
+                        "emailAddress": "vorname.name@schule.ch"
+                    }
+                }
+            },
+            {
+                "id": "mdm-command",
+                "method": "POST",
+                "path": "/api/v2/mdm/commands",
+                "label": "MDM-Befehl senden",
+                "status": "partial",
+                "danger": true,
+                "use": "Aktion «Inventar aktualisieren»",
+                "permission": "MDM-Befehle (je Befehlstyp)",
+                "note": "DEVICE_INFORMATION entspricht «Inventar aktualisieren».",
+                "body": {
+                    "clientData": [{ "managementId": "…" }],
+                    "commandData": { "commandType": "DEVICE_INFORMATION" }
+                }
+            }
+        ]
+    },
+    "settings": [
+        {
+            "key": "base_url",
+            "type": "url",
+            "label": "Jamf-Pro-Adresse",
+            "required": true,
+            "placeholder": "https://sekbuelach.jamfcloud.com"
+        },
+        {
+            "key": "client_id",
+            "type": "text",
+            "label": "Client-ID (API-Client)",
+            "required": true
+        },
+        {
+            "key": "client_secret",
+            "type": "password",
+            "label": "Client-Secret",
+            "required": true
+        },
+        {
+            "key": "token_path",
+            "type": "select",
+            "label": "Token-Adresse",
+            "default": "/api/v1/oauth/token",
+            "help": "Je nach Jamf-Version. Bei Fehler 404 beim Testen die andere wählen.",
+            "choices": [
+                ["/api/v1/oauth/token", "/api/v1/oauth/token (aktuelle Doku)"],
+                ["/api/oauth/token", "/api/oauth/token (ältere Versionen)"]
+            ]
+        }
+    ],
+    "actions": [
+        {
+            "id": "devices-of-person",
+            "label": "Geräte einer Person",
+            "kind": "read",
+            "options": [
+                {
+                    "key": "email",
+                    "type": "text",
+                    "label": "E-Mail (oder Benutzername)",
+                    "required": true
+                }
+            ]
+        },
+        {
+            "id": "overview",
+            "label": "Geräteübersicht iPads",
+            "kind": "read",
+            "options": [
+                {
+                    "key": "filter",
+                    "type": "text",
+                    "label": "Filter (RSQL, optional)",
+                    "placeholder": "displayName==\"*2a*\""
+                }
+            ]
+        },
+        {
+            "id": "refresh-inventory",
+            "label": "Inventar eines iPads aktualisieren",
+            "kind": "write",
+            "confirm": "Jamf schickt dem Gerät einen MDM-Befehl (Geräteinformationen abfragen). Am Gerät ändert sich nichts.",
+            "options": [
+                {
+                    "key": "serial",
+                    "type": "text",
+                    "label": "Seriennummer",
+                    "required": true
+                }
+            ]
+        },
+        {
+            "id": "assign-user",
+            "label": "iPad einer Person zuweisen",
+            "kind": "write",
+            "confirm": "Die zugewiesene Person des Geräts wird in Jamf geändert. Das kann Gruppen und Profile beeinflussen.",
+            "options": [
+                {
+                    "key": "serial",
+                    "type": "text",
+                    "label": "Seriennummer",
+                    "required": true
+                },
+                {
+                    "key": "email",
+                    "type": "text",
+                    "label": "E-Mail der Person (aus dem Intranet)",
+                    "required": true
+                }
+            ]
+        }
+    ],
+    "widgets": [
+        {
+            "id": "devices",
+            "label": "Geräte (Jamf)",
+            "ttl": 900,
+            "audience": "admin"
+        }
+    ],
+    "events": ["person.updated", "person.deleted"]
+}

@@ -1,0 +1,81 @@
+{
+    "id": "ida",
+    "name": "IDA – Identitäten, Devices & Access",
+    "version": "0.1",
+    "api": 1,
+    "category": "school",
+    "author": "SekBülach Intranet",
+    "description": "Verbindung zum eigenen Lizenz- und Geräteportal IDA. Heute: Verbindungsprüfung. Personen, Geräte und Lizenzen folgen, sobald IDA eine API hat (API-Stil in IDA noch offen).",
+    "service": {
+        "name": "IDA-API",
+        "home": "https://sekbuelach.atlassian.net/wiki/spaces/IDA/overview",
+        "docs": "https://sekbuelach.atlassian.net/wiki/spaces/IDA/pages/892436481",
+        "auth": { "type": "bearer", "token_setting": "api_token" },
+        "auth_note": "Token, das IDA für das Intranet ausstellt (geplant). Für die Verbindungsprüfung genügt die Adresse.",
+        "endpoints": [
+            {
+                "id": "health",
+                "method": "GET",
+                "path": "/up",
+                "label": "IDA erreichbar",
+                "status": "full",
+                "use": "Testen"
+            },
+            {
+                "id": "persons",
+                "method": "GET",
+                "path": "/api/v1/persons",
+                "label": "Personen",
+                "status": "planned",
+                "use": "später: Personen übernehmen"
+            },
+            {
+                "id": "person-licenses",
+                "method": "GET",
+                "path": "/api/v1/persons/{id}/licenses",
+                "label": "Lizenzen einer Person",
+                "status": "planned",
+                "use": "später: Kachel «Meine Lizenzen»"
+            },
+            {
+                "id": "devices",
+                "method": "GET",
+                "path": "/api/v1/devices",
+                "label": "Geräte",
+                "status": "planned",
+                "use": "später"
+            },
+            {
+                "id": "orders",
+                "method": "POST",
+                "path": "/api/v1/orders",
+                "label": "Lizenzbestellung anlegen",
+                "status": "planned",
+                "danger": true,
+                "use": "später: Bestellung aus dem Intranet"
+            }
+        ]
+    },
+    "settings": [
+        {
+            "key": "base_url",
+            "type": "url",
+            "label": "Adresse von IDA",
+            "required": true,
+            "placeholder": "https://ida.sekbuelach.ch"
+        },
+        {
+            "key": "api_token",
+            "type": "password",
+            "label": "API-Token (sobald verfügbar)",
+            "default": ""
+        },
+        {
+            "key": "report_people",
+            "type": "check",
+            "label": "Personen-Änderungen an IDA melden (sobald die API bereitsteht)",
+            "default": false
+        }
+    ],
+    "events": ["person.created", "person.updated", "person.deleted"]
+}

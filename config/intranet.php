@@ -31,6 +31,10 @@ return [
     // Produktiv: OIDC mit Entra ID / Edulog (IDA ADR-004).
     'demo_login' => (bool) env('INTRANET_DEMO_LOGIN', false),
 
+    // Steht der Server in der Schweiz? Solange nicht, warnen die Plugins vor echten Personendaten
+    // (IDA ADR-005: produktiv Infomaniak). Auf dem Hostinger-Prototyp: false.
+    'server_in_switzerland' => (bool) env('INTRANET_SERVER_IN_SWITZERLAND', false),
+
     // Gemeinsames Passwort vor der ganzen Seite (HTTP Basic Auth).
     // Leer = keine Sperre. Benutzername leer = beliebiger Benutzername.
     'access' => [
@@ -161,7 +165,7 @@ return [
     |--------------------------------------------------------------------------
     | Datenschema (Quelle für Doku, Datenstruktur-Seite und spätere Migrationen)
     |--------------------------------------------------------------------------
-    | Typen: uuid, string, text, email, url, bool, date, datetime, enum, ref.
+    | Typen: uuid, string, text, email, url, bool, int, date, datetime, enum, ref, json.
     | Jede Sammlung erhält automatisch id (uuid v7), created_at, updated_at.
     | Wird ein Feld geändert, hier nachführen: Die Seite «Datenstrukturen»
     | vergleicht die gespeicherten Datensätze mit diesem Schema.
@@ -226,6 +230,32 @@ return [
                 'file_name' => ['type' => 'string', 'required' => false, 'label' => 'Originaler Dateiname'],
                 'file_size' => ['type' => 'int', 'required' => false, 'label' => 'Dateigrösse (Bytes)'],
                 'created_by' => ['type' => 'ref', 'references' => 'users', 'required' => true, 'label' => 'Erfasst von'],
+            ],
+        ],
+
+        'plugin_states' => [
+            'label' => 'System: Plugin-Zustand',
+            'description' => 'Ein Datensatz je Plugin (id = Plugin-ID). Zugangsdaten mit APP_KEY verschlüsselt.',
+            'fields' => [
+                'enabled' => ['type' => 'bool', 'required' => true, 'label' => 'Eingeschaltet'],
+                'allow_write' => ['type' => 'bool', 'required' => true, 'label' => 'Schreibende Aktionen erlaubt'],
+                'settings' => ['type' => 'json', 'required' => false, 'label' => 'Einstellungen'],
+                'secrets' => ['type' => 'json', 'required' => false, 'label' => 'Zugangsdaten (verschlüsselt)'],
+            ],
+        ],
+
+        'plugin_runs' => [
+            'label' => 'System: Plugin-Protokoll',
+            'description' => 'Letzte Läufe aller Plugins (höchstens 300), Zugangsdaten geschwärzt.',
+            'fields' => [
+                'plugin' => ['type' => 'string', 'required' => true, 'label' => 'Plugin'],
+                'label' => ['type' => 'string', 'required' => true, 'label' => 'Vorgang'],
+                'status' => ['type' => 'enum', 'values' => ['success' => 'Erfolg', 'warning' => 'Warnung', 'error' => 'Fehler'], 'required' => true, 'label' => 'Ergebnis'],
+                'message' => ['type' => 'text', 'required' => false, 'label' => 'Meldung'],
+                'log' => ['type' => 'json', 'required' => false, 'label' => 'Protokollzeilen'],
+                'user_id' => ['type' => 'ref', 'references' => 'users', 'required' => false, 'label' => 'Ausgelöst von'],
+                'user_name' => ['type' => 'string', 'required' => false, 'label' => 'Name (Momentaufnahme)'],
+                'ms' => ['type' => 'int', 'required' => true, 'label' => 'Dauer (ms)'],
             ],
         ],
 

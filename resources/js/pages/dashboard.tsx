@@ -10,6 +10,7 @@ import {
 } from 'lucide-react';
 import OptionBadge from '@/components/option-badge';
 import EmptyState from '@/components/empty-state';
+import PluginWidgets from '@/components/plugins/plugin-widgets';
 import { Button } from '@/components/ui/button';
 import {
     Card,
@@ -19,12 +20,18 @@ import {
     CardTitle,
 } from '@/components/ui/card';
 import { formatDate, formatEventRange } from '@/lib/format';
-import type { Announcement, DocumentItem, IntranetEvent } from '@/types';
+import type {
+    Announcement,
+    DocumentItem,
+    IntranetEvent,
+    PluginWidget,
+} from '@/types';
 
 type Props = {
     announcements: Announcement[];
     events: IntranetEvent[];
     links: DocumentItem[];
+    widgets?: PluginWidget[];
     stats: {
         announcements: number;
         events: number;
@@ -37,6 +44,7 @@ export default function Dashboard({
     announcements,
     events,
     links,
+    widgets,
     stats,
 }: Props) {
     const { auth } = usePage().props;
@@ -100,6 +108,8 @@ export default function Dashboard({
                         </Link>
                     ))}
                 </div>
+
+                <PluginWidgets widgets={widgets} />
 
                 <div className="grid gap-6 lg:grid-cols-3">
                     <Card className="lg:col-span-2">

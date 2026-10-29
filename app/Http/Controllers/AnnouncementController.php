@@ -59,6 +59,7 @@ class AnnouncementController extends Controller
         $data['author_id'] = (string) $request->user()?->getAuthIdentifier();
 
         $item = $this->announcements->create($data);
+        $this->pluginEvent('announcement.created', $item);
         $this->toast('Mitteilung gespeichert.');
 
         return redirect()->route('announcements.show', $item['id']);

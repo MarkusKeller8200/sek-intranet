@@ -13,6 +13,9 @@ Projekt: SekBülach Intranet, Prototyp. Stack und Konventionen wie IDA.
 - Farben nur über das Farbkonzept: Tokens in `resources/css/app.css`, Farben je Auswahlwert in
   `config/intranet.php` → `colors`, Badges über `OptionBadge`. Keine festen Farbwerte in Seiten.
   Text und Buttons in `primary` (Kontrast AA), Logo-Blau `brand` nur für Linien und Symbole.
+- Anbindungen anderer Systeme nur als Plugin unter `plugins/<Ordner>/` (siehe `PLUGINS.md`), nie
+  direkt in Controllern. Endpunkte nur aus der Hersteller-Doku; Unbestätigtes als `partial` markieren.
+  Zugangsdaten nur über `password`-Einstellungen (verschlüsselt), nie in Code, Logs oder Tests im Klartext.
 - Wird ein Schlüssel einer Auswahlliste umbenannt, Umstellung unter `renames` eintragen
   (`php artisan intranet:upgrade` stellt bestehende Daten beim Start um).
 

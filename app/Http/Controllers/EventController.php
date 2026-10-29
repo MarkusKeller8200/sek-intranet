@@ -33,7 +33,8 @@ class EventController extends Controller
         $data = $this->validated($request);
         $data['created_by'] = (string) $request->user()?->getAuthIdentifier();
 
-        $this->events->create($data);
+        $event = $this->events->create($data);
+        $this->pluginEvent('event.created', $event);
         $this->toast('Termin gespeichert.');
 
         return redirect()->route('events.index');

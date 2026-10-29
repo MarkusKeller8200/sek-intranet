@@ -1,0 +1,260 @@
+{
+    "id": "entra",
+    "name": "Microsoft 365 / Entra ID",
+    "version": "1.0",
+    "api": 1,
+    "category": "identity",
+    "author": "SekBülach Intranet",
+    "description": "Personen und Gruppen aus Microsoft Entra ID (Microsoft Graph): Personen übernehmen, nachschlagen, zu Gruppen hinzufügen. Kachel mit Kennzahlen des Tenants.",
+    "data_notice": "Entra liefert echte Namen, E-Mail-Adressen und Funktionen.",
+    "service": {
+        "name": "Microsoft Graph v1.0",
+        "home": "https://entra.microsoft.com",
+        "docs": "https://learn.microsoft.com/graph/api/overview?view=graph-rest-1.0",
+        "base": "https://graph.microsoft.com/v1.0",
+        "auth": {
+            "type": "oauth2_client_credentials",
+            "token_url": "https://login.microsoftonline.com/{tenant_id}/oauth2/v2.0/token",
+            "scope": "https://graph.microsoft.com/.default",
+            "client_id_setting": "client_id",
+            "client_secret_setting": "client_secret"
+        },
+        "auth_note": "App-Registrierung im Entra-Tenant mit Anwendungsberechtigungen (Administratorzustimmung nötig): Organization.Read.All, User.Read.All, GroupMember.Read.All – für «Zu Gruppe hinzufügen» zusätzlich GroupMember.ReadWrite.All. Client-Secret wird verschlüsselt gespeichert.",
+        "endpoints": [
+            {
+                "id": "organization",
+                "method": "GET",
+                "path": "/organization",
+                "label": "Organisation (Tenant)",
+                "status": "full",
+                "use": "Testen, Kachel",
+                "permission": "Organization.Read.All",
+                "params": [
+                    {
+                        "name": "$select",
+                        "default": "id,displayName,verifiedDomains"
+                    }
+                ]
+            },
+            {
+                "id": "users",
+                "method": "GET",
+                "path": "/users",
+                "label": "Benutzer",
+                "status": "full",
+                "use": "Personen übernehmen",
+                "permission": "User.Read.All",
+                "note": "Höchstens 999 je Seite, weitere Seiten über @odata.nextLink.",
+                "params": [
+                    {
+                        "name": "$select",
+                        "default": "id,displayName,mail,userPrincipalName,jobTitle,department,businessPhones,mobilePhone,accountEnabled"
+                    },
+                    { "name": "$top", "default": "100" },
+                    { "name": "$filter", "example": "accountEnabled eq true" }
+                ]
+            },
+            {
+                "id": "user",
+                "method": "GET",
+                "path": "/users/{id}",
+                "label": "Ein Benutzer",
+                "status": "full",
+                "use": "Person nachschlagen, Ereignisse",
+                "permission": "User.Read.All",
+                "params": [
+                    {
+                        "name": "id",
+                        "required": true,
+                        "example": "vorname.name@schule.ch",
+                        "help": "Objekt-ID oder UPN"
+                    },
+                    {
+                        "name": "$select",
+                        "default": "id,displayName,mail,userPrincipalName,jobTitle,department,businessPhones,mobilePhone,accountEnabled"
+                    }
+                ]
+            },
+            {
+                "id": "user-groups",
+                "method": "GET",
+                "path": "/users/{id}/memberOf",
+                "label": "Gruppen eines Benutzers",
+                "status": "full",
+                "use": "Person nachschlagen",
+                "permission": "GroupMember.Read.All",
+                "params": [
+                    { "name": "id", "required": true },
+                    { "name": "$select", "default": "id,displayName" }
+                ]
+            },
+            {
+                "id": "groups",
+                "method": "GET",
+                "path": "/groups",
+                "label": "Gruppen",
+                "status": "full",
+                "use": "Gruppen-ID finden",
+                "permission": "GroupMember.Read.All",
+                "params": [
+                    { "name": "$select", "default": "id,displayName,mail" },
+                    { "name": "$top", "default": "100" },
+                    {
+                        "name": "$filter",
+                        "example": "startswith(displayName,'LP')"
+                    }
+                ]
+            },
+            {
+                "id": "group-members",
+                "method": "GET",
+                "path": "/groups/{id}/members",
+                "label": "Mitglieder einer Gruppe",
+                "status": "full",
+                "use": "Personen einer Gruppe übernehmen",
+                "permission": "GroupMember.Read.All + User.Read.All",
+                "params": [
+                    { "name": "id", "required": true },
+                    {
+                        "name": "$select",
+                        "default": "id,displayName,mail,userPrincipalName,jobTitle,businessPhones,mobilePhone,accountEnabled"
+                    },
+                    { "name": "$top", "default": "999" }
+                ]
+            },
+            {
+                "id": "group-add-member",
+                "method": "POST",
+                "path": "/groups/{id}/members/$ref",
+                "label": "Mitglied hinzufügen",
+                "status": "full",
+                "danger": true,
+                "use": "Aktion «Zu Gruppe hinzufügen»",
+                "permission": "GroupMember.ReadWrite.All",
+                "params": [
+                    { "name": "id", "required": true, "help": "Gruppen-ID" }
+                ],
+                "body": {
+                    "@odata.id": "https://graph.microsoft.com/v1.0/directoryObjects/{benutzer-id}"
+                }
+            },
+            {
+                "id": "user-calendar",
+                "method": "GET",
+                "path": "/users/{id}/calendar/events",
+                "label": "Termine eines Kalenders",
+                "status": "planned",
+                "use": "später: Schulkalender ins Intranet",
+                "permission": "Calendars.Read"
+            }
+        ]
+    },
+    "settings": [
+        {
+            "key": "tenant_id",
+            "type": "text",
+            "label": "Tenant-ID (Verzeichnis-ID)",
+            "required": true,
+            "placeholder": "00000000-0000-0000-0000-000000000000"
+        },
+        {
+            "key": "client_id",
+            "type": "text",
+            "label": "Client-ID (Anwendungs-ID)",
+            "required": true
+        },
+        {
+            "key": "client_secret",
+            "type": "password",
+            "label": "Client-Secret",
+            "required": true
+        },
+        {
+            "key": "group_id",
+            "type": "text",
+            "label": "Gruppe für «Personen übernehmen» (optional)",
+            "help": "Leer = alle Benutzer des Tenants. Sonst nur Mitglieder dieser Gruppe (Objekt-ID)."
+        },
+        {
+            "key": "default_school",
+            "type": "select",
+            "label": "Schulhaus für neue Personen",
+            "default": "gesamt",
+            "choices": [
+                ["gesamt", "Gesamte Schule"],
+                ["hinterbirch", "Schulhaus Hinterbirch"],
+                ["mettmenriet", "Schulhaus Mettmenriet"],
+                ["verwaltung", "Schulverwaltung"]
+            ]
+        },
+        {
+            "key": "max_users",
+            "type": "number",
+            "label": "Höchstens Personen je Übernahme",
+            "default": 2000
+        }
+    ],
+    "actions": [
+        {
+            "id": "import-people",
+            "label": "Personen aus Entra übernehmen",
+            "kind": "import",
+            "description": "Vergleicht Entra mit dem Personenverzeichnis (Schlüssel: E-Mail). Zeigt zuerst eine Vorschau; angelegt und geändert wird nur, was du auswählst. Gelöscht wird nie.",
+            "options": [
+                {
+                    "key": "only_enabled",
+                    "type": "check",
+                    "label": "Nur aktive Konten (accountEnabled)",
+                    "default": true
+                },
+                {
+                    "key": "group_id",
+                    "type": "text",
+                    "label": "Andere Gruppe (Objekt-ID, optional)"
+                }
+            ]
+        },
+        {
+            "id": "lookup",
+            "label": "Person in Entra nachschlagen",
+            "kind": "read",
+            "options": [
+                {
+                    "key": "email",
+                    "type": "text",
+                    "label": "E-Mail oder UPN",
+                    "required": true
+                }
+            ]
+        },
+        {
+            "id": "add-to-group",
+            "label": "Person zu Gruppe hinzufügen",
+            "kind": "write",
+            "confirm": "Die Person wird in Entra ID zur Gruppe hinzugefügt. Das ändert Rechte und Verteilerlisten in Microsoft 365.",
+            "options": [
+                {
+                    "key": "email",
+                    "type": "text",
+                    "label": "E-Mail oder UPN der Person",
+                    "required": true
+                },
+                {
+                    "key": "group_id",
+                    "type": "text",
+                    "label": "Gruppen-ID",
+                    "required": true
+                }
+            ]
+        }
+    ],
+    "widgets": [
+        {
+            "id": "tenant",
+            "label": "Microsoft 365",
+            "ttl": 900,
+            "audience": "admin"
+        }
+    ],
+    "events": ["person.created", "person.updated"]
+}

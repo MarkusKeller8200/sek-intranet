@@ -57,6 +57,8 @@ bei jedem Push auf `main`: siehe [DEPLOY.md](DEPLOY.md).
 - **Personen**: Verzeichnis mit Suche und Sortierung; Verwaltung nur Administration
 - **Datenstrukturen** (Administration): alle Sammlungen mit Feldern, Füllgrad,
   PostgreSQL-Typvorschlag und Warnung bei Feldern ausserhalb des Schemas
+- **Plugins** (Administration, `/plugins`): andere Systeme per API anschliessen – Microsoft 365/Entra ID,
+  Jamf Pro, Inventory360, IDA. Siehe [PLUGINS.md](PLUGINS.md)
 - **Farbkonzept** (Administration, `/farbkonzept`): Farben und Logo aus dem Auftritt von
   sekbuelach.ch, Farben je Kategorie, Schulhaus, Zielgruppe und Rolle, Statusfarben
 - Hell/Dunkel, responsive, deutsche Validierungsmeldungen

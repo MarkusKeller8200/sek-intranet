@@ -13,6 +13,7 @@ use App\Data\Json\JsonDocumentRepository;
 use App\Data\Json\JsonEventRepository;
 use App\Data\Json\JsonUserRepository;
 use App\Data\Store\JsonStore;
+use App\Plugins\PluginManager;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
@@ -46,6 +47,12 @@ class IntranetServiceProvider extends ServiceProvider
 
             return new JsonStore($path, (string) config('app.timezone', 'Europe/Zurich'));
         });
+
+        $this->app->singleton(PluginManager::class, fn ($app): PluginManager => new PluginManager(
+            $app->make(JsonStore::class),
+            $app->make(UserRepository::class),
+            base_path('plugins'),
+        ));
 
         $store = (string) config('intranet.store', 'json');
 

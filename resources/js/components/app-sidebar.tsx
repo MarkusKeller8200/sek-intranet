@@ -6,6 +6,7 @@ import {
     LayoutGrid,
     Megaphone,
     Palette,
+    Plug,
     Users,
 } from 'lucide-react';
 import AppLogo from '@/components/app-logo';
@@ -31,6 +32,7 @@ const mainNavItems: NavItem[] = [
 ];
 
 const adminNavItems: NavItem[] = [
+    { title: 'Plugins', href: '/plugins', icon: Plug },
     { title: 'Datenstrukturen', href: '/datenstrukturen', icon: Database },
     { title: 'Farbkonzept', href: '/farbkonzept', icon: Palette },
 ];

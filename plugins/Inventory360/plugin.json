@@ -1,0 +1,145 @@
+{
+    "id": "inventory360",
+    "name": "Inventory360",
+    "version": "0.9",
+    "api": 1,
+    "category": "inventory",
+    "author": "SekBülach Intranet",
+    "description": "Hardware-Inventar aus Inventory360 (enteksystems, API 2.0): Inventar durchsuchen, Gerät nach Inventarnummer anzeigen. Weitere Funktionen folgen, sobald die API-2.0-Referenz vorliegt.",
+    "data_notice": "Inventory360 kann Personenzuordnungen zu Geräten enthalten.",
+    "service": {
+        "name": "Inventory360 API 2.0",
+        "home": "https://www.enteksystems.de",
+        "docs": "https://docs.enteksystems.de/inventory360/api/2.0/",
+        "auth": {
+            "type": "header",
+            "setting": "api_token",
+            "header": "Authorization",
+            "header_setting": "auth_header",
+            "prefix_setting": "auth_prefix"
+        },
+        "auth_note": "In Inventory360 unter Admin → API → «Hinzufügen» einen Zugang anlegen (Lesen, bei Bedarf Schreiben). Das erzeugte Token hier eintragen. Wie das Token übergeben wird (Kopfzeile, Präfix), steht in der API-2.0-Referenz – Standard: «Authorization: Bearer …».",
+        "endpoints": [
+            {
+                "id": "hardware",
+                "method": "GET",
+                "path": "/api/2.0/assets/hardware",
+                "label": "Hardware-Inventar",
+                "status": "partial",
+                "use": "Testen, Inventar durchsuchen",
+                "note": "Laut Admin-Doku; Antwortfelder noch nicht verifiziert.",
+                "params": [
+                    { "name": "per_page", "default": "50" },
+                    { "name": "page", "default": "1" },
+                    { "name": "search", "example": "Inventarnummer oder Name" },
+                    { "name": "discovery", "help": "0 oder 1" }
+                ]
+            },
+            {
+                "id": "hardware-update",
+                "method": "PUT",
+                "path": "/api/2.0/assets/hardware/{inventorynumber}",
+                "label": "Hardware ändern",
+                "status": "partial",
+                "danger": true,
+                "use": "API-Tester (z. B. Kostenstellen)",
+                "params": [{ "name": "inventorynumber", "required": true }],
+                "body": {
+                    "costcenters": [
+                        { "name": "Schulhaus Hinterbirch", "percentage": 100 }
+                    ]
+                }
+            },
+            {
+                "id": "software",
+                "method": "GET",
+                "path": "/api/2.0/assets/software/{id}",
+                "label": "Software-Lizenz",
+                "status": "partial",
+                "use": "API-Tester",
+                "params": [{ "name": "id", "required": true }]
+            },
+            {
+                "id": "software-assign",
+                "method": "PUT",
+                "path": "/api/2.0/assets/software/{id}",
+                "label": "Software zuweisen (Personen/Hardware)",
+                "status": "partial",
+                "danger": true,
+                "use": "später: Lizenzzuweisung",
+                "params": [{ "name": "id", "required": true }],
+                "body": { "users": [{ "user_id": 1, "comment": "Intranet" }] }
+            },
+            {
+                "id": "persons",
+                "method": "GET",
+                "path": "/api/2.0/base/persons",
+                "label": "Personen",
+                "status": "planned",
+                "use": "später: Personen abgleichen",
+                "note": "Pfad noch nicht bekannt (API-2.0-Referenz nötig)."
+            },
+            {
+                "id": "assignments",
+                "method": "GET",
+                "path": "/api/2.0/assets/hardware/{inventorynumber}/assignments",
+                "label": "Zuordnung Gerät ↔ Person",
+                "status": "planned",
+                "use": "später: Geräte einer Person",
+                "note": "Pfad noch nicht bekannt."
+            }
+        ]
+    },
+    "settings": [
+        {
+            "key": "base_url",
+            "type": "url",
+            "label": "Adresse der Inventory360-Instanz",
+            "required": true,
+            "placeholder": "https://sekbuelach.inventory360.de"
+        },
+        {
+            "key": "api_token",
+            "type": "password",
+            "label": "API-Token",
+            "required": true
+        },
+        {
+            "key": "auth_header",
+            "type": "text",
+            "label": "Kopfzeile für das Token",
+            "default": "Authorization"
+        },
+        {
+            "key": "auth_prefix",
+            "type": "select",
+            "label": "Präfix",
+            "default": "Bearer",
+            "choices": [
+                ["Bearer", "Bearer"],
+                ["Token", "Token"],
+                ["none", "ohne"]
+            ]
+        }
+    ],
+    "actions": [
+        {
+            "id": "search",
+            "label": "Inventar durchsuchen",
+            "kind": "read",
+            "options": [
+                {
+                    "key": "search",
+                    "type": "text",
+                    "label": "Suchbegriff (Inventarnummer, Name …)"
+                },
+                {
+                    "key": "per_page",
+                    "type": "number",
+                    "label": "Anzahl",
+                    "default": 50
+                }
+            ]
+        }
+    ]
+}

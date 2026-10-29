@@ -26,6 +26,7 @@ final class SchemaInspector
         'datetime' => 'timestamptz',
         'enum' => 'varchar(50) + CHECK',
         'ref' => 'uuid (FK)',
+        'json' => 'jsonb',
     ];
 
     public function __construct(private readonly JsonStore $store) {}

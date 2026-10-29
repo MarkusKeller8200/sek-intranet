@@ -45,7 +45,9 @@ class DocumentController extends Controller
         $data = $this->validated($request, requireFile: true);
         $data['created_by'] = (string) $request->user()?->getAuthIdentifier();
 
-        $this->documents->create($data);
+        $document = $this->documents->create($data);
+        unset($document['file_path']);
+        $this->pluginEvent('document.created', $document);
         $this->toast('Eintrag gespeichert.');
 
         return redirect()->route('documents.index');
