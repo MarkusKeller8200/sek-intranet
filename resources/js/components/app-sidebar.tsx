@@ -1,5 +1,6 @@
 import { Link, usePage } from '@inertiajs/react';
-import AppLogo from '@/components/app-logo';
+import AppLogoIcon from '@/components/app-logo-icon';
+import AppWordmark from '@/components/app-wordmark';
 import { NavModules } from '@/components/nav-modules';
 import { NavUser } from '@/components/nav-user';
 import { SidebarSplitter } from '@/components/sidebar-splitter';
@@ -8,9 +9,6 @@ import {
     SidebarContent,
     SidebarFooter,
     SidebarHeader,
-    SidebarMenu,
-    SidebarMenuButton,
-    SidebarMenuItem,
 } from '@/components/ui/sidebar';
 
 export function AppSidebar() {
@@ -18,16 +16,25 @@ export function AppSidebar() {
 
     return (
         <Sidebar collapsible="icon" variant="inset">
-            <SidebarHeader>
-                <SidebarMenu>
-                    <SidebarMenuItem>
-                        <SidebarMenuButton size="lg" asChild>
-                            <Link href="/start" prefetch>
-                                <AppLogo />
-                            </Link>
-                        </SidebarMenuButton>
-                    </SidebarMenuItem>
-                </SidebarMenu>
+            <SidebarHeader className="px-3 pt-3 pb-2">
+                {/* Logo über die ganze Breite; skaliert mit dem Splitter mit */}
+                <Link
+                    href="/start"
+                    prefetch
+                    aria-label="Zur Startseite"
+                    className="block rounded-md p-1 focus-visible:ring-2 focus-visible:ring-sidebar-ring focus-visible:outline-none group-data-[collapsible=icon]:hidden"
+                >
+                    <AppWordmark className="w-full" />
+                </Link>
+                {/* Schmale Leiste: nur das Signet */}
+                <Link
+                    href="/start"
+                    prefetch
+                    aria-label="Zur Startseite"
+                    className="hidden justify-center group-data-[collapsible=icon]:flex"
+                >
+                    <AppLogoIcon className="size-8 rounded-md" />
+                </Link>
             </SidebarHeader>
 
             <SidebarContent>

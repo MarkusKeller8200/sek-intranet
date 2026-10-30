@@ -1,5 +1,16 @@
 import type { LucideIcon } from 'lucide-react';
 import {
+    AppWindow,
+    BadgeCheck,
+    BookMarked,
+    FilePlus2,
+    Globe,
+    Laptop,
+    MonitorSmartphone,
+    PackageMinus,
+    PackagePlus,
+    Projector,
+    ShoppingCart,
     Boxes,
     Building2,
     FlaskConical,
@@ -40,6 +51,17 @@ import {
  * Neue Module: Symbol hier eintragen, sonst erscheint ein Kreis.
  */
 const icons: Record<string, LucideIcon> = {
+    AppWindow,
+    BadgeCheck,
+    BookMarked,
+    FilePlus2,
+    Globe,
+    Laptop,
+    MonitorSmartphone,
+    PackageMinus,
+    PackagePlus,
+    Projector,
+    ShoppingCart,
     Boxes,
     Building2,
     FlaskConical,
