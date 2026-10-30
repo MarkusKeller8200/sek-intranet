@@ -96,7 +96,7 @@ class Plugin extends BasePlugin
             'school' => $school,
         ], $records);
 
-        $import = new PeopleImport($ctx->users());
+        $import = new PeopleImport($ctx->users(), 'Import '.$ctx->manifest->name());
         $rows = $import->plan($people, 'Entra');
         $ctx->log(count($records).' Konten aus Entra gelesen'.($groupId !== '' ? " (Gruppe {$groupId})" : '').'.');
 

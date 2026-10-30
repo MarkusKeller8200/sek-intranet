@@ -141,7 +141,7 @@ class Plugin extends BasePlugin
             count($table['rows']), $ignored, $withoutEmail, $authorities,
         ));
 
-        $import = new PeopleImport($ctx->users());
+        $import = new PeopleImport($ctx->users(), 'Import '.$ctx->manifest->name());
         $rows = $import->plan($people, 'Escola');
 
         if (($options['_apply'] ?? false) === true) {

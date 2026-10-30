@@ -15,7 +15,8 @@ import {
 import { useState } from 'react';
 import { toast } from 'sonner';
 import DataGrid from '@/components/data-grid';
-import type { GridColumn } from '@/components/data-grid';
+import type { CellChange, GridColumn, SavedView } from '@/components/data-grid';
+import type { SaveSource } from '@/components/grid/types';
 import DeleteButton from '@/components/delete-button';
 import EmptyState from '@/components/empty-state';
 import OptionBadge from '@/components/option-badge';
@@ -55,30 +56,72 @@ type BulkChange = {
     clear: () => void;
 };
 
-type FieldResponse = { person?: Person; status?: string; message?: string };
+type CellsResponse = { people?: Person[]; status?: string; message?: string };
 
-async function saveField(
-    person: Person,
-    field: string,
-    value: unknown,
-): Promise<Person> {
-    const res = await postJson<FieldResponse>(`/personen/${person.id}/feld`, {
-        field,
-        value,
+async function saveCells(
+    changes: CellChange<Person>[],
+    source: SaveSource,
+): Promise<Person[]> {
+    const res = await postJson<CellsResponse>('/personen/zellen', {
+        source,
+        changes: changes.map((c) => ({
+            id: c.id,
+            field: c.field,
+            value: c.value,
+        })),
     });
-    if (!res.person) {
+    if (!res.people) {
         throw new Error(res.message ?? 'Speichern fehlgeschlagen.');
     }
 
-    return res.person;
+    return res.people;
+}
+
+/** Export als Datei herunterladen (Server prüft Felder und Berechtigung). */
+async function exportPeople(
+    format: 'csv' | 'xlsx',
+    ids: string[],
+    columns: string[],
+) {
+    const token = decodeURIComponent(
+        document.cookie
+            .split('; ')
+            .find((c) => c.startsWith('XSRF-TOKEN='))
+            ?.slice('XSRF-TOKEN='.length) ?? '',
+    );
+    const response = await fetch('/personen/export', {
+        method: 'POST',
+        credentials: 'same-origin',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest',
+            'X-XSRF-TOKEN': token,
+        },
+        body: JSON.stringify({ format, ids, columns }),
+    });
+    if (!response.ok) {
+        toast.error(`Export nicht möglich (HTTP ${response.status}).`);
+
+        return;
+    }
+    const blob = await response.blob();
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `personen-${new Date().toISOString().slice(0, 10)}.${format}`;
+    link.click();
+    URL.revokeObjectURL(url);
+    toast.success(`${ids.length} Personen exportiert.`);
 }
 
 export default function PeopleIndex({
     people,
     groups,
+    views,
 }: {
     people: Person[];
     groups: PersonGroup[];
+    views: SavedView[];
 }) {
     const { auth } = usePage().props;
     const options = useOptions();
@@ -97,6 +140,7 @@ export default function PeopleIndex({
                 type: gridType(field),
                 options: field.options ?? undefined,
                 editable: !field.computed,
+                required: field.required,
                 hidden: !DEFAULT_VISIBLE.includes(field.key),
             };
 
@@ -349,7 +393,13 @@ export default function PeopleIndex({
                             columns={columns}
                             storageKey={`intranet.grid.people.${canManage ? 'admin' : 'all'}`}
                             canEdit={canManage}
-                            onSave={saveField}
+                            onSaveCells={saveCells}
+                            gridId="people"
+                            views={views}
+                            canShareViews={canManage}
+                            onExport={(format, ids, cols) =>
+                                void exportPeople(format, ids, cols)
+                            }
                             bulkActions={bulkActions}
                             searchPlaceholder="Name, Funktion, E-Mail …"
                             emptyText="Keine Personen gefunden."

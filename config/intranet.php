@@ -454,6 +454,33 @@ return [
             ],
         ],
 
+        'audit_log' => [
+            'label' => 'System: Änderungsverlauf',
+            'description' => 'Wer hat wann welches Feld geändert (alter → neuer Wert). Höchstens 20 000 Einträge, älteste fallen weg.',
+            'fields' => [
+                'collection' => ['type' => 'string', 'required' => true, 'label' => 'Sammlung'],
+                'record_id' => ['type' => 'uuid', 'required' => true, 'label' => 'Datensatz'],
+                'record_label' => ['type' => 'string', 'required' => false, 'label' => 'Bezeichnung (Momentaufnahme)'],
+                'action' => ['type' => 'enum', 'values' => ['created' => 'Angelegt', 'updated' => 'Geändert', 'deleted' => 'Gelöscht'], 'required' => true, 'label' => 'Vorgang'],
+                'changes' => ['type' => 'json', 'required' => true, 'label' => 'Änderungen {feld: {old, new}}'],
+                'source' => ['type' => 'string', 'required' => true, 'label' => 'Quelle (Formular, Tabelle, Import …)'],
+                'user_id' => ['type' => 'ref', 'references' => 'users', 'required' => false, 'label' => 'Geändert von'],
+                'user_name' => ['type' => 'string', 'required' => false, 'label' => 'Name (Momentaufnahme)'],
+            ],
+        ],
+
+        'grid_views' => [
+            'label' => 'System: Tabellenansichten',
+            'description' => 'Gespeicherte Ansichten (Filter, Sortierung, Spalten, Gruppierung) je Tabelle; persönlich oder für alle.',
+            'fields' => [
+                'grid' => ['type' => 'string', 'required' => true, 'label' => 'Tabelle'],
+                'name' => ['type' => 'string', 'required' => true, 'label' => 'Name'],
+                'owner_id' => ['type' => 'ref', 'references' => 'users', 'required' => true, 'label' => 'Erstellt von'],
+                'shared' => ['type' => 'bool', 'required' => true, 'label' => 'Für alle sichtbar'],
+                'state' => ['type' => 'json', 'required' => true, 'label' => 'Ansicht'],
+            ],
+        ],
+
     ],
 
 ];

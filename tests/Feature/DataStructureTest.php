@@ -20,7 +20,7 @@ class DataStructureTest extends TestCase
             ->assertInertia(fn (Assert $page) => $page
                 ->component('data-structures')
                 ->where('store', 'json')
-                ->has('collections', 6)
+                ->has('collections', 8)
                 ->where('collections.0.name', 'users')
                 ->where('collections.0.count', 8)
                 ->where('collections.2.name', 'events')

@@ -3,6 +3,7 @@
 namespace App\Plugins\Support;
 
 use App\Data\Contracts\UserRepository;
+use App\Support\AuditLog;
 use App\Support\PersonFields;
 
 /**
@@ -24,7 +25,7 @@ final class PeopleImport
         'school', 'active',
     ];
 
-    public function __construct(private readonly UserRepository $users) {}
+    public function __construct(private readonly UserRepository $users, private readonly string $source = 'Import') {}
 
     /**
      * @param  list<array<string, mixed>>  $external  je Person mindestens «email» und «name»
@@ -96,12 +97,14 @@ final class PeopleImport
                         $record[$field] = $value;
                     }
                 }
-                $this->users->create(PersonFields::withNames($record));
+                $person = $this->users->create(PersonFields::withNames($record));
+                app(AuditLog::class)->record('users', null, $person, $this->source, auth()->user());
                 $created++;
             } elseif ($row['_change'] === 'ändern') {
                 $existing = $this->users->findByEmail((string) $row['email']);
                 if ($existing !== null) {
-                    $this->users->update((string) $existing['id'], array_map(fn (array $c): mixed => $c['new'], $row['changes']));
+                    $after = $this->users->update((string) $existing['id'], array_map(fn (array $c): mixed => $c['new'], $row['changes']));
+                    app(AuditLog::class)->record('users', $existing, $after, $this->source, auth()->user());
                     $updated++;
                 }
             }

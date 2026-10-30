@@ -21,7 +21,7 @@ class DemoPlugin extends BasePlugin
         }
 
         $people = (array) $ctx->call('people')->json('value');
-        $import = new PeopleImport($ctx->users());
+        $import = new PeopleImport($ctx->users(), 'Import '.$ctx->manifest->name());
         $rows = $import->plan(array_map(fn (array $p): array => [
             'name' => $p['displayName'], 'email' => $p['mail'], 'function' => $p['jobTitle'] ?? null,
         ], $people), 'Demo');

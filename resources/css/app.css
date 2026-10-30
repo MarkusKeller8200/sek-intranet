@@ -181,3 +181,33 @@
         @apply bg-background text-foreground;
     }
 }
+
+/* Tabellen-Scrollbereich: Scrollleisten immer sichtbar und gut greifbar */
+.grid-scroll {
+    overflow: scroll;
+    scrollbar-width: auto;
+    scrollbar-color: var(--color-muted-foreground) var(--color-muted);
+}
+
+.grid-scroll::-webkit-scrollbar {
+    width: 12px;
+    height: 12px;
+}
+
+.grid-scroll::-webkit-scrollbar-track {
+    background: var(--color-muted);
+}
+
+.grid-scroll::-webkit-scrollbar-thumb {
+    border: 3px solid var(--color-muted);
+    border-radius: 999px;
+    background: color-mix(in oklab, var(--color-muted-foreground) 70%, transparent);
+}
+
+.grid-scroll::-webkit-scrollbar-thumb:hover {
+    background: var(--color-muted-foreground);
+}
+
+.grid-scroll::-webkit-scrollbar-corner {
+    background: var(--color-muted);
+}

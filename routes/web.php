@@ -6,6 +6,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DataStructureController;
 use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\EventController;
+use App\Http\Controllers\GridViewController;
 use App\Http\Controllers\ModuleController;
 use App\Http\Controllers\PersonController;
 use App\Http\Controllers\PluginController;
@@ -65,6 +66,8 @@ Route::middleware('auth')->group(function () {
         Route::post('personen/{id}/feld', [PersonController::class, 'updateField'])->middleware('throttle:240,1')->name('people.update-field');
         Route::post('personen/sammelaenderung', [PersonController::class, 'bulkUpdate'])->name('people.bulk-update');
         Route::post('personen/sammelloeschung', [PersonController::class, 'bulkDestroy'])->name('people.bulk-destroy');
+        Route::post('personen/zellen', [PersonController::class, 'cells'])->middleware('throttle:240,1')->name('people.cells');
+        Route::post('personen/{id}/verlauf/{entry}/wiederherstellen', [PersonController::class, 'restore'])->name('people.restore');
         Route::delete('personen/{id}', [PersonController::class, 'destroy'])->name('people.destroy');
 
         Route::get('datenstrukturen', DataStructureController::class)->name('data-structures');
@@ -83,6 +86,9 @@ Route::middleware('auth')->group(function () {
         });
     });
     Route::get('personen', [PersonController::class, 'index'])->name('people.index');
+    Route::post('personen/export', [PersonController::class, 'export'])->middleware('throttle:30,1')->name('people.export');
+    Route::post('ansichten', [GridViewController::class, 'store'])->middleware('throttle:60,1')->name('grid-views.store');
+    Route::delete('ansichten/{id}', [GridViewController::class, 'destroy'])->name('grid-views.destroy');
     Route::get('personen/{id}', [PersonController::class, 'show'])->name('people.show');
 
     Route::redirect('einstellungen', '/einstellungen/darstellung');
