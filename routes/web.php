@@ -64,6 +64,7 @@ Route::middleware('auth')->group(function () {
         Route::put('personen/{id}', [PersonController::class, 'update'])->name('people.update');
         Route::post('personen/{id}/feld', [PersonController::class, 'updateField'])->middleware('throttle:240,1')->name('people.update-field');
         Route::post('personen/sammelaenderung', [PersonController::class, 'bulkUpdate'])->name('people.bulk-update');
+        Route::post('personen/sammelloeschung', [PersonController::class, 'bulkDestroy'])->name('people.bulk-destroy');
         Route::delete('personen/{id}', [PersonController::class, 'destroy'])->name('people.destroy');
 
         Route::get('datenstrukturen', DataStructureController::class)->name('data-structures');
@@ -82,6 +83,7 @@ Route::middleware('auth')->group(function () {
         });
     });
     Route::get('personen', [PersonController::class, 'index'])->name('people.index');
+    Route::get('personen/{id}', [PersonController::class, 'show'])->name('people.show');
 
     Route::redirect('einstellungen', '/einstellungen/darstellung');
     Route::inertia('einstellungen/darstellung', 'settings/appearance')->name('appearance.edit');

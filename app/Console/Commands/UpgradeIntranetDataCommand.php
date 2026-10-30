@@ -3,11 +3,13 @@
 namespace App\Console\Commands;
 
 use App\Data\Store\JsonStore;
+use App\Support\PersonFields;
 use Illuminate\Console\Command;
 
 /**
  * Stellt gespeicherte Werte um, wenn Schlüssel von Auswahllisten umbenannt wurden
- * (config/intranet.php → renames). Idempotent: läuft bei jedem Containerstart.
+ * (config/intranet.php → renames) und ergänzt neue abgeleitete Felder.
+ * Idempotent: läuft bei jedem Containerstart.
  * Ändert nur Werte, löscht nie Datensätze.
  */
 class UpgradeIntranetDataCommand extends Command
@@ -28,6 +30,15 @@ class UpgradeIntranetDataCommand extends Command
                     $store->update($collection, (string) $record['id'], [$field => $to]);
                     $total++;
                 }
+            }
+        }
+
+        // Vor-/Nachname aus dem Anzeigenamen ableiten (Personen von vor der Feldaufteilung)
+        foreach ($store->all('users') as $record) {
+            if (($record['last_name'] ?? null) === null && ($record['name'] ?? '') !== '') {
+                $names = PersonFields::withNames($record);
+                $store->update('users', (string) $record['id'], array_intersect_key($names, array_flip(['first_name', 'last_name', 'name'])));
+                $total++;
             }
         }
 

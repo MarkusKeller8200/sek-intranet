@@ -25,6 +25,6 @@ class DataStructureTest extends TestCase
                 ->where('collections.0.count', 8)
                 ->where('collections.2.name', 'events')
                 ->where('collections.2.unknown_fields.raum_nr', 1)
-                ->where('collections.0.fields.1.unique', true));
+                ->where('collections.0.fields', fn ($fields): bool => collect($fields)->firstWhere('name', 'email')['unique'] === true));
     }
 }

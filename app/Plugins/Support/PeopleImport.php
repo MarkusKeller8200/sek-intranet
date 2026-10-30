@@ -3,6 +3,7 @@
 namespace App\Plugins\Support;
 
 use App\Data\Contracts\UserRepository;
+use App\Support\PersonFields;
 
 /**
  * Vergleicht Personen aus einem Fremdsystem mit den Intranet-Personen (Schlüssel: E-Mail)
@@ -15,7 +16,13 @@ use App\Data\Contracts\UserRepository;
 final class PeopleImport
 {
     /** Felder, die übernommen werden dürfen. */
-    public const FIELDS = ['name', 'email', 'function', 'phone', 'school', 'active'];
+    public const FIELDS = [
+        'name', 'title', 'first_name', 'last_name', 'short', 'email', 'function', 'department', 'escola_roles',
+        'phone', 'phone2', 'mobile', 'office_street', 'office_zip', 'office_city',
+        'private_email', 'private_phone', 'private_mobile', 'private_street', 'private_zip', 'private_city',
+        'emergency_name', 'emergency_phone', 'entry_date', 'exit_date', 'username', 'escola_id', 'external_id',
+        'school', 'active',
+    ];
 
     public function __construct(private readonly UserRepository $users) {}
 
@@ -36,7 +43,7 @@ final class PeopleImport
             $seen[$email] = true;
 
             $existing = $this->users->findByEmail($email);
-            $incoming = $this->normalize($person) + ['email' => $email];
+            $incoming = $this->normalize(PersonFields::withNames($person)) + ['email' => $email];
 
             if ($existing === null) {
                 $rows[] = $this->row($email, 'neu', $incoming, [], $source);
@@ -83,15 +90,13 @@ final class PeopleImport
             }
 
             if ($row['_change'] === 'neu') {
-                $this->users->create([
-                    'name' => $row['name'],
-                    'email' => $row['email'],
-                    'role' => 'mitarbeitende',
-                    'function' => $row['function'] ?? null,
-                    'school' => $row['school'] ?? 'gesamt',
-                    'phone' => $row['phone'] ?? null,
-                    'active' => $row['active'] ?? true,
-                ]);
+                $record = ['role' => 'mitarbeitende', 'school' => 'gesamt', 'active' => true];
+                foreach ((array) ($row['_record'] ?? []) as $field => $value) {
+                    if ($value !== null && in_array($field, self::FIELDS, true)) {
+                        $record[$field] = $value;
+                    }
+                }
+                $this->users->create(PersonFields::withNames($record));
                 $created++;
             } elseif ($row['_change'] === 'ändern') {
                 $existing = $this->users->findByEmail((string) $row['email']);
@@ -134,11 +139,27 @@ final class PeopleImport
             $out[$field] = match ($field) {
                 'active' => $value === null ? null : (bool) $value,
                 'school' => is_string($value) && array_key_exists($value, (array) config('intranet.schools')) ? $value : null,
+                'entry_date', 'exit_date' => self::date($value),
+                'email', 'private_email' => is_string($value) && trim($value) !== '' ? mb_strtolower(trim($value)) : null,
                 default => is_scalar($value) && trim((string) $value) !== '' ? trim((string) $value) : null,
             };
         }
 
         return $out;
+    }
+
+    /** Datum als JJJJ-MM-TT; akzeptiert auch TT.MM.JJJJ (Escola). */
+    private static function date(mixed $value): ?string
+    {
+        $value = is_scalar($value) ? trim((string) $value) : '';
+        if (preg_match('/^(\d{4})-(\d{2})-(\d{2})$/', $value) === 1) {
+            return $value;
+        }
+        if (preg_match('/^(\d{1,2})\.(\d{1,2})\.(\d{4})$/', $value, $m) === 1 && checkdate((int) $m[2], (int) $m[1], (int) $m[3])) {
+            return sprintf('%04d-%02d-%02d', $m[3], $m[2], $m[1]);
+        }
+
+        return null;
     }
 
     /**
@@ -171,6 +192,8 @@ final class PeopleImport
             'active' => $data['active'] ?? true,
             'changes' => $changes,
             'summary' => $summary,
+            // vollständiger Datensatz für «neu» (nicht als Spalte angezeigt)
+            '_record' => array_intersect_key($data, array_flip(self::FIELDS)),
         ];
     }
 

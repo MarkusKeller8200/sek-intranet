@@ -60,6 +60,53 @@ export type Person = StoredRecord & {
     school: string;
     phone: string | null;
     active: boolean;
+    // Weitere Felder aus config/intranet.php → schema.users (Admin-Felder nur für die Administration)
+    title?: string | null;
+    first_name?: string | null;
+    last_name?: string | null;
+    short?: string | null;
+    department?: string | null;
+    escola_roles?: string | null;
+    entry_date?: string | null;
+    exit_date?: string | null;
+    phone2?: string | null;
+    mobile?: string | null;
+    office_street?: string | null;
+    office_zip?: string | null;
+    office_city?: string | null;
+    private_email?: string | null;
+    private_phone?: string | null;
+    private_mobile?: string | null;
+    private_street?: string | null;
+    private_zip?: string | null;
+    private_city?: string | null;
+    emergency_name?: string | null;
+    emergency_phone?: string | null;
+    username?: string | null;
+    escola_id?: string | null;
+    external_id?: string | null;
+    notes?: string | null;
+};
+
+/** Feld einer Person (aus dem Schema, vom Server geliefert). */
+export type PersonField = {
+    key: keyof Person & string;
+    label: string;
+    type: 'string' | 'text' | 'email' | 'bool' | 'date' | 'enum';
+    group: string;
+    required: boolean;
+    computed: boolean;
+    admin: boolean;
+    input: 'tel' | null;
+    options: Record<string, string> | null;
+};
+
+export type PersonGroup = {
+    key: string;
+    label: string;
+    description: string;
+    admin: boolean;
+    fields: PersonField[];
 };
 
 export type SchemaField = {

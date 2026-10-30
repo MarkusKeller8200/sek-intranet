@@ -14,16 +14,25 @@ use Illuminate\Http\UploadedFile;
  *
  * Datenschutz: Die Adressliste enthält auch private und besonders schützenswerte
  * Angaben (Gesundheit, AHV-Nummer, Religion …). Gelesen werden nur die Spalten in
- * COLUMNS, alles andere wird sofort verworfen. Die Datei selbst wird nicht gespeichert
+ * COLUMNS, alles andere wird sofort verworfen. Private Kontaktangaben nur mit Option. Die Datei selbst wird nicht gespeichert
  * und beim Übernehmen erneut mitgeschickt.
  */
 class Plugin extends BasePlugin
 {
     /** Einzige Spalten, die gelesen werden. */
     public const COLUMNS = [
-        'aktiv/inaktiv', 'Name', 'Vorname',
-        'E-Mail Geschäft', 'Telefon Geschäft', 'Mobiltelefon Geschäft',
-        'Funktion', 'Rollen',
+        'aktiv/inaktiv', 'Name', 'Vorname', 'Title', 'Abkürzung',
+        'E-Mail Geschäft', 'Telefon Geschäft', 'Telefon 2 Geschäft', 'Mobiltelefon Geschäft',
+        'Strasse Geschäft', 'PLZ Geschäft', 'Ort Geschäft',
+        'Funktion', 'Rollen', 'Abteilung (Firma/Schule)', 'Eintritt', 'Austritt',
+        'Escola-ID', 'Fremd-ID', 'Benutzername',
+        ...self::PRIVATE_COLUMNS,
+    ];
+
+    /** Nur mit Option «Private Angaben übernehmen». */
+    public const PRIVATE_COLUMNS = [
+        'E-Mail privat', 'Telefon', 'Mobiltelefon', 'Strasse', 'PLZ', 'Ort',
+        'Notfall-Telefon: Person', 'Notfall-Telefon: Nummer',
     ];
 
     /** Rollen, die nicht zum Personal der Schule gehören. */
@@ -57,7 +66,10 @@ class Plugin extends BasePlugin
             return ActionResult::warning('Die Datei ist grösser als '.(self::MAX_KB / 1024).' MB.');
         }
 
-        $table = SpreadsheetReader::read($file->getRealPath(), $file->getClientOriginalName(), self::COLUMNS);
+        // Nur die nötigen Spalten lesen; private nur mit Option
+        $includePrivate = ($options['include_private'] ?? false) === true;
+        $columns = $includePrivate ? self::COLUMNS : array_values(array_diff(self::COLUMNS, self::PRIVATE_COLUMNS));
+        $table = SpreadsheetReader::read($file->getRealPath(), $file->getClientOriginalName(), $columns);
         $missing = array_values(array_diff(['Name', 'Vorname', 'E-Mail Geschäft', 'Rollen'], $table['header']));
         if ($missing !== []) {
             return ActionResult::warning('Das sieht nicht nach einer Escola-Adressliste aus. Es fehlen die Spalten: '.implode(', ', $missing).'.');
@@ -82,17 +94,48 @@ class Plugin extends BasePlugin
                 continue;
             }
 
-            $people[] = [
-                'name' => trim(($row['Vorname'] ?? '').' '.($row['Name'] ?? '')),
+            $value = fn (string $column): ?string => ($row[$column] ?? '') !== '' ? $row[$column] : null;
+            $person = [
+                'title' => $value('Title'),
+                'first_name' => $value('Vorname'),
+                'last_name' => $value('Name'),
+                'short' => $value('Abkürzung'),
                 'email' => $row['E-Mail Geschäft'],
-                'function' => ($row['Funktion'] ?? '') !== '' ? $row['Funktion'] : self::functionFromRoles($roles),
-                'phone' => ($row['Telefon Geschäft'] ?? '') ?: (($row['Mobiltelefon Geschäft'] ?? '') ?: null),
+                'function' => $value('Funktion') ?? self::functionFromRoles($roles),
+                'department' => $value('Abteilung (Firma/Schule)'),
+                'escola_roles' => $value('Rollen'),
+                'phone' => $value('Telefon Geschäft') ?? $value('Mobiltelefon Geschäft'),
+                'phone2' => $value('Telefon 2 Geschäft'),
+                'mobile' => $value('Mobiltelefon Geschäft'),
+                'office_street' => $value('Strasse Geschäft'),
+                'office_zip' => $value('PLZ Geschäft'),
+                'office_city' => $value('Ort Geschäft'),
+                'entry_date' => $value('Eintritt'),
+                'exit_date' => $value('Austritt'),
+                'escola_id' => $value('Escola-ID'),
+                'external_id' => $value('Fremd-ID'),
+                'username' => $value('Benutzername'),
                 'school' => self::school($roles),
                 'active' => mb_strtolower($row['aktiv/inaktiv'] ?? 'aktiv') !== 'inaktiv',
             ];
+
+            if ($includePrivate) {
+                $person += [
+                    'private_email' => $value('E-Mail privat'),
+                    'private_phone' => $value('Telefon'),
+                    'private_mobile' => $value('Mobiltelefon'),
+                    'private_street' => $value('Strasse'),
+                    'private_zip' => $value('PLZ'),
+                    'private_city' => $value('Ort'),
+                    'emergency_name' => $value('Notfall-Telefon: Person'),
+                    'emergency_phone' => $value('Notfall-Telefon: Nummer'),
+                ];
+            }
+
+            $people[] = $person;
         }
 
-        $ignored = count(array_diff($table['header'], self::COLUMNS));
+        $ignored = count(array_diff($table['header'], $columns));
         $ctx->log(sprintf(
             '%d Zeilen gelesen, %d Spalten verworfen. Ausgelassen: %d ohne Geschäfts-E-Mail, %d Behörde/RPK.',
             count($table['rows']), $ignored, $withoutEmail, $authorities,

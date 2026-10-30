@@ -130,4 +130,23 @@ class PluginEscolaImportTest extends TestCase
         $result = $this->postJson('/plugins/escola/aktion/import-file', ['options' => []])->json();
         $this->assertStringContainsString('Bitte die Escola-Adressliste wählen', $result['message']);
     }
+
+    public function test_private_contact_details_only_with_option_and_never_sensitive_data(): void
+    {
+        $this->enable(allowWrite: true);
+        $this->signInAs('admin');
+
+        $this->send(['options' => ['include_private' => true], 'apply' => true, 'selected' => ['lea.test@sekbuelach.example']]);
+
+        $lea = app(UserRepository::class)->findByEmail('lea.test@sekbuelach.example');
+        $this->assertSame(['Lea', 'Test', 'Lea Test'], [$lea['first_name'], $lea['last_name'], $lea['name']]);
+        $this->assertSame('privat@example.test', $lea['private_email']);
+        $this->assertSame('lea.test', $lea['username']);
+        $this->assertSame('904', $lea['escola_id']);
+
+        $stored = (string) file_get_contents(app(JsonStore::class)->filePath('users'));
+        foreach (['GEHEIM', '756.0000', 'CH00'] as $secret) {
+            $this->assertStringNotContainsString($secret, $stored);
+        }
+    }
 }

@@ -329,14 +329,56 @@ return [
         'users' => [
             'label' => 'Personen',
             'description' => 'Mitarbeitende, zugleich Benutzerkonten des Intranets.',
+            // Gruppen der Detailansicht und des Formulars (Reihenfolge = Anzeige).
+            // «admin»: nur für die Administration sichtbar, wird anderen nie gesendet.
+            'groups' => [
+                'person' => ['label' => 'Person', 'description' => 'Name und Status'],
+                'organisation' => ['label' => 'Organisation', 'description' => 'Schulhaus, Funktion und Anstellung'],
+                'contact' => ['label' => 'Kontakt Schule', 'description' => 'Geschäftliche Erreichbarkeit'],
+                'private' => ['label' => 'Privat & Notfall', 'description' => 'Nur für die Administration sichtbar', 'admin' => true],
+                'system' => ['label' => 'Intranet & Systeme', 'description' => 'Berechtigung und Verknüpfung mit Escola', 'admin' => true],
+            ],
+            // Bewusst nicht vorgesehen (besonders schützenswert oder nicht nötig für das Personal-
+            // verzeichnis): AHV-Nummer, Religion/Konfession, Nationalität, Heimatort, Aufenthalts-
+            // bewilligung, Zivilstand, Gesundheit, Ernährung, IBAN/BIC, Angaben zu Schülerinnen,
+            // Schülern und Erziehungsberechtigten (Klasse, Vertreter).
             'fields' => [
-                'name' => ['type' => 'string', 'required' => true, 'label' => 'Name'],
-                'email' => ['type' => 'email', 'required' => true, 'unique' => true, 'label' => 'E-Mail'],
-                'role' => ['type' => 'enum', 'values' => 'roles', 'required' => true, 'label' => 'Rolle im Intranet'],
-                'function' => ['type' => 'string', 'required' => false, 'label' => 'Funktion'],
-                'school' => ['type' => 'enum', 'values' => 'schools', 'required' => true, 'label' => 'Schulhaus'],
-                'phone' => ['type' => 'string', 'required' => false, 'label' => 'Telefon'],
-                'active' => ['type' => 'bool', 'required' => true, 'label' => 'Aktiv'],
+                'title' => ['type' => 'string', 'required' => false, 'label' => 'Titel', 'group' => 'person'],
+                'first_name' => ['type' => 'string', 'required' => false, 'label' => 'Vorname', 'group' => 'person'],
+                'last_name' => ['type' => 'string', 'required' => true, 'label' => 'Nachname', 'group' => 'person'],
+                'name' => ['type' => 'string', 'required' => true, 'label' => 'Name (Anzeige)', 'group' => 'person', 'computed' => true],
+                'short' => ['type' => 'string', 'required' => false, 'label' => 'Kürzel', 'group' => 'person', 'max' => 20],
+                'active' => ['type' => 'bool', 'required' => true, 'label' => 'Aktiv', 'group' => 'person'],
+
+                'school' => ['type' => 'enum', 'values' => 'schools', 'required' => true, 'label' => 'Schulhaus', 'group' => 'organisation'],
+                'function' => ['type' => 'string', 'required' => false, 'label' => 'Funktion', 'group' => 'organisation'],
+                'department' => ['type' => 'string', 'required' => false, 'label' => 'Abteilung / Stufe', 'group' => 'organisation'],
+                'escola_roles' => ['type' => 'string', 'required' => false, 'label' => 'Rollen (Escola)', 'group' => 'organisation'],
+                'entry_date' => ['type' => 'date', 'required' => false, 'label' => 'Eintritt', 'group' => 'organisation'],
+                'exit_date' => ['type' => 'date', 'required' => false, 'label' => 'Austritt', 'group' => 'organisation'],
+
+                'email' => ['type' => 'email', 'required' => true, 'unique' => true, 'label' => 'E-Mail', 'group' => 'contact'],
+                'phone' => ['type' => 'string', 'required' => false, 'label' => 'Telefon', 'group' => 'contact', 'input' => 'tel', 'max' => 50],
+                'phone2' => ['type' => 'string', 'required' => false, 'label' => 'Telefon 2', 'group' => 'contact', 'input' => 'tel', 'max' => 50],
+                'mobile' => ['type' => 'string', 'required' => false, 'label' => 'Mobiltelefon', 'group' => 'contact', 'input' => 'tel', 'max' => 50],
+                'office_street' => ['type' => 'string', 'required' => false, 'label' => 'Strasse (Schule)', 'group' => 'contact'],
+                'office_zip' => ['type' => 'string', 'required' => false, 'label' => 'PLZ (Schule)', 'group' => 'contact', 'max' => 10],
+                'office_city' => ['type' => 'string', 'required' => false, 'label' => 'Ort (Schule)', 'group' => 'contact'],
+
+                'private_email' => ['type' => 'email', 'required' => false, 'label' => 'E-Mail privat', 'group' => 'private'],
+                'private_phone' => ['type' => 'string', 'required' => false, 'label' => 'Telefon privat', 'group' => 'private', 'input' => 'tel', 'max' => 50],
+                'private_mobile' => ['type' => 'string', 'required' => false, 'label' => 'Mobiltelefon privat', 'group' => 'private', 'input' => 'tel', 'max' => 50],
+                'private_street' => ['type' => 'string', 'required' => false, 'label' => 'Strasse privat', 'group' => 'private'],
+                'private_zip' => ['type' => 'string', 'required' => false, 'label' => 'PLZ privat', 'group' => 'private', 'max' => 10],
+                'private_city' => ['type' => 'string', 'required' => false, 'label' => 'Ort privat', 'group' => 'private'],
+                'emergency_name' => ['type' => 'string', 'required' => false, 'label' => 'Notfallkontakt (Person)', 'group' => 'private'],
+                'emergency_phone' => ['type' => 'string', 'required' => false, 'label' => 'Notfallkontakt (Nummer)', 'group' => 'private', 'input' => 'tel', 'max' => 50],
+
+                'role' => ['type' => 'enum', 'values' => 'roles', 'required' => true, 'label' => 'Rolle im Intranet', 'group' => 'system'],
+                'username' => ['type' => 'string', 'required' => false, 'label' => 'Benutzername (Escola)', 'group' => 'system'],
+                'escola_id' => ['type' => 'string', 'required' => false, 'label' => 'Escola-ID', 'group' => 'system', 'max' => 50],
+                'external_id' => ['type' => 'string', 'required' => false, 'label' => 'Fremd-ID', 'group' => 'system', 'max' => 100],
+                'notes' => ['type' => 'text', 'required' => false, 'label' => 'Bemerkungen', 'group' => 'system'],
             ],
         ],
 

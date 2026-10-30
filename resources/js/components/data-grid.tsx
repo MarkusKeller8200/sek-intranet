@@ -10,6 +10,7 @@ import type {
     ColumnDef,
     ColumnFiltersState,
     ColumnOrderState,
+    ColumnSizingState,
     FilterFn,
     Row,
     RowSelectionState,
@@ -27,6 +28,7 @@ import {
     GripVertical,
     ListChecks,
     Loader2,
+    MoveHorizontal,
     Pencil,
     RotateCcw,
     Search,
@@ -57,7 +59,7 @@ import { cn } from '@/lib/utils';
 export type GridColumn<T> = {
     id: keyof T & string;
     title: string;
-    type?: 'text' | 'email' | 'tel' | 'select' | 'bool';
+    type?: 'text' | 'email' | 'tel' | 'select' | 'bool' | 'date';
     /** Nur «select»: Schlüssel → Bezeichnung */
     options?: Record<string, string>;
     editable?: boolean;
@@ -73,10 +75,36 @@ type ViewState = {
     order: ColumnOrderState;
     visibility: VisibilityState;
     sorting: SortingState;
+    sizing: ColumnSizingState;
 };
 
 const SELECT_ID = '_select';
 const ACTIONS_ID = '_actions';
+
+/** JJJJ-MM-TT → TT.MM.JJJJ */
+export function formatDate(value: unknown): string {
+    const raw = text(value);
+    const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(raw);
+
+    return match ? `${match[3]}.${match[2]}.${match[1]}` : raw;
+}
+
+let measureContext: CanvasRenderingContext2D | null = null;
+
+/** Textbreite in Pixeln (für automatische Spaltenbreite). */
+function measure(value: string, weight = 400): number {
+    if (typeof document === 'undefined') {
+        return value.length * 8;
+    }
+    measureContext ??= document.createElement('canvas').getContext('2d');
+    if (!measureContext) {
+        return value.length * 8;
+    }
+    const family = getComputedStyle(document.body).fontFamily || 'sans-serif';
+    measureContext.font = `${weight} 14px ${family}`;
+
+    return measureContext.measureText(value).width;
+}
 
 export function text(value: unknown): string {
     if (typeof value === 'string') {
@@ -165,6 +193,10 @@ export default function DataGrid<T extends GridRow>({
     const [globalFilter, setGlobalFilter] = useState('');
     const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
     const [dragging, setDragging] = useState<string | null>(null);
+    const [columnSizing, setColumnSizing] = useState<ColumnSizingState>(
+        stored.sizing ?? {},
+    );
+    const autoSized = useRef(Object.keys(stored.sizing ?? {}).length > 0);
 
     // Neue Daten vom Server (z. B. nach Löschen) übernehmen
     useEffect(() => {
@@ -183,15 +215,18 @@ export default function DataGrid<T extends GridRow>({
             order: columnOrder,
             visibility: columnVisibility,
             sorting,
+            sizing: columnSizing,
         });
-    }, [storageKey, columnOrder, columnVisibility, sorting]);
+    }, [storageKey, columnOrder, columnVisibility, sorting, columnSizing]);
 
     const byId = new Map(columns.map((c) => [c.id as string, c]));
 
     const display = (column: GridColumn<T>, value: unknown): string =>
         column.type === 'select'
             ? (column.options?.[text(value)] ?? text(value))
-            : text(value);
+            : column.type === 'date'
+              ? formatDate(value)
+              : text(value);
 
     const filterFn: FilterFn<T> = (row, columnId, filter) => {
         const column = byId.get(columnId);
@@ -256,6 +291,8 @@ export default function DataGrid<T extends GridRow>({
                       id: SELECT_ID,
                       enableSorting: false,
                       enableHiding: false,
+                      enableResizing: false,
+                      size: 40,
                       header: () => null,
                       cell: ({ row }: { row: Row<T> }) => (
                           <Checkbox
@@ -269,27 +306,34 @@ export default function DataGrid<T extends GridRow>({
                   } satisfies ColumnDef<T>,
               ]
             : []),
-        ...columns.map((column): ColumnDef<T> => ({
-            id: column.id,
-            accessorFn: (row) => row[column.id],
-            header: column.title,
-            filterFn,
-            sortingFn,
-            cell: ({ row }) => (
-                <EditableCell
-                    row={row.original}
-                    column={column}
-                    canEdit={canEdit && column.editable === true}
-                    onSave={save}
-                />
-            ),
-        })),
+        ...columns.map(
+            (column): ColumnDef<T> => ({
+                id: column.id,
+                accessorFn: (row) => row[column.id],
+                header: column.title,
+                size: 160,
+                minSize: 60,
+                maxSize: 800,
+                filterFn,
+                sortingFn,
+                cell: ({ row }) => (
+                    <EditableCell
+                        row={row.original}
+                        column={column}
+                        canEdit={canEdit && column.editable === true}
+                        onSave={save}
+                    />
+                ),
+            }),
+        ),
         ...(rowActions
             ? [
                   {
                       id: ACTIONS_ID,
                       enableSorting: false,
                       enableHiding: false,
+                      enableResizing: false,
+                      size: 96,
                       header: () => null,
                       cell: ({ row }: { row: Row<T> }) =>
                           rowActions(row.original),
@@ -308,8 +352,12 @@ export default function DataGrid<T extends GridRow>({
             columnFilters,
             globalFilter,
             rowSelection,
+            columnSizing,
         },
         getRowId: (row) => row.id,
+        enableColumnResizing: true,
+        columnResizeMode: 'onChange',
+        onColumnSizingChange: setColumnSizing,
         enableRowSelection: selectable,
         onSortingChange: setSorting,
         onColumnOrderChange: setColumnOrder,
@@ -357,7 +405,51 @@ export default function DataGrid<T extends GridRow>({
         });
     };
 
+    /** Breite aus dem längsten Inhalt (sichtbare Zeilen) und dem Titel. */
+    const fitWidth = (id: string): number => {
+        const column = byId.get(id);
+        if (!column) {
+            return 160;
+        }
+        if (column.type === 'bool') {
+            return Math.max(70, measure(column.title, 500) + 56);
+        }
+        const extra = column.type === 'select' ? 44 : 28;
+        let widest = measure(column.title, 500) + 56;
+        for (const row of table.getRowModel().rows) {
+            widest = Math.max(
+                widest,
+                measure(display(column, row.original[column.id])) + extra,
+            );
+        }
+
+        return Math.round(Math.min(480, Math.max(60, widest)));
+    };
+
+    const autoFit = (ids?: string[]) => {
+        const targets =
+            ids ??
+            table
+                .getVisibleLeafColumns()
+                .map((c) => c.id)
+                .filter((id) => byId.has(id));
+        setColumnSizing((current) => ({
+            ...current,
+            ...Object.fromEntries(targets.map((id) => [id, fitWidth(id)])),
+        }));
+    };
+
+    // Erste Anzeige ohne gemerkte Breiten: automatisch anpassen
+    useEffect(() => {
+        if (!autoSized.current && rows.length > 0) {
+            autoSized.current = true;
+            autoFit();
+        }
+    });
+
     const resetView = () => {
+        setColumnSizing({});
+        autoSized.current = false;
         setColumnOrder(defaultOrder);
         setColumnVisibility(defaultVisibility);
         setSorting([]);
@@ -458,6 +550,9 @@ export default function DataGrid<T extends GridRow>({
                             />
                         ))}
                         <DropdownMenuSeparator />
+                        <DropdownMenuItem onSelect={() => autoFit()}>
+                            <MoveHorizontal /> Spaltenbreiten automatisch
+                        </DropdownMenuItem>
                         <DropdownMenuItem onSelect={resetView}>
                             <RotateCcw /> Ansicht zurücksetzen
                         </DropdownMenuItem>
@@ -507,8 +602,15 @@ export default function DataGrid<T extends GridRow>({
                 </div>
             )}
 
-            <div className="overflow-x-auto rounded-xl border">
-                <table className="w-full caption-bottom text-sm">
+            <div className="overflow-x-auto rounded-lg border">
+                <table
+                    className="caption-bottom border-collapse text-sm"
+                    style={{
+                        tableLayout: 'fixed',
+                        width: table.getTotalSize(),
+                        minWidth: '100%',
+                    }}
+                >
                     <thead className="bg-muted/40">
                         {table.getHeaderGroups().map((group) => (
                             <tr key={group.id} className="border-b">
@@ -521,7 +623,10 @@ export default function DataGrid<T extends GridRow>({
                                         return (
                                             <th
                                                 key={header.id}
-                                                className="w-10 px-3"
+                                                style={{
+                                                    width: header.getSize(),
+                                                }}
+                                                className="border-r px-3"
                                             >
                                                 <Checkbox
                                                     checked={
@@ -552,7 +657,9 @@ export default function DataGrid<T extends GridRow>({
                                         return (
                                             <th
                                                 key={header.id}
-                                                className="w-24"
+                                                style={{
+                                                    width: header.getSize(),
+                                                }}
                                             />
                                         );
                                     }
@@ -560,12 +667,7 @@ export default function DataGrid<T extends GridRow>({
                                     return (
                                         <th
                                             key={header.id}
-                                            draggable
-                                            onDragStart={(e) => {
-                                                setDragging(id);
-                                                e.dataTransfer.effectAllowed =
-                                                    'move';
-                                            }}
+                                            style={{ width: header.getSize() }}
                                             onDragOver={(e) => {
                                                 if (
                                                     dragging &&
@@ -593,18 +695,27 @@ export default function DataGrid<T extends GridRow>({
                                             }}
                                             onDragEnd={() => setDragging(null)}
                                             className={cn(
-                                                'h-10 px-3 text-left align-middle font-medium whitespace-nowrap text-foreground',
+                                                'relative h-9 border-r px-2 text-left align-middle font-semibold whitespace-nowrap text-foreground',
                                                 dragging === id && 'opacity-40',
                                             )}
                                         >
-                                            <div className="flex items-center gap-1">
+                                            <div
+                                                className="flex min-w-0 items-center gap-1"
+                                                draggable
+                                                onDragStart={(e) => {
+                                                    setDragging(id);
+                                                    e.dataTransfer.effectAllowed =
+                                                        'move';
+                                                }}
+                                                title="Ziehen zum Verschieben"
+                                            >
                                                 <GripVertical
                                                     className="size-3.5 shrink-0 cursor-grab text-muted-foreground/60"
                                                     aria-hidden
                                                 />
                                                 <button
                                                     type="button"
-                                                    className="inline-flex items-center gap-1 rounded px-1 py-0.5 hover:bg-accent"
+                                                    className="inline-flex min-w-0 items-center gap-1 truncate rounded px-1 py-0.5 hover:bg-accent"
                                                     onClick={header.column.getToggleSortingHandler()}
                                                     title="Sortieren"
                                                 >
@@ -622,6 +733,24 @@ export default function DataGrid<T extends GridRow>({
                                                     )}
                                                 </button>
                                             </div>
+                                            {header.column.getCanResize() && (
+                                                <div
+                                                    role="separator"
+                                                    aria-orientation="vertical"
+                                                    aria-label={`Breite ${byId.get(id)?.title ?? id}`}
+                                                    title="Ziehen = Breite ändern, Doppelklick = automatisch"
+                                                    onMouseDown={header.getResizeHandler()}
+                                                    onTouchStart={header.getResizeHandler()}
+                                                    onDoubleClick={() =>
+                                                        autoFit([id])
+                                                    }
+                                                    className={cn(
+                                                        'absolute top-0 right-0 h-full w-1.5 cursor-col-resize touch-none select-none hover:bg-brand/60',
+                                                        header.column.getIsResizing() &&
+                                                            'bg-brand',
+                                                    )}
+                                                />
+                                            )}
                                         </th>
                                     );
                                 })}
@@ -634,7 +763,7 @@ export default function DataGrid<T extends GridRow>({
                                 return (
                                     <th
                                         key={column.id}
-                                        className="px-2 pb-2 font-normal"
+                                        className="border-r px-1.5 pb-1.5 font-normal last:border-r-0"
                                     >
                                         {def && (
                                             <ColumnFilter
@@ -648,14 +777,15 @@ export default function DataGrid<T extends GridRow>({
                         </tr>
                     </thead>
                     <tbody>
-                        {visibleRows.map((row) => (
+                        {visibleRows.map((row, index) => (
                             <tr
                                 key={row.id}
                                 data-state={
                                     row.getIsSelected() ? 'selected' : undefined
                                 }
                                 className={cn(
-                                    'border-b transition-colors last:border-0 hover:bg-muted/40 data-[state=selected]:bg-muted',
+                                    'border-b transition-colors last:border-0 hover:bg-accent/50 data-[state=selected]:bg-brand/10',
+                                    index % 2 === 1 && 'bg-muted/40',
                                     rowClassName?.(row.original),
                                 )}
                             >
@@ -663,7 +793,7 @@ export default function DataGrid<T extends GridRow>({
                                     <td
                                         key={cell.id}
                                         className={cn(
-                                            'px-3 py-1.5 align-middle',
+                                            'overflow-hidden border-r px-2 py-1 align-middle last:border-r-0',
                                             byId.get(cell.column.id)?.className,
                                         )}
                                     >
@@ -694,7 +824,8 @@ export default function DataGrid<T extends GridRow>({
                 <p className="text-xs text-muted-foreground">
                     Zelle anklicken oder mit Enter öffnen, um zu bearbeiten.
                     Enter speichert, Esc bricht ab. Spaltenköpfe lassen sich
-                    verschieben.
+                    verschieben; Rand ziehen ändert die Breite, Doppelklick
+                    passt sie automatisch an.
                 </p>
             )}
         </div>
@@ -850,7 +981,9 @@ function EditableCell<T extends GridRow>({
         ? column.render(row)
         : column.type === 'select'
           ? (column.options?.[text(value)] ?? text(value))
-          : text(value);
+          : column.type === 'date'
+            ? formatDate(value)
+            : text(value);
 
     const commit = async (next: unknown) => {
         if (committing.current) {
@@ -949,11 +1082,11 @@ function EditableCell<T extends GridRow>({
                     <input
                         autoFocus
                         type={
-                            column.type === 'email'
-                                ? 'email'
-                                : column.type === 'tel'
-                                  ? 'tel'
-                                  : 'text'
+                            column.type === 'email' ||
+                            column.type === 'tel' ||
+                            column.type === 'date'
+                                ? column.type
+                                : 'text'
                         }
                         className={cls}
                         value={draft}

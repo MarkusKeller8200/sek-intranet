@@ -2,12 +2,14 @@ import { Head, Link, router, usePage } from '@inertiajs/react';
 import {
     ChevronDown,
     Copy,
+    Eye,
     Mail,
     Pencil,
     Phone,
     Plus,
     Search,
     SquarePen,
+    Trash2,
     Users,
 } from 'lucide-react';
 import { useState } from 'react';
@@ -42,10 +44,11 @@ import {
 import { Input } from '@/components/ui/input';
 import { useOptions } from '@/hooks/use-options';
 import { postJson } from '@/lib/http';
-import type { Person } from '@/types';
+import { DEFAULT_VISIBLE, gridType } from '@/lib/person-fields';
+import type { Person, PersonGroup } from '@/types';
 
 type BulkChange = {
-    field: 'school' | 'role' | 'active';
+    field: 'school' | 'role' | 'active' | 'delete';
     value: string | boolean;
     label: string;
     people: Person[];
@@ -70,7 +73,13 @@ async function saveField(
     return res.person;
 }
 
-export default function PeopleIndex({ people }: { people: Person[] }) {
+export default function PeopleIndex({
+    people,
+    groups,
+}: {
+    people: Person[];
+    groups: PersonGroup[];
+}) {
     const { auth } = usePage().props;
     const options = useOptions();
     const canManage = auth.can.manageUsers;
@@ -78,76 +87,80 @@ export default function PeopleIndex({ people }: { people: Person[] }) {
     const [busy, setBusy] = useState(false);
     const [mobileSearch, setMobileSearch] = useState('');
 
-    const columns: GridColumn<Person>[] = [
-        {
-            id: 'name',
-            title: 'Name',
-            type: 'text',
-            editable: true,
-            render: (p) => (
-                <span className="flex items-center gap-2">
-                    <span className="truncate font-medium">{p.name}</span>
-                    {!p.active && <Badge variant="outline">inaktiv</Badge>}
-                </span>
-            ),
-        },
-        { id: 'function', title: 'Funktion', type: 'text', editable: true },
-        {
-            id: 'school',
-            title: 'Schulhaus',
-            type: 'select',
-            options: options.schools,
-            editable: true,
-            render: (p) => <OptionBadge list="schools" value={p.school} dot />,
-        },
-        {
-            id: 'email',
-            title: 'E-Mail',
-            type: 'email',
-            editable: true,
-            render: canManage
-                ? undefined
-                : (p) => (
-                      <a className="hover:underline" href={`mailto:${p.email}`}>
-                          {p.email}
-                      </a>
-                  ),
-        },
-        { id: 'phone', title: 'Telefon', type: 'tel', editable: true },
-        ...(canManage
-            ? ([
-                  {
-                      id: 'role',
-                      title: 'Rolle',
-                      type: 'select',
-                      options: options.roles,
-                      editable: true,
-                      render: (p) => (
-                          <OptionBadge list="roles" value={p.role} />
-                      ),
-                  },
-                  {
-                      id: 'active',
-                      title: 'Aktiv',
-                      type: 'bool',
-                      editable: true,
-                  },
-              ] satisfies GridColumn<Person>[])
-            : []),
-    ];
+    // Alle Felder aus dem Schema als Spalten; nicht standardmässige ausgeblendet
+    const columns: GridColumn<Person>[] = groups
+        .flatMap((group) => group.fields)
+        .map((field): GridColumn<Person> => {
+            const column: GridColumn<Person> = {
+                id: field.key,
+                title: field.label,
+                type: gridType(field),
+                options: field.options ?? undefined,
+                editable: !field.computed,
+                hidden: !DEFAULT_VISIBLE.includes(field.key),
+            };
+
+            switch (field.key) {
+                case 'last_name':
+                    return {
+                        ...column,
+                        render: (p) => (
+                            <span className="flex items-center gap-2">
+                                <span className="truncate font-medium">
+                                    {p.last_name ?? p.name}
+                                </span>
+                                {!p.active && (
+                                    <Badge variant="outline">inaktiv</Badge>
+                                )}
+                            </span>
+                        ),
+                    };
+                case 'school':
+                    return {
+                        ...column,
+                        render: (p) => (
+                            <OptionBadge list="schools" value={p.school} dot />
+                        ),
+                    };
+                case 'role':
+                    return {
+                        ...column,
+                        render: (p) => (
+                            <OptionBadge list="roles" value={p.role} />
+                        ),
+                    };
+                case 'email':
+                    return canManage
+                        ? column
+                        : {
+                              ...column,
+                              render: (p) => (
+                                  <a
+                                      className="hover:underline"
+                                      href={`mailto:${p.email}`}
+                                  >
+                                      {p.email}
+                                  </a>
+                              ),
+                          };
+                default:
+                    return column;
+            }
+        });
 
     const applyBulk = async () => {
         if (!bulk) {
             return;
         }
         setBusy(true);
+        const ids = bulk.people.map((p) => p.id);
         const res = await postJson<{ message?: string; status?: string }>(
-            '/personen/sammelaenderung',
-            {
-                ids: bulk.people.map((p) => p.id),
-                field: bulk.field,
-                value: bulk.value,
-            },
+            bulk.field === 'delete'
+                ? '/personen/sammelloeschung'
+                : '/personen/sammelaenderung',
+            bulk.field === 'delete'
+                ? { ids }
+                : { ids, field: bulk.field, value: bulk.value },
         );
         setBusy(false);
         if (res.status === 'error') {
@@ -275,6 +288,25 @@ export default function PeopleIndex({ people }: { people: Person[] }) {
                     </DropdownMenuContent>
                 </DropdownMenu>
             )}
+            {canManage && (
+                <Button
+                    variant="destructive"
+                    size="sm"
+                    onClick={() =>
+                        setBulk({
+                            field: 'delete',
+                            value: true,
+                            label: '',
+                            people: selected.filter(
+                                (p) => p.id !== auth.user.id,
+                            ),
+                            clear,
+                        })
+                    }
+                >
+                    <Trash2 /> Löschen
+                </Button>
+            )}
         </>
     );
 
@@ -322,33 +354,47 @@ export default function PeopleIndex({ people }: { people: Person[] }) {
                             searchPlaceholder="Name, Funktion, E-Mail …"
                             emptyText="Keine Personen gefunden."
                             rowClassName={(p) => (p.active ? '' : 'opacity-60')}
-                            rowActions={
-                                canManage
-                                    ? (p) => (
-                                          <div className="flex justify-end gap-1">
-                                              <Button
-                                                  variant="ghost"
-                                                  size="icon"
-                                                  asChild
-                                              >
-                                                  <Link
-                                                      href={`/personen/${p.id}/bearbeiten`}
-                                                      aria-label="Im Formular bearbeiten"
-                                                  >
-                                                      <Pencil />
-                                                  </Link>
-                                              </Button>
-                                              {p.id !== auth.user.id && (
-                                                  <DeleteButton
-                                                      url={`/personen/${p.id}`}
-                                                      title={`${p.name} löschen?`}
-                                                      size="icon"
-                                                  />
-                                              )}
-                                          </div>
-                                      )
-                                    : undefined
-                            }
+                            rowActions={(p) => (
+                                <div className="flex justify-end gap-0.5">
+                                    <Button
+                                        variant="ghost"
+                                        size="icon"
+                                        className="size-7"
+                                        asChild
+                                    >
+                                        <Link
+                                            href={`/personen/${p.id}`}
+                                            aria-label="Details anzeigen"
+                                            title="Details"
+                                        >
+                                            <Eye />
+                                        </Link>
+                                    </Button>
+                                    {canManage && (
+                                        <Button
+                                            variant="ghost"
+                                            size="icon"
+                                            className="size-7"
+                                            asChild
+                                        >
+                                            <Link
+                                                href={`/personen/${p.id}/bearbeiten`}
+                                                aria-label="Im Formular bearbeiten"
+                                                title="Bearbeiten"
+                                            >
+                                                <Pencil />
+                                            </Link>
+                                        </Button>
+                                    )}
+                                    {canManage && p.id !== auth.user.id && (
+                                        <DeleteButton
+                                            url={`/personen/${p.id}`}
+                                            title={`${p.name} löschen?`}
+                                            size="icon"
+                                        />
+                                    )}
+                                </div>
+                            )}
                         />
                     </div>
                 )}
@@ -372,7 +418,12 @@ export default function PeopleIndex({ people }: { people: Person[] }) {
                         >
                             <div className="flex items-start justify-between gap-2">
                                 <div>
-                                    <p className="font-medium">{person.name}</p>
+                                    <Link
+                                        href={`/personen/${person.id}`}
+                                        className="font-medium hover:underline"
+                                    >
+                                        {person.name}
+                                    </Link>
                                     <p className="text-sm text-muted-foreground">
                                         {person.function}
                                     </p>
@@ -421,12 +472,16 @@ export default function PeopleIndex({ people }: { people: Person[] }) {
                     <DialogContent>
                         <DialogHeader>
                             <DialogTitle>
-                                {bulk?.people.length} Personen ändern?
+                                {bulk?.people.length} Personen{' '}
+                                {bulk?.field === 'delete'
+                                    ? 'löschen'
+                                    : 'ändern'}
+                                ?
                             </DialogTitle>
                             <DialogDescription>
-                                Für alle ausgewählten Personen wird{' '}
-                                {bulk?.label} gesetzt. Das eigene Konto behält
-                                Rolle und Status.
+                                {bulk?.field === 'delete'
+                                    ? 'Die ausgewählten Personen werden endgültig aus dem Intranet gelöscht. Das eigene Konto ist ausgenommen.'
+                                    : `Für alle ausgewählten Personen wird ${bulk?.label ?? ''} gesetzt. Das eigene Konto behält Rolle und Status.`}
                             </DialogDescription>
                         </DialogHeader>
                         <DialogFooter>
@@ -435,9 +490,18 @@ export default function PeopleIndex({ people }: { people: Person[] }) {
                             </DialogClose>
                             <Button
                                 disabled={busy}
+                                variant={
+                                    bulk?.field === 'delete'
+                                        ? 'destructive'
+                                        : 'default'
+                                }
                                 onClick={() => void applyBulk()}
                             >
-                                {busy ? 'Speichert …' : 'Ja, ändern'}
+                                {busy
+                                    ? 'Speichert …'
+                                    : bulk?.field === 'delete'
+                                      ? 'Ja, löschen'
+                                      : 'Ja, ändern'}
                             </Button>
                         </DialogFooter>
                     </DialogContent>
