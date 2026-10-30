@@ -22,7 +22,7 @@ export function AppSidebar() {
                     href="/start"
                     prefetch
                     aria-label="Zur Startseite"
-                    className="block rounded-md p-1 focus-visible:ring-2 focus-visible:ring-sidebar-ring focus-visible:outline-none group-data-[collapsible=icon]:hidden"
+                    className="block rounded-md p-1 group-data-[collapsible=icon]:hidden focus-visible:ring-2 focus-visible:ring-sidebar-ring focus-visible:outline-none"
                 >
                     <AppWordmark className="w-full" />
                 </Link>
