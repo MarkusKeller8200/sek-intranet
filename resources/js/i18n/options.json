@@ -3,8 +3,14 @@
     "Redaktion": ["Editors", "Redaktion"],
     "Mitarbeitende": ["Staff", "Mitarbeitendi"],
     "Gesamte Schule": ["Whole school", "Ganzi Schuel"],
-    "Schulhaus Hinterbirch": ["Hinterbirch school building", "Schuelhuus Hinterbirch"],
-    "Schulhaus Mettmenriet": ["Mettmenriet school building", "Schuelhuus Mettmenriet"],
+    "Schulhaus Hinterbirch": [
+        "Hinterbirch school building",
+        "Schuelhuus Hinterbirch"
+    ],
+    "Schulhaus Mettmenriet": [
+        "Mettmenriet school building",
+        "Schuelhuus Mettmenriet"
+    ],
     "Schulverwaltung": ["School administration", "Schuelverwaltig"],
     "Alle Mitarbeitenden": ["All staff", "Alli Mitarbeitende"],
     "Lehrpersonen": ["Teachers", "Lehrpersone"],
@@ -19,7 +25,10 @@
     "Weiterbildung": ["Training", "Wiiterbildig"],
     "Ferien / schulfrei": ["Holidays / no school", "Ferie / schuelfrei"],
     "Termin": ["Appointment", "Termin"],
-    "Reglemente & Weisungen": ["Regulations & directives", "Reglemänt & Wiisige"],
+    "Reglemente & Weisungen": [
+        "Regulations & directives",
+        "Reglemänt & Wiisige"
+    ],
     "Formulare": ["Forms", "Formular"],
     "IT-Anleitungen": ["IT guides", "IT-Aaleitige"],
     "Wichtige Links": ["Important links", "Wichtigi Links"],

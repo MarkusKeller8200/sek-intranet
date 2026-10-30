@@ -5,11 +5,11 @@ Sprachwahl in den Einstellungen, Fallback auf die Ausgangssprache).
 
 ## Sprachen
 
-| Sprache       | Code (BCP 47)   | HTML `lang` | Hinweise                                                       |
-| ------------- | --------------- | ----------- | -------------------------------------------------------------- |
-| Deutsch       | `de-CH`         | `de-CH`     | Standard. «ss» statt «ß», Datum TT.MM.JJJJ. Text = Schlüssel.  |
-| Englisch      | `en`            | `en`        | Britisches Englisch, schulnahe Begriffe.                       |
-| Züritüütsch   | `gsw-u-sd-chzh` | `gsw-CH`    | Dieth-Schreibung, locker aber verständlich. Fachbegriffe bleiben. |
+| Sprache     | Code (BCP 47)   | HTML `lang` | Hinweise                                                          |
+| ----------- | --------------- | ----------- | ----------------------------------------------------------------- |
+| Deutsch     | `de-CH`         | `de-CH`     | Standard. «ss» statt «ß», Datum TT.MM.JJJJ. Text = Schlüssel.     |
+| Englisch    | `en`            | `en`        | Britisches Englisch, schulnahe Begriffe.                          |
+| Züritüütsch | `gsw-u-sd-chzh` | `gsw-CH`    | Dieth-Schreibung, locker aber verständlich. Fachbegriffe bleiben. |
 
 ## Funktionsweise
 

@@ -122,7 +122,10 @@ export default function AnnouncementsIndex({
                                         </Badge>
                                     )}
                                 </div>
-                                <p className="line-clamp-2 text-sm text-muted-foreground" translate="no">
+                                <p
+                                    className="line-clamp-2 text-sm text-muted-foreground"
+                                    translate="no"
+                                >
                                     {item.body}
                                 </p>
                                 <p className="text-xs text-muted-foreground">

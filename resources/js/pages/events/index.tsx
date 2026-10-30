@@ -86,7 +86,9 @@ export default function EventsIndex({
                                 <div className="grid flex-1 gap-1">
                                     <div className="flex flex-wrap items-center gap-2">
                                         <span className="font-medium">
-                                            <span translate="no">{event.title}</span>
+                                            <span translate="no">
+                                                {event.title}
+                                            </span>
                                         </span>
                                         <OptionBadge
                                             list="eventCategories"
@@ -112,7 +114,10 @@ export default function EventsIndex({
                                         </p>
                                     )}
                                     {event.description && (
-                                        <p className="text-sm whitespace-pre-line text-muted-foreground" translate="no">
+                                        <p
+                                            className="text-sm whitespace-pre-line text-muted-foreground"
+                                            translate="no"
+                                        >
                                             {event.description}
                                         </p>
                                     )}

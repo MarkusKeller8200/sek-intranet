@@ -76,7 +76,10 @@ export default function AnnouncementShow({
                     </p>
                 </header>
 
-                <div className="leading-relaxed whitespace-pre-line" translate="no">
+                <div
+                    className="leading-relaxed whitespace-pre-line"
+                    translate="no"
+                >
                     {announcement.body}
                 </div>
             </article>

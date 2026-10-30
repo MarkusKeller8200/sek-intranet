@@ -14,27 +14,31 @@ import {
 import { CATALOGS, COLUMNS, coverage, LANGUAGES, missing } from '@/lib/i18n';
 import type { Language } from '@/lib/i18n';
 
-const codes: { language: Language; code: string; html: string; note: string }[] =
-    [
-        {
-            language: 'de-CH',
-            code: 'de-CH',
-            html: 'de-CH',
-            note: 'Standardsprache. Schweizer Rechtschreibung (ss statt ß), Datum TT.MM.JJJJ. Der deutsche Text im Code ist zugleich der Schlüssel.',
-        },
-        {
-            language: 'en',
-            code: 'en',
-            html: 'en',
-            note: 'Britisches Englisch, schulnahe Begriffe (staff, school building, term).',
-        },
-        {
-            language: 'gsw-u-sd-chzh',
-            code: 'gsw-u-sd-chzh',
-            html: 'gsw-CH',
-            note: 'Zürichdeutsch nach Dieth-Schreibung, locker aber verständlich. Fachbegriffe (Login, Export, API) bleiben.',
-        },
-    ];
+const codes: {
+    language: Language;
+    code: string;
+    html: string;
+    note: string;
+}[] = [
+    {
+        language: 'de-CH',
+        code: 'de-CH',
+        html: 'de-CH',
+        note: 'Standardsprache. Schweizer Rechtschreibung (ss statt ß), Datum TT.MM.JJJJ. Der deutsche Text im Code ist zugleich der Schlüssel.',
+    },
+    {
+        language: 'en',
+        code: 'en',
+        html: 'en',
+        note: 'Britisches Englisch, schulnahe Begriffe (staff, school building, term).',
+    },
+    {
+        language: 'gsw-u-sd-chzh',
+        code: 'gsw-u-sd-chzh',
+        html: 'gsw-CH',
+        note: 'Zürichdeutsch nach Dieth-Schreibung, locker aber verständlich. Fachbegriffe (Login, Export, API) bleiben.',
+    },
+];
 
 const rules = [
     'Der Code enthält nur deutsche Texte. Übersetzt wird beim Anzeigen: Eine Schicht über der Seite ersetzt Texte und Attribute (title, placeholder, aria-label) anhand der Kataloge.',
@@ -82,7 +86,8 @@ export default function LanguageConcept() {
                     <CardHeader>
                         <CardTitle>Sprache wählen</CardTitle>
                         <CardDescription>
-                            Wirkt sofort auf die ganze Oberfläche, ohne Neuladen.
+                            Wirkt sofort auf die ganze Oberfläche, ohne
+                            Neuladen.
                         </CardDescription>
                     </CardHeader>
                     <CardContent>

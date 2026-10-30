@@ -1,19 +1,49 @@
 {
-    "News und Informationen an die Mitarbeitenden.": ["News and information for staff.", "News und Informatione für d Mitarbeitende."],
+    "News und Informationen an die Mitarbeitenden.": [
+        "News and information for staff.",
+        "News und Informatione für d Mitarbeitende."
+    ],
     "Autor/in": ["Author", "Autor/in"],
-    "Schulanlässe, Konferenzen, Weiterbildungen und Ferien.": ["School events, conferences, training and holidays.", "Schuelaaläss, Konferänze, Wiiterbildige und Ferie."],
+    "Schulanlässe, Konferenzen, Weiterbildungen und Ferien.": [
+        "School events, conferences, training and holidays.",
+        "Schuelaaläss, Konferänze, Wiiterbildige und Ferie."
+    ],
     "Erfasst von": ["Recorded by", "Erfasst vo"],
-    "Hochgeladene Dateien oder Verweise auf externe Seiten.": ["Uploaded files or links to external pages.", "Uegladeni Dateie oder Verwiis uf externi Siite."],
+    "Hochgeladene Dateien oder Verweise auf externe Seiten.": [
+        "Uploaded files or links to external pages.",
+        "Uegladeni Dateie oder Verwiis uf externi Siite."
+    ],
     "Link (bei Art Link)": ["Link (for type link)", "Link (bi Art Link)"],
-    "Dateipfad (bei Art Datei)": ["File path (for type file)", "Dateipfad (bi Art Datei)"],
+    "Dateipfad (bei Art Datei)": [
+        "File path (for type file)",
+        "Dateipfad (bi Art Datei)"
+    ],
     "Originaler Dateiname": ["Original file name", "Originale Dateiname"],
     "Dateigrösse (Bytes)": ["File size (bytes)", "Dateigrössi (Bytes)"],
-    "System: Plugin-Zustand": ["System: plugin state", "System: Plugin-Zuestand"],
-    "Ein Datensatz je Plugin (id = Plugin-ID). Zugangsdaten mit APP_KEY verschlüsselt.": ["One record per plugin (id = plugin ID). Credentials encrypted with APP_KEY.", "En Datesatz pro Plugin (id = Plugin-ID). Zuegangsdate mit APP_KEY verschlüsslet."],
-    "Schreibende Aktionen erlaubt": ["Write actions allowed", "Schriibendi Aktione erlaubt"],
-    "Zugangsdaten (verschlüsselt)": ["Credentials (encrypted)", "Zuegangsdate (verschlüsslet)"],
-    "System: Plugin-Protokoll": ["System: plugin log", "System: Plugin-Protokoll"],
-    "Letzte Läufe aller Plugins (höchstens {n}), Zugangsdaten geschwärzt.": ["Latest runs of all plugins (at most {n}), credentials redacted.", "Letschti Läuf vo allne Plugins (höchschtens {n}), Zuegangsdate gschwärzt."],
+    "System: Plugin-Zustand": [
+        "System: plugin state",
+        "System: Plugin-Zuestand"
+    ],
+    "Ein Datensatz je Plugin (id = Plugin-ID). Zugangsdaten mit APP_KEY verschlüsselt.": [
+        "One record per plugin (id = plugin ID). Credentials encrypted with APP_KEY.",
+        "En Datesatz pro Plugin (id = Plugin-ID). Zuegangsdate mit APP_KEY verschlüsslet."
+    ],
+    "Schreibende Aktionen erlaubt": [
+        "Write actions allowed",
+        "Schriibendi Aktione erlaubt"
+    ],
+    "Zugangsdaten (verschlüsselt)": [
+        "Credentials (encrypted)",
+        "Zuegangsdate (verschlüsslet)"
+    ],
+    "System: Plugin-Protokoll": [
+        "System: plugin log",
+        "System: Plugin-Protokoll"
+    ],
+    "Letzte Läufe aller Plugins (höchstens {n}), Zugangsdaten geschwärzt.": [
+        "Latest runs of all plugins (at most {n}), credentials redacted.",
+        "Letschti Läuf vo allne Plugins (höchschtens {n}), Zuegangsdate gschwärzt."
+    ],
     "Plugin": ["Plugin", "Plugin"],
     "Vorgang": ["Operation", "Vorgang"],
     "Ergebnis": ["Result", "Ergebnis"],
@@ -22,21 +52,48 @@
     "Ausgelöst von": ["Triggered by", "Usglöst vo"],
     "Name (Momentaufnahme)": ["Name (snapshot)", "Name (Momäntufnahm)"],
     "Dauer (ms)": ["Duration (ms)", "Duur (ms)"],
-    "System: Änderungsverlauf": ["System: change history", "System: Änderigsverlauf"],
-    "Wer hat wann welches Feld geändert (alter → neuer Wert). Höchstens {n} {n} Einträge, älteste fallen weg.": ["Who changed which field when (old → new value). At most {n} {n} entries, oldest are dropped.", "Wer hät wänn weles Fäld gänderet (alte → neue Wert). Höchschtens {n} {n} Iiträg, di eltischte fallet weg."],
+    "System: Änderungsverlauf": [
+        "System: change history",
+        "System: Änderigsverlauf"
+    ],
+    "Wer hat wann welches Feld geändert (alter → neuer Wert). Höchstens {n} {n} Einträge, älteste fallen weg.": [
+        "Who changed which field when (old → new value). At most {n} {n} entries, oldest are dropped.",
+        "Wer hät wänn weles Fäld gänderet (alte → neue Wert). Höchschtens {n} {n} Iiträg, di eltischte fallet weg."
+    ],
     "Sammlung": ["Collection", "Sammlig"],
     "Datensatz": ["Record", "Datesatz"],
-    "Bezeichnung (Momentaufnahme)": ["Label (snapshot)", "Bezeichnig (Momäntufnahm)"],
-    "Quelle (Formular, Tabelle, Import …)": ["Source (form, table, import …)", "Quälle (Formular, Tabälle, Import …)"],
+    "Bezeichnung (Momentaufnahme)": [
+        "Label (snapshot)",
+        "Bezeichnig (Momäntufnahm)"
+    ],
+    "Quelle (Formular, Tabelle, Import …)": [
+        "Source (form, table, import …)",
+        "Quälle (Formular, Tabälle, Import …)"
+    ],
     "Geändert von": ["Changed by", "Gänderet vo"],
     "System: API-Zugänge": ["System: API access", "System: API-Zuegäng"],
-    "Zugänge für die REST-API (/api/v{n}). Gespeichert wird nur der SHA-{n}-Hash des Tokens.": ["Access for the REST API (/api/v{n}). Only the SHA-{n} hash of the token is stored.", "Zuegäng für d REST-API (/api/v{n}). Gspicheret wird nur de SHA-{n}-Hash vom Token."],
+    "Zugänge für die REST-API (/api/v{n}). Gespeichert wird nur der SHA-{n}-Hash des Tokens.": [
+        "Access for the REST API (/api/v{n}). Only the SHA-{n} hash of the token is stored.",
+        "Zuegäng für d REST-API (/api/v{n}). Gspicheret wird nur de SHA-{n}-Hash vom Token."
+    ],
     "Token (SHA-{n})": ["Token (SHA-{n})", "Token (SHA-{n})"],
-    "Anfang des Tokens (zur Wiedererkennung)": ["Start of the token (for recognition)", "Aafang vom Token (zum Widererkenne)"],
-    "Rechte (read, write)": ["Permissions (read, write)", "Rächt (read, write)"],
+    "Anfang des Tokens (zur Wiedererkennung)": [
+        "Start of the token (for recognition)",
+        "Aafang vom Token (zum Widererkenne)"
+    ],
+    "Rechte (read, write)": [
+        "Permissions (read, write)",
+        "Rächt (read, write)"
+    ],
     "Handelt im Namen von": ["Acts on behalf of", "Handlet im Name vo"],
-    "System: Tabellenansichten": ["System: table views", "System: Tabälleaasichte"],
-    "Gespeicherte Ansichten (Filter, Sortierung, Spalten, Gruppierung) je Tabelle; persönlich oder für alle.": ["Saved views (filters, sorting, columns, grouping) per table; personal or for everyone.", "Gspicheret Aasichte (Filter, Sortierig, Spalte, Gruppierig) pro Tabälle; persönlich oder für alli."],
+    "System: Tabellenansichten": [
+        "System: table views",
+        "System: Tabälleaasichte"
+    ],
+    "Gespeicherte Ansichten (Filter, Sortierung, Spalten, Gruppierung) je Tabelle; persönlich oder für alle.": [
+        "Saved views (filters, sorting, columns, grouping) per table; personal or for everyone.",
+        "Gspicheret Aasichte (Filter, Sortierig, Spalte, Gruppierig) pro Tabälle; persönlich oder für alli."
+    ],
     "Tabelle": ["Table", "Tabälle"],
     "Erstellt von": ["Created by", "Erstellt vo"]
 }

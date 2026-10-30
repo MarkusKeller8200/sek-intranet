@@ -21,11 +21,11 @@ angemeldeten Person.
 
 ## Clients
 
-| Client  | Einbindung                                                                                | Anmeldung                                        |
-| ------- | ----------------------------------------------------------------------------------------- | ------------------------------------------------ |
-| Claude  | Benutzerdefinierter Connector (Remote-MCP); in Team/Enterprise durch Inhaber für alle     | OAuth (mit dynamischer Registrierung) oder keine |
-| ChatGPT | Entwicklermodus (Beta, Web; Plus, Pro, Business, Enterprise, Edu); nur Remote über HTTPS  | OAuth oder keine; Schreibaktionen mit Rückfrage  |
-| Rovo    | Atlassian-Administration → Verbundene Apps → eigenen MCP-Server hinzufügen                | OAuth 2.1 mit PKCE und DCR (Pflicht)             |
+| Client  | Einbindung                                                                               | Anmeldung                                        |
+| ------- | ---------------------------------------------------------------------------------------- | ------------------------------------------------ |
+| Claude  | Benutzerdefinierter Connector (Remote-MCP); in Team/Enterprise durch Inhaber für alle    | OAuth (mit dynamischer Registrierung) oder keine |
+| ChatGPT | Entwicklermodus (Beta, Web; Plus, Pro, Business, Enterprise, Edu); nur Remote über HTTPS | OAuth oder keine; Schreibaktionen mit Rückfrage  |
+| Rovo    | Atlassian-Administration → Verbundene Apps → eigenen MCP-Server hinzufügen               | OAuth 2.1 mit PKCE und DCR (Pflicht)             |
 
 Alle drei verlangen einen öffentlich erreichbaren HTTPS-Server. OAuth 2.1 mit PKCE und dynamischer
 Client-Registrierung deckt alle drei ab.
@@ -35,18 +35,18 @@ Client-Registrierung deckt alle drei ab.
 Abgeleitet aus `App\Support\OpenApi` durch `App\Support\McpConcept` (eine neue API-Operation erscheint
 automatisch):
 
-| Werkzeug             | API                    | Art       | Phase |
-| -------------------- | ---------------------- | --------- | ----- |
-| `whoami`             | GET /me                | lesen     | 1     |
-| `list_announcements` | GET /announcements     | lesen     | 1     |
-| `list_events`        | GET /events            | lesen     | 1     |
-| `list_documents`     | GET /documents         | lesen     | 1     |
-| `get_options`        | GET /options           | lesen     | 1     |
-| `search_people`      | GET /people            | lesen     | 2     |
-| `get_person`         | GET /people/{id}       | lesen     | 2     |
-| `create_person`      | POST /people           | schreiben | 3     |
-| `update_person`      | PATCH /people/{id}     | schreiben | 3     |
-| `delete_person`      | DELETE /people/{id}    | löschen   | 4     |
+| Werkzeug             | API                 | Art       | Phase |
+| -------------------- | ------------------- | --------- | ----- |
+| `whoami`             | GET /me             | lesen     | 1     |
+| `list_announcements` | GET /announcements  | lesen     | 1     |
+| `list_events`        | GET /events         | lesen     | 1     |
+| `list_documents`     | GET /documents      | lesen     | 1     |
+| `get_options`        | GET /options        | lesen     | 1     |
+| `search_people`      | GET /people         | lesen     | 2     |
+| `get_person`         | GET /people/{id}    | lesen     | 2     |
+| `create_person`      | POST /people        | schreiben | 3     |
+| `update_person`      | PATCH /people/{id}  | schreiben | 3     |
+| `delete_person`      | DELETE /people/{id} | löschen   | 4     |
 
 Jedes Werkzeug erhält MCP-Annotations (`readOnlyHint`, `destructiveHint`, `idempotentHint`,
 `openWorldHint=false`). Sie sind Hinweise an den Client, keine Sicherheitsgrenze.

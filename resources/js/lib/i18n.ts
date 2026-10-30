@@ -18,7 +18,11 @@ import system from '@/i18n/system.json';
 export const LANGUAGES = {
     'de-CH': { label: 'Deutsch', native: 'Deutsch', short: 'DE' },
     en: { label: 'Englisch', native: 'English', short: 'EN' },
-    'gsw-u-sd-chzh': { label: 'Zürichdeutsch', native: 'Züritüütsch', short: 'ZH' },
+    'gsw-u-sd-chzh': {
+        label: 'Zürichdeutsch',
+        native: 'Züritüütsch',
+        short: 'ZH',
+    },
 } as const;
 
 export type Language = keyof typeof LANGUAGES;
@@ -41,7 +45,15 @@ export const CATALOGS: Record<string, Catalog> = {
 
 const STORAGE_KEY = 'lang';
 const ATTRIBUTES = ['title', 'placeholder', 'aria-label', 'alt'] as const;
-const SKIP_TAGS = new Set(['SCRIPT', 'STYLE', 'CODE', 'PRE', 'TEXTAREA', 'KBD', 'SAMP']);
+const SKIP_TAGS = new Set([
+    'SCRIPT',
+    'STYLE',
+    'CODE',
+    'PRE',
+    'TEXTAREA',
+    'KBD',
+    'SAMP',
+]);
 const NUMBER = /\d+(?:['’.,]\d+)*/g;
 
 let current: Language = 'de-CH';
@@ -141,9 +153,14 @@ export function t(text: string): string {
 
 function skipped(node: Node): boolean {
     let element: Element | null =
-        node.nodeType === Node.ELEMENT_NODE ? (node as Element) : node.parentElement;
+        node.nodeType === Node.ELEMENT_NODE
+            ? (node as Element)
+            : node.parentElement;
     while (element) {
-        if (SKIP_TAGS.has(element.tagName) || element.getAttribute('translate') === 'no') {
+        if (
+            SKIP_TAGS.has(element.tagName) ||
+            element.getAttribute('translate') === 'no'
+        ) {
             return true;
         }
         element = element.parentElement;
@@ -165,7 +182,8 @@ function processText(node: Text) {
     const leading = /^\s*/.exec(original)?.[0] ?? '';
     const trailing = /\s*$/.exec(original)?.[0] ?? '';
     const translated = translate(original);
-    const next = translated === null ? original : leading + translated + trailing;
+    const next =
+        translated === null ? original : leading + translated + trailing;
     if (next !== now) {
         node.data = next;
     }
@@ -207,7 +225,10 @@ function processTree(root: Node) {
 
         return;
     }
-    if (root.nodeType !== Node.ELEMENT_NODE && root.nodeType !== Node.DOCUMENT_NODE) {
+    if (
+        root.nodeType !== Node.ELEMENT_NODE &&
+        root.nodeType !== Node.DOCUMENT_NODE
+    ) {
         return;
     }
     if (root.nodeType === Node.ELEMENT_NODE) {
@@ -216,7 +237,10 @@ function processTree(root: Node) {
         }
         processAttributes(root as Element);
     }
-    const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT | NodeFilter.SHOW_ELEMENT);
+    const walker = document.createTreeWalker(
+        root,
+        NodeFilter.SHOW_TEXT | NodeFilter.SHOW_ELEMENT,
+    );
     let node = walker.nextNode();
     while (node) {
         if (node.nodeType === Node.TEXT_NODE) {
@@ -286,7 +310,8 @@ export function setLanguage(language: Language) {
     } catch {
         // ohne Speicher nur bis zum Neuladen
     }
-    document.documentElement.lang = language === 'de-CH' ? 'de-CH' : language === 'en' ? 'en' : 'gsw-CH';
+    document.documentElement.lang =
+        language === 'de-CH' ? 'de-CH' : language === 'en' ? 'en' : 'gsw-CH';
     buildTable(language);
     // Ganze Seite aus den Ausgangstexten neu übersetzen (zurück auf Deutsch ohne Neuladen)
     run(() => processTree(document.body));
@@ -304,7 +329,8 @@ export function initializeLanguage() {
     const language = storedLanguage();
     current = language;
     buildTable(language);
-    document.documentElement.lang = language === 'de-CH' ? 'de-CH' : language === 'en' ? 'en' : 'gsw-CH';
+    document.documentElement.lang =
+        language === 'de-CH' ? 'de-CH' : language === 'en' ? 'en' : 'gsw-CH';
     if (language !== 'de-CH') {
         const begin = () => {
             run(() => processTree(document.body));
@@ -312,7 +338,9 @@ export function initializeLanguage() {
             document.documentElement.classList.remove('i18n-wait');
         };
         if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', begin, { once: true });
+            document.addEventListener('DOMContentLoaded', begin, {
+                once: true,
+            });
         } else {
             begin();
         }
@@ -326,11 +354,16 @@ export function subscribe(listener: () => void): () => void {
 }
 
 /** Anteil übersetzter Texte je Sprache (für die Sprachkonzept-Seite). */
-export function coverage(): { total: number; byLanguage: Record<string, number> } {
+export function coverage(): {
+    total: number;
+    byLanguage: Record<string, number>;
+} {
     const all = Object.values(CATALOGS).flatMap((c) => Object.entries(c));
     const byLanguage: Record<string, number> = {};
     COLUMNS.forEach((language, i) => {
-        byLanguage[language] = all.filter(([, translations]) => Boolean(translations[i])).length;
+        byLanguage[language] = all.filter(([, translations]) =>
+            Boolean(translations[i]),
+        ).length;
     });
 
     return { total: all.length, byLanguage };

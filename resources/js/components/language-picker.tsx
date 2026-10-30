@@ -4,15 +4,28 @@ import type { Language } from '@/lib/i18n';
 import { cn } from '@/lib/utils';
 
 /** Flaggen als SVG (Emoji-Flaggen fehlen unter Windows). */
-function Flag({ language, className }: { language: Language; className?: string }) {
-    const cls = cn('h-3.5 w-5 shrink-0 rounded-[2px] ring-1 ring-black/10', className);
+function Flag({
+    language,
+    className,
+}: {
+    language: Language;
+    className?: string;
+}) {
+    const cls = cn(
+        'h-3.5 w-5 shrink-0 rounded-[2px] ring-1 ring-black/10',
+        className,
+    );
 
     if (language === 'en') {
         return (
             <svg viewBox="0 0 60 36" className={cls} aria-hidden>
                 <rect width="60" height="36" fill="#012169" />
                 <path d="M0 0l60 36M60 0L0 36" stroke="#fff" strokeWidth="7" />
-                <path d="M0 0l60 36M60 0L0 36" stroke="#C8102E" strokeWidth="3" />
+                <path
+                    d="M0 0l60 36M60 0L0 36"
+                    stroke="#C8102E"
+                    strokeWidth="3"
+                />
                 <path d="M30 0v36M0 18h60" stroke="#fff" strokeWidth="11" />
                 <path d="M30 0v36M0 18h60" stroke="#C8102E" strokeWidth="6" />
             </svg>
@@ -38,7 +51,11 @@ function Flag({ language, className }: { language: Language; className?: string 
 }
 
 export function useLanguage(): Language {
-    return useSyncExternalStore(subscribe, getLanguage, (): Language => 'de-CH');
+    return useSyncExternalStore(
+        subscribe,
+        getLanguage,
+        (): Language => 'de-CH',
+    );
 }
 
 /** Sprachwahl mit Flaggen (Einstellungen → Darstellung). Namen in der jeweiligen Sprache. */
@@ -46,7 +63,12 @@ export default function LanguagePicker() {
     const language = useLanguage();
 
     return (
-        <div className="flex flex-wrap gap-2" role="radiogroup" aria-label="Sprache" translate="no">
+        <div
+            className="flex flex-wrap gap-2"
+            role="radiogroup"
+            aria-label="Sprache"
+            translate="no"
+        >
             {(Object.keys(LANGUAGES) as Language[]).map((key) => (
                 <button
                     key={key}
@@ -56,13 +78,16 @@ export default function LanguagePicker() {
                     onClick={() => setLanguage(key)}
                     className={cn(
                         'flex items-center gap-2 rounded-lg border px-3 py-2 text-sm transition-colors hover:bg-accent',
-                        language === key && 'border-primary ring-1 ring-primary',
+                        language === key &&
+                            'border-primary ring-1 ring-primary',
                     )}
                 >
                     <Flag language={key} />
                     <span className="font-medium">{LANGUAGES[key].native}</span>
                     {key === 'de-CH' && (
-                        <span className="text-xs text-muted-foreground">Standard</span>
+                        <span className="text-xs text-muted-foreground">
+                            Standard
+                        </span>
                     )}
                 </button>
             ))}

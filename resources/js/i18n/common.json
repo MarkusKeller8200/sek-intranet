@@ -2,7 +2,10 @@
     "SekBülach Intranet": ["SekBülach Intranet", "SekBülach Intranet"],
     "Intranet": ["Intranet", "Intranet"],
     "Sekundarschule Bülach": ["Sekundarschule Bülach", "Sekundarschuel Bülach"],
-    "Something went wrong.": ["Something went wrong.", "Öppis isch schiefgange."],
+    "Something went wrong.": [
+        "Something went wrong.",
+        "Öppis isch schiefgange."
+    ],
     "Zur Startseite": ["Go to home page", "Zur Startsiite"],
     "Dateien (JSON)": ["Files (JSON)", "Dateie (JSON)"],
     "Prototyp": ["Prototype", "Prototyp"],
@@ -15,7 +18,10 @@
     "Löschen": ["Delete", "Lösche"],
     "löschen": ["delete", "lösche"],
     "ändern": ["change", "ändere"],
-    "Der Eintrag wird endgültig gelöscht. Dies kann nicht rückgängig gemacht werden.": ["The entry will be deleted permanently. This cannot be undone.", "De Iitrag wird für immer glöscht. Das chame nöd rückgängig mache."],
+    "Der Eintrag wird endgültig gelöscht. Dies kann nicht rückgängig gemacht werden.": [
+        "The entry will be deleted permanently. This cannot be undone.",
+        "De Iitrag wird für immer glöscht. Das chame nöd rückgängig mache."
+    ],
     "Speichern": ["Save", "Spichere"],
     "Speichert …": ["Saving …", "Spichert …"],
     "Bearbeiten": ["Edit", "Bearbeite"],
@@ -23,31 +29,76 @@
     "Darstellung": ["Appearance", "Darstellig"],
     "Abmelden": ["Sign out", "Abmälde"],
     "Einstellungen": ["Settings", "Iistellige"],
-    "Persönliche Einstellungen für dieses Gerät": ["Personal settings for this device", "Persönlichi Iistellige für das Grät"],
-    "Hell, dunkel oder wie das Betriebssystem": ["Light, dark or like the operating system", "Hell, dunkel oder wie s Betriebssystem"],
+    "Persönliche Einstellungen für dieses Gerät": [
+        "Personal settings for this device",
+        "Persönlichi Iistellige für das Grät"
+    ],
+    "Hell, dunkel oder wie das Betriebssystem": [
+        "Light, dark or like the operating system",
+        "Hell, dunkel oder wie s Betriebssystem"
+    ],
     "Schriftart": ["Font", "Schriftart"],
-    "Gilt für diesen Browser. Gut lesbare Schriften helfen auf kleinen Bildschirmen.": ["Applies to this browser. Easy-to-read fonts help on small screens.", "Gilt für dä Browser. Guet läsbari Schrifte hälfed uf chliine Bildschirm."],
+    "Gilt für diesen Browser. Gut lesbare Schriften helfen auf kleinen Bildschirmen.": [
+        "Applies to this browser. Easy-to-read fonts help on small screens.",
+        "Gilt für dä Browser. Guet läsbari Schrifte hälfed uf chliine Bildschirm."
+    ],
     "Sprache": ["Language", "Sprooch"],
-    "Sprache der Oberfläche. Gilt für diesen Browser; Inhalte wie Mitteilungen bleiben in ihrer Sprache.": ["Language of the interface. Applies to this browser; content such as announcements stays in its language.", "Sprooch vo de Oberflächi. Gilt für dä Browser; Inhält wie Mitteilige bliibed i ihrere Sprooch."],
-    "Standard (wie sekbuelach.ch)": ["Default (as on sekbuelach.ch)", "Standard (wie sekbuelach.ch)"],
-    "Besonders gut lesbar, klare Buchstabenformen": ["Especially legible, clear letter shapes", "Bsunders guet läsbar, klari Buechstabeforme"],
-    "Kompakt, gut für Tabellen": ["Compact, good for tables", "Kompakt, guet für Tabälle"],
-    "Serifenschrift für längere Texte": ["Serif font for longer texts", "Serifeschrift für längeri Text"],
+    "Sprache der Oberfläche. Gilt für diesen Browser; Inhalte wie Mitteilungen bleiben in ihrer Sprache.": [
+        "Language of the interface. Applies to this browser; content such as announcements stays in its language.",
+        "Sprooch vo de Oberflächi. Gilt für dä Browser; Inhält wie Mitteilige bliibed i ihrere Sprooch."
+    ],
+    "Standard (wie sekbuelach.ch)": [
+        "Default (as on sekbuelach.ch)",
+        "Standard (wie sekbuelach.ch)"
+    ],
+    "Besonders gut lesbar, klare Buchstabenformen": [
+        "Especially legible, clear letter shapes",
+        "Bsunders guet läsbar, klari Buechstabeforme"
+    ],
+    "Kompakt, gut für Tabellen": [
+        "Compact, good for tables",
+        "Kompakt, guet für Tabälle"
+    ],
+    "Serifenschrift für längere Texte": [
+        "Serif font for longer texts",
+        "Serifeschrift für längeri Text"
+    ],
     "Systemschrift": ["System font", "Systemschrift"],
-    "Schrift des Betriebssystems, lädt nichts nach": ["Operating system font, loads nothing extra", "Schrift vom Betriebssystem, ladt nüt naa"],
-    "Sekundarschule Bülach – Ää Öö Üü {n}": ["Sekundarschule Bülach – Ää Öö Üü {n}", "Sekundarschuel Bülach – Ää Öö Üü {n}"],
+    "Schrift des Betriebssystems, lädt nichts nach": [
+        "Operating system font, loads nothing extra",
+        "Schrift vom Betriebssystem, ladt nüt naa"
+    ],
+    "Sekundarschule Bülach – Ää Öö Üü {n}": [
+        "Sekundarschule Bülach – Ää Öö Üü {n}",
+        "Sekundarschuel Bülach – Ää Öö Üü {n}"
+    ],
     "Breite der Seitenleiste": ["Sidebar width", "Breiti vo de Siiteleischte"],
-    "Ziehen = Breite ändern, Doppelklick = Standardbreite": ["Drag = change width, double-click = default width", "Zieh = Breiti ändere, Doppelklick = Standardbreiti"],
-    "Versionen und Änderungen": ["Versions and changes", "Versione und Änderige"],
+    "Ziehen = Breite ändern, Doppelklick = Standardbreite": [
+        "Drag = change width, double-click = default width",
+        "Zieh = Breiti ändere, Doppelklick = Standardbreiti"
+    ],
+    "Versionen und Änderungen": [
+        "Versions and changes",
+        "Versione und Änderige"
+    ],
     "Version {n}": ["Version {n}", "Version {n}"],
-    "Enthält die aktuelle Seite": ["Contains the current page", "Hät di aktuell Siite drin"],
+    "Enthält die aktuelle Seite": [
+        "Contains the current page",
+        "Hät di aktuell Siite drin"
+    ],
     "Einklappen": ["Collapse", "Iichlappe"],
     "Ausklappen": ["Expand", "Uusklappe"],
     "geplant": ["planned", "planet"],
     "Geplant": ["Planned", "Planet"],
-    "Nur mit Testdaten verwenden": ["Use with test data only", "Nur mit Testdate bruuche"],
+    "Nur mit Testdaten verwenden": [
+        "Use with test data only",
+        "Nur mit Testdate bruuche"
+    ],
     "nicht eingerichtet": ["not set up", "nöd iigrichtet"],
-    "Fehler beim letzten Lauf": ["Error in last run", "Fähler bim letschte Lauf"],
+    "Fehler beim letzten Lauf": [
+        "Error in last run",
+        "Fähler bim letschte Lauf"
+    ],
     "Kopieren": ["Copy", "Kopiere"],
     "Kopiert.": ["Copied.", "Kopiert."],
     "Kopieren nicht möglich.": ["Copying not possible.", "Kopiere gaht nöd."],

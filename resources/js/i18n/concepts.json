@@ -3,62 +3,29 @@
         "Language / Sprache / Sprooch",
         "Sprooch / Language / Sprache"
     ],
-    "aktiv": [
-        "active",
-        "aktiv"
-    ],
-    "Version": [
-        "Version",
-        "Version"
-    ],
-    "Sprache wählen": [
-        "Choose language",
-        "Sprooch wääle"
-    ],
+    "aktiv": ["active", "aktiv"],
+    "Version": ["Version", "Version"],
+    "Sprache wählen": ["Choose language", "Sprooch wääle"],
     "Wirkt sofort auf die ganze Oberfläche, ohne Neuladen.": [
         "Applies to the whole interface at once, without reloading.",
         "Wirkt sofort uf di ganz Oberflächi, ooni neu z laade."
     ],
-    "Grundsätze": [
-        "Principles",
-        "Grundsätz"
-    ],
-    "Sprachen und Codes": [
-        "Languages and codes",
-        "Spraache und Codes"
-    ],
+    "Grundsätze": ["Principles", "Grundsätz"],
+    "Sprachen und Codes": ["Languages and codes", "Spraache und Codes"],
     "Codes nach BCP {n}. Zürichdeutsch: Sprache gsw (Schweizerdeutsch) mit Unterteilung Kanton Zürich.": [
         "Codes according to BCP {n}. Zurich German: language gsw (Swiss German) with the subdivision Canton of Zurich.",
         "Codes nach BCP {n}. Züritüütsch: Sprooch gsw (Schwiizertüütsch) mit de Unterteilig Kanton Züri."
     ],
-    "Code": [
-        "Code",
-        "Code"
-    ],
-    "HTML lang": [
-        "HTML lang",
-        "HTML lang"
-    ],
-    "Übersetzt": [
-        "Translated",
-        "Übersetzt"
-    ],
-    "Hinweise": [
-        "Notes",
-        "Hiiwiis"
-    ],
+    "Code": ["Code", "Code"],
+    "HTML lang": ["HTML lang", "HTML lang"],
+    "Übersetzt": ["Translated", "Übersetzt"],
+    "Hinweise": ["Notes", "Hiiwiis"],
     "Beispiele aus den Katalogen": [
         "Examples from the catalogues",
         "Biispiil us de Kataloog"
     ],
-    "English": [
-        "English",
-        "English"
-    ],
-    "Züritüütsch": [
-        "Zurich German",
-        "Züritüütsch"
-    ],
+    "English": ["English", "English"],
+    "Züritüütsch": ["Zurich German", "Züritüütsch"],
     "Fehlende Texte in diesem Browser": [
         "Missing texts in this browser",
         "Fäälendi Täxt i däm Browser"
@@ -67,14 +34,8 @@
         "Texts shown without a translation since the page was loaded. Only recorded in English or Zurich German.",
         "Täxt, wo sit em Laade ooni Übersetzig aazeigt worde sind. Nur uf Änglisch oder Züritüütsch erfasst."
     ],
-    "Aktualisieren": [
-        "Refresh",
-        "Aktualisiere"
-    ],
-    "Keine fehlenden Texte.": [
-        "No missing texts.",
-        "Kei fäälendi Täxt."
-    ],
+    "Aktualisieren": ["Refresh", "Aktualisiere"],
+    "Keine fehlenden Texte.": ["No missing texts.", "Kei fäälendi Täxt."],
     "Mehrsprachige Oberfläche nach dem Vorbild TagStudio: Deutsch als Standard, Englisch und Zürichdeutsch als Alternativen.": [
         "Multilingual interface modelled on TagStudio: German by default, English and Zurich German as alternatives.",
         "Mehrspraachigi Oberflächi nach em Vorbild TagStudio: Tüütsch als Standard, Änglisch und Züritüütsch als Alternativä."
@@ -111,106 +72,46 @@
         "The language applies per browser (Settings → Appearance or at the bottom of the sidebar). The page is hidden briefly before the first paint so no German flashes up.",
         "D Sprooch gilt pro Browser (Iistellige → Darstellig oder une i de Siiteleiste). Vor em erschte Bild wird d Siite churz versteckt, damit kei Tüütsch ufblitzt."
     ],
-    "Konzept": [
-        "Concept",
-        "Konzept"
-    ],
-    "Geplanter Endpunkt": [
-        "Planned endpoint",
-        "Plante Ändpunkt"
-    ],
-    "noch nicht aktiv": [
-        "not active yet",
-        "no nöd aktiv"
-    ],
-    "Aufbau": [
-        "Architecture",
-        "Ufbau"
-    ],
+    "Konzept": ["Concept", "Konzept"],
+    "Geplanter Endpunkt": ["Planned endpoint", "Plante Ändpunkt"],
+    "noch nicht aktiv": ["not active yet", "no nöd aktiv"],
+    "Aufbau": ["Architecture", "Ufbau"],
     "Das Model Context Protocol (MCP) ist ein offener Standard, über den KI-Assistenten Werkzeuge und Daten anderer Systeme nutzen.": [
         "The Model Context Protocol (MCP) is an open standard that lets AI assistants use tools and data from other systems.",
         "S Model Context Protocol (MCP) isch en offne Standard, über dä KI-Assistänte Wärchzüüg und Date vo andere Systeem bruuched."
     ],
-    "Clients": [
-        "Clients",
-        "Clients"
-    ],
+    "Clients": ["Clients", "Clients"],
     "Alle drei verlangen einen öffentlich erreichbaren Server mit HTTPS. Mit OAuth {n}, PKCE und dynamischer Client-Registrierung sind alle drei abgedeckt.": [
         "All three require a publicly reachable server with HTTPS. OAuth {n} with PKCE and dynamic client registration covers all three.",
         "Alli drüü verlanged en öffentlich erreichbare Server mit HTTPS. Mit OAuth {n}, PKCE und dynamischer Client-Registrierig sind alli drüü abdeckt."
     ],
-    "Client": [
-        "Client",
-        "Client"
-    ],
-    "Einbindung": [
-        "Integration",
-        "Iibindig"
-    ],
-    "Anmeldung": [
-        "Sign-in",
-        "Aamäldig"
-    ],
-    "Werkzeuge": [
-        "Tools",
-        "Wärchzüüg"
-    ],
+    "Client": ["Client", "Client"],
+    "Einbindung": ["Integration", "Iibindig"],
+    "Anmeldung": ["Sign-in", "Aamäldig"],
+    "Werkzeuge": ["Tools", "Wärchzüüg"],
     "Abgeleitet aus der OpenAPI-Beschreibung der API – eine neue API-Operation erscheint hier automatisch.": [
         "Derived from the API's OpenAPI description – a new API operation appears here automatically.",
         "Abgleitet us de OpenAPI-Beschriibig vo de API – e neui API-Operation chunnt da automatisch dezue."
     ],
-    "Werkzeug": [
-        "Tool",
-        "Wärchzüüg"
-    ],
-    "Phase": [
-        "Phase",
-        "Phase"
-    ],
-    "Phase {n}": [
-        "Phase {n}",
-        "Phase {n}"
-    ],
-    "lesen": [
-        "read",
-        "läse"
-    ],
-    "schreiben": [
-        "write",
-        "schriibe"
-    ],
+    "Werkzeug": ["Tool", "Wärchzüüg"],
+    "Phase": ["Phase", "Phase"],
+    "Phase {n}": ["Phase {n}", "Phase {n}"],
+    "lesen": ["read", "läse"],
+    "schreiben": ["write", "schriibe"],
     "Datenschutz und Sicherheit": [
         "Data protection and security",
         "Dateschutz und Sicherheit"
     ],
-    "Phasen": [
-        "Phases",
-        "Phase"
-    ],
-    "Offene Fragen": [
-        "Open questions",
-        "Offni Frage"
-    ],
-    "KI-Client": [
-        "AI client",
-        "KI-Client"
-    ],
-    "MCP-Endpunkt /mcp": [
-        "MCP endpoint /mcp",
-        "MCP-Ändpunkt /mcp"
-    ],
+    "Phasen": ["Phases", "Phase"],
+    "Offene Fragen": ["Open questions", "Offni Frage"],
+    "KI-Client": ["AI client", "KI-Client"],
+    "MCP-Endpunkt /mcp": ["MCP endpoint /mcp", "MCP-Ändpunkt /mcp"],
     "Gleiche Regeln wie die API": [
         "Same rules as the API",
         "Gliichi Regle wie d API"
     ],
-    "Daten und Protokoll": [
-        "Data and log",
-        "Date und Protokoll"
-    ],
-    "Lesen: Inhalte": [
-        "Read: content",
-        "Läse: Inhält"
-    ],
+    "Daten und Protokoll": ["Data and log", "Date und Protokoll"],
+    "Lesen: Inhalte": ["Read: content", "Läse: Inhält"],
     "Lesen: Personalverzeichnis": [
         "Read: staff directory",
         "Läse: Personalverzeichnis"
@@ -323,42 +224,24 @@
         "Signed-in person and token",
         "Aagmäldeti Person und Token"
     ],
-    "Personen auflisten": [
-        "List people",
-        "Persoone uflischte"
-    ],
-    "Person anlegen": [
-        "Create person",
-        "Person aalege"
-    ],
-    "Eine Person": [
-        "One person",
-        "Ei Person"
-    ],
+    "Personen auflisten": ["List people", "Persoone uflischte"],
+    "Person anlegen": ["Create person", "Person aalege"],
+    "Eine Person": ["One person", "Ei Person"],
     "Person ändern (nur gesendete Felder)": [
         "Change person (sent fields only)",
         "Person ändere (nur gschickti Fälder)"
     ],
-    "Person löschen": [
-        "Delete person",
-        "Person lösche"
-    ],
+    "Person löschen": ["Delete person", "Person lösche"],
     "Veröffentlichte Mitteilungen": [
         "Published announcements",
         "Veröffentlichti Mitteilige"
     ],
-    "Dokumente und Links": [
-        "Documents and links",
-        "Dokumänt und Links"
-    ],
+    "Dokumente und Links": ["Documents and links", "Dokumänt und Links"],
     "Auswahllisten (Schulhäuser, Rollen, Kategorien)": [
         "Selection lists (school buildings, roles, categories)",
         "Uswaallischte (Schuelhüüser, Rolle, Kategorie)"
     ],
-    "Felder der Person": [
-        "Fields of the person",
-        "Fälder vo de Person"
-    ],
+    "Felder der Person": ["Fields of the person", "Fälder vo de Person"],
     "Zahlen werden beim Nachschlagen ersetzt: «{n} Einträge» und «{n} Einträge» teilen sich einen Katalogeintrag.": [
         "Numbers are replaced when looking up: «{n} Einträge» and «{n} Einträge» share one catalogue entry.",
         "Zaale werded bim Naaluege ersetzt: «{n} Einträge» und «{n} Einträge» teiled sich en Kataloogiitrag."
