@@ -182,8 +182,7 @@ export function NavModules({ groups }: { groups: ModuleNavGroup[] }) {
                                                                 'text-sidebar-foreground/60',
                                                         )}
                                                     >
-                                                        {item.open ===
-                                                            'tab' &&
+                                                        {item.open === 'tab' &&
                                                         item.external ? (
                                                             // Nur neuer Tab: direkt zur Adresse
                                                             <a

@@ -12,11 +12,11 @@ betrieben und im Intranet **eingebunden**: im Rahmen (iframe) und/oder in neuem 
 Intranet. So bleiben die Projekte unabhängig (eigene Releases, eigenes Repository) und das Intranet
 bleibt schlank.
 
-| Art          | Beispiel                           | Läuft wo                    | Einbindung                       |
-| ------------ | ---------------------------------- | --------------------------- | -------------------------------- |
-| Plugin       | Escola-Import, Jamf, IDA           | im Intranet (PHP)           | `plugins/<Ordner>/`              |
+| Art          | Beispiel                            | Läuft wo                    | Einbindung                       |
+| ------------ | ----------------------------------- | --------------------------- | -------------------------------- |
+| Plugin       | Escola-Import, Jamf, IDA            | im Intranet (PHP)           | `plugins/<Ordner>/`              |
 | Anwendung    | websnapshot, abaflow, TTS, Lizenzen | eigener Container/Subdomain | `embed` mit `repo`, Adresse .env |
-| Fremde Seite | SharePoint, Jira, Confluence       | beim Anbieter               | `embed` mit fester Adresse       |
+| Fremde Seite | SharePoint, Jira, Confluence        | beim Anbieter               | `embed` mit fester Adresse       |
 
 ## Umsetzung im Intranet (ab 0.12.0)
 
