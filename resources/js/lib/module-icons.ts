@@ -1,6 +1,7 @@
 import type { LucideIcon } from 'lucide-react';
 import {
     BookOpen,
+    Braces,
     CalendarCheck,
     CalendarClock,
     CalendarDays,
@@ -32,6 +33,7 @@ import {
  */
 const icons: Record<string, LucideIcon> = {
     BookOpen,
+    Braces,
     CalendarCheck,
     CalendarClock,
     CalendarDays,

@@ -6,13 +6,13 @@ use App\Data\Contracts\UserRepository;
 use App\Support\AuditLog;
 use App\Support\GridViews;
 use App\Support\PersonFields;
+use App\Support\PersonValidator;
 use App\Support\SpreadsheetWriter;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\ValidationException;
-use Illuminate\Validation\Validator;
 use Inertia\Inertia;
 use Inertia\Response;
 use Symfony\Component\HttpFoundation\Response as HttpResponse;
@@ -382,47 +382,11 @@ class PersonController extends Controller
     }
 
     /**
-     * Prüft alle Felder nach Schema; liefert einen vollständigen Datensatz (fehlende Felder = null)
-     * oder die Fehler je Feld.
-     *
      * @param  array<string, mixed>  $input
      * @return array{data: array<string, mixed>}|array{errors: array<string, string>}
      */
     private function check(array $input, ?string $ignoreId = null): array
     {
-        $input = PersonFields::withNames($input);
-        foreach (['email', 'private_email'] as $key) {
-            if (is_string($input[$key] ?? null)) {
-                $input[$key] = mb_strtolower(trim($input[$key]));
-            }
-        }
-
-        $rules = PersonFields::rules();
-        $validator = validator($input, $rules, [], array_map(
-            fn (array $f): string => $f['label'],
-            array_column(PersonFields::fields(true), null, 'key'),
-        ));
-
-        // Eindeutige E-Mail (in der Datenbank später ein UNIQUE-Index).
-        $validator->after(function (Validator $validator) use ($input, $ignoreId): void {
-            $existing = $this->users->findByEmail((string) ($input['email'] ?? ''));
-
-            if ($existing !== null && ($existing['id'] ?? null) !== $ignoreId) {
-                $validator->errors()->add('email', 'Diese E-Mail-Adresse ist bereits erfasst.');
-            }
-        });
-
-        if ($validator->fails()) {
-            return ['errors' => array_map(fn (array $m): string => (string) $m[0], $validator->errors()->toArray())];
-        }
-
-        $data = $validator->validated();
-        $complete = [];
-        foreach (array_keys($rules) as $key) {
-            $complete[$key] = $data[$key] ?? null;
-        }
-        $complete['active'] = filter_var($input['active'] ?? false, FILTER_VALIDATE_BOOL);
-
-        return ['data' => $complete];
+        return app(PersonValidator::class)->check($input, $ignoreId);
     }
 }

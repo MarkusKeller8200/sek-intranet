@@ -19,6 +19,9 @@ Projekt: SekBülach Intranet, Prototyp. Stack und Konventionen wie IDA.
 - Module und Navigation nur in `config/intranet.php` → `modules` pflegen. Geplante Module ohne `href`
   (erscheinen als Platzhalter unter `/module/<schlüssel>`); beim Umsetzen `href` setzen. Symbol in
   `resources/js/lib/module-icons.ts` eintragen.
+- REST-API unter `/api/v1` (routes/api.php, `App\Http\Controllers\Api`), Beschreibung in
+  `App\Support\OpenApi` nachführen – die Seite «API» (Tester) und `/api/openapi.json` lesen daraus.
+  Anmeldung nur mit Token (`api_tokens`, nur Hash gespeichert), Rechte wie die Besitzerin/der Besitzer.
 - Wird ein Schlüssel einer Auswahlliste umbenannt, Umstellung unter `renames` eintragen
   (`php artisan intranet:upgrade` stellt bestehende Daten beim Start um).
 

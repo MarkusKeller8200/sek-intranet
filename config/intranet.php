@@ -251,6 +251,7 @@ return [
                 'plugins' => ['title' => 'Plugins', 'icon' => 'Plug', 'href' => '/plugins'],
                 'datenstrukturen' => ['title' => 'Datenstrukturen', 'icon' => 'Database', 'href' => '/datenstrukturen'],
                 'farbkonzept' => ['title' => 'Farbkonzept', 'icon' => 'Palette', 'href' => '/farbkonzept'],
+                'api' => ['title' => 'API', 'icon' => 'Braces', 'href' => '/api-doku'],
             ],
         ],
     ],
@@ -474,6 +475,20 @@ return [
                 'source' => ['type' => 'string', 'required' => true, 'label' => 'Quelle (Formular, Tabelle, Import …)'],
                 'user_id' => ['type' => 'ref', 'references' => 'users', 'required' => false, 'label' => 'Geändert von'],
                 'user_name' => ['type' => 'string', 'required' => false, 'label' => 'Name (Momentaufnahme)'],
+            ],
+        ],
+
+        'api_tokens' => [
+            'label' => 'System: API-Zugänge',
+            'description' => 'Zugänge für die REST-API (/api/v1). Gespeichert wird nur der SHA-256-Hash des Tokens.',
+            'fields' => [
+                'name' => ['type' => 'string', 'required' => true, 'label' => 'Bezeichnung'],
+                'token_hash' => ['type' => 'string', 'required' => true, 'unique' => true, 'label' => 'Token (SHA-256)'],
+                'prefix' => ['type' => 'string', 'required' => true, 'label' => 'Anfang des Tokens (zur Wiedererkennung)'],
+                'abilities' => ['type' => 'json', 'required' => true, 'label' => 'Rechte (read, write)'],
+                'owner_id' => ['type' => 'ref', 'references' => 'users', 'required' => true, 'label' => 'Handelt im Namen von'],
+                'expires_at' => ['type' => 'datetime', 'required' => false, 'label' => 'Gültig bis'],
+                'last_used_at' => ['type' => 'datetime', 'required' => false, 'label' => 'Zuletzt verwendet'],
             ],
         ],
 

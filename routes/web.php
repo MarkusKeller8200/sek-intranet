@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AnnouncementController;
+use App\Http\Controllers\ApiDocsController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DataStructureController;
@@ -72,6 +73,11 @@ Route::middleware('auth')->group(function () {
 
         Route::get('datenstrukturen', DataStructureController::class)->name('data-structures');
         Route::inertia('farbkonzept', 'color-concept')->name('color-concept');
+
+        // REST-API: Beschreibung mit Tester und Tokens
+        Route::get('api-doku', [ApiDocsController::class, 'show'])->name('api-docs');
+        Route::post('api-doku/tokens', [ApiDocsController::class, 'store'])->middleware('throttle:20,1')->name('api-docs.tokens.store');
+        Route::delete('api-doku/tokens/{id}', [ApiDocsController::class, 'destroy'])->name('api-docs.tokens.destroy');
 
         // Plugins (Anbindung anderer Systeme per API)
         Route::get('plugins', [PluginController::class, 'index'])->name('plugins.index');
