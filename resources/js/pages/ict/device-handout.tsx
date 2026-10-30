@@ -96,7 +96,9 @@ export default function DeviceHandout({ planned }: { planned: Planned }) {
         }
         const reader = new FileReader();
         reader.onload = () => {
-            const result = parseCsv(String(reader.result ?? ''));
+            const result = parseCsv(
+                typeof reader.result === 'string' ? reader.result : '',
+            );
             if ('error' in result) {
                 toast.error(result.error);
             } else {
