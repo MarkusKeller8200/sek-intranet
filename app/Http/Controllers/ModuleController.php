@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Plugins\PluginManager;
 use App\Support\ModuleNavigation;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
@@ -14,10 +15,17 @@ use Inertia\Response;
  */
 class ModuleController extends Controller
 {
-    public function show(Request $request, string $key, ModuleNavigation $modules, PluginManager $plugins): Response
+    public function show(Request $request, string $key, ModuleNavigation $modules, PluginManager $plugins): Response|RedirectResponse
     {
         $module = $modules->planned($key, $request->user());
-        abort_if($module === null, 404);
+        if ($module === null) {
+            // Inzwischen umgesetzt: alte Links (/module/<schlüssel>) auf die neue Seite umleiten
+            $href = collect($modules->groups($request->user()))->flatMap(fn (array $g): array => $g['items'])
+                ->firstWhere('key', $key)['href'] ?? null;
+            abort_if(! is_string($href) || str_starts_with($href, '/module/'), 404);
+
+            return redirect($href);
+        }
 
         $plugin = null;
         $id = $module['plugin'];

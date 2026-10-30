@@ -47,7 +47,8 @@ class ModuleNavigationTest extends TestCase
         $this->signInAs('admin');
 
         $this->get('/module/gibt-es-nicht')->assertNotFound();
-        $this->get('/module/mitteilungen')->assertNotFound();
+        $this->get('/module/mitteilungen')->assertRedirect('/mitteilungen');
+        $this->get('/module/geraeteausgabe')->assertRedirect('/geraeteausgabe');
     }
 
     public function test_every_implemented_module_link_works_for_admin(): void

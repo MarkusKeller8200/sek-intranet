@@ -345,6 +345,7 @@ return [
                 'geraeteausgabe' => [
                     'title' => 'Geräteausgabe',
                     'icon' => 'PackagePlus',
+                    'href' => '/geraeteausgabe',
                     'description' => 'Geräte an Mitarbeitende oder Schülerinnen und Schüler ausgeben, mit Quittung.',
                     'features' => ['Gerät per Seriennummer oder Scan wählen', 'Zuweisung in Jamf (Benutzer und Standort)', 'Ausgabequittung als PDF', 'Offene Bestellungen übernehmen'],
                     'plugin' => 'jamf',

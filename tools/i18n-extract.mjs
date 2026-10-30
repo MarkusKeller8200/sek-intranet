@@ -40,8 +40,10 @@ const walk = (dir) => {
         if (fs.statSync(file).isDirectory()) {
             if (!SKIP_DIRS.has(name)) walk(file);
         } else if (/\.tsx?$/.test(name)) {
-            const code = fs
-                .readFileSync(file, 'utf8')
+            const raw = fs.readFileSync(file, 'utf8');
+            // Dateien für Ausdrucke/Downloads (z. B. PDF für Schüler:innen) bleiben deutsch
+            if (raw.includes('i18n: nicht übersetzen')) continue;
+            const code = raw
                 .replace(/\/\*[\s\S]*?\*\//g, '')
                 .replace(/^\s*\/\/.*$/gm, '');
             const rel = path.relative(root, file);

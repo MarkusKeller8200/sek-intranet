@@ -5,6 +5,7 @@ use App\Http\Controllers\ApiDocsController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DataStructureController;
+use App\Http\Controllers\DeviceHandoutController;
 use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\EmbedController;
 use App\Http\Controllers\EventController;
@@ -76,6 +77,7 @@ Route::middleware('auth')->group(function () {
         Route::delete('personen/{id}', [PersonController::class, 'destroy'])->name('people.destroy');
 
         Route::get('datenstrukturen', DataStructureController::class)->name('data-structures');
+        Route::get('geraeteausgabe', DeviceHandoutController::class)->name('device-handout');
         Route::inertia('farbkonzept', 'color-concept')->name('color-concept');
         Route::inertia('sprachkonzept', 'language-concept')->name('language-concept');
         Route::get('mcp-konzept', McpConceptController::class)->name('mcp-concept');

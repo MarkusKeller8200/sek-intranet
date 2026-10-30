@@ -7,6 +7,18 @@ laufend unter **Unveröffentlicht** und werden beim Erhöhen der Version zur neu
 
 ## [Unveröffentlicht]
 
+## [0.13.0] – 2026-10-30
+
+### Neu
+
+- Fachstelle ICT → Geräteausgabe: Zugangsdaten-Generator (Passwörter und PIN für Schüler-Logins, CSV-Export und
+  -Import, Zugangskärtchen, PDF je Schüler:in mit Klassenübersicht, PowerShell-Skript für Microsoft 365). Läuft nur
+  im Browser, speichert nichts im Intranet
+
+### Geändert
+
+- Alte Links `/module/<modul>` leiten auf umgesetzte Seiten weiter
+
 ## [0.12.1] – 2026-10-30
 
 ### Geändert
