@@ -62,6 +62,8 @@ Route::middleware('auth')->group(function () {
         Route::post('personen', [PersonController::class, 'store'])->name('people.store');
         Route::get('personen/{id}/bearbeiten', [PersonController::class, 'edit'])->name('people.edit');
         Route::put('personen/{id}', [PersonController::class, 'update'])->name('people.update');
+        Route::post('personen/{id}/feld', [PersonController::class, 'updateField'])->middleware('throttle:240,1')->name('people.update-field');
+        Route::post('personen/sammelaenderung', [PersonController::class, 'bulkUpdate'])->name('people.bulk-update');
         Route::delete('personen/{id}', [PersonController::class, 'destroy'])->name('people.destroy');
 
         Route::get('datenstrukturen', DataStructureController::class)->name('data-structures');

@@ -1,175 +1,288 @@
-import { Head, Link, usePage } from '@inertiajs/react';
+import { Head, Link, router, usePage } from '@inertiajs/react';
 import {
-    flexRender,
-    getCoreRowModel,
-    getFilteredRowModel,
-    getSortedRowModel,
-    useReactTable,
-} from '@tanstack/react-table';
-import type {
-    ColumnDef,
-    HeaderContext,
-    SortingState,
-} from '@tanstack/react-table';
-import {
-    ArrowUpDown,
+    ChevronDown,
+    Copy,
     Mail,
     Pencil,
     Phone,
     Plus,
     Search,
+    SquarePen,
     Users,
 } from 'lucide-react';
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
+import { toast } from 'sonner';
+import DataGrid from '@/components/data-grid';
+import type { GridColumn } from '@/components/data-grid';
 import DeleteButton from '@/components/delete-button';
 import EmptyState from '@/components/empty-state';
 import OptionBadge from '@/components/option-badge';
 import PageHeader from '@/components/page-header';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from '@/components/ui/table';
-import { label, useOptions } from '@/hooks/use-options';
+    Dialog,
+    DialogClose,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+} from '@/components/ui/dialog';
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuSeparator,
+    DropdownMenuSub,
+    DropdownMenuSubContent,
+    DropdownMenuSubTrigger,
+    DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { Input } from '@/components/ui/input';
+import { useOptions } from '@/hooks/use-options';
+import { postJson } from '@/lib/http';
 import type { Person } from '@/types';
 
-export default function PeopleIndex({ people }: { people: Person[] }) {
-    // TanStack Table arbeitet mit veränderlichen Objekten: React Compiler hier aus.
-    'use no memo';
+type BulkChange = {
+    field: 'school' | 'role' | 'active';
+    value: string | boolean;
+    label: string;
+    people: Person[];
+    clear: () => void;
+};
 
+type FieldResponse = { person?: Person; status?: string; message?: string };
+
+async function saveField(
+    person: Person,
+    field: string,
+    value: unknown,
+): Promise<Person> {
+    const res = await postJson<FieldResponse>(`/personen/${person.id}/feld`, {
+        field,
+        value,
+    });
+    if (!res.person) {
+        throw new Error(res.message ?? 'Speichern fehlgeschlagen.');
+    }
+
+    return res.person;
+}
+
+export default function PeopleIndex({ people }: { people: Person[] }) {
     const { auth } = usePage().props;
     const options = useOptions();
-    const [sorting, setSorting] = useState<SortingState>([
-        { id: 'name', desc: false },
-    ]);
-    const [globalFilter, setGlobalFilter] = useState('');
     const canManage = auth.can.manageUsers;
+    const [bulk, setBulk] = useState<BulkChange | null>(null);
+    const [busy, setBusy] = useState(false);
+    const [mobileSearch, setMobileSearch] = useState('');
 
-    const columns = useMemo<ColumnDef<Person>[]>(() => {
-        const sortable = (title: string) =>
-            function SortHeader({ column }: HeaderContext<Person, unknown>) {
-                return (
-                    <Button
-                        variant="ghost"
-                        size="sm"
-                        className="-ml-3"
-                        onClick={() =>
-                            column.toggleSorting(column.getIsSorted() === 'asc')
-                        }
-                    >
-                        {title} <ArrowUpDown className="size-3.5" />
-                    </Button>
-                );
-            };
+    const columns: GridColumn<Person>[] = [
+        {
+            id: 'name',
+            title: 'Name',
+            type: 'text',
+            editable: true,
+            render: (p) => (
+                <span className="flex items-center gap-2">
+                    <span className="truncate font-medium">{p.name}</span>
+                    {!p.active && <Badge variant="outline">inaktiv</Badge>}
+                </span>
+            ),
+        },
+        { id: 'function', title: 'Funktion', type: 'text', editable: true },
+        {
+            id: 'school',
+            title: 'Schulhaus',
+            type: 'select',
+            options: options.schools,
+            editable: true,
+            render: (p) => <OptionBadge list="schools" value={p.school} dot />,
+        },
+        {
+            id: 'email',
+            title: 'E-Mail',
+            type: 'email',
+            editable: true,
+            render: canManage
+                ? undefined
+                : (p) => (
+                      <a className="hover:underline" href={`mailto:${p.email}`}>
+                          {p.email}
+                      </a>
+                  ),
+        },
+        { id: 'phone', title: 'Telefon', type: 'tel', editable: true },
+        ...(canManage
+            ? ([
+                  {
+                      id: 'role',
+                      title: 'Rolle',
+                      type: 'select',
+                      options: options.roles,
+                      editable: true,
+                      render: (p) => (
+                          <OptionBadge list="roles" value={p.role} />
+                      ),
+                  },
+                  {
+                      id: 'active',
+                      title: 'Aktiv',
+                      type: 'bool',
+                      editable: true,
+                  },
+              ] satisfies GridColumn<Person>[])
+            : []),
+    ];
 
-        const base: ColumnDef<Person>[] = [
-            {
-                accessorKey: 'name',
-                header: sortable('Name'),
-                cell: ({ row }) => (
-                    <div className="flex items-center gap-2">
-                        <span className="font-medium">{row.original.name}</span>
-                        {!row.original.active && (
-                            <Badge variant="outline">inaktiv</Badge>
-                        )}
-                    </div>
-                ),
-            },
-            {
-                accessorKey: 'function',
-                header: sortable('Funktion'),
-                cell: ({ row }) => row.original.function ?? '',
-            },
-            {
-                id: 'school',
-                accessorFn: (person) => label(options.schools, person.school),
-                header: sortable('Schulhaus'),
-                cell: ({ row }) => (
-                    <OptionBadge
-                        list="schools"
-                        value={row.original.school}
-                        dot
-                    />
-                ),
-            },
-            {
-                accessorKey: 'email',
-                header: 'E-Mail',
-                cell: ({ row }) => (
-                    <a
-                        className="hover:underline"
-                        href={`mailto:${row.original.email}`}
-                    >
-                        {row.original.email}
-                    </a>
-                ),
-            },
-            {
-                accessorKey: 'phone',
-                header: 'Telefon',
-                cell: ({ row }) => row.original.phone ?? '',
-            },
-        ];
-
-        if (!canManage) {
-            return base;
+    const applyBulk = async () => {
+        if (!bulk) {
+            return;
         }
-
-        return [
-            ...base,
+        setBusy(true);
+        const res = await postJson<{ message?: string; status?: string }>(
+            '/personen/sammelaenderung',
             {
-                id: 'role',
-                accessorFn: (person) => label(options.roles, person.role),
-                header: sortable('Rolle'),
-                cell: ({ row }) => (
-                    <OptionBadge list="roles" value={row.original.role} />
-                ),
+                ids: bulk.people.map((p) => p.id),
+                field: bulk.field,
+                value: bulk.value,
             },
-            {
-                id: 'actions',
-                header: '',
-                enableSorting: false,
-                cell: ({ row }) => (
-                    <div className="flex justify-end gap-1">
-                        <Button variant="ghost" size="icon" asChild>
-                            <Link
-                                href={`/personen/${row.original.id}/bearbeiten`}
-                                aria-label="Bearbeiten"
-                            >
-                                <Pencil />
-                            </Link>
+        );
+        setBusy(false);
+        if (res.status === 'error') {
+            toast.error(res.message ?? 'Änderung fehlgeschlagen.');
+
+            return;
+        }
+        toast.success(res.message ?? 'Geändert.');
+        bulk.clear();
+        setBulk(null);
+        router.reload({ only: ['people'] });
+    };
+
+    const emails = (selected: Person[]) => selected.map((p) => p.email);
+
+    const bulkActions = (selected: Person[], clear: () => void) => (
+        <>
+            <Button variant="outline" size="sm" asChild>
+                <a href={`mailto:?bcc=${emails(selected).join(',')}`}>
+                    <Mail /> E-Mail an Auswahl
+                </a>
+            </Button>
+            <Button
+                variant="outline"
+                size="sm"
+                onClick={() =>
+                    void navigator.clipboard
+                        .writeText(emails(selected).join('; '))
+                        .then(() =>
+                            toast.success(
+                                `${selected.length} Adressen kopiert.`,
+                            ),
+                        )
+                        .catch(() => toast.error('Kopieren nicht möglich.'))
+                }
+            >
+                <Copy /> Adressen kopieren
+            </Button>
+            {canManage && (
+                <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                        <Button size="sm">
+                            <SquarePen /> Ändern{' '}
+                            <ChevronDown className="opacity-60" />
                         </Button>
-                        {row.original.id !== auth.user.id && (
-                            <DeleteButton
-                                url={`/personen/${row.original.id}`}
-                                title={`${row.original.name} löschen?`}
-                                size="icon"
-                            />
-                        )}
-                    </div>
-                ),
-            },
-        ];
-    }, [auth.user.id, canManage, options.roles, options.schools]);
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                        <DropdownMenuSub>
+                            <DropdownMenuSubTrigger>
+                                Schulhaus setzen
+                            </DropdownMenuSubTrigger>
+                            <DropdownMenuSubContent>
+                                {Object.entries(options.schools).map(
+                                    ([key, name]) => (
+                                        <DropdownMenuItem
+                                            key={key}
+                                            onSelect={() =>
+                                                setBulk({
+                                                    field: 'school',
+                                                    value: key,
+                                                    label: `Schulhaus «${name}»`,
+                                                    people: selected,
+                                                    clear,
+                                                })
+                                            }
+                                        >
+                                            {name}
+                                        </DropdownMenuItem>
+                                    ),
+                                )}
+                            </DropdownMenuSubContent>
+                        </DropdownMenuSub>
+                        <DropdownMenuSub>
+                            <DropdownMenuSubTrigger>
+                                Rolle setzen
+                            </DropdownMenuSubTrigger>
+                            <DropdownMenuSubContent>
+                                {Object.entries(options.roles).map(
+                                    ([key, name]) => (
+                                        <DropdownMenuItem
+                                            key={key}
+                                            onSelect={() =>
+                                                setBulk({
+                                                    field: 'role',
+                                                    value: key,
+                                                    label: `Rolle «${name}»`,
+                                                    people: selected,
+                                                    clear,
+                                                })
+                                            }
+                                        >
+                                            {name}
+                                        </DropdownMenuItem>
+                                    ),
+                                )}
+                            </DropdownMenuSubContent>
+                        </DropdownMenuSub>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem
+                            onSelect={() =>
+                                setBulk({
+                                    field: 'active',
+                                    value: true,
+                                    label: 'aktiv',
+                                    people: selected,
+                                    clear,
+                                })
+                            }
+                        >
+                            Aktiv setzen
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                            onSelect={() =>
+                                setBulk({
+                                    field: 'active',
+                                    value: false,
+                                    label: 'inaktiv',
+                                    people: selected,
+                                    clear,
+                                })
+                            }
+                        >
+                            Inaktiv setzen
+                        </DropdownMenuItem>
+                    </DropdownMenuContent>
+                </DropdownMenu>
+            )}
+        </>
+    );
 
-    const table = useReactTable({
-        data: people,
-        columns,
-        state: { sorting, globalFilter },
-        onSortingChange: setSorting,
-        onGlobalFilterChange: setGlobalFilter,
-        getCoreRowModel: getCoreRowModel(),
-        getSortedRowModel: getSortedRowModel(),
-        getFilteredRowModel: getFilteredRowModel(),
-    });
-
-    const rows = table.getRowModel().rows;
+    const mobileRows = people.filter((p) =>
+        `${p.name} ${p.function ?? ''} ${p.email}`
+            .toLowerCase()
+            .includes(mobileSearch.toLowerCase().trim()),
+    );
 
     return (
         <>
@@ -189,76 +302,70 @@ export default function PeopleIndex({ people }: { people: Person[] }) {
                     }
                 />
 
-                <div className="relative md:w-72">
-                    <Search className="absolute top-2.5 left-2.5 size-4 text-muted-foreground" />
-                    <Input
-                        value={globalFilter}
-                        onChange={(e) => setGlobalFilter(e.target.value)}
-                        placeholder="Name, Funktion, E-Mail …"
-                        className="pl-8"
-                        aria-label="Personen durchsuchen"
+                {people.length === 0 && (
+                    <EmptyState
+                        icon={Users}
+                        title="Noch keine Personen erfasst"
                     />
-                </div>
-
-                {rows.length === 0 && (
-                    <EmptyState icon={Users} title="Keine Personen gefunden" />
                 )}
 
-                {/* Desktop: Tabelle */}
-                {rows.length > 0 && (
-                    <div className="hidden rounded-xl border md:block">
-                        <Table>
-                            <TableHeader>
-                                {table.getHeaderGroups().map((group) => (
-                                    <TableRow key={group.id}>
-                                        {group.headers.map((header) => (
-                                            <TableHead
-                                                key={header.id}
-                                                className="px-3"
-                                            >
-                                                {header.isPlaceholder
-                                                    ? null
-                                                    : flexRender(
-                                                          header.column
-                                                              .columnDef.header,
-                                                          header.getContext(),
-                                                      )}
-                                            </TableHead>
-                                        ))}
-                                    </TableRow>
-                                ))}
-                            </TableHeader>
-                            <TableBody>
-                                {rows.map((row) => (
-                                    <TableRow
-                                        key={row.id}
-                                        className={
-                                            row.original.active
-                                                ? ''
-                                                : 'opacity-60'
-                                        }
-                                    >
-                                        {row.getVisibleCells().map((cell) => (
-                                            <TableCell
-                                                key={cell.id}
-                                                className="px-3"
-                                            >
-                                                {flexRender(
-                                                    cell.column.columnDef.cell,
-                                                    cell.getContext(),
-                                                )}
-                                            </TableCell>
-                                        ))}
-                                    </TableRow>
-                                ))}
-                            </TableBody>
-                        </Table>
+                {/* Desktop: bearbeitbare Tabelle */}
+                {people.length > 0 && (
+                    <div className="hidden md:block">
+                        <DataGrid
+                            data={people}
+                            columns={columns}
+                            storageKey={`intranet.grid.people.${canManage ? 'admin' : 'all'}`}
+                            canEdit={canManage}
+                            onSave={saveField}
+                            bulkActions={bulkActions}
+                            searchPlaceholder="Name, Funktion, E-Mail …"
+                            emptyText="Keine Personen gefunden."
+                            rowClassName={(p) => (p.active ? '' : 'opacity-60')}
+                            rowActions={
+                                canManage
+                                    ? (p) => (
+                                          <div className="flex justify-end gap-1">
+                                              <Button
+                                                  variant="ghost"
+                                                  size="icon"
+                                                  asChild
+                                              >
+                                                  <Link
+                                                      href={`/personen/${p.id}/bearbeiten`}
+                                                      aria-label="Im Formular bearbeiten"
+                                                  >
+                                                      <Pencil />
+                                                  </Link>
+                                              </Button>
+                                              {p.id !== auth.user.id && (
+                                                  <DeleteButton
+                                                      url={`/personen/${p.id}`}
+                                                      title={`${p.name} löschen?`}
+                                                      size="icon"
+                                                  />
+                                              )}
+                                          </div>
+                                      )
+                                    : undefined
+                            }
+                        />
                     </div>
                 )}
 
                 {/* Mobile: Karten */}
                 <div className="grid gap-3 md:hidden">
-                    {rows.map(({ original: person }) => (
+                    <div className="relative">
+                        <Search className="absolute top-2.5 left-2.5 size-4 text-muted-foreground" />
+                        <Input
+                            value={mobileSearch}
+                            onChange={(e) => setMobileSearch(e.target.value)}
+                            placeholder="Name, Funktion, E-Mail …"
+                            className="pl-8"
+                            aria-label="Personen durchsuchen"
+                        />
+                    </div>
+                    {mobileRows.map((person) => (
                         <div
                             key={person.id}
                             className="grid gap-1 rounded-xl border bg-card p-4"
@@ -306,6 +413,35 @@ export default function PeopleIndex({ people }: { people: Person[] }) {
                         </div>
                     ))}
                 </div>
+
+                <Dialog
+                    open={bulk !== null}
+                    onOpenChange={(open: boolean) => !open && setBulk(null)}
+                >
+                    <DialogContent>
+                        <DialogHeader>
+                            <DialogTitle>
+                                {bulk?.people.length} Personen ändern?
+                            </DialogTitle>
+                            <DialogDescription>
+                                Für alle ausgewählten Personen wird{' '}
+                                {bulk?.label} gesetzt. Das eigene Konto behält
+                                Rolle und Status.
+                            </DialogDescription>
+                        </DialogHeader>
+                        <DialogFooter>
+                            <DialogClose asChild>
+                                <Button variant="outline">Abbrechen</Button>
+                            </DialogClose>
+                            <Button
+                                disabled={busy}
+                                onClick={() => void applyBulk()}
+                            >
+                                {busy ? 'Speichert …' : 'Ja, ändern'}
+                            </Button>
+                        </DialogFooter>
+                    </DialogContent>
+                </Dialog>
             </div>
         </>
     );

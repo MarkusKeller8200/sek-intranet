@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Data\Contracts\UserRepository;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
@@ -48,7 +49,7 @@ class PersonController extends Controller
         $this->users->findOrFail($id);
         $data = $this->validated($request, $id);
 
-        if ($id === (string) $request->user()?->getAuthIdentifier() && ($data['role'] !== 'admin' || $data['active'] !== true)) {
+        if ($this->removesOwnAdmin($request, $id, $data)) {
             return back()->withErrors(['role' => 'Die eigene Administrationsrolle kann nicht entfernt werden.']);
         }
 
@@ -57,6 +58,80 @@ class PersonController extends Controller
         $this->toast('Person aktualisiert.');
 
         return redirect()->route('people.index');
+    }
+
+    /** Bearbeitbare Felder in der Tabelle (direkt und als Sammeländerung). */
+    private const GRID_FIELDS = ['name', 'email', 'role', 'function', 'school', 'phone', 'active'];
+
+    private const BULK_FIELDS = ['role', 'school', 'active', 'function'];
+
+    /**
+     * Ein Feld direkt in der Tabelle ändern (JSON).
+     */
+    public function updateField(Request $request, string $id): JsonResponse
+    {
+        $field = (string) $request->input('field');
+        abort_unless(in_array($field, self::GRID_FIELDS, true), 422, 'Dieses Feld kann nicht geändert werden.');
+
+        $existing = $this->users->findOrFail($id);
+        $data = $this->validateData([$field => $request->input('value')] + $existing, $id);
+
+        if ($this->removesOwnAdmin($request, $id, $data)) {
+            return response()->json(['message' => 'Die eigene Administrationsrolle kann nicht entfernt werden.'], 422);
+        }
+
+        $person = $this->users->update($id, [$field => $data[$field]]);
+        $this->pluginEvent('person.updated', $person);
+
+        return response()->json(['person' => $person]);
+    }
+
+    /**
+     * Ein Feld für mehrere Personen setzen (JSON). Das eigene Konto wird bei Rolle/Aktiv übersprungen.
+     */
+    public function bulkUpdate(Request $request): JsonResponse
+    {
+        $field = (string) $request->input('field');
+        abort_unless(in_array($field, self::BULK_FIELDS, true), 422, 'Dieses Feld kann nicht gesammelt geändert werden.');
+
+        $ids = array_values(array_unique(array_map('strval', (array) $request->input('ids', []))));
+        abort_if($ids === [] || count($ids) > 1000, 422, 'Keine oder zu viele Personen ausgewählt.');
+
+        $people = [];
+        $skipped = 0;
+        foreach ($ids as $id) {
+            $existing = $this->users->find($id);
+            if ($existing === null) {
+                $skipped++;
+
+                continue;
+            }
+
+            $data = $this->validateData([$field => $request->input('value')] + $existing, $id);
+            if ($this->removesOwnAdmin($request, $id, $data)) {
+                $skipped++;
+
+                continue;
+            }
+
+            $person = $this->users->update($id, [$field => $data[$field]]);
+            $this->pluginEvent('person.updated', $person);
+            $people[] = $person;
+        }
+
+        return response()->json([
+            'message' => count($people).' Personen geändert'.($skipped > 0 ? ", {$skipped} übersprungen (eigenes Konto oder nicht gefunden)" : '').'.',
+            'people' => $people,
+        ]);
+    }
+
+    /**
+     * @param  array<string, mixed>  $data
+     */
+    private function removesOwnAdmin(Request $request, string $id, array $data): bool
+    {
+        return $id === (string) $request->user()?->getAuthIdentifier()
+            && (($data['role'] ?? null) !== 'admin' || ($data['active'] ?? null) !== true);
     }
 
     public function destroy(Request $request, string $id): RedirectResponse
@@ -76,7 +151,16 @@ class PersonController extends Controller
      */
     private function validated(Request $request, ?string $ignoreId = null): array
     {
-        $validator = validator($request->all(), [
+        return $this->validateData($request->all(), $ignoreId);
+    }
+
+    /**
+     * @param  array<string, mixed>  $input
+     * @return array<string, mixed>
+     */
+    private function validateData(array $input, ?string $ignoreId = null): array
+    {
+        $validator = validator($input, [
             'name' => ['required', 'string', 'max:150'],
             'email' => ['required', 'email', 'max:200'],
             'role' => ['required', Rule::in($this->keys('roles'))],
@@ -87,8 +171,8 @@ class PersonController extends Controller
         ]);
 
         // Eindeutige E-Mail (in der Datenbank später ein UNIQUE-Index).
-        $validator->after(function (Validator $validator) use ($request, $ignoreId): void {
-            $existing = $this->users->findByEmail((string) $request->input('email'));
+        $validator->after(function (Validator $validator) use ($input, $ignoreId): void {
+            $existing = $this->users->findByEmail(mb_strtolower(trim((string) ($input['email'] ?? ''))));
 
             if ($existing !== null && ($existing['id'] ?? null) !== $ignoreId) {
                 $validator->errors()->add('email', 'Diese E-Mail-Adresse ist bereits erfasst.');
@@ -97,7 +181,7 @@ class PersonController extends Controller
 
         $data = $validator->validate();
         $data['email'] = mb_strtolower(trim((string) $data['email']));
-        $data['active'] = $request->boolean('active');
+        $data['active'] = filter_var($input['active'] ?? false, FILTER_VALIDATE_BOOL);
         $data['function'] = $data['function'] ?? null;
         $data['phone'] = $data['phone'] ?? null;
 
