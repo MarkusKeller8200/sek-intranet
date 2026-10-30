@@ -42,6 +42,6 @@ initializeTheme();
 initializeFont();
 initializeLanguage();
 initializePwa(
-    document.querySelector<HTMLMetaElement>('meta[name="app-build"]')?.content ??
-        null,
+    document.querySelector<HTMLMetaElement>('meta[name="app-build"]')
+        ?.content ?? null,
 );

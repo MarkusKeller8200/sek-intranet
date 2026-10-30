@@ -32,7 +32,10 @@ export function isIos(): boolean {
     const ua = navigator.userAgent;
 
     // iPadOS meldet sich als Mac mit Touch
-    return /iPad|iPhone|iPod/.test(ua) || (ua.includes('Macintosh') && navigator.maxTouchPoints > 1);
+    return (
+        /iPad|iPhone|iPod/.test(ua) ||
+        (ua.includes('Macintosh') && navigator.maxTouchPoints > 1)
+    );
 }
 
 export function installState(): InstallState {
@@ -84,19 +87,25 @@ export function initializePwa(build: string | null) {
         deferred = null;
         notify();
     });
-    window.matchMedia('(display-mode: standalone)').addEventListener('change', notify);
+    window
+        .matchMedia('(display-mode: standalone)')
+        .addEventListener('change', notify);
 
     if ('serviceWorker' in navigator && window.isSecureContext) {
         const register = () =>
             navigator.serviceWorker
-                .register(`/sw.js?v=${encodeURIComponent(build ?? 'dev')}`, { scope: '/' })
+                .register(`/sw.js?v=${encodeURIComponent(build ?? 'dev')}`, {
+                    scope: '/',
+                })
                 .catch(() => {
                     // ohne Service Worker läuft das Intranet normal weiter
                 });
         if (document.readyState === 'complete') {
             void register();
         } else {
-            window.addEventListener('load', () => void register(), { once: true });
+            window.addEventListener('load', () => void register(), {
+                once: true,
+            });
         }
     }
 }

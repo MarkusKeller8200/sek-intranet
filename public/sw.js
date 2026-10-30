@@ -21,14 +21,23 @@ self.addEventListener('activate', (event) => {
     event.waitUntil(
         caches
             .keys()
-            .then((keys) => Promise.all(keys.filter((k) => k.startsWith('intranet-') && k !== CACHE).map((k) => caches.delete(k))))
+            .then((keys) =>
+                Promise.all(
+                    keys
+                        .filter((k) => k.startsWith('intranet-') && k !== CACHE)
+                        .map((k) => caches.delete(k)),
+                ),
+            )
             .then(() => self.clients.claim()),
     );
 });
 
 const isStatic = (url) =>
     url.origin === self.location.origin &&
-    (url.pathname.startsWith('/build/') || url.pathname.startsWith('/icons/') || url.pathname.startsWith('/fonts/') || url.pathname === '/favicon.svg');
+    (url.pathname.startsWith('/build/') ||
+        url.pathname.startsWith('/icons/') ||
+        url.pathname.startsWith('/fonts/') ||
+        url.pathname === '/favicon.svg');
 
 self.addEventListener('fetch', (event) => {
     const request = event.request;
@@ -39,7 +48,9 @@ self.addEventListener('fetch', (event) => {
 
     // Seitenaufrufe: immer vom Server, ohne Verbindung die Offline-Seite
     if (request.mode === 'navigate') {
-        event.respondWith(fetch(request).catch(() => caches.match('/offline.html')));
+        event.respondWith(
+            fetch(request).catch(() => caches.match('/offline.html')),
+        );
 
         return;
     }
@@ -53,7 +64,9 @@ self.addEventListener('fetch', (event) => {
                     fetch(request).then((response) => {
                         if (response.ok && response.type === 'basic') {
                             const copy = response.clone();
-                            caches.open(CACHE).then((cache) => cache.put(request, copy));
+                            caches
+                                .open(CACHE)
+                                .then((cache) => cache.put(request, copy));
                         }
 
                         return response;
