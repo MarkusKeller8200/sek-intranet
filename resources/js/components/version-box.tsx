@@ -13,7 +13,7 @@ export function VersionBox({ store }: { store: string }) {
             href="/versionen"
             title="Versionen und Änderungen"
             className={cn(
-                'mt-auto grid gap-0.5 rounded-md border border-dashed border-sidebar-border px-3 py-2 text-xs text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground group-data-[collapsible=icon]:hidden',
+                'mt-auto grid gap-0.5 rounded-md border border-dashed border-sidebar-border px-3 py-2 text-xs text-sidebar-foreground/70 group-data-[collapsible=icon]:hidden hover:bg-sidebar-accent hover:text-sidebar-accent-foreground',
                 isCurrentOrParentUrl('/versionen') &&
                     'bg-sidebar-accent text-sidebar-accent-foreground',
             )}
