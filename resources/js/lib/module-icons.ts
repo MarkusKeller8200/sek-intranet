@@ -1,5 +1,13 @@
 import type { LucideIcon } from 'lucide-react';
 import {
+    Boxes,
+    Building2,
+    FlaskConical,
+    Folder,
+    Library,
+    MessagesSquare,
+    PartyPopper,
+    School,
     BookOpen,
     Braces,
     CalendarCheck,
@@ -32,6 +40,14 @@ import {
  * Neue Module: Symbol hier eintragen, sonst erscheint ein Kreis.
  */
 const icons: Record<string, LucideIcon> = {
+    Boxes,
+    Building2,
+    FlaskConical,
+    Folder,
+    Library,
+    MessagesSquare,
+    PartyPopper,
+    School,
     BookOpen,
     Braces,
     CalendarCheck,

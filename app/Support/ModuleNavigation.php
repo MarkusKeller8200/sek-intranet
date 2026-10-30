@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Gate;
  * Module aus config/intranet.php → modules: Navigation (Seitenleiste) und Platzhalter.
  *
  * @phpstan-type Module array{key: string, title: string, icon: string, href: string, planned: bool}
- * @phpstan-type Group array{key: string, title: string, color: string, items: list<Module>}
+ * @phpstan-type Group array{key: string, title: string, color: string, icon: string, items: list<Module>}
  */
 class ModuleNavigation
 {
@@ -48,6 +48,7 @@ class ModuleNavigation
                     'key' => (string) $groupKey,
                     'title' => (string) ($group['title'] ?? $groupKey),
                     'color' => (string) ($group['color'] ?? 'slate'),
+                    'icon' => (string) ($group['icon'] ?? 'Folder'),
                     'items' => $items,
                 ];
             }

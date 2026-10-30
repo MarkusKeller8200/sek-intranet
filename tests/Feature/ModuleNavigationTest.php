@@ -65,7 +65,8 @@ class ModuleNavigationTest extends TestCase
     {
         $map = (string) file_get_contents(resource_path('js/lib/module-icons.ts'));
 
-        foreach (config('intranet.modules') as $group) {
+        foreach (config('intranet.modules') as $groupKey => $group) {
+            $this->assertMatchesRegularExpression('/^\s+'.$group['icon'].',$/m', $map, "Symbol {$group['icon']} für Bereich {$groupKey} fehlt in module-icons.ts");
             foreach ($group['items'] as $key => $module) {
                 $this->assertMatchesRegularExpression('/^\s+'.$module['icon'].',$/m', $map, "Symbol {$module['icon']} für Modul {$key} fehlt in module-icons.ts");
             }

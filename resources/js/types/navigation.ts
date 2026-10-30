@@ -28,6 +28,8 @@ export type ModuleNavGroup = {
     title: string;
     /** Farbe aus dem Farbkonzept (Palette in lib/colors.ts) */
     color: string;
+    /** Symbol des Bereichs (lib/module-icons.ts) */
+    icon: string;
     items: ModuleNavItem[];
 };
 

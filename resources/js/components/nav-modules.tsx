@@ -1,5 +1,5 @@
 import { Link } from '@inertiajs/react';
-import { ChevronRight } from 'lucide-react';
+import { ChevronDown } from 'lucide-react';
 import { useState } from 'react';
 import {
     Collapsible,
@@ -8,7 +8,6 @@ import {
 } from '@/components/ui/collapsible';
 import {
     SidebarGroup,
-    SidebarGroupLabel,
     SidebarMenu,
     SidebarMenuBadge,
     SidebarMenuButton,
@@ -74,6 +73,7 @@ export function NavModules({ groups }: { groups: ModuleNavGroup[] }) {
                 const color = isColorName(group.color)
                     ? palette[group.color]
                     : palette.slate;
+                const GroupIcon = moduleIcon(group.icon);
 
                 return (
                     <Collapsible
@@ -84,40 +84,44 @@ export function NavModules({ groups }: { groups: ModuleNavGroup[] }) {
                         }
                         className="group/collapsible"
                     >
-                        <SidebarGroup className="px-2 py-0">
-                            <SidebarGroupLabel asChild>
-                                <CollapsibleTrigger
+                        <SidebarGroup className="px-2 py-0.5">
+                            {/* Hauptmenü: farbige Fläche mit Symbol (in der Symbolleiste ausgeblendet) */}
+                            <CollapsibleTrigger
+                                className={cn(
+                                    'flex h-10 w-full items-center gap-2.5 rounded-lg px-2.5 text-left text-sm font-semibold transition-colors focus-visible:ring-2 focus-visible:ring-sidebar-ring focus-visible:outline-none',
+                                    'group-data-[collapsible=icon]:hidden',
+                                    color.panel,
+                                )}
+                                title={open ? 'Einklappen' : 'Ausklappen'}
+                            >
+                                <GroupIcon
                                     className={cn(
-                                        'w-full gap-2 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground',
-                                        containsCurrent &&
-                                            !open &&
-                                            'font-semibold text-sidebar-foreground',
+                                        'size-5 shrink-0',
+                                        color.icon,
                                     )}
-                                    title={open ? 'Einklappen' : 'Ausklappen'}
-                                >
+                                    aria-hidden
+                                />
+                                <span className="flex-1 truncate">
+                                    {group.title}
+                                </span>
+                                {!open && containsCurrent && (
                                     <span
                                         className={cn(
                                             'size-2 shrink-0 rounded-full',
                                             color.dot,
                                         )}
-                                        aria-hidden
+                                        title="Enthält die aktuelle Seite"
                                     />
-                                    <span>{group.title}</span>
-                                    {!open && (
-                                        <span className="ml-1.5 text-sidebar-foreground/50">
-                                            {group.items.length}
-                                        </span>
+                                )}
+                                <ChevronDown
+                                    className={cn(
+                                        'size-4 shrink-0 opacity-70 transition-transform duration-200',
+                                        open && 'rotate-180',
                                     )}
-                                    <ChevronRight
-                                        className={cn(
-                                            'ml-auto transition-transform duration-200',
-                                            open && 'rotate-90',
-                                        )}
-                                    />
-                                </CollapsibleTrigger>
-                            </SidebarGroupLabel>
+                                />
+                            </CollapsibleTrigger>
                             <CollapsibleContent>
-                                <SidebarMenu>
+                                <SidebarMenu className="py-1">
                                     {group.items.map((item) => {
                                         const Icon = moduleIcon(item.icon);
                                         const current = isCurrentOrParentUrl(

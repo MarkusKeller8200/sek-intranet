@@ -112,6 +112,7 @@ return [
         'kommunikation' => [
             'title' => 'Kommunikation',
             'color' => 'sky',
+            'icon' => 'MessagesSquare',
             'items' => [
                 'start' => ['title' => 'Start', 'icon' => 'LayoutGrid', 'href' => '/start'],
                 'mitteilungen' => ['title' => 'Mitteilungen', 'icon' => 'Megaphone', 'href' => '/mitteilungen'],
@@ -133,6 +134,7 @@ return [
         'wissen' => [
             'title' => 'Wissen & Ablage',
             'color' => 'violet',
+            'icon' => 'Library',
             'items' => [
                 'dokumente' => ['title' => 'Dokumente & Links', 'icon' => 'FileText', 'href' => '/dokumente'],
                 'handbuch' => [
@@ -152,6 +154,7 @@ return [
         'organisation' => [
             'title' => 'Personen & Organisation',
             'color' => 'teal',
+            'icon' => 'Building2',
             'items' => [
                 'personen' => ['title' => 'Personen', 'icon' => 'Users', 'href' => '/personen'],
                 'klassen' => [
@@ -178,6 +181,7 @@ return [
         'unterricht' => [
             'title' => 'Unterricht',
             'color' => 'amber',
+            'icon' => 'School',
             'items' => [
                 'stundenplan' => [
                     'title' => 'Stundenpläne',
@@ -201,7 +205,8 @@ return [
         ],
         'ressourcen' => [
             'title' => 'Räume & Geräte',
-            'color' => 'emerald',
+            'color' => 'indigo',
+            'icon' => 'Boxes',
             'items' => [
                 'reservationen' => [
                     'title' => 'Reservationen',
@@ -228,6 +233,7 @@ return [
         'anlaesse' => [
             'title' => 'Anlässe & Angebote',
             'color' => 'rose',
+            'icon' => 'PartyPopper',
             'items' => [
                 'sporttag' => [
                     'title' => 'Sporttag',
@@ -246,6 +252,7 @@ return [
         'prototyp' => [
             'title' => 'Prototyp',
             'color' => 'slate',
+            'icon' => 'FlaskConical',
             'can' => 'manage-users',
             'items' => [
                 'plugins' => ['title' => 'Plugins', 'icon' => 'Plug', 'href' => '/plugins'],
