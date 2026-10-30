@@ -1,7 +1,9 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" @class(['dark' => ($appearance ?? 'system') == 'dark'])>
+<html lang="de-CH" @class(['dark' => ($appearance ?? 'system') == 'dark'])>
     <head>
         <meta charset="utf-8">
+        {{-- Seite ist deutsch (Schweiz): Browser sollen keine Übersetzung aus dem Englischen anbieten --}}
+        <meta http-equiv="content-language" content="de-CH">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
         {{-- Inline script to detect system dark mode preference and apply it immediately --}}
@@ -29,6 +31,10 @@
                     };
                     // Andere Sprache: Seite kurz verdecken, bis übersetzt ist (höchstens 1,5 s)
                     const lang = localStorage.getItem('lang');
+                    // Gewählte Sprache sofort angeben (vor der Spracherkennung des Browsers)
+                    if (lang === 'en' || lang === 'gsw-u-sd-chzh') {
+                        document.documentElement.lang = lang === 'en' ? 'en' : 'gsw-CH';
+                    }
                     if (lang && lang !== 'de-CH') {
                         document.documentElement.classList.add('i18n-wait');
                         setTimeout(function () { document.documentElement.classList.remove('i18n-wait'); }, 1500);

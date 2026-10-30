@@ -7,6 +7,18 @@ laufend unter **Unveröffentlicht** und werden beim Erhöhen der Version zur neu
 
 ## [Unveröffentlicht]
 
+## [0.14.2] – 2026-10-30
+
+### Neu
+
+- Mobil: Menü mit Wischen von links nach rechts einblenden, von rechts nach links ausblenden (nicht in
+  waagrecht scrollenden Tabellen und Eingabefeldern)
+
+### Behoben
+
+- Seiten sind als Deutsch (Schweiz) ausgewiesen (`lang="de-CH"`, Laravel-Sprache `de`); Browser bieten keine
+  Übersetzung aus dem Englischen mehr an
+
 ## [0.14.1] – 2026-10-30
 
 ### Geändert

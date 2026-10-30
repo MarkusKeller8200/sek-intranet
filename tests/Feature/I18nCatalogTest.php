@@ -78,4 +78,14 @@ class I18nCatalogTest extends TestCase
         $this->signInAs('admin');
         $this->get('/sprachkonzept')->assertOk();
     }
+
+    public function test_pages_are_declared_as_swiss_german(): void
+    {
+        $this->signInAs('lehrperson');
+
+        $html = (string) $this->get('/start')->getContent();
+        $this->assertStringContainsString('<html lang="de-CH"', $html);
+        $this->assertStringContainsString('<meta http-equiv="content-language" content="de-CH">', $html);
+        $this->assertSame('de', app()->getLocale());
+    }
 }
