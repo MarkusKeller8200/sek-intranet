@@ -19,28 +19,74 @@ export type Student = {
 export type PasswordStyle = 'animalcolor' | 'word' | 'random';
 
 const WORDS = [
-    'Falke', 'Panda', 'Adler', 'Fuchs', 'Delfin', 'Puma', 'Koala', 'Biber', 'Igel', 'Otter',
-    'Wolke', 'Rakete', 'Planet', 'Komet', 'Vulkan', 'Gletscher', 'Kaktus', 'Ahorn', 'Zeder', 'Klippe',
-    'Drache', 'Ritter', 'Pirat', 'Kompass', 'Leuchtturm', 'Zauber', 'Kristall', 'Fossil', 'Meteor', 'Turbine',
+    'Falke',
+    'Panda',
+    'Adler',
+    'Fuchs',
+    'Delfin',
+    'Puma',
+    'Koala',
+    'Biber',
+    'Igel',
+    'Otter',
+    'Wolke',
+    'Rakete',
+    'Planet',
+    'Komet',
+    'Vulkan',
+    'Gletscher',
+    'Kaktus',
+    'Ahorn',
+    'Zeder',
+    'Klippe',
+    'Drache',
+    'Ritter',
+    'Pirat',
+    'Kompass',
+    'Leuchtturm',
+    'Zauber',
+    'Kristall',
+    'Fossil',
+    'Meteor',
+    'Turbine',
 ];
 
 type Gender = 'm' | 'f' | 'n';
 
 const ANIMALS: { name: string; gender: Gender }[] = [
-    { name: 'Falke', gender: 'm' }, { name: 'Panda', gender: 'm' }, { name: 'Adler', gender: 'm' },
-    { name: 'Fuchs', gender: 'm' }, { name: 'Delfin', gender: 'm' }, { name: 'Puma', gender: 'm' },
-    { name: 'Koala', gender: 'm' }, { name: 'Biber', gender: 'm' }, { name: 'Igel', gender: 'm' },
-    { name: 'Otter', gender: 'm' }, { name: 'Hase', gender: 'm' }, { name: 'Luchs', gender: 'm' },
-    { name: 'Tiger', gender: 'm' }, { name: 'Wolf', gender: 'm' }, { name: 'Pinguin', gender: 'm' },
-    { name: 'Papagei', gender: 'm' }, { name: 'Elefant', gender: 'm' }, { name: 'Zebra', gender: 'n' },
-    { name: 'Krake', gender: 'f' }, { name: 'Reh', gender: 'n' },
+    { name: 'Falke', gender: 'm' },
+    { name: 'Panda', gender: 'm' },
+    { name: 'Adler', gender: 'm' },
+    { name: 'Fuchs', gender: 'm' },
+    { name: 'Delfin', gender: 'm' },
+    { name: 'Puma', gender: 'm' },
+    { name: 'Koala', gender: 'm' },
+    { name: 'Biber', gender: 'm' },
+    { name: 'Igel', gender: 'm' },
+    { name: 'Otter', gender: 'm' },
+    { name: 'Hase', gender: 'm' },
+    { name: 'Luchs', gender: 'm' },
+    { name: 'Tiger', gender: 'm' },
+    { name: 'Wolf', gender: 'm' },
+    { name: 'Pinguin', gender: 'm' },
+    { name: 'Papagei', gender: 'm' },
+    { name: 'Elefant', gender: 'm' },
+    { name: 'Zebra', gender: 'n' },
+    { name: 'Krake', gender: 'f' },
+    { name: 'Reh', gender: 'n' },
 ];
 
 // stem = Adjektivstamm; unveränderliche Farben (Lehnwörter) ohne Endung
 const COLORS: { stem: string; invariable: boolean }[] = [
-    { stem: 'Rot', invariable: false }, { stem: 'Blau', invariable: false }, { stem: 'Weiss', invariable: false },
-    { stem: 'Gelb', invariable: false }, { stem: 'Orange', invariable: true }, { stem: 'Lila', invariable: true },
-    { stem: 'Rosa', invariable: true }, { stem: 'Golden', invariable: false }, { stem: 'Grau', invariable: false },
+    { stem: 'Rot', invariable: false },
+    { stem: 'Blau', invariable: false },
+    { stem: 'Weiss', invariable: false },
+    { stem: 'Gelb', invariable: false },
+    { stem: 'Orange', invariable: true },
+    { stem: 'Lila', invariable: true },
+    { stem: 'Rosa', invariable: true },
+    { stem: 'Golden', invariable: false },
+    { stem: 'Grau', invariable: false },
     { stem: 'Braun', invariable: false },
 ];
 
@@ -187,16 +233,23 @@ const CSV_HEADER =
 
 export function toCsv(data: Student[]): string {
     const rows = data.map((d) =>
-        [d.nachname, d.vorname, d.benutzer, d.inventar, d.lehrperson, d.klasse, d.pw, d.pin].join(';'),
+        [
+            d.nachname,
+            d.vorname,
+            d.benutzer,
+            d.inventar,
+            d.lehrperson,
+            d.klasse,
+            d.pw,
+            d.pin,
+        ].join(';'),
     );
 
     return '﻿' + [CSV_HEADER, ...rows].join('\r\n');
 }
 
 /** Frühere zugangsdaten.csv wieder einlesen (ohne neu zu würfeln). */
-export function parseCsv(
-    raw: string,
-): { data: Student[] } | { error: string } {
+export function parseCsv(raw: string): { data: Student[] } | { error: string } {
     let text = raw;
     if (text.charCodeAt(0) === 0xfeff) {
         text = text.slice(1);
@@ -231,7 +284,9 @@ export function parseCsv(
         data: lines.slice(1).map((line) => {
             const cols = split(line);
             const get = (key: keyof Student) =>
-                idx[key] >= 0 && cols[idx[key]] !== undefined ? cols[idx[key]] : '';
+                idx[key] >= 0 && cols[idx[key]] !== undefined
+                    ? cols[idx[key]]
+                    : '';
 
             return {
                 nachname: get('nachname'),
@@ -260,7 +315,8 @@ export function escapeHtml(str: string): string {
 export function groupByClass(data: Student[]): Map<string, Student[]> {
     const groups = new Map<string, Student[]>();
     data.forEach((d) => {
-        const key = d.klasse && d.klasse.trim() ? d.klasse.trim() : '— ohne Klasse';
+        const key =
+            d.klasse && d.klasse.trim() ? d.klasse.trim() : '— ohne Klasse';
         if (!groups.has(key)) {
             groups.set(key, []);
         }
@@ -286,7 +342,11 @@ export function slipsHtml(data: Student[]): string {
         .map((klasse, i) => {
             const students = groups.get(klasse) ?? [];
             const lehrpersonen = Array.from(
-                new Set(students.map((s) => s.lehrperson).filter((v) => v && v.length)),
+                new Set(
+                    students
+                        .map((s) => s.lehrperson)
+                        .filter((v) => v && v.length),
+                ),
             );
             const subtitle = lehrpersonen.length
                 ? ` · ${escapeHtml(lehrpersonen.join(', '))}`
@@ -340,7 +400,11 @@ export function slipsHtml(data: Student[]): string {
 }
 
 /** Datei im Browser speichern (ohne Server). */
-export function downloadBlob(content: BlobPart, type: string, filename: string) {
+export function downloadBlob(
+    content: BlobPart,
+    type: string,
+    filename: string,
+) {
     const blob = new Blob([content], { type });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');

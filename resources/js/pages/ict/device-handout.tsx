@@ -81,7 +81,9 @@ export default function DeviceHandout({ planned }: { planned: Planned }) {
     const toggleSymbol = (symbol: string, on: boolean) => {
         setSymbols((current) =>
             on
-                ? SAFE_SYMBOLS.filter((s) => s === symbol || current.includes(s))
+                ? SAFE_SYMBOLS.filter(
+                      (s) => s === symbol || current.includes(s),
+                  )
                 : current.filter((s) => s !== symbol),
         );
     };
@@ -103,7 +105,8 @@ export default function DeviceHandout({ planned }: { planned: Planned }) {
             }
             input.value = ''; // dieselbe Datei später erneut wählbar
         };
-        reader.onerror = () => toast.error('Datei konnte nicht gelesen werden.');
+        reader.onerror = () =>
+            toast.error('Datei konnte nicht gelesen werden.');
         reader.readAsText(file, 'UTF-8');
     };
 
@@ -164,7 +167,9 @@ export default function DeviceHandout({ planned }: { planned: Planned }) {
                         <Textarea
                             value={input}
                             onChange={(e) => setInput(e.target.value)}
-                            placeholder={DEMO_INPUT.split('\n').slice(0, 3).join('\n')}
+                            placeholder={DEMO_INPUT.split('\n')
+                                .slice(0, 3)
+                                .join('\n')}
                             className="min-h-40 font-mono text-sm"
                             translate="no"
                             spellCheck={false}
@@ -191,7 +196,9 @@ export default function DeviceHandout({ planned }: { planned: Planned }) {
                                     className={selectClass}
                                     value={style}
                                     onChange={(e) =>
-                                        setStyle(e.target.value as PasswordStyle)
+                                        setStyle(
+                                            e.target.value as PasswordStyle,
+                                        )
                                     }
                                 >
                                     <option value="animalcolor">
@@ -208,21 +215,23 @@ export default function DeviceHandout({ planned }: { planned: Planned }) {
                             <label className="flex items-center gap-2 pb-2 text-sm">
                                 <Checkbox
                                     checked={avoidAmbig}
-                                    onCheckedChange={(v: boolean | 'indeterminate') =>
-                                        setAvoidAmbig(v === true)
-                                    }
+                                    onCheckedChange={(
+                                        v: boolean | 'indeterminate',
+                                    ) => setAvoidAmbig(v === true)}
                                 />
-                                Verwechselbare Zeichen vermeiden (I, l, 1, O,
-                                0)
+                                Verwechselbare Zeichen vermeiden (I, l, 1, O, 0)
                             </label>
                         </div>
 
                         <div className="grid gap-2">
                             <span className="text-sm">
-                                Sonderzeichen (auswählen, welche verwendet werden
-                                dürfen)
+                                Sonderzeichen (auswählen, welche verwendet
+                                werden dürfen)
                             </span>
-                            <div className="flex flex-wrap gap-4" translate="no">
+                            <div
+                                className="flex flex-wrap gap-4"
+                                translate="no"
+                            >
                                 {SAFE_SYMBOLS.map((symbol) => (
                                     <label
                                         key={symbol}
@@ -230,7 +239,9 @@ export default function DeviceHandout({ planned }: { planned: Planned }) {
                                     >
                                         <Checkbox
                                             checked={symbols.includes(symbol)}
-                                            onCheckedChange={(v: boolean | 'indeterminate') =>
+                                            onCheckedChange={(
+                                                v: boolean | 'indeterminate',
+                                            ) =>
                                                 toggleSymbol(symbol, v === true)
                                             }
                                         />
@@ -246,7 +257,10 @@ export default function DeviceHandout({ planned }: { planned: Planned }) {
                         </div>
 
                         <div className="flex flex-wrap gap-2">
-                            <Button onClick={generateAll} disabled={!input.trim()}>
+                            <Button
+                                onClick={generateAll}
+                                disabled={!input.trim()}
+                            >
                                 <KeyRound /> Passwörter & PINs generieren
                             </Button>
                             <Button
@@ -345,22 +359,38 @@ export default function DeviceHandout({ planned }: { planned: Planned }) {
                                                                 : 'hover:bg-muted/40',
                                                         )}
                                                     >
-                                                        <td className="px-3 py-2">{d.nachname}</td>
-                                                        <td className="px-3 py-2">{d.vorname}</td>
-                                                        <td className="px-3 py-2">{d.klasse}</td>
-                                                        <td className="px-3 py-2">{d.lehrperson}</td>
+                                                        <td className="px-3 py-2">
+                                                            {d.nachname}
+                                                        </td>
+                                                        <td className="px-3 py-2">
+                                                            {d.vorname}
+                                                        </td>
+                                                        <td className="px-3 py-2">
+                                                            {d.klasse}
+                                                        </td>
+                                                        <td className="px-3 py-2">
+                                                            {d.lehrperson}
+                                                        </td>
                                                         <td
                                                             className={cn(
                                                                 'px-3 py-2 font-mono text-xs',
-                                                                issue && 'text-rose-700 dark:text-rose-300',
+                                                                issue &&
+                                                                    'text-rose-700 dark:text-rose-300',
                                                             )}
-                                                            title={issue ?? undefined}
+                                                            title={
+                                                                issue ??
+                                                                undefined
+                                                            }
                                                         >
                                                             {d.benutzer}
                                                             {issue && ' ⚠'}
                                                         </td>
-                                                        <td className="px-3 py-2 font-mono text-xs">{d.inventar}</td>
-                                                        <td className="px-3 py-2 font-mono font-semibold">{d.pw}</td>
+                                                        <td className="px-3 py-2 font-mono text-xs">
+                                                            {d.inventar}
+                                                        </td>
+                                                        <td className="px-3 py-2 font-mono font-semibold">
+                                                            {d.pw}
+                                                        </td>
                                                         <td className="px-3 py-2 font-mono font-semibold tracking-wider text-emerald-700 dark:text-emerald-400">
                                                             {d.pin}
                                                         </td>
@@ -368,10 +398,15 @@ export default function DeviceHandout({ planned }: { planned: Planned }) {
                                                             <Button
                                                                 variant="ghost"
                                                                 size="sm"
-                                                                onClick={() => regenerateOne(i)}
+                                                                onClick={() =>
+                                                                    regenerateOne(
+                                                                        i,
+                                                                    )
+                                                                }
                                                                 title="Passwort und PIN neu"
                                                             >
-                                                                <RefreshCw /> neu
+                                                                <RefreshCw />{' '}
+                                                                neu
                                                             </Button>
                                                         </td>
                                                     </tr>
@@ -405,7 +440,10 @@ export default function DeviceHandout({ planned }: { planned: Planned }) {
                                         <Download /> Zugangskärtchen als Datei
                                         herunterladen
                                     </Button>
-                                    <Button variant="outline" onClick={regenerateAll}>
+                                    <Button
+                                        variant="outline"
+                                        onClick={regenerateAll}
+                                    >
                                         <RefreshCw /> Alle neu generieren
                                     </Button>
                                 </div>
