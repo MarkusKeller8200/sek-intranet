@@ -4,6 +4,7 @@ import AppWordmark from '@/components/app-wordmark';
 import { NavModules } from '@/components/nav-modules';
 import { LanguageSelect } from '@/components/language-picker';
 import { NavUser } from '@/components/nav-user';
+import { VersionBox } from '@/components/version-box';
 import { SidebarSplitter } from '@/components/sidebar-splitter';
 import {
     Sidebar,
@@ -43,10 +44,7 @@ export function AppSidebar() {
             </SidebarContent>
 
             <SidebarFooter>
-                <div className="mt-auto rounded-md border border-dashed border-sidebar-border px-3 py-2 text-xs text-muted-foreground group-data-[collapsible=icon]:hidden">
-                    Prototyp · Speicher:{' '}
-                    {store === 'json' ? 'Dateien (JSON)' : store}
-                </div>
+                <VersionBox store={store} />
                 <LanguageSelect />
                 <NavUser />
             </SidebarFooter>

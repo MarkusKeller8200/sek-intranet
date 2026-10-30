@@ -62,10 +62,13 @@ class I18nCatalogTest extends TestCase
             $keys += $entries;
         }
 
+        // Wie im Browser: Zahlen werden zu {n}
+        $key = fn (string $text): string => (string) preg_replace("/\\d+(?:['’.,]\\d+)*/u", '{n}', $text);
+
         foreach ((array) config('intranet.modules') as $group) {
-            $this->assertArrayHasKey($group['title'], $keys, "Menütitel «{$group['title']}» fehlt im Katalog");
+            $this->assertArrayHasKey($key($group['title']), $keys, "Menütitel «{$group['title']}» fehlt im Katalog");
             foreach ((array) $group['items'] as $item) {
-                $this->assertArrayHasKey($item['title'], $keys, "Menüpunkt «{$item['title']}» fehlt im Katalog");
+                $this->assertArrayHasKey($key($item['title']), $keys, "Menüpunkt «{$item['title']}» fehlt im Katalog");
             }
         }
     }

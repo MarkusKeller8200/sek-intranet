@@ -157,6 +157,12 @@ return [
                     'description' => 'Briefe und Formulare mit Schullogo, die mit Daten aus dem Intranet befüllt werden (Serienbriefe).',
                     'features' => ['Word-Vorlagen mit Platzhaltern', 'PDF-Ausgabe', 'Vorlagen je Schulhaus'],
                 ],
+                'lehrplan21' => [
+                    'title' => 'Lehrplan 21',
+                    'icon' => 'GraduationCap',
+                    'description' => 'Lehrplan 21 des Kantons Zürich: Fachbereiche, Kompetenzen und Lehrmittel.',
+                    'embed' => ['url' => 'https://zh.lehrplan.ch/index.php', 'open' => 'both'],
+                ],
             ],
         ],
         'organisation' => [

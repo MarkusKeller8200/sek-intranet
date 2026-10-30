@@ -1,5 +1,5 @@
-import { Link, usePage } from '@inertiajs/react';
-import { ChevronDown, ExternalLink, Tag } from 'lucide-react';
+import { Link } from '@inertiajs/react';
+import { ChevronDown, ExternalLink } from 'lucide-react';
 import { Fragment, useState } from 'react';
 import {
     Collapsible,
@@ -44,39 +44,6 @@ function writeStored(value: Record<string, boolean>) {
     }
 }
 
-/** Version und Build, verlinkt auf die Seite «Versionen». */
-function VersionLine() {
-    const { appVersion } = usePage().props;
-    const { isCurrentOrParentUrl } = useCurrentUrl();
-
-    return (
-        <div className="px-2 py-1 group-data-[collapsible=icon]:hidden">
-            <Link
-                href="/versionen"
-                className={cn(
-                    'flex items-center gap-2 rounded-md px-2.5 py-1.5 text-xs text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground',
-                    isCurrentOrParentUrl('/versionen') &&
-                        'bg-sidebar-accent text-sidebar-accent-foreground',
-                )}
-                title="Versionen und Änderungen"
-            >
-                <Tag className="size-3.5 shrink-0" />
-                <span>Version {appVersion.version}</span>
-                {appVersion.build && (
-                    <span className="font-mono text-sidebar-foreground/50">
-                        {appVersion.build}
-                    </span>
-                )}
-                {appVersion.prototype && (
-                    <span className="ml-auto rounded border border-sidebar-border px-1 text-[10px] tracking-wide uppercase">
-                        Prototyp
-                    </span>
-                )}
-            </Link>
-        </div>
-    );
-}
-
 export function NavModules({ groups }: { groups: ModuleNavGroup[] }) {
     const { isCurrentOrParentUrl } = useCurrentUrl();
     const { state, isMobile } = useSidebar();
@@ -90,8 +57,6 @@ export function NavModules({ groups }: { groups: ModuleNavGroup[] }) {
         setStored(next);
         writeStored(next);
     };
-
-    const hasPrototype = groups.some((g) => g.key === 'prototyp');
 
     return (
         <>
@@ -112,7 +77,6 @@ export function NavModules({ groups }: { groups: ModuleNavGroup[] }) {
 
                 return (
                     <Fragment key={group.key}>
-                        {group.key === 'prototyp' && <VersionLine />}
                         <Collapsible
                             open={open}
                             onOpenChange={(value: boolean) =>
@@ -236,7 +200,6 @@ export function NavModules({ groups }: { groups: ModuleNavGroup[] }) {
                     </Fragment>
                 );
             })}
-            {!hasPrototype && <VersionLine />}
         </>
     );
 }

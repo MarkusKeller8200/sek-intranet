@@ -7,6 +7,13 @@ laufend unter **Unveröffentlicht** und werden beim Erhöhen der Version zur neu
 
 ## [Unveröffentlicht]
 
+## [0.12.1] – 2026-10-30
+
+### Geändert
+
+- Version, Build und Prototyp-Hinweis in einem Feld unten in der Seitenleiste, über der Sprachwahl
+- Wissen & Ablage: Lehrplan 21 (Kanton Zürich) eingebunden
+
 ## [0.12.0] – 2026-10-30
 
 ### Neu
