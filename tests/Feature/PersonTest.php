@@ -11,7 +11,7 @@ class PersonTest extends TestCase
 {
     public function test_staff_see_active_people_admin_sees_all(): void
     {
-        $this->signInAs('mitarbeitende');
+        $this->signInAs('lehrperson');
         $this->get('/personen')->assertInertia(fn (Assert $page) => $page->component('people/index')->has('people', 7));
 
         $this->signInAs('admin');
@@ -56,7 +56,7 @@ class PersonTest extends TestCase
 
     public function test_deactivated_user_loses_session(): void
     {
-        $staff = $this->signInAs('mitarbeitende');
+        $staff = $this->signInAs('lehrperson');
         app(UserRepository::class)->update($staff->id(), ['active' => false]);
 
         // Neuer Request ohne actingAs: Session-ID wird über den Provider aufgelöst

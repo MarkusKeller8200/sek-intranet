@@ -14,6 +14,7 @@ class DeviceHandoutController extends Controller
     public function __invoke(): Response
     {
         return Inertia::render('ict/device-handout', [
+            'mailDomain' => (string) config('intranet.student_mail_domain', 'edu.sekbuelach.ch'),
             'planned' => [
                 'features' => array_values(array_map('strval', (array) config('intranet.modules.ict.items.geraeteausgabe.features', []))),
             ],

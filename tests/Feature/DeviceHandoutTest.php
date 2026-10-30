@@ -7,19 +7,23 @@ use Tests\TestCase;
 
 class DeviceHandoutTest extends TestCase
 {
-    public function test_device_handout_shows_generator_for_administration(): void
+    public function test_device_handout_shows_generator_for_ict(): void
     {
-        $this->signInAs('admin');
+        $this->signInAs('ict');
 
         $this->get('/geraeteausgabe')->assertOk()->assertInertia(fn (Assert $page) => $page
             ->component('ict/device-handout')
+            ->where('mailDomain', 'edu.sekbuelach.ch')
             ->has('planned.features', 4));
     }
 
     public function test_device_handout_is_not_for_staff(): void
     {
-        $this->signInAs('mitarbeitende');
+        $this->signInAs('lehrperson');
 
+        $this->get('/geraeteausgabe')->assertForbidden();
+
+        $this->signInAs('verwaltung');
         $this->get('/geraeteausgabe')->assertForbidden();
     }
 

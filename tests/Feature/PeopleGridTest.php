@@ -91,7 +91,7 @@ class PeopleGridTest extends TestCase
 
     public function test_staff_can_neither_edit_inline_nor_bulk(): void
     {
-        $this->signInAs('mitarbeitende');
+        $this->signInAs('lehrperson');
         $daniel = $this->person('daniel.probe@sekbuelach.example');
 
         $this->postJson("/personen/{$daniel['id']}/feld", ['field' => 'function', 'value' => 'x'])->assertForbidden();
@@ -135,7 +135,7 @@ class PeopleGridTest extends TestCase
             ->where('person.notes', 'Nur für die Administration')
             ->where('groups', fn ($groups): bool => collect($groups)->pluck('key')->all() === ['person', 'organisation', 'contact', 'private', 'system']));
 
-        $this->signInAs('mitarbeitende');
+        $this->signInAs('lehrperson');
         foreach (["/personen/{$daniel['id']}", '/personen'] as $url) {
             $content = (string) $this->get($url)->assertOk()->getContent();
             foreach (['Nur für die Administration', 'Erfunden Person', 'Testdorf', '079 000 99 99'] as $secret) {

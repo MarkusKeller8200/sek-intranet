@@ -14,6 +14,7 @@ use App\Data\Json\JsonEventRepository;
 use App\Data\Json\JsonUserRepository;
 use App\Data\Store\JsonStore;
 use App\Plugins\PluginManager;
+use App\Support\Roles;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
@@ -71,7 +72,9 @@ class IntranetServiceProvider extends ServiceProvider
             $app->make(UserRepository::class),
         ));
 
-        Gate::define('manage-content', fn (IntranetUser $user): bool => $user->hasRole('admin', 'redaktion'));
-        Gate::define('manage-users', fn (IntranetUser $user): bool => $user->hasRole('admin'));
+        // Rechte aus dem Rollenkonzept (config/intranet.php → abilities)
+        foreach (array_keys(Roles::abilities()) as $ability) {
+            Gate::define($ability, fn (IntranetUser $user): bool => Roles::allows($user->role(), $ability));
+        }
     }
 }

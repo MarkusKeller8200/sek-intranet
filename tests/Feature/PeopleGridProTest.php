@@ -66,14 +66,14 @@ class PeopleGridProTest extends TestCase
         $this->post("/personen/{$daniel['id']}/verlauf/{$history[0]['id']}/wiederherstellen", ['field' => 'function'])->assertRedirect();
         $this->assertSame($oldFunction, $this->person('daniel.probe@sekbuelach.example')['function']);
 
-        $this->signInAs('mitarbeitende');
+        $this->signInAs('lehrperson');
         $this->get("/personen/{$daniel['id']}")->assertInertia(fn (Assert $page) => $page->where('history', []));
         $this->post("/personen/{$daniel['id']}/verlauf/{$history[0]['id']}/wiederherstellen", ['field' => 'function'])->assertForbidden();
     }
 
     public function test_views_are_personal_or_shared_by_admin(): void
     {
-        $this->signInAs('mitarbeitende');
+        $this->signInAs('lehrperson');
         $state = ['filters' => [['column' => 'school', 'op' => 'in', 'values' => ['hinterbirch']]], 'grouping' => 'school'];
 
         $mine = $this->postJson('/ansichten', ['grid' => 'people', 'name' => 'Meine Hinterbirch', 'state' => $state])->assertOk()->json('view');
@@ -85,7 +85,7 @@ class PeopleGridProTest extends TestCase
         $this->deleteJson("/ansichten/{$mine['id']}")->assertForbidden();
         $this->postJson('/ansichten', ['grid' => 'people', 'name' => 'Lehrpersonen', 'shared' => true, 'state' => $state])->assertOk();
 
-        $this->signInAs('mitarbeitende');
+        $this->signInAs('lehrperson');
         $this->get('/personen')->assertInertia(fn (Assert $page) => $page->has('views', 2)->where('views.0.name', 'Lehrpersonen')->where('views.0.mine', false));
         $this->deleteJson("/ansichten/{$mine['id']}")->assertOk();
     }
@@ -108,7 +108,7 @@ class PeopleGridProTest extends TestCase
         $this->assertSame(['Nachname', 'E-Mail'], $table['header']);
         $this->assertCount(count(app(UserRepository::class)->all()), $table['rows']);
 
-        $this->signInAs('mitarbeitende');
+        $this->signInAs('lehrperson');
         $csv = $this->post('/personen/export', ['format' => 'csv', 'columns' => ['last_name', 'emergency_name', 'role']])->assertOk()->getContent() ?: '';
         $this->assertStringNotContainsString('Notfall', (string) $csv);
         $this->assertStringNotContainsString('Erfunden Person', (string) $csv);

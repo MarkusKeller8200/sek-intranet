@@ -10,7 +10,7 @@ class EventTest extends TestCase
 {
     public function test_upcoming_events_by_default_past_on_request(): void
     {
-        $this->signInAs('mitarbeitende');
+        $this->signInAs('lehrperson');
 
         $this->get('/termine')->assertInertia(fn (Assert $page) => $page
             ->component('events/index')
@@ -22,7 +22,7 @@ class EventTest extends TestCase
 
     public function test_dashboard_shows_next_five_events_in_order(): void
     {
-        $this->signInAs('mitarbeitende');
+        $this->signInAs('lehrperson');
 
         $this->get('/start')->assertInertia(fn (Assert $page) => $page
             ->has('events', 5)
@@ -65,7 +65,7 @@ class EventTest extends TestCase
 
     public function test_staff_cannot_change_events(): void
     {
-        $this->signInAs('mitarbeitende');
+        $this->signInAs('lehrperson');
         $event = app(EventRepository::class)->all()[0];
 
         $this->delete("/termine/{$event['id']}")->assertForbidden();

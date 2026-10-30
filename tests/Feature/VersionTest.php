@@ -18,7 +18,7 @@ class VersionTest extends TestCase
 
     public function test_every_page_shares_the_version(): void
     {
-        $this->signInAs('mitarbeitende');
+        $this->signInAs('lehrperson');
 
         $this->get('/start')->assertInertia(fn (Assert $page) => $page
             ->where('appVersion.version', AppVersion::info()['version'])
@@ -28,7 +28,7 @@ class VersionTest extends TestCase
 
     public function test_versions_page_lists_the_changelog_with_the_current_version(): void
     {
-        $this->signInAs('mitarbeitende');
+        $this->signInAs('lehrperson');
         $current = AppVersion::info()['version'];
 
         $this->get('/versionen')->assertOk()->assertInertia(fn (Assert $page) => $page
@@ -48,7 +48,7 @@ class VersionTest extends TestCase
     {
         $this->get('/version.json')->assertRedirect();
 
-        $this->signInAs('mitarbeitende');
+        $this->signInAs('lehrperson');
         $response = $this->getJson('/version.json')->assertOk()
             ->assertJsonPath('version', AppVersion::info()['version'])
             ->assertJsonStructure(['version', 'build', 'changes']);

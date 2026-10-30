@@ -10,7 +10,7 @@ class AnnouncementTest extends TestCase
 {
     public function test_staff_see_only_published_announcements_pinned_first(): void
     {
-        $this->signInAs('mitarbeitende');
+        $this->signInAs('lehrperson');
 
         $this->get('/mitteilungen')
             ->assertOk()
@@ -30,7 +30,7 @@ class AnnouncementTest extends TestCase
 
     public function test_staff_cannot_open_scheduled_announcement_or_create(): void
     {
-        $this->signInAs('mitarbeitende');
+        $this->signInAs('lehrperson');
         $scheduled = collect(app(AnnouncementRepository::class)->all())
             ->first(fn (array $a) => strtotime($a['published_at']) > time());
 

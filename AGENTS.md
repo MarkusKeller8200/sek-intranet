@@ -33,6 +33,9 @@ Projekt: SekBülach Intranet, Prototyp. Stack und Konventionen wie IDA.
   (`App\Support\McpConcept`). Neue API-Operationen dort mit Werkzeugnamen ergänzen.
 - Eigene Anwendungen (andere Repositories) und fremde Seiten nicht in den Code übernehmen, sondern als
   Menüpunkt mit `embed` einbinden (`docs/KONZEPT-ANWENDUNGEN.md`); Adressen eigener Anwendungen nur über `.env`.
+- Rollen und Rechte (`docs/KONZEPT-ROLLEN.md`): Menüs und Routen fragen nur Rechte ab (`can:<recht>`), nie Rollen.
+  Neue Rechte unter `config/intranet.php` → `abilities`.
+- Schülerdaten nie im Intranet speichern; Listen (z. B. Geräteausgabe) nur im Browser verarbeiten.
 - Wird ein Schlüssel einer Auswahlliste umbenannt, Umstellung unter `renames` eintragen
   (`php artisan intranet:upgrade` stellt bestehende Daten beim Start um).
 

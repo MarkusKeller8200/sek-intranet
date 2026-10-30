@@ -11,22 +11,33 @@ class EmbedTest extends TestCase
 {
     public function test_verwaltung_menu_links_to_embed_pages(): void
     {
-        $this->signInAs('mitarbeitende');
+        $this->signInAs('lehrperson');
 
         $this->get('/start')->assertInertia(fn (Assert $page) => $page
             ->where('navigation', function ($groups): bool {
                 $group = collect($groups)->firstWhere('key', 'verwaltung');
                 $items = collect($group['items'] ?? []);
 
-                return $items->pluck('key')->all() === ['workflows', 'tickets', 'elternportal']
+                // Workflows nur für Verwaltung und Schulleitung
+                return $items->pluck('key')->all() === ['tickets', 'elternportal']
                     && $items->every(fn ($i) => str_starts_with($i['href'], '/einbindung/') && str_starts_with((string) $i['external'], 'https://'));
             }));
+    }
+
+    public function test_workflows_for_administration_staff(): void
+    {
+        Http::fake();
+        $this->signInAs('lehrperson');
+        $this->get('/einbindung/workflows')->assertNotFound();
+
+        $this->signInAs('verwaltung');
+        $this->get('/einbindung/workflows')->assertOk();
     }
 
     public function test_blocked_page_is_offered_in_new_tab(): void
     {
         Http::fake(['*' => Http::response('', 200, ['X-Frame-Options' => 'DENY'])]);
-        $this->signInAs('mitarbeitende');
+        $this->signInAs('lehrperson');
 
         $this->get('/einbindung/tickets')->assertOk()->assertInertia(fn (Assert $page) => $page
             ->component('modules/embed')
@@ -47,12 +58,16 @@ class EmbedTest extends TestCase
         Http::assertNothingSent();
     }
 
-    public function test_ict_apps_are_for_administration_only(): void
+    public function test_ict_apps_are_for_ict_only(): void
     {
-        $this->signInAs('mitarbeitende');
+        $this->signInAs('lehrperson');
 
         $this->get('/einbindung/websnapshot')->assertNotFound();
         $this->get('/einbindung/gibt-es-nicht')->assertNotFound();
+
+        Http::fake();
+        $this->signInAs('ict');
+        $this->get('/einbindung/websnapshot')->assertOk();
     }
 
     public function test_frame_rules(): void
@@ -71,7 +86,7 @@ class EmbedTest extends TestCase
     public function test_only_https_addresses_are_used(): void
     {
         config(['intranet.modules.verwaltung.items.tickets.embed.url' => 'javascript:alert(1)']);
-        $this->signInAs('mitarbeitende');
+        $this->signInAs('lehrperson');
 
         $this->get('/einbindung/tickets')->assertInertia(fn (Assert $page) => $page->where('module.url', null));
     }

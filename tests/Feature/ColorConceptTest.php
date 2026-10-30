@@ -26,7 +26,7 @@ class ColorConceptTest extends TestCase
 
     public function test_colors_are_shared_with_the_frontend(): void
     {
-        $this->signInAs('mitarbeitende');
+        $this->signInAs('lehrperson');
 
         $this->get('/start')->assertInertia(fn (Assert $page) => $page
             ->where('options.colors.schools.hinterbirch', 'teal')
@@ -49,7 +49,7 @@ class ColorConceptTest extends TestCase
 
     public function test_color_concept_page_is_admin_only(): void
     {
-        $this->signInAs('mitarbeitende');
+        $this->signInAs('lehrperson');
         $this->get('/farbkonzept')->assertForbidden();
 
         $this->signInAs('admin');

@@ -33,6 +33,21 @@ class UpgradeIntranetDataCommand extends Command
             }
         }
 
+        // Demo-Personen auf das Rollenkonzept umstellen (nur erfundene @sekbuelach.example-Adressen)
+        /** @var list<array{0: string, 1: string, 2: string}> $demoRoles */
+        $demoRoles = config('intranet.demo_roles', []);
+        foreach ($demoRoles as [$email, $from, $to]) {
+            if (! str_ends_with($email, '@sekbuelach.example')) {
+                continue;
+            }
+            foreach ($store->all('users') as $record) {
+                if (($record['email'] ?? null) === $email && ($record['role'] ?? null) === $from) {
+                    $store->update('users', (string) $record['id'], ['role' => $to]);
+                    $total++;
+                }
+            }
+        }
+
         // Vor-/Nachname aus dem Anzeigenamen ableiten (Personen von vor der Feldaufteilung)
         foreach ($store->all('users') as $record) {
             if (($record['last_name'] ?? null) === null && ($record['name'] ?? '') !== '') {

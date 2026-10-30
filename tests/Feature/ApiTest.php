@@ -47,7 +47,7 @@ class ApiTest extends TestCase
 
     public function test_staff_tokens_read_without_admin_fields_and_cannot_write(): void
     {
-        $token = $this->token('mitarbeitende');
+        $token = $this->token('lehrperson');
         $headers = ['Authorization' => "Bearer {$token}"];
 
         $response = $this->getJson('/api/v1/people?school=hinterbirch&limit=2', $headers)->assertOk()
@@ -101,7 +101,7 @@ class ApiTest extends TestCase
 
     public function test_admin_manages_tokens_on_the_api_page(): void
     {
-        $this->signInAs('mitarbeitende');
+        $this->signInAs('lehrperson');
         $this->get('/api-doku')->assertForbidden();
 
         $this->signInAs('admin');

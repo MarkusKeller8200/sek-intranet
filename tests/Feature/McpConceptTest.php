@@ -39,7 +39,7 @@ class McpConceptTest extends TestCase
 
     public function test_concept_page_for_administration_only(): void
     {
-        $this->signInAs('mitarbeitende');
+        $this->signInAs('lehrperson');
         $this->get('/mcp-konzept')->assertForbidden();
 
         $this->signInAs('admin');

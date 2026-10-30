@@ -58,10 +58,40 @@ return [
     | Schlüssel nur ändern, wenn unter «renames» eine Umstellung eingetragen ist.
     */
 
+    // Domain der Schüler-Konten (Geräteausgabe: Benutzername vorname.nachname@…)
+    'student_mail_domain' => env('INTRANET_STUDENT_MAIL_DOMAIN', 'edu.sekbuelach.ch'),
+
+    // Rollenkonzept (docs/KONZEPT-ROLLEN.md): eine Rolle je Person im Prototyp, später aus
+    // Entra-ID-Gruppen (mehrere möglich, Rechte werden zusammengezählt).
     'roles' => [
         'admin' => 'Administration',
+        'schulleitung' => 'Schulleitung',
+        'verwaltung' => 'Schulverwaltung',
+        'ict' => 'Fachstelle ICT',
         'redaktion' => 'Redaktion',
+        'lehrperson' => 'Lehrperson',
         'mitarbeitende' => 'Mitarbeitende',
+    ],
+
+    // Beschreibung je Rolle (Seite Prototyp → Rollenkonzept)
+    'role_descriptions' => [
+        'admin' => 'Betreibt das Intranet: Personen, Plugins, Einstellungen, Prototyp. Wenige Personen.',
+        'schulleitung' => 'Leitet die Schule: Inhalte für alle, Verwaltungsabläufe, Sicht auf Unterricht und Personal.',
+        'verwaltung' => 'Sekretariat und Schulverwaltung: Workflows, Bestellungen, Personalverzeichnis lesen.',
+        'ict' => 'Fachstelle ICT: Geräte ausgeben und zurücknehmen, Lizenzen, ICT-Anwendungen.',
+        'redaktion' => 'Pflegt Mitteilungen, Termine und Dokumente für alle.',
+        'lehrperson' => 'Unterrichtet: Unterricht, Bestellungen für Klasse und Zimmer, Inhalte lesen.',
+        'mitarbeitende' => 'Weitere Mitarbeitende (Hausdienst, Betreuung, Assistenz): Inhalte lesen.',
+    ],
+
+    // Rechte (Gates) → Rollen, die es haben. Menüs und Routen fragen nur Rechte ab, nie Rollen.
+    'abilities' => [
+        'manage-users' => ['label' => 'Personen und Intranet verwalten', 'roles' => ['admin']],
+        'manage-content' => ['label' => 'Mitteilungen, Termine, Dokumente bearbeiten', 'roles' => ['admin', 'schulleitung', 'redaktion']],
+        'use-ict' => ['label' => 'Fachstelle ICT (Geräte, Lizenzen, Zugangsdaten)', 'roles' => ['admin', 'ict']],
+        'use-verwaltung' => ['label' => 'Verwaltung (Workflows)', 'roles' => ['admin', 'schulleitung', 'verwaltung']],
+        'use-unterricht' => ['label' => 'Unterricht (Klassen, Stundenpläne, Absenzen)', 'roles' => ['admin', 'schulleitung', 'lehrperson', 'ict']],
+        'order' => ['label' => 'Bestellen (Ausrüstung, Lehrmittel, Anträge)', 'roles' => ['admin', 'schulleitung', 'verwaltung', 'ict', 'lehrperson']],
     ],
 
     'schools' => [
@@ -196,6 +226,7 @@ return [
             'title' => 'Unterricht',
             'color' => 'amber',
             'icon' => 'School',
+            'can' => 'use-unterricht',
             'items' => [
                 'stundenplan' => [
                     'title' => 'Stundenpläne',
@@ -267,6 +298,7 @@ return [
             'title' => 'Bestellen',
             'color' => 'orange',
             'icon' => 'ShoppingCart',
+            'can' => 'order',
             'items' => [
                 'persoenliche-ausruestung' => [
                     'title' => 'Persönliche Ausrüstung (HW)',
@@ -318,6 +350,7 @@ return [
             'items' => [
                 'workflows' => [
                     'title' => 'Workflows',
+                    'can' => 'use-verwaltung',
                     'icon' => 'Workflow',
                     'description' => 'SharePoint-Seite «Leitung und Verwaltung» mit Abläufen und Formularen.',
                     'embed' => ['url' => 'https://sekbuelach.sharepoint.com/sites/LeitungundVerwaltung', 'open' => 'both'],
@@ -340,7 +373,7 @@ return [
             'title' => 'Fachstelle ICT',
             'color' => 'cyan',
             'icon' => 'MonitorSmartphone',
-            'can' => 'manage-users',
+            'can' => 'use-ict',
             'items' => [
                 'geraeteausgabe' => [
                     'title' => 'Geräteausgabe',
@@ -417,6 +450,7 @@ return [
                 'api' => ['title' => 'API', 'icon' => 'Braces', 'href' => '/api-doku'],
                 'mcp' => ['title' => 'MCP-Schnittstelle', 'icon' => 'Bot', 'href' => '/mcp-konzept'],
                 'sprachkonzept' => ['title' => 'Sprachkonzept', 'icon' => 'Languages', 'href' => '/sprachkonzept'],
+                'rollenkonzept' => ['title' => 'Rollenkonzept', 'icon' => 'ShieldCheck', 'href' => '/rollenkonzept'],
             ],
         ],
     ],
@@ -439,7 +473,11 @@ return [
         ],
         'roles' => [
             'admin' => 'rose',
+            'schulleitung' => 'violet',
+            'verwaltung' => 'emerald',
+            'ict' => 'cyan',
             'redaktion' => 'indigo',
+            'lehrperson' => 'amber',
             'mitarbeitende' => 'slate',
         ],
         'audiences' => [
@@ -480,6 +518,15 @@ return [
     | Format: [Sammlung, Feld, alter Wert, neuer Wert].
     | Später werden daraus Datenbank-Migrationen.
     */
+
+    // Demo-Personen auf das Rollenkonzept umstellen (nur @sekbuelach.example, nur wenn noch alte Rolle)
+    'demo_roles' => [
+        ['beat.beispiel@sekbuelach.example', 'redaktion', 'schulleitung'],
+        ['gabriela.vorlage@sekbuelach.example', 'mitarbeitende', 'verwaltung'],
+        ['daniel.probe@sekbuelach.example', 'mitarbeitende', 'lehrperson'],
+        ['eva.fiktiv@sekbuelach.example', 'mitarbeitende', 'lehrperson'],
+        ['fabian.platzhalter@sekbuelach.example', 'mitarbeitende', 'ict'],
+    ],
 
     'renames' => [
         ['users', 'school', 'schulhaus-a', 'hinterbirch'],

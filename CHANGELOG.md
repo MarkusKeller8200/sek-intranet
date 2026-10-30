@@ -7,6 +7,21 @@ laufend unter **Unveröffentlicht** und werden beim Erhöhen der Version zur neu
 
 ## [Unveröffentlicht]
 
+## [0.14.0] – 2026-10-30
+
+### Neu
+
+- Rollenkonzept: Administration, Schulleitung, Schulverwaltung, Fachstelle ICT, Redaktion, Lehrperson,
+  Mitarbeitende; Rechte je Rolle in der Konfiguration, Seite Prototyp → Rollenkonzept
+- Geräteausgabe: Schüler:innen aus einer Klassenliste (Excel oder CSV) importieren, mit Auswahl von Jahrgang
+  (Standard 1. Sek) und Klasse; fehlende Benutzernamen werden gebildet. Die Datei wird nur im Browser gelesen
+
+### Geändert
+
+- Fachstelle ICT für die Rolle Fachstelle ICT (bisher nur Administration); Workflows nur für Verwaltung und
+  Schulleitung; Unterricht und Bestellen nur für Rollen mit diesen Aufgaben
+- Demo-Personen haben neue Rollen (Schulleitung, Verwaltung, Lehrperson, Fachstelle ICT)
+
 ## [0.13.0] – 2026-10-30
 
 ### Neu

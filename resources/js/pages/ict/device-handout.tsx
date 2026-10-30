@@ -8,10 +8,13 @@ import {
     RefreshCw,
     ShieldCheck,
     TriangleAlert,
+    Users,
 } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import type { ChangeEvent } from 'react';
 import { toast } from 'sonner';
+import ClassImportDialog from '@/components/class-import-dialog';
+import type { ImportedRow } from '@/components/class-import-dialog';
 import PageHeader from '@/components/page-header';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -44,10 +47,26 @@ import { cn } from '@/lib/utils';
 
 type Planned = { features: string[] };
 
+/** Zeilen im Format der Eingabe (Semikolon, Reihenfolge wie im Hinweis). */
+const toLines = (rows: ImportedRow[]) =>
+    rows
+        .map((r) =>
+            [r.nachname, r.vorname, r.benutzer, r.inventar, r.lehrperson, r.klasse]
+                .map((v) => v.replace(/[;\t\n]/g, ' '))
+                .join(';'),
+        )
+        .join('\n');
+
 const selectClass =
     'h-9 rounded-md border border-input bg-background px-2 text-sm';
 
-export default function DeviceHandout({ planned }: { planned: Planned }) {
+export default function DeviceHandout({
+    planned,
+    mailDomain,
+}: {
+    planned: Planned;
+    mailDomain: string;
+}) {
     const [input, setInput] = useState('');
     const [length, setLength] = useState(10);
     const [style, setStyle] = useState<PasswordStyle>('animalcolor');
@@ -56,6 +75,15 @@ export default function DeviceHandout({ planned }: { planned: Planned }) {
     const [ort, setOrt] = useState('Bülach');
     const [data, setData] = useState<Student[]>([]);
     const [busy, setBusy] = useState(false);
+    const [importOpen, setImportOpen] = useState(false);
+
+    const importRows = (rows: ImportedRow[], replace: boolean) => {
+        const lines = toLines(rows);
+        setInput((current) =>
+            replace || !current.trim() ? lines : `${current.trimEnd()}\n${lines}`,
+        );
+        toast.success(`${rows.length} Schüler:innen übernommen.`);
+    };
 
     const newCredentials = () => ({
         pw: generatePassword(length, style, avoidAmbig, symbols),
@@ -166,6 +194,21 @@ export default function DeviceHandout({ planned }: { planned: Planned }) {
                         </CardDescription>
                     </CardHeader>
                     <CardContent className="grid gap-4">
+                        <div className="flex flex-wrap items-center gap-2">
+                            <Button onClick={() => setImportOpen(true)}>
+                                <Users /> Schüler:innen importieren
+                            </Button>
+                            <span className="text-xs text-muted-foreground">
+                                Klassenliste (Excel oder CSV) – Jahrgang und
+                                Klasse wählen, z. B. alle 1. Sek-Klassen.
+                            </span>
+                        </div>
+                        <ClassImportDialog
+                            open={importOpen}
+                            onOpenChange={setImportOpen}
+                            mailDomain={mailDomain}
+                            onImport={importRows}
+                        />
                         <Textarea
                             value={input}
                             onChange={(e) => setInput(e.target.value)}

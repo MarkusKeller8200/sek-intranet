@@ -14,6 +14,7 @@ use App\Http\Controllers\McpConceptController;
 use App\Http\Controllers\ModuleController;
 use App\Http\Controllers\PersonController;
 use App\Http\Controllers\PluginController;
+use App\Http\Controllers\RoleConceptController;
 use App\Http\Controllers\VersionController;
 use Illuminate\Support\Facades\Route;
 
@@ -64,6 +65,11 @@ Route::middleware('auth')->group(function () {
     Route::get('dokumente/{id}/download', [DocumentController::class, 'download'])->name('documents.download');
 
     // Personen
+    // Fachstelle ICT (Recht use-ict)
+    Route::middleware('can:use-ict')->group(function () {
+        Route::get('geraeteausgabe', DeviceHandoutController::class)->name('device-handout');
+    });
+
     Route::middleware('can:manage-users')->group(function () {
         Route::get('personen/neu', [PersonController::class, 'create'])->name('people.create');
         Route::post('personen', [PersonController::class, 'store'])->name('people.store');
@@ -77,9 +83,9 @@ Route::middleware('auth')->group(function () {
         Route::delete('personen/{id}', [PersonController::class, 'destroy'])->name('people.destroy');
 
         Route::get('datenstrukturen', DataStructureController::class)->name('data-structures');
-        Route::get('geraeteausgabe', DeviceHandoutController::class)->name('device-handout');
         Route::inertia('farbkonzept', 'color-concept')->name('color-concept');
         Route::inertia('sprachkonzept', 'language-concept')->name('language-concept');
+        Route::get('rollenkonzept', RoleConceptController::class)->name('role-concept');
         Route::get('mcp-konzept', McpConceptController::class)->name('mcp-concept');
 
         // REST-API: Beschreibung mit Tester und Tokens

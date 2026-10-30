@@ -10,7 +10,7 @@ class ModuleNavigationTest extends TestCase
 {
     public function test_navigation_is_shared_and_hides_admin_groups_for_staff(): void
     {
-        $this->signInAs('mitarbeitende');
+        $this->signInAs('lehrperson');
 
         $this->get('/start')->assertOk()->assertInertia(fn (Assert $page) => $page
             ->where('navigation.0.key', 'kommunikation')
@@ -26,7 +26,7 @@ class ModuleNavigationTest extends TestCase
 
     public function test_placeholder_page_shows_planned_module(): void
     {
-        $this->signInAs('mitarbeitende');
+        $this->signInAs('lehrperson');
 
         $this->get('/module/reservationen')->assertOk()->assertInertia(fn (Assert $page) => $page
             ->component('modules/show')
