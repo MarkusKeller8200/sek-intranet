@@ -17,6 +17,8 @@ permissions:
 jobs:
   ci:
     runs-on: ubuntu-latest
+    outputs:
+      fmt: ${{ steps.report.outputs.fmt }}
     steps:
       - name: Checkout code
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -54,15 +56,42 @@ jobs:
           composer ci:check 2>&1 | tee ci-output.txt
 
       - name: Fehler anzeigen
+        id: report
         if: failure()
         run: |
           .github/scripts/report-failure.sh ci-output.txt 'CI-Prüfung fehlgeschlagen'
-          # Formatierung: Korrektur als Diff anzeigen, damit sie ohne lokale Werkzeuge übernommen werden kann
+          # Formatierung: Korrektur erzeugen; der Job format-fix legt sie als Branch ci/format-fix ab
           if grep -q 'Formatting issues' ci-output.txt; then
             npx vp check --fix > /dev/null 2>&1 || true
             git diff > fmt.diff
-            .github/scripts/report-failure.sh fmt.diff 'Formatierung (Korrektur)' 400
+            .github/scripts/report-failure.sh fmt.diff 'Formatierung (Korrektur)'
+            echo "fmt=$(gzip -9c fmt.diff | base64 -w0)" >> "$GITHUB_OUTPUT"
           fi
+
+  # Nur bei Formatfehlern: übernimmt die Korrektur aus dem Job ci (git apply, kein npm) in den Branch
+  # ci/format-fix. So lässt sie sich ohne lokale Werkzeuge holen: git fetch origin ci/format-fix.
+  format-fix:
+    needs: ci
+    if: failure() && needs.ci.outputs.fmt != ''
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Korrektur als Branch ablegen
+        env:
+          FMT: ${{ needs.ci.outputs.fmt }}
+        run: |
+          printf '%s' "$FMT" | base64 -d | gunzip > "$RUNNER_TEMP/fmt.diff"
+          git apply "$RUNNER_TEMP/fmt.diff"
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git switch -c ci/format-fix
+          git commit -qam "Formatierung (vp check --fix) für ${GITHUB_SHA::7}"
+          git push -f origin ci/format-fix
+          echo "::notice title=Formatierung::Korrektur im Branch ci/format-fix (git fetch origin ci/format-fix)"
 
   deploy:
     needs: ci
