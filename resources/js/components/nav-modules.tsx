@@ -49,7 +49,9 @@ export function NavModules({ groups }: { groups: ModuleNavGroup[] }) {
     const { state, isMobile, openMobile, setOpenMobile } = useSidebar();
     const [stored, setStored] = useState<Record<string, boolean>>(readStored);
     // Mobil: bei jedem Öffnen des Menüs alle Hauptmenüs eingeklappt, nicht gemerkt
-    const [mobileGroups, setMobileGroups] = useState<Record<string, boolean>>({});
+    const [mobileGroups, setMobileGroups] = useState<Record<string, boolean>>(
+        {},
+    );
 
     useEffect(() => {
         if (openMobile) {
