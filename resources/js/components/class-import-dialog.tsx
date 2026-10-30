@@ -83,7 +83,9 @@ export default function ClassImportDialog({
             setTable(null);
             setMapping(null);
             setError(
-                e instanceof Error ? e.message : 'Datei konnte nicht gelesen werden.',
+                e instanceof Error
+                    ? e.message
+                    : 'Datei konnte nicht gelesen werden.',
             );
         }
     };
@@ -94,7 +96,9 @@ export default function ClassImportDialog({
         }
 
         return Array.from(
-            new Set(table.rows.map((r) => cell(r, mapping.klasse)).filter(Boolean)),
+            new Set(
+                table.rows.map((r) => cell(r, mapping.klasse)).filter(Boolean),
+            ),
         ).sort((a, b) => a.localeCompare(b, 'de-CH', { numeric: true }));
     }, [table, mapping]);
 
@@ -124,7 +128,9 @@ export default function ClassImportDialog({
                 const nachname = cell(r, mapping.nachname);
                 const benutzer =
                     cell(r, mapping.benutzer).toLowerCase() ||
-                    (buildNames ? usernameFor(vorname, nachname, mailDomain) : '');
+                    (buildNames
+                        ? usernameFor(vorname, nachname, mailDomain)
+                        : '');
 
                 return {
                     nachname,
@@ -138,13 +144,16 @@ export default function ClassImportDialog({
             .filter((r) => r.nachname || r.vorname)
             .sort(
                 (a, b) =>
-                    a.klasse.localeCompare(b.klasse, 'de-CH', { numeric: true }) ||
+                    a.klasse.localeCompare(b.klasse, 'de-CH', {
+                        numeric: true,
+                    }) ||
                     a.nachname.localeCompare(b.nachname, 'de-CH') ||
                     a.vorname.localeCompare(b.vorname, 'de-CH'),
             );
     }, [table, mapping, klasse, year, teacher, buildNames, mailDomain]);
 
-    const ready = mapping !== null && (mapping.nachname >= 0 || mapping.vorname >= 0);
+    const ready =
+        mapping !== null && (mapping.nachname >= 0 || mapping.vorname >= 0);
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
@@ -222,7 +231,11 @@ export default function ClassImportDialog({
                                         {`Alle Klassen (${yearClasses.length})`}
                                     </option>
                                     {yearClasses.map((c) => (
-                                        <option key={c} value={c} translate="no">
+                                        <option
+                                            key={c}
+                                            value={c}
+                                            translate="no"
+                                        >
                                             {c}
                                         </option>
                                     ))}
@@ -260,7 +273,9 @@ export default function ClassImportDialog({
                                                 })
                                             }
                                         >
-                                            <option value={-1}>– keine –</option>
+                                            <option value={-1}>
+                                                – keine –
+                                            </option>
                                             {table.headers.map((h, i) => (
                                                 <option
                                                     key={i}
@@ -292,9 +307,9 @@ export default function ClassImportDialog({
                             <label className="flex items-start gap-2 text-sm">
                                 <Checkbox
                                     checked={buildNames}
-                                    onCheckedChange={(v: boolean | 'indeterminate') =>
-                                        setBuildNames(v === true)
-                                    }
+                                    onCheckedChange={(
+                                        v: boolean | 'indeterminate',
+                                    ) => setBuildNames(v === true)}
                                     className="mt-0.5"
                                 />
                                 <span>
@@ -312,14 +327,26 @@ export default function ClassImportDialog({
                                 {`Vorschau: ${selected.length} Schüler:innen`}
                             </div>
                             <div className="max-h-48 overflow-auto">
-                                <table className="w-full text-xs" translate="no">
+                                <table
+                                    className="w-full text-xs"
+                                    translate="no"
+                                >
                                     <tbody>
                                         {selected.slice(0, 50).map((r, i) => (
-                                            <tr key={i} className="border-b last:border-0">
-                                                <td className="px-3 py-1">{r.klasse}</td>
+                                            <tr
+                                                key={i}
+                                                className="border-b last:border-0"
+                                            >
+                                                <td className="px-3 py-1">
+                                                    {r.klasse}
+                                                </td>
                                                 <td className="px-3 py-1">{`${r.nachname} ${r.vorname}`}</td>
-                                                <td className="px-3 py-1 font-mono">{r.benutzer}</td>
-                                                <td className="px-3 py-1 font-mono">{r.inventar}</td>
+                                                <td className="px-3 py-1 font-mono">
+                                                    {r.benutzer}
+                                                </td>
+                                                <td className="px-3 py-1 font-mono">
+                                                    {r.inventar}
+                                                </td>
                                             </tr>
                                         ))}
                                     </tbody>
@@ -330,9 +357,9 @@ export default function ClassImportDialog({
                         <label className="flex items-center gap-2 text-sm">
                             <Checkbox
                                 checked={replace}
-                                onCheckedChange={(v: boolean | 'indeterminate') =>
-                                    setReplace(v === true)
-                                }
+                                onCheckedChange={(
+                                    v: boolean | 'indeterminate',
+                                ) => setReplace(v === true)}
                             />
                             Bisherige Liste ersetzen (sonst anhängen)
                         </label>
@@ -340,7 +367,10 @@ export default function ClassImportDialog({
                 )}
 
                 <DialogFooter>
-                    <Button variant="outline" onClick={() => onOpenChange(false)}>
+                    <Button
+                        variant="outline"
+                        onClick={() => onOpenChange(false)}
+                    >
                         Abbrechen
                     </Button>
                     <Button

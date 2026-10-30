@@ -51,7 +51,14 @@ type Planned = { features: string[] };
 const toLines = (rows: ImportedRow[]) =>
     rows
         .map((r) =>
-            [r.nachname, r.vorname, r.benutzer, r.inventar, r.lehrperson, r.klasse]
+            [
+                r.nachname,
+                r.vorname,
+                r.benutzer,
+                r.inventar,
+                r.lehrperson,
+                r.klasse,
+            ]
                 .map((v) => v.replace(/[;\t\n]/g, ' '))
                 .join(';'),
         )
@@ -80,7 +87,9 @@ export default function DeviceHandout({
     const importRows = (rows: ImportedRow[], replace: boolean) => {
         const lines = toLines(rows);
         setInput((current) =>
-            replace || !current.trim() ? lines : `${current.trimEnd()}\n${lines}`,
+            replace || !current.trim()
+                ? lines
+                : `${current.trimEnd()}\n${lines}`,
         );
         toast.success(`${rows.length} Schüler:innen übernommen.`);
     };

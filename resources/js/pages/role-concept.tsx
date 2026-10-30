@@ -87,7 +87,10 @@ export default function RoleConcept({
                                 className="grid gap-1 rounded-lg border p-3 text-sm"
                             >
                                 <div className="flex items-center gap-2">
-                                    <OptionBadge list="roles" value={role.key} />
+                                    <OptionBadge
+                                        list="roles"
+                                        value={role.key}
+                                    />
                                     <span className="ml-auto text-xs text-muted-foreground">
                                         {`${role.people} Personen`}
                                     </span>

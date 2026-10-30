@@ -22,23 +22,52 @@ export const IMPORT_FIELDS: { key: ImportField; label: string }[] = [
 
 /** Übliche Überschriften (Escola-Export, Excel-Listen der Schulhäuser). */
 const SYNONYMS: Record<ImportField, string[]> = {
-    nachname: ['nachname', 'name', 'familienname', 'last name', 'lastname', 'surname'],
+    nachname: [
+        'nachname',
+        'name',
+        'familienname',
+        'last name',
+        'lastname',
+        'surname',
+    ],
     vorname: ['vorname', 'rufname', 'first name', 'firstname', 'given name'],
     klasse: ['klasse', 'klassenbezeichnung', 'klasse kurz', 'class', 'gruppe'],
-    benutzer: ['benutzername', 'e-mail', 'email', 'mail', 'e-mail schule', 'mail schule', 'upn', 'login', 'benutzer'],
-    inventar: ['inventarnummer', 'inventar', 'ipad', 'ipad-nr', 'ipad nr', 'geräte-nr', 'gerätenummer', 'asset tag'],
-    lehrperson: ['lehrperson', 'klassenlehrperson', 'klassenlehrer', 'klassenlehrerin', 'klp', 'lp'],
+    benutzer: [
+        'benutzername',
+        'e-mail',
+        'email',
+        'mail',
+        'e-mail schule',
+        'mail schule',
+        'upn',
+        'login',
+        'benutzer',
+    ],
+    inventar: [
+        'inventarnummer',
+        'inventar',
+        'ipad',
+        'ipad-nr',
+        'ipad nr',
+        'geräte-nr',
+        'gerätenummer',
+        'asset tag',
+    ],
+    lehrperson: [
+        'lehrperson',
+        'klassenlehrperson',
+        'klassenlehrer',
+        'klassenlehrerin',
+        'klp',
+        'lp',
+    ],
 };
 
 export type Table = { headers: string[]; rows: string[][] };
 export type Mapping = Record<ImportField, number>;
 
 const norm = (s: string) =>
-    s
-        .toLowerCase()
-        .replace(/[_.:]/g, ' ')
-        .replace(/\s+/g, ' ')
-        .trim();
+    s.toLowerCase().replace(/[_.:]/g, ' ').replace(/\s+/g, ' ').trim();
 
 /** Spalten anhand der Überschriften zuordnen (-1 = nicht vorhanden). */
 export function guessMapping(headers: string[]): Mapping {
@@ -46,10 +75,14 @@ export function guessMapping(headers: string[]): Mapping {
     const used = new Set<number>();
     const mapping = {} as Mapping;
     for (const { key } of IMPORT_FIELDS) {
-        let index = h.findIndex((x, i) => !used.has(i) && SYNONYMS[key].includes(x));
+        let index = h.findIndex(
+            (x, i) => !used.has(i) && SYNONYMS[key].includes(x),
+        );
         if (index < 0) {
             index = h.findIndex(
-                (x, i) => !used.has(i) && SYNONYMS[key].some((s) => s.length > 3 && x.includes(s)),
+                (x, i) =>
+                    !used.has(i) &&
+                    SYNONYMS[key].some((s) => s.length > 3 && x.includes(s)),
             );
         }
         if (index >= 0) {
@@ -85,7 +118,9 @@ function splitHeader(all: string[][]): Table {
 function decodeText(bytes: Uint8Array): string {
     const utf8 = new TextDecoder('utf-8').decode(bytes);
     // Excel speichert CSV oft in Windows-1252: dann tauchen Ersatzzeichen auf
-    const text = utf8.includes('�') ? new TextDecoder('windows-1252').decode(bytes) : utf8;
+    const text = utf8.includes('�')
+        ? new TextDecoder('windows-1252').decode(bytes)
+        : utf8;
 
     return text.charCodeAt(0) === 0xfeff ? text.slice(1) : text;
 }
@@ -138,7 +173,11 @@ export function parseCsvTable(text: string): string[][] {
 async function unzip(bytes: Uint8Array): Promise<Map<string, Uint8Array>> {
     const view = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
     let eocd = -1;
-    for (let i = bytes.length - 22; i >= Math.max(0, bytes.length - 65557); i--) {
+    for (
+        let i = bytes.length - 22;
+        i >= Math.max(0, bytes.length - 65557);
+        i--
+    ) {
         if (view.getUint32(i, true) === 0x06054b50) {
             eocd = i;
             break;
@@ -162,20 +201,34 @@ async function unzip(bytes: Uint8Array): Promise<Map<string, Uint8Array>> {
         const extraLength = view.getUint16(offset + 30, true);
         const commentLength = view.getUint16(offset + 32, true);
         const local = view.getUint32(offset + 42, true);
-        const name = decoder.decode(bytes.subarray(offset + 46, offset + 46 + nameLength));
+        const name = decoder.decode(
+            bytes.subarray(offset + 46, offset + 46 + nameLength),
+        );
         offset += 46 + nameLength + extraLength + commentLength;
 
-        if (!/^xl\/(sharedStrings\.xml|workbook\.xml|worksheets\/sheet\d+\.xml)$/.test(name)) {
+        if (
+            !/^xl\/(sharedStrings\.xml|workbook\.xml|worksheets\/sheet\d+\.xml)$/.test(
+                name,
+            )
+        ) {
             continue;
         }
         const start =
-            local + 30 + view.getUint16(local + 26, true) + view.getUint16(local + 28, true);
+            local +
+            30 +
+            view.getUint16(local + 26, true) +
+            view.getUint16(local + 28, true);
         const data = bytes.subarray(start, start + size);
         if (method === 0) {
             files.set(name, data);
         } else if (method === 8) {
-            const stream = new Blob([data as BlobPart]).stream().pipeThrough(new DecompressionStream('deflate-raw'));
-            files.set(name, new Uint8Array(await new Response(stream).arrayBuffer()));
+            const stream = new Blob([data as BlobPart])
+                .stream()
+                .pipeThrough(new DecompressionStream('deflate-raw'));
+            files.set(
+                name,
+                new Uint8Array(await new Response(stream).arrayBuffer()),
+            );
         }
     }
 
@@ -198,15 +251,26 @@ async function parseXlsx(bytes: Uint8Array): Promise<string[][]> {
     const parse = (name: string) => {
         const data = files.get(name);
 
-        return data ? new DOMParser().parseFromString(decoder.decode(data), 'application/xml') : null;
+        return data
+            ? new DOMParser().parseFromString(
+                  decoder.decode(data),
+                  'application/xml',
+              )
+            : null;
     };
     const strings: string[] = [];
     const shared = parse('xl/sharedStrings.xml');
     shared?.querySelectorAll('si').forEach((si) => {
-        strings.push(Array.from(si.querySelectorAll('t')).map((t) => t.textContent ?? '').join(''));
+        strings.push(
+            Array.from(si.querySelectorAll('t'))
+                .map((t) => t.textContent ?? '')
+                .join(''),
+        );
     });
     // erstes Tabellenblatt
-    const sheetName = [...files.keys()].filter((k) => k.startsWith('xl/worksheets/')).sort()[0];
+    const sheetName = [...files.keys()]
+        .filter((k) => k.startsWith('xl/worksheets/'))
+        .sort()[0];
     const sheet = sheetName ? parse(sheetName) : null;
     if (!sheet) {
         throw new Error('Kein Tabellenblatt gefunden.');
@@ -221,7 +285,9 @@ async function parseXlsx(bytes: Uint8Array): Promise<string[][]> {
                 type === 's'
                     ? (strings[Number(v)] ?? '')
                     : type === 'inlineStr'
-                      ? Array.from(c.querySelectorAll('is t')).map((t) => t.textContent ?? '').join('')
+                      ? Array.from(c.querySelectorAll('is t'))
+                            .map((t) => t.textContent ?? '')
+                            .join('')
                       : v;
             row[columnIndex(c.getAttribute('r') ?? '')] = value;
         });
@@ -239,7 +305,9 @@ export async function readTable(file: File): Promise<Table> {
         return splitHeader(await parseXlsx(bytes));
     }
     if (/\.xls$/i.test(file.name)) {
-        throw new Error('Altes Excel-Format (.xls): bitte in Excel als .xlsx oder CSV speichern.');
+        throw new Error(
+            'Altes Excel-Format (.xls): bitte in Excel als .xlsx oder CSV speichern.',
+        );
     }
 
     return splitHeader(parseCsvTable(decodeText(bytes)));
@@ -253,7 +321,11 @@ export function yearOf(klasse: string): number | null {
 }
 
 /** Benutzername nach Schulkonvention vorname.nachname@domain (ohne Umlaute, nur a-z). */
-export function usernameFor(vorname: string, nachname: string, domain: string): string {
+export function usernameFor(
+    vorname: string,
+    nachname: string,
+    domain: string,
+): string {
     const clean = (s: string) =>
         s
             .toLowerCase()

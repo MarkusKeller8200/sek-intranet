@@ -17,26 +17,26 @@ Stand: Version 0.14.0. Quelle der Wahrheit: `config/intranet.php` → `roles`, `
 
 ## Rollen
 
-| Rolle                 | Schlüssel       | Für wen                                                          |
-| --------------------- | --------------- | ---------------------------------------------------------------- |
-| Administration        | `admin`         | Betrieb des Intranets: Personen, Plugins, Einstellungen, Prototyp |
-| Schulleitung          | `schulleitung`  | Schulleitungen                                                   |
-| Schulverwaltung       | `verwaltung`    | Sekretariat, Schulverwaltung                                     |
-| Fachstelle ICT        | `ict`           | ICT-Support, pädagogischer ICT-Support                           |
-| Redaktion             | `redaktion`     | Pflege von Mitteilungen, Terminen, Dokumenten                    |
-| Lehrperson            | `lehrperson`    | Klassen- und Fachlehrpersonen, SHP, DaZ                          |
-| Mitarbeitende         | `mitarbeitende` | Hausdienst, Betreuung, Assistenz                                 |
+| Rolle           | Schlüssel       | Für wen                                                           |
+| --------------- | --------------- | ----------------------------------------------------------------- |
+| Administration  | `admin`         | Betrieb des Intranets: Personen, Plugins, Einstellungen, Prototyp |
+| Schulleitung    | `schulleitung`  | Schulleitungen                                                    |
+| Schulverwaltung | `verwaltung`    | Sekretariat, Schulverwaltung                                      |
+| Fachstelle ICT  | `ict`           | ICT-Support, pädagogischer ICT-Support                            |
+| Redaktion       | `redaktion`     | Pflege von Mitteilungen, Terminen, Dokumenten                     |
+| Lehrperson      | `lehrperson`    | Klassen- und Fachlehrpersonen, SHP, DaZ                           |
+| Mitarbeitende   | `mitarbeitende` | Hausdienst, Betreuung, Assistenz                                  |
 
 ## Rechte
 
-| Recht            | Bedeutung                                  | Admin | Schulleitung | Verwaltung | ICT | Redaktion | Lehrperson | Mitarbeitende |
-| ---------------- | ------------------------------------------ | :---: | :----------: | :--------: | :-: | :-------: | :--------: | :-----------: |
-| `manage-users`   | Personen und Intranet verwalten, Prototyp  |   ✓   |              |            |     |           |            |               |
+| Recht            | Bedeutung                                   | Admin | Schulleitung | Verwaltung | ICT | Redaktion | Lehrperson | Mitarbeitende |
+| ---------------- | ------------------------------------------- | :---: | :----------: | :--------: | :-: | :-------: | :--------: | :-----------: |
+| `manage-users`   | Personen und Intranet verwalten, Prototyp   |   ✓   |              |            |     |           |            |               |
 | `manage-content` | Mitteilungen, Termine, Dokumente bearbeiten |   ✓   |      ✓       |            |     |     ✓     |            |               |
-| `use-ict`        | Fachstelle ICT (Geräteausgabe, Lizenzen …) |   ✓   |              |            |  ✓  |           |            |               |
-| `use-verwaltung` | Verwaltung (Workflows)                     |   ✓   |      ✓       |     ✓      |     |           |            |               |
-| `use-unterricht` | Unterricht (Klassen, Stundenpläne …)       |   ✓   |      ✓       |            |  ✓  |           |     ✓      |               |
-| `order`          | Bestellen (Ausrüstung, Lehrmittel …)       |   ✓   |      ✓       |     ✓      |  ✓  |           |     ✓      |               |
+| `use-ict`        | Fachstelle ICT (Geräteausgabe, Lizenzen …)  |   ✓   |              |            |  ✓  |           |            |               |
+| `use-verwaltung` | Verwaltung (Workflows)                      |   ✓   |      ✓       |     ✓      |     |           |            |               |
+| `use-unterricht` | Unterricht (Klassen, Stundenpläne …)        |   ✓   |      ✓       |            |  ✓  |           |     ✓      |               |
+| `order`          | Bestellen (Ausrüstung, Lehrmittel …)        |   ✓   |      ✓       |     ✓      |  ✓  |           |     ✓      |               |
 
 Lesen (Start, Mitteilungen, Termine, Dokumente, Personalverzeichnis ohne Admin-Felder, Wissen, Tickets,
 Elternportal) dürfen alle angemeldeten Personen.
