@@ -90,7 +90,7 @@ export type Person = StoredRecord & {
 
 /** Feld einer Person (aus dem Schema, vom Server geliefert). */
 export type PersonField = {
-    key: keyof Person & string;
+    key: keyof Person;
     label: string;
     type: 'string' | 'text' | 'email' | 'bool' | 'date' | 'enum';
     group: string;
