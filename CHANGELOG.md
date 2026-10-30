@@ -7,6 +7,13 @@ laufend unter **Unveröffentlicht** und werden beim Erhöhen der Version zur neu
 
 ## [Unveröffentlicht]
 
+## [0.14.1] – 2026-10-30
+
+### Geändert
+
+- Mobil: Das eingeblendete Menü schliesst sich nach der Wahl eines Menüpunkts (nicht beim Auf- und Zuklappen
+  eines Hauptmenüs); beim Öffnen sind alle Hauptmenüs eingeklappt
+
 ## [0.14.0] – 2026-10-30
 
 ### Neu

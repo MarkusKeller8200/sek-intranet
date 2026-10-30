@@ -1,6 +1,6 @@
 import { Link } from '@inertiajs/react';
 import { ChevronDown, ExternalLink } from 'lucide-react';
-import { Fragment, useState } from 'react';
+import { Fragment, useEffect, useState } from 'react';
 import {
     Collapsible,
     CollapsibleContent,
@@ -46,13 +46,33 @@ function writeStored(value: Record<string, boolean>) {
 
 export function NavModules({ groups }: { groups: ModuleNavGroup[] }) {
     const { isCurrentOrParentUrl } = useCurrentUrl();
-    const { state, isMobile } = useSidebar();
+    const { state, isMobile, openMobile, setOpenMobile } = useSidebar();
     const [stored, setStored] = useState<Record<string, boolean>>(readStored);
+    // Mobil: bei jedem Öffnen des Menüs alle Hauptmenüs eingeklappt, nicht gemerkt
+    const [mobileGroups, setMobileGroups] = useState<Record<string, boolean>>({});
+
+    useEffect(() => {
+        if (openMobile) {
+            setMobileGroups({});
+        }
+    }, [openMobile]);
+
+    // Mobil: nach Wahl eines Menüpunkts das eingeblendete Menü schliessen
+    const closeOnMobile = () => {
+        if (isMobile) {
+            setOpenMobile(false);
+        }
+    };
 
     // In der schmalen Leiste (nur Symbole) gibt es keine Gruppentitel – alles zeigen.
     const iconOnly = state === 'collapsed' && !isMobile;
 
     const toggle = (key: string, open: boolean) => {
+        if (isMobile) {
+            setMobileGroups((current) => ({ ...current, [key]: open }));
+
+            return;
+        }
         const next = { ...stored, [key]: open };
         setStored(next);
         writeStored(next);
@@ -67,9 +87,10 @@ export function NavModules({ groups }: { groups: ModuleNavGroup[] }) {
                 // Standard: offen, wenn die Gruppe Umgesetztes enthält
                 const defaultOpen = group.items.some((item) => !item.planned);
                 // Gemerkte Wahl gilt immer – auch für die Gruppe der aktuellen Seite
-                const open =
-                    iconOnly ||
-                    (stored[group.key] ?? (defaultOpen || containsCurrent));
+                const open = isMobile
+                    ? (mobileGroups[group.key] ?? false)
+                    : iconOnly ||
+                      (stored[group.key] ?? (defaultOpen || containsCurrent));
                 const color = isColorName(group.color)
                     ? palette[group.color]
                     : palette.slate;
@@ -155,6 +176,9 @@ export function NavModules({ groups }: { groups: ModuleNavGroup[] }) {
                                                                 }
                                                                 target="_blank"
                                                                 rel="noopener noreferrer"
+                                                                onClick={
+                                                                    closeOnMobile
+                                                                }
                                                             >
                                                                 <Icon
                                                                     className={
@@ -171,6 +195,9 @@ export function NavModules({ groups }: { groups: ModuleNavGroup[] }) {
                                                                 href={item.href}
                                                                 prefetch={
                                                                     !item.planned
+                                                                }
+                                                                onClick={
+                                                                    closeOnMobile
                                                                 }
                                                             >
                                                                 <Icon

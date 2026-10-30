@@ -11,10 +11,13 @@ import {
     SidebarContent,
     SidebarFooter,
     SidebarHeader,
+    useSidebar,
 } from '@/components/ui/sidebar';
 
 export function AppSidebar() {
     const { navigation, store } = usePage().props;
+    const { isMobile, setOpenMobile } = useSidebar();
+    const closeOnMobile = () => isMobile && setOpenMobile(false);
 
     return (
         <Sidebar collapsible="icon" variant="inset">
@@ -23,6 +26,7 @@ export function AppSidebar() {
                 <Link
                     href="/start"
                     prefetch
+                    onClick={closeOnMobile}
                     aria-label="Zur Startseite"
                     className="block rounded-md p-1 group-data-[collapsible=icon]:hidden focus-visible:ring-2 focus-visible:ring-sidebar-ring focus-visible:outline-none"
                 >
@@ -32,6 +36,7 @@ export function AppSidebar() {
                 <Link
                     href="/start"
                     prefetch
+                    onClick={closeOnMobile}
                     aria-label="Zur Startseite"
                     className="hidden justify-center group-data-[collapsible=icon]:flex"
                 >

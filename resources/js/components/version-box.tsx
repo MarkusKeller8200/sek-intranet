@@ -1,16 +1,19 @@
 import { Link, usePage } from '@inertiajs/react';
 import { Tag } from 'lucide-react';
 import { useCurrentUrl } from '@/hooks/use-current-url';
+import { useSidebar } from '@/components/ui/sidebar';
 import { cn } from '@/lib/utils';
 
 /** Version, Build und Prototyp-Hinweis in einem Feld (Fuss der Seitenleiste), verlinkt auf «Versionen». */
 export function VersionBox({ store }: { store: string }) {
     const { appVersion } = usePage().props;
     const { isCurrentOrParentUrl } = useCurrentUrl();
+    const { isMobile, setOpenMobile } = useSidebar();
 
     return (
         <Link
             href="/versionen"
+            onClick={() => isMobile && setOpenMobile(false)}
             title="Versionen und Änderungen"
             className={cn(
                 'mt-auto grid gap-0.5 rounded-md border border-dashed border-sidebar-border px-3 py-2 text-xs text-sidebar-foreground/70 group-data-[collapsible=icon]:hidden hover:bg-sidebar-accent hover:text-sidebar-accent-foreground',
