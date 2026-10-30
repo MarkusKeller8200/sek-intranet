@@ -51,6 +51,11 @@ RUN apt-get update \
         'Header always set X-Robots-Tag "noindex, nofollow"' \
         'Header always set X-Content-Type-Options "nosniff"' \
         'Header always set Referrer-Policy "strict-origin-when-cross-origin"' \
+        'AddType application/manifest+json .webmanifest' \
+        '<Files "sw.js">' \
+        '    Header set Cache-Control "no-cache"' \
+        '    Header set Service-Worker-Allowed "/"' \
+        '</Files>' \
         > /etc/apache2/conf-enabled/intranet.conf \
     && cp "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini" \
     && printf '%s\n' \

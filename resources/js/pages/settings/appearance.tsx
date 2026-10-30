@@ -1,6 +1,7 @@
 import { Head } from '@inertiajs/react';
 import AppearanceTabs from '@/components/appearance-tabs';
 import FontPicker from '@/components/font-picker';
+import { InstallAppButton } from '@/components/install-app';
 import LanguagePicker from '@/components/language-picker';
 import Heading from '@/components/heading';
 
@@ -29,6 +30,13 @@ export default function Appearance() {
                     description="Sprache der Oberfläche. Gilt für diesen Browser; Inhalte wie Mitteilungen bleiben in ihrer Sprache."
                 />
                 <LanguagePicker />
+
+                <Heading
+                    variant="small"
+                    title="App"
+                    description="Das Intranet lässt sich auf Computer, Tablet und Handy wie eine App installieren (eigenes Fenster, Symbol auf dem Startbildschirm)."
+                />
+                <InstallAppButton variant="settings" />
             </div>
         </>
     );

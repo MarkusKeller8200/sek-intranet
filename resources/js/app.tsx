@@ -4,6 +4,7 @@ import { TooltipProvider } from '@/components/ui/tooltip';
 import { initializeTheme } from '@/hooks/use-appearance';
 import { initializeFont } from '@/hooks/use-font';
 import { initializeLanguage, t } from '@/lib/i18n';
+import { initializePwa } from '@/lib/pwa';
 import AppLayout from '@/layouts/app-layout';
 import AuthLayout from '@/layouts/auth-layout';
 import SettingsLayout from '@/layouts/settings/layout';
@@ -40,3 +41,7 @@ void createInertiaApp({
 initializeTheme();
 initializeFont();
 initializeLanguage();
+initializePwa(
+    document.querySelector<HTMLMetaElement>('meta[name="app-build"]')?.content ??
+        null,
+);

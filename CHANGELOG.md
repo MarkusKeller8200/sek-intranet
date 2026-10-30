@@ -7,6 +7,14 @@ laufend unter **Unveröffentlicht** und werden beim Erhöhen der Version zur neu
 
 ## [Unveröffentlicht]
 
+## [0.15.0] – 2026-10-30
+
+### Neu
+
+- PWA: Intranet als App installierbar (Computer, Android, iPhone/iPad), Knopf «App installieren» in der
+  Seitenleiste und unter Einstellungen → Darstellung, Anleitung für iPhone/iPad, Offline-Seite. Der Service Worker
+  speichert keine Seiten oder Daten, nur Programmdateien
+
 ## [0.14.2] – 2026-10-30
 
 ### Neu

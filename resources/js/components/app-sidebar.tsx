@@ -2,6 +2,7 @@ import { Link, usePage } from '@inertiajs/react';
 import AppLogoIcon from '@/components/app-logo-icon';
 import AppWordmark from '@/components/app-wordmark';
 import { NavModules } from '@/components/nav-modules';
+import { InstallAppButton } from '@/components/install-app';
 import { LanguageSelect } from '@/components/language-picker';
 import { NavUser } from '@/components/nav-user';
 import { VersionBox } from '@/components/version-box';
@@ -49,6 +50,7 @@ export function AppSidebar() {
             </SidebarContent>
 
             <SidebarFooter>
+                <InstallAppButton />
                 <VersionBox store={store} />
                 <LanguageSelect />
                 <NavUser />
