@@ -119,6 +119,10 @@ export type SchemaField = {
     values: string[];
     postgres: string;
     filled: number;
+    /** Gruppe in Formular/Detailansicht (nur Personen) */
+    group: string | null;
+    admin_only: boolean;
+    computed: boolean;
 };
 
 export type SchemaCollection = {

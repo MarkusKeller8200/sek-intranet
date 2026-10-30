@@ -1,6 +1,7 @@
-import { Head } from '@inertiajs/react';
+import { Head, usePage } from '@inertiajs/react';
 import { CircleAlert, CircleCheck, Info, TriangleAlert } from 'lucide-react';
 import AppWordmark from '@/components/app-wordmark';
+import FontPicker from '@/components/font-picker';
 import OptionBadge from '@/components/option-badge';
 import PageHeader from '@/components/page-header';
 import { Button } from '@/components/ui/button';
@@ -12,7 +13,8 @@ import {
     CardTitle,
 } from '@/components/ui/card';
 import { useOptions } from '@/hooks/use-options';
-import { statusClasses } from '@/lib/colors';
+import { isColorName, palette, statusClasses } from '@/lib/colors';
+import { moduleIcon } from '@/lib/module-icons';
 import type { ColoredList } from '@/lib/colors';
 import { cn } from '@/lib/utils';
 
@@ -97,6 +99,7 @@ const lists: { list: ColoredList; title: string; dot?: boolean }[] = [
 
 export default function ColorConcept() {
     const options = useOptions();
+    const { navigation } = usePage().props;
 
     return (
         <>
@@ -104,7 +107,7 @@ export default function ColorConcept() {
             <div className="flex flex-1 flex-col gap-6 p-4 md:p-6">
                 <PageHeader
                     title="Farbkonzept"
-                    description="Abgeleitet aus dem Auftritt von sekbuelach.ch. Schrift: Open Sans."
+                    description="Abgeleitet aus dem Auftritt von sekbuelach.ch. Schrift: Open Sans (umstellbar)."
                 />
 
                 <Card>
@@ -227,6 +230,61 @@ export default function ColorConcept() {
                             Schulhäuser und Zielgruppen. Termine erhalten
                             zusätzlich einen farbigen Rand links.
                         </p>
+                    </CardContent>
+                </Card>
+
+                <Card>
+                    <CardHeader>
+                        <CardTitle>Navigation (Hauptmenüs)</CardTitle>
+                        <CardDescription>
+                            Jeder Bereich der Seitenleiste hat eine Farbe und
+                            ein Symbol: farbige Fläche für den Kopf, Symbole und
+                            Markierung der aktiven Seite in der Bereichsfarbe.
+                            Zuordnung in config/intranet.php → modules (color,
+                            icon).
+                        </CardDescription>
+                    </CardHeader>
+                    <CardContent className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+                        {navigation.map((group) => {
+                            const color = isColorName(group.color)
+                                ? palette[group.color]
+                                : palette.slate;
+                            const Icon = moduleIcon(group.icon);
+
+                            return (
+                                <div key={group.key} className="grid gap-1.5">
+                                    <div
+                                        className={cn(
+                                            'flex h-10 items-center gap-2.5 rounded-lg px-2.5 text-sm font-semibold',
+                                            color.panel,
+                                        )}
+                                    >
+                                        <Icon
+                                            className={cn('size-5', color.icon)}
+                                        />
+                                        {group.title}
+                                    </div>
+                                    <span className="px-1 font-mono text-xs text-muted-foreground">
+                                        {group.color} · {group.icon} ·{' '}
+                                        {group.items.length} Module
+                                    </span>
+                                </div>
+                            );
+                        })}
+                    </CardContent>
+                </Card>
+
+                <Card>
+                    <CardHeader>
+                        <CardTitle>Schrift</CardTitle>
+                        <CardDescription>
+                            Standard ist Open Sans wie auf sekbuelach.ch. Jede
+                            Person kann die Schrift unter Einstellungen →
+                            Darstellung umstellen (gilt pro Browser).
+                        </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                        <FontPicker />
                     </CardContent>
                 </Card>
             </div>

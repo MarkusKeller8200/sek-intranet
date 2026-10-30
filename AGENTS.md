@@ -7,7 +7,9 @@ Projekt: SekBülach Intranet, Prototyp. Stack und Konventionen wie IDA.
 - Nur erfundene Testdaten verwenden, nie echte Personendaten (Volksschule, IDG Kanton Zürich).
 - Keine Datenbank einführen, solange `INTRANET_STORE=json` gilt. Fachdaten nur über die
   Repository-Schnittstellen in `app/Data/Contracts` lesen und schreiben, nie direkt über Dateien.
-- Jede neue oder geänderte Sammlung zuerst im Schema `config/intranet.php` nachführen.
+- Datenstrukturen immer nachführen: jede neue oder geänderte Sammlung und jedes Feld zuerst im Schema
+  `config/intranet.php` → `schema` (Label, Typ, Gruppe). `SchemaCompletenessTest` und die Seite
+  «Datenstrukturen» prüfen das.
 - Dateien und Daten nie ohne Rückfrage löschen; `intranet:seed --force` nur in Tests.
 - UI-Texte Deutsch (Schweiz): «ss» statt «ß».
 - Farben nur über das Farbkonzept: Tokens in `resources/css/app.css`, Farben je Auswahlwert in

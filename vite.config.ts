@@ -16,6 +16,19 @@ export default defineConfig({
                 bunny('Open Sans', {
                     weights: [400, 500, 600, 700],
                 }),
+                // Wählbar unter Einstellungen → Darstellung (nur geladen, wenn gewählt)
+                bunny('Atkinson Hyperlegible', {
+                    weights: [400, 700],
+                    preload: false,
+                }),
+                bunny('Inter', {
+                    weights: [400, 500, 600, 700],
+                    preload: false,
+                }),
+                bunny('Source Serif 4', {
+                    weights: [400, 600, 700],
+                    preload: false,
+                }),
             ],
         }),
         inertia(),

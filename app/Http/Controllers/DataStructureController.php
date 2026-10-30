@@ -17,6 +17,7 @@ class DataStructureController extends Controller
         return Inertia::render('data-structures', [
             'store' => config('intranet.store'),
             'collections' => $inspector->inspect(),
+            'unknownCollections' => $inspector->unknownCollections(),
         ]);
     }
 }

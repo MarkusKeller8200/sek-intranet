@@ -17,6 +17,22 @@
                     }
                 }
             })();
+
+            // Gewählte Schrift sofort setzen (siehe resources/js/hooks/use-font.ts), damit nichts springt
+            (function() {
+                try {
+                    const stacks = {
+                        atkinson: "'Atkinson Hyperlegible', ui-sans-serif, system-ui, sans-serif",
+                        inter: "'Inter', ui-sans-serif, system-ui, sans-serif",
+                        serif: "'Source Serif 4', Georgia, 'Times New Roman', serif",
+                        system: "ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif",
+                    };
+                    const font = localStorage.getItem('font');
+                    if (font && stacks[font]) {
+                        document.documentElement.style.setProperty('--font-sans', stacks[font]);
+                    }
+                } catch (e) {}
+            })();
         </script>
 
         {{-- Inline style to set the HTML background color based on our theme in app.css --}}

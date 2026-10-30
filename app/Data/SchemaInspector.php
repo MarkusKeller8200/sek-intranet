@@ -47,8 +47,11 @@ final class SchemaInspector
             $known = array_merge(['id', 'created_at', 'updated_at'], array_keys($fields));
 
             $fieldRows = [];
+            /** @var array<string, array<string, mixed>> $groups */
+            $groups = (array) ($definition['groups'] ?? []);
 
             foreach ($fields as $name => $field) {
+                $group = is_string($field['group'] ?? null) ? $field['group'] : null;
                 $type = is_string($field['type'] ?? null) ? $field['type'] : 'string';
                 $filled = count(array_filter($records, fn (array $r): bool => ($r[$name] ?? null) !== null && ($r[$name] ?? '') !== ''));
 
@@ -62,6 +65,9 @@ final class SchemaInspector
                     'values' => $this->values($field['values'] ?? null),
                     'postgres' => self::POSTGRES_TYPES[$type] ?? 'text',
                     'filled' => $filled,
+                    'group' => $group !== null ? (string) ($groups[$group]['label'] ?? $group) : null,
+                    'admin_only' => $group !== null && ($groups[$group]['admin'] ?? false) === true,
+                    'computed' => ($field['computed'] ?? false) === true,
                 ];
             }
 
@@ -88,6 +94,16 @@ final class SchemaInspector
         }
 
         return $result;
+    }
+
+    /**
+     * Gespeicherte Sammlungen, die im Schema fehlen (müssen nachgeführt werden).
+     *
+     * @return list<string>
+     */
+    public function unknownCollections(): array
+    {
+        return array_values(array_diff($this->store->collections(), array_keys((array) config('intranet.schema', []))));
     }
 
     /**
