@@ -31,6 +31,8 @@ Projekt: SekBülach Intranet, Prototyp. Stack und Konventionen wie IDA.
 - Versionierung: Nummer nur in `VERSION` (SemVer), Änderungen laufend in `CHANGELOG.md` unter «Unveröffentlicht».
 - MCP-Schnittstelle (Konzept, `docs/KONZEPT-MCP.md`): Werkzeuge werden aus `App\Support\OpenApi` abgeleitet
   (`App\Support\McpConcept`). Neue API-Operationen dort mit Werkzeugnamen ergänzen.
+- Eigene Anwendungen (andere Repositories) und fremde Seiten nicht in den Code übernehmen, sondern als
+  Menüpunkt mit `embed` einbinden (`docs/KONZEPT-ANWENDUNGEN.md`); Adressen eigener Anwendungen nur über `.env`.
 - Wird ein Schlüssel einer Auswahlliste umbenannt, Umstellung unter `renames` eintragen
   (`php artisan intranet:upgrade` stellt bestehende Daten beim Start um).
 

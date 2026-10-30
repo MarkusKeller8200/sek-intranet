@@ -8,7 +8,8 @@ use Illuminate\Support\Facades\Gate;
 /**
  * Module aus config/intranet.php → modules: Navigation (Seitenleiste) und Platzhalter.
  *
- * @phpstan-type Module array{key: string, title: string, icon: string, href: string, planned: bool}
+ * @phpstan-type Module array{key: string, title: string, icon: string, href: string, planned: bool, external: string|null, open: string|null}
+ * @phpstan-type Embedded array{key: string, title: string, icon: string, group: string, color: string, description: string, url: string|null, open: string, repo: string|null, stack: string|null}
  * @phpstan-type Group array{key: string, title: string, color: string, icon: string, items: list<Module>}
  */
 class ModuleNavigation
@@ -34,12 +35,19 @@ class ModuleNavigation
                 }
 
                 $href = $module['href'] ?? null;
+                $embed = $this->embed($module);
+                if ($embed !== null) {
+                    // Eingebunden: eigene Seite mit Rahmen, «tab» führt direkt auf die Adresse
+                    $href = '/einbindung/'.$key;
+                }
                 $items[] = [
                     'key' => (string) $key,
                     'title' => (string) ($module['title'] ?? $key),
                     'icon' => (string) ($module['icon'] ?? 'Circle'),
                     'href' => is_string($href) ? $href : '/module/'.$key,
                     'planned' => ! is_string($href),
+                    'external' => $embed['url'] ?? null,
+                    'open' => $embed['open'] ?? null,
                 ];
             }
 
@@ -68,7 +76,7 @@ class ModuleNavigation
             $items = (array) ($group['items'] ?? []);
             $module = $items[$key] ?? null;
 
-            if (! is_array($module) || isset($module['href']) || ! $this->allowed($group, $user) || ! $this->allowed($module, $user)) {
+            if (! is_array($module) || isset($module['href']) || isset($module['embed']) || ! $this->allowed($group, $user) || ! $this->allowed($module, $user)) {
                 continue;
             }
 
@@ -84,6 +92,58 @@ class ModuleNavigation
         }
 
         return null;
+    }
+
+    /**
+     * Eingebundene Anwendung oder Seite («embed»), null wenn unbekannt oder nicht erlaubt.
+     *
+     * @return Embedded|null
+     */
+    public function embedded(string $key, ?Authenticatable $user): ?array
+    {
+        foreach ($this->config() as $group) {
+            $module = ((array) ($group['items'] ?? []))[$key] ?? null;
+            if (! is_array($module) || ! $this->allowed($group, $user) || ! $this->allowed($module, $user)) {
+                continue;
+            }
+            $embed = $this->embed($module);
+            if ($embed === null) {
+                continue;
+            }
+
+            return [
+                'key' => $key,
+                'title' => (string) ($module['title'] ?? $key),
+                'icon' => (string) ($module['icon'] ?? 'Circle'),
+                'group' => (string) ($group['title'] ?? ''),
+                'color' => (string) ($group['color'] ?? 'slate'),
+                'description' => (string) ($module['description'] ?? ''),
+            ] + $embed;
+        }
+
+        return null;
+    }
+
+    /**
+     * @param  array<mixed>  $module
+     * @return array{url: string|null, open: string, repo: string|null, stack: string|null}|null
+     */
+    private function embed(array $module): ?array
+    {
+        $embed = $module['embed'] ?? null;
+        if (! is_array($embed)) {
+            return null;
+        }
+        $url = $embed['url'] ?? null;
+        $open = $embed['open'] ?? 'both';
+
+        return [
+            // Nur https-Adressen (keine javascript:- oder data:-Ziele)
+            'url' => is_string($url) && str_starts_with($url, 'https://') ? $url : null,
+            'open' => in_array($open, ['embed', 'tab', 'both'], true) ? $open : 'both',
+            'repo' => isset($embed['repo']) && is_string($embed['repo']) ? $embed['repo'] : null,
+            'stack' => isset($embed['stack']) && is_string($embed['stack']) ? $embed['stack'] : null,
+        ];
     }
 
     /**

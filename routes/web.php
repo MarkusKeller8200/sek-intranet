@@ -6,6 +6,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DataStructureController;
 use App\Http\Controllers\DocumentController;
+use App\Http\Controllers\EmbedController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\GridViewController;
 use App\Http\Controllers\McpConceptController;
@@ -27,6 +28,7 @@ Route::middleware('auth')->group(function () {
     Route::redirect('/', '/start')->name('home');
     Route::get('start', DashboardController::class)->name('dashboard');
     Route::get('module/{key}', [ModuleController::class, 'show'])->where('key', '[a-z0-9-]+')->name('modules.show');
+    Route::get('einbindung/{key}', [EmbedController::class, 'show'])->where('key', '[a-z0-9-]+')->name('embeds.show');
 
     // Mitteilungen
     Route::middleware('can:manage-content')->group(function () {
@@ -96,6 +98,7 @@ Route::middleware('auth')->group(function () {
         });
     });
     Route::get('versionen', VersionController::class)->name('versions');
+    Route::get('version.json', [VersionController::class, 'current'])->name('versions.current');
     Route::get('personen', [PersonController::class, 'index'])->name('people.index');
     Route::post('personen/export', [PersonController::class, 'export'])->middleware('throttle:30,1')->name('people.export');
     Route::post('ansichten', [GridViewController::class, 'store'])->middleware('throttle:60,1')->name('grid-views.store');

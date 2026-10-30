@@ -43,4 +43,15 @@ class VersionTest extends TestCase
 
         $this->assertContains(AppVersion::info()['version'], $versions, 'CHANGELOG.md: Eintrag für die aktuelle Version fehlt');
     }
+
+    public function test_version_json_for_update_check(): void
+    {
+        $this->get('/version.json')->assertRedirect();
+
+        $this->signInAs('mitarbeitende');
+        $response = $this->getJson('/version.json')->assertOk()
+            ->assertJsonPath('version', AppVersion::info()['version'])
+            ->assertJsonStructure(['version', 'build', 'changes']);
+        $this->assertStringContainsString('no-store', (string) $response->headers->get('Cache-Control'));
+    }
 }

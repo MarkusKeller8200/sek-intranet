@@ -305,6 +305,31 @@ return [
                 ],
             ],
         ],
+        'verwaltung' => [
+            'title' => 'Verwaltung',
+            'color' => 'emerald',
+            'icon' => 'Landmark',
+            'items' => [
+                'workflows' => [
+                    'title' => 'Workflows',
+                    'icon' => 'Workflow',
+                    'description' => 'SharePoint-Seite «Leitung und Verwaltung» mit Abläufen und Formularen.',
+                    'embed' => ['url' => 'https://sekbuelach.sharepoint.com/sites/LeitungundVerwaltung', 'open' => 'both'],
+                ],
+                'tickets' => [
+                    'title' => 'Tickets',
+                    'icon' => 'Ticket',
+                    'description' => 'Anliegen an Verwaltung und ICT über das Kundenportal melden.',
+                    'embed' => ['url' => 'https://sekbuelach.atlassian.net/servicedesk/customer/portal/2', 'open' => 'both'],
+                ],
+                'elternportal' => [
+                    'title' => 'Elternportal',
+                    'icon' => 'UsersRound',
+                    'description' => 'Portal für Anliegen von Eltern und Erziehungsberechtigten.',
+                    'embed' => ['url' => 'https://sekbuelach.atlassian.net/servicedesk/customer/portal/3', 'open' => 'both'],
+                ],
+            ],
+        ],
         'ict' => [
             'title' => 'Fachstelle ICT',
             'color' => 'cyan',
@@ -331,6 +356,45 @@ return [
                     'description' => 'Software-Lizenzen Personen, Klassen und Geräten zuweisen und freigeben.',
                     'features' => ['Freie und belegte Lizenzen', 'Zuweisung an Personen und Klassen', 'Automatisch beim Ein- und Austritt (IDA)', 'Ablaufende Lizenzen'],
                     'plugin' => 'ida',
+                ],
+                // Eingebundene Anwendungen (eigene Projekte auf GitHub, laufen als eigener Dienst)
+                // und Atlassian-Seiten. «embed»: url, open (embed | tab | both), repo, stack.
+                // Adresse der Anwendung über .env, solange sie nicht betrieben wird: null.
+                'websnapshot' => [
+                    'title' => 'Webseiten-Snapshot',
+                    'icon' => 'Camera',
+                    'description' => 'Webseiten erfassen, Versionen vergleichen und Änderungsberichte erstellen.',
+                    'embed' => ['url' => env('INTRANET_APP_WEBSNAPSHOT_URL'), 'open' => 'both', 'repo' => 'MarkusKeller8200/websnapshot', 'stack' => 'Python, Streamlit, SQLite'],
+                ],
+                'rechnung' => [
+                    'title' => 'Rechnung',
+                    'icon' => 'Receipt',
+                    'description' => 'Rechnungsablauf (Projekt abaflow).',
+                    'embed' => ['url' => env('INTRANET_APP_ABAFLOW_URL'), 'open' => 'both', 'repo' => 'MaKeSekB/abaflow'],
+                ],
+                'ansagetexte' => [
+                    'title' => 'Telefonie Ansagetexte',
+                    'icon' => 'AudioLines',
+                    'description' => 'Ansagetexte für die 3CX-Telefonanlage (Text-to-Speech).',
+                    'embed' => ['url' => env('INTRANET_APP_TTS_URL'), 'open' => 'both', 'repo' => 'sekbuelach/3CX-SEKB-TTS'],
+                ],
+                'lmvz-shop' => [
+                    'title' => 'LMVZ Shop (Prototyp)',
+                    'icon' => 'Store',
+                    'description' => 'Lizenzen für Lehrmittel bestellen (Projekt edu-license-portal).',
+                    'embed' => ['url' => env('INTRANET_APP_LICENSE_PORTAL_URL'), 'open' => 'both', 'repo' => 'sekbuelach/edu-license-portal'],
+                ],
+                'servicedesk' => [
+                    'title' => 'Jira Service Desk',
+                    'icon' => 'LifeBuoy',
+                    'description' => 'Warteschlange der ICT-Tickets in Jira Service Management.',
+                    'embed' => ['url' => 'https://sekbuelach.atlassian.net/jira/servicedesk/projects/ICT/queues/custom/286', 'open' => 'both'],
+                ],
+                'confluence-ict' => [
+                    'title' => 'Confluence',
+                    'icon' => 'BookText',
+                    'description' => 'Wissensbereich ICT in Confluence.',
+                    'embed' => ['url' => 'https://sekbuelach.atlassian.net/wiki/spaces/ICT/overview', 'open' => 'both'],
                 ],
             ],
         ],

@@ -1,5 +1,5 @@
 import { Link, usePage } from '@inertiajs/react';
-import { ChevronDown, Tag } from 'lucide-react';
+import { ChevronDown, ExternalLink, Tag } from 'lucide-react';
 import { Fragment, useState } from 'react';
 import {
     Collapsible,
@@ -182,22 +182,45 @@ export function NavModules({ groups }: { groups: ModuleNavGroup[] }) {
                                                                 'text-sidebar-foreground/60',
                                                         )}
                                                     >
-                                                        <Link
-                                                            href={item.href}
-                                                            prefetch={
-                                                                !item.planned
-                                                            }
-                                                        >
-                                                            <Icon
-                                                                className={cn(
-                                                                    !item.planned &&
-                                                                        color.icon,
-                                                                )}
-                                                            />
-                                                            <span>
-                                                                {item.title}
-                                                            </span>
-                                                        </Link>
+                                                        {item.open ===
+                                                            'tab' &&
+                                                        item.external ? (
+                                                            // Nur neuer Tab: direkt zur Adresse
+                                                            <a
+                                                                href={
+                                                                    item.external
+                                                                }
+                                                                target="_blank"
+                                                                rel="noopener noreferrer"
+                                                            >
+                                                                <Icon
+                                                                    className={
+                                                                        color.icon
+                                                                    }
+                                                                />
+                                                                <span>
+                                                                    {item.title}
+                                                                </span>
+                                                                <ExternalLink className="ml-auto size-3 opacity-50" />
+                                                            </a>
+                                                        ) : (
+                                                            <Link
+                                                                href={item.href}
+                                                                prefetch={
+                                                                    !item.planned
+                                                                }
+                                                            >
+                                                                <Icon
+                                                                    className={cn(
+                                                                        !item.planned &&
+                                                                            color.icon,
+                                                                    )}
+                                                                />
+                                                                <span>
+                                                                    {item.title}
+                                                                </span>
+                                                            </Link>
+                                                        )}
                                                     </SidebarMenuButton>
                                                     {item.planned && (
                                                         <SidebarMenuBadge className="text-[10px] font-normal text-sidebar-foreground/50">

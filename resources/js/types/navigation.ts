@@ -21,6 +21,10 @@ export type ModuleNavItem = {
     href: string;
     /** Noch nicht umgesetzt – führt auf die Platzhalterseite. */
     planned: boolean;
+    /** Eingebundene Seite: Zieladresse (null = noch nicht verbunden). */
+    external?: string | null;
+    /** embed = im Rahmen, tab = neuer Tab, both = Rahmen mit Knopf für neuen Tab */
+    open?: 'embed' | 'tab' | 'both' | null;
 };
 
 export type ModuleNavGroup = {

@@ -7,6 +7,22 @@ laufend unter **Unveröffentlicht** und werden beim Erhöhen der Version zur neu
 
 ## [Unveröffentlicht]
 
+## [0.12.0] – 2026-10-30
+
+### Neu
+
+- Aktualisierung im Hintergrund: Das Intranet erkennt ein neues Deployment, meldet es und lädt die Seite neu
+  (nicht während einer Eingabe); danach zeigt ein Fenster, was neu ist
+- Menü «Verwaltung»: Workflows (SharePoint), Tickets und Elternportal (Jira Service Management)
+- Fachstelle ICT: Webseiten-Snapshot, Rechnung, Telefonie Ansagetexte, LMVZ Shop (Prototyp), Jira Service Desk,
+  Confluence
+- Einbindung fremder Seiten und eigener Anwendungen im Rahmen oder in neuem Tab, mit Prüfung, ob der Anbieter das
+  Einbetten erlaubt
+
+### Geändert
+
+- CI legt Formatkorrekturen im Branch `ci/format-fix` ab
+
 ## [0.11.0] – 2026-10-30
 
 ### Neu

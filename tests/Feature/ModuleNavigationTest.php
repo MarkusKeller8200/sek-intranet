@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use Illuminate\Support\Facades\Http;
 use Inertia\Testing\AssertableInertia as Assert;
 use Tests\TestCase;
 
@@ -13,7 +14,7 @@ class ModuleNavigationTest extends TestCase
 
         $this->get('/start')->assertOk()->assertInertia(fn (Assert $page) => $page
             ->where('navigation.0.key', 'kommunikation')
-            ->where('navigation.0.items.0', ['key' => 'start', 'title' => 'Start', 'icon' => 'LayoutGrid', 'href' => '/start', 'planned' => false])
+            ->where('navigation.0.items.0', ['key' => 'start', 'title' => 'Start', 'icon' => 'LayoutGrid', 'href' => '/start', 'planned' => false, 'external' => null, 'open' => null])
             ->where('navigation.0.items.3.href', '/module/pinnwand')
             ->where('navigation.0.items.3.planned', true)
             ->where('navigation', fn ($groups): bool => ! collect($groups)->contains('key', 'prototyp')));
@@ -52,10 +53,11 @@ class ModuleNavigationTest extends TestCase
     public function test_every_implemented_module_link_works_for_admin(): void
     {
         $this->signInAs('admin');
+        Http::fake(['*' => Http::response('ok')]);
 
         foreach (config('intranet.modules') as $group) {
             foreach ($group['items'] as $key => $module) {
-                $href = $module['href'] ?? "/module/{$key}";
+                $href = $module['href'] ?? (isset($module['embed']) ? "/einbindung/{$key}" : "/module/{$key}");
                 $this->get($href)->assertOk();
             }
         }
