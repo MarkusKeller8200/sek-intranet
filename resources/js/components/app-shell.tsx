@@ -1,5 +1,6 @@
 import { usePage } from '@inertiajs/react';
-import type { ReactNode } from 'react';
+import type { CSSProperties, ReactNode } from 'react';
+import { storedSidebarWidth } from '@/components/sidebar-splitter';
 import { SidebarProvider } from '@/components/ui/sidebar';
 import type { AppVariant } from '@/types';
 
@@ -17,5 +18,19 @@ export function AppShell({ children, variant = 'sidebar' }: Props) {
         );
     }
 
-    return <SidebarProvider defaultOpen={isOpen}>{children}</SidebarProvider>;
+    // Breite aus dem Splitter der Seitenleiste (pro Browser gemerkt)
+    const width = typeof window === 'undefined' ? null : storedSidebarWidth();
+
+    return (
+        <SidebarProvider
+            defaultOpen={isOpen}
+            style={
+                width
+                    ? ({ '--sidebar-width': `${width}px` } as CSSProperties)
+                    : undefined
+            }
+        >
+            {children}
+        </SidebarProvider>
+    );
 }

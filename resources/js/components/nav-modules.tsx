@@ -17,6 +17,7 @@ import {
 } from '@/components/ui/sidebar';
 import { useCurrentUrl } from '@/hooks/use-current-url';
 import { moduleIcon } from '@/lib/module-icons';
+import { isColorName, palette } from '@/lib/colors';
 import { cn } from '@/lib/utils';
 import type { ModuleNavGroup } from '@/types';
 
@@ -66,10 +67,13 @@ export function NavModules({ groups }: { groups: ModuleNavGroup[] }) {
                 );
                 // Standard: offen, wenn die Gruppe Umgesetztes enthält
                 const defaultOpen = group.items.some((item) => !item.planned);
+                // Gemerkte Wahl gilt immer – auch für die Gruppe der aktuellen Seite
                 const open =
                     iconOnly ||
-                    containsCurrent ||
-                    (stored[group.key] ?? defaultOpen);
+                    (stored[group.key] ?? (defaultOpen || containsCurrent));
+                const color = isColorName(group.color)
+                    ? palette[group.color]
+                    : palette.slate;
 
                 return (
                     <Collapsible
@@ -83,16 +87,21 @@ export function NavModules({ groups }: { groups: ModuleNavGroup[] }) {
                         <SidebarGroup className="px-2 py-0">
                             <SidebarGroupLabel asChild>
                                 <CollapsibleTrigger
-                                    className="w-full hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
-                                    disabled={containsCurrent}
-                                    title={
-                                        containsCurrent
-                                            ? 'Enthält die aktuelle Seite'
-                                            : open
-                                              ? 'Einklappen'
-                                              : 'Ausklappen'
-                                    }
+                                    className={cn(
+                                        'w-full gap-2 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground',
+                                        containsCurrent &&
+                                            !open &&
+                                            'font-semibold text-sidebar-foreground',
+                                    )}
+                                    title={open ? 'Einklappen' : 'Ausklappen'}
                                 >
+                                    <span
+                                        className={cn(
+                                            'size-2 shrink-0 rounded-full',
+                                            color.dot,
+                                        )}
+                                        aria-hidden
+                                    />
                                     <span>{group.title}</span>
                                     {!open && (
                                         <span className="ml-1.5 text-sidebar-foreground/50">
@@ -103,7 +112,6 @@ export function NavModules({ groups }: { groups: ModuleNavGroup[] }) {
                                         className={cn(
                                             'ml-auto transition-transform duration-200',
                                             open && 'rotate-90',
-                                            containsCurrent && 'opacity-40',
                                         )}
                                     />
                                 </CollapsibleTrigger>
@@ -112,20 +120,23 @@ export function NavModules({ groups }: { groups: ModuleNavGroup[] }) {
                                 <SidebarMenu>
                                     {group.items.map((item) => {
                                         const Icon = moduleIcon(item.icon);
+                                        const current = isCurrentOrParentUrl(
+                                            item.href,
+                                        );
 
                                         return (
                                             <SidebarMenuItem key={item.key}>
                                                 <SidebarMenuButton
                                                     asChild
-                                                    isActive={isCurrentOrParentUrl(
-                                                        item.href,
-                                                    )}
+                                                    isActive={current}
                                                     tooltip={{
                                                         children: item.planned
                                                             ? `${item.title} (geplant)`
                                                             : item.title,
                                                     }}
                                                     className={cn(
+                                                        'border-l-2 border-transparent',
+                                                        current && color.bar,
                                                         item.planned &&
                                                             'text-sidebar-foreground/60',
                                                     )}
@@ -134,7 +145,12 @@ export function NavModules({ groups }: { groups: ModuleNavGroup[] }) {
                                                         href={item.href}
                                                         prefetch={!item.planned}
                                                     >
-                                                        <Icon />
+                                                        <Icon
+                                                            className={cn(
+                                                                !item.planned &&
+                                                                    color.icon,
+                                                            )}
+                                                        />
                                                         <span>
                                                             {item.title}
                                                         </span>

@@ -2,6 +2,7 @@ import { Link, usePage } from '@inertiajs/react';
 import AppLogo from '@/components/app-logo';
 import { NavModules } from '@/components/nav-modules';
 import { NavUser } from '@/components/nav-user';
+import { SidebarSplitter } from '@/components/sidebar-splitter';
 import {
     Sidebar,
     SidebarContent,
@@ -40,6 +41,7 @@ export function AppSidebar() {
                 </div>
                 <NavUser />
             </SidebarFooter>
+            <SidebarSplitter />
         </Sidebar>
     );
 }

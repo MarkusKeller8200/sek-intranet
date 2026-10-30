@@ -26,6 +26,8 @@ export type ModuleNavItem = {
 export type ModuleNavGroup = {
     key: string;
     title: string;
+    /** Farbe aus dem Farbkonzept (Palette in lib/colors.ts) */
+    color: string;
     items: ModuleNavItem[];
 };
 

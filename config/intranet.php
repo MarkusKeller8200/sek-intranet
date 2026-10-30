@@ -101,7 +101,8 @@ return [
     | Gruppen erscheinen in der Seitenleiste ein- und ausklappbar. Ein Modul mit
     | «href» ist umgesetzt; ohne «href» ist es ein Platzhalter (/module/<schlüssel>)
     | mit Beschreibung und geplanten Funktionen. «can» blendet Gruppe oder Modul
-    | nur mit dieser Berechtigung ein (Gate). «icon» = Name eines Lucide-Symbols,
+    | nur mit dieser Berechtigung ein (Gate). «color» = Farbe aus dem Farbkonzept
+    | (Punkt und Symbole der Gruppe). «icon» = Name eines Lucide-Symbols,
     | muss in resources/js/lib/module-icons.ts eingetragen sein.
     | Bewusst nicht vorgesehen: Noten, Zeugnisse, Förderplanung – das bleibt im
     | Schulverwaltungssystem (besonders schützenswerte Personendaten).
@@ -110,6 +111,7 @@ return [
     'modules' => [
         'kommunikation' => [
             'title' => 'Kommunikation',
+            'color' => 'sky',
             'items' => [
                 'start' => ['title' => 'Start', 'icon' => 'LayoutGrid', 'href' => '/start'],
                 'mitteilungen' => ['title' => 'Mitteilungen', 'icon' => 'Megaphone', 'href' => '/mitteilungen'],
@@ -130,6 +132,7 @@ return [
         ],
         'wissen' => [
             'title' => 'Wissen & Ablage',
+            'color' => 'violet',
             'items' => [
                 'dokumente' => ['title' => 'Dokumente & Links', 'icon' => 'FileText', 'href' => '/dokumente'],
                 'handbuch' => [
@@ -148,6 +151,7 @@ return [
         ],
         'organisation' => [
             'title' => 'Personen & Organisation',
+            'color' => 'teal',
             'items' => [
                 'personen' => ['title' => 'Personen', 'icon' => 'Users', 'href' => '/personen'],
                 'klassen' => [
@@ -173,6 +177,7 @@ return [
         ],
         'unterricht' => [
             'title' => 'Unterricht',
+            'color' => 'amber',
             'items' => [
                 'stundenplan' => [
                     'title' => 'Stundenpläne',
@@ -196,6 +201,7 @@ return [
         ],
         'ressourcen' => [
             'title' => 'Räume & Geräte',
+            'color' => 'emerald',
             'items' => [
                 'reservationen' => [
                     'title' => 'Reservationen',
@@ -221,6 +227,7 @@ return [
         ],
         'anlaesse' => [
             'title' => 'Anlässe & Angebote',
+            'color' => 'rose',
             'items' => [
                 'sporttag' => [
                     'title' => 'Sporttag',
@@ -238,6 +245,7 @@ return [
         ],
         'prototyp' => [
             'title' => 'Prototyp',
+            'color' => 'slate',
             'can' => 'manage-users',
             'items' => [
                 'plugins' => ['title' => 'Plugins', 'icon' => 'Plug', 'href' => '/plugins'],
