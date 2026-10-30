@@ -306,26 +306,24 @@ export default function DataGrid<T extends GridRow>({
                   } satisfies ColumnDef<T>,
               ]
             : []),
-        ...columns.map(
-            (column): ColumnDef<T> => ({
-                id: column.id,
-                accessorFn: (row) => row[column.id],
-                header: column.title,
-                size: 160,
-                minSize: 60,
-                maxSize: 800,
-                filterFn,
-                sortingFn,
-                cell: ({ row }) => (
-                    <EditableCell
-                        row={row.original}
-                        column={column}
-                        canEdit={canEdit && column.editable === true}
-                        onSave={save}
-                    />
-                ),
-            }),
-        ),
+        ...columns.map((column): ColumnDef<T> => ({
+            id: column.id,
+            accessorFn: (row) => row[column.id],
+            header: column.title,
+            size: 160,
+            minSize: 60,
+            maxSize: 800,
+            filterFn,
+            sortingFn,
+            cell: ({ row }) => (
+                <EditableCell
+                    row={row.original}
+                    column={column}
+                    canEdit={canEdit && column.editable === true}
+                    onSave={save}
+                />
+            ),
+        })),
         ...(rowActions
             ? [
                   {
