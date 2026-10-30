@@ -201,7 +201,11 @@
 .grid-scroll::-webkit-scrollbar-thumb {
     border: 3px solid var(--color-muted);
     border-radius: 999px;
-    background: color-mix(in oklab, var(--color-muted-foreground) 70%, transparent);
+    background: color-mix(
+        in oklab,
+        var(--color-muted-foreground) 70%,
+        transparent
+    );
 }
 
 .grid-scroll::-webkit-scrollbar-thumb:hover {

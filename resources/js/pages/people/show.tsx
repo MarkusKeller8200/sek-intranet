@@ -1,5 +1,14 @@
-import { Head, Link, usePage } from '@inertiajs/react';
-import { ArrowLeft, Lock, Mail, Pencil, Phone } from 'lucide-react';
+import { Head, Link, router, usePage } from '@inertiajs/react';
+import {
+    ArrowLeft,
+    History as HistoryIcon,
+    Lock,
+    Mail,
+    Pencil,
+    Phone,
+    Undo2,
+} from 'lucide-react';
+import { text } from '@/components/data-grid';
 import DeleteButton from '@/components/delete-button';
 import OptionBadge from '@/components/option-badge';
 import { Badge } from '@/components/ui/badge';
@@ -11,6 +20,7 @@ import {
     CardHeader,
     CardTitle,
 } from '@/components/ui/card';
+import { formatDateTime } from '@/lib/format';
 import { displayValue } from '@/lib/person-fields';
 import type { Person, PersonField, PersonGroup } from '@/types';
 
@@ -51,12 +61,141 @@ function Value({ field, person }: { field: PersonField; person: Person }) {
     return <span className="whitespace-pre-line">{shown}</span>;
 }
 
-export default function PersonShow({
+type HistoryEntry = {
+    id: string;
+    created_at: string;
+    action: 'created' | 'updated' | 'deleted';
+    changes: Record<string, { old: unknown; new: unknown }>;
+    source: string;
+    user_name: string | null;
+};
+
+const ACTIONS = {
+    created: 'Angelegt',
+    updated: 'Geändert',
+    deleted: 'Gelöscht',
+};
+
+function History({
     person,
     groups,
+    history,
 }: {
     person: Person;
     groups: PersonGroup[];
+    history: HistoryEntry[];
+}) {
+    const fields = new Map(
+        groups.flatMap((g) => g.fields).map((f) => [f.key as string, f]),
+    );
+    const show = (key: string, value: unknown) => {
+        const field = fields.get(key);
+        const shown = field ? displayValue(field, value) : text(value);
+
+        return shown === '' ? '–' : shown;
+    };
+
+    return (
+        <Card>
+            <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                    <HistoryIcon className="size-4" /> Änderungsverlauf
+                    <Lock
+                        className="size-4 text-muted-foreground"
+                        aria-label="Nur Administration"
+                    />
+                </CardTitle>
+                <CardDescription>
+                    Wer hat wann was geändert. Ein früherer Wert lässt sich
+                    wiederherstellen.
+                </CardDescription>
+            </CardHeader>
+            <CardContent>
+                {history.length === 0 ? (
+                    <p className="text-sm text-muted-foreground">
+                        Noch keine Änderungen erfasst.
+                    </p>
+                ) : (
+                    <ol className="grid gap-3 text-sm">
+                        {history.map((entry) => (
+                            <li
+                                key={entry.id}
+                                className="rounded-lg border p-3"
+                            >
+                                <div className="flex flex-wrap items-baseline gap-x-2 text-muted-foreground">
+                                    <span className="font-medium text-foreground">
+                                        {ACTIONS[entry.action]}
+                                    </span>
+                                    <span>
+                                        {formatDateTime(entry.created_at)}
+                                    </span>
+                                    <span>· {entry.user_name ?? 'System'}</span>
+                                    <span>· {entry.source}</span>
+                                </div>
+                                {entry.action === 'updated' && (
+                                    <ul className="mt-2 grid gap-1">
+                                        {Object.entries(entry.changes).map(
+                                            ([key, c]) => (
+                                                <li
+                                                    key={key}
+                                                    className="flex flex-wrap items-center gap-2"
+                                                >
+                                                    <span className="text-muted-foreground">
+                                                        {fields.get(key)
+                                                            ?.label ?? key}
+                                                        :
+                                                    </span>
+                                                    <span className="line-through opacity-70">
+                                                        {show(key, c.old)}
+                                                    </span>
+                                                    <span>
+                                                        → {show(key, c.new)}
+                                                    </span>
+                                                    {fields.has(key) &&
+                                                        !fields.get(key)
+                                                            ?.computed && (
+                                                            <Button
+                                                                variant="ghost"
+                                                                size="sm"
+                                                                className="h-6 px-2 text-xs"
+                                                                onClick={() =>
+                                                                    router.post(
+                                                                        `/personen/${person.id}/verlauf/${entry.id}/wiederherstellen`,
+                                                                        {
+                                                                            field: key,
+                                                                        },
+                                                                        {
+                                                                            preserveScroll: true,
+                                                                        },
+                                                                    )
+                                                                }
+                                                            >
+                                                                <Undo2 />{' '}
+                                                                Wiederherstellen
+                                                            </Button>
+                                                        )}
+                                                </li>
+                                            ),
+                                        )}
+                                    </ul>
+                                )}
+                            </li>
+                        ))}
+                    </ol>
+                )}
+            </CardContent>
+        </Card>
+    );
+}
+
+export default function PersonShow({
+    person,
+    groups,
+    history,
+}: {
+    person: Person;
+    groups: PersonGroup[];
+    history: HistoryEntry[];
 }) {
     const { auth } = usePage().props;
     const canManage = auth.can.manageUsers;
@@ -186,6 +325,14 @@ export default function PersonShow({
                         </Card>
                     ))}
                 </div>
+
+                {canManage && (
+                    <History
+                        person={person}
+                        groups={groups}
+                        history={history}
+                    />
+                )}
             </div>
         </>
     );
