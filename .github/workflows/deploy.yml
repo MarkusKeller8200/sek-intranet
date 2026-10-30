@@ -55,7 +55,14 @@ jobs:
 
       - name: Fehler anzeigen
         if: failure()
-        run: .github/scripts/report-failure.sh ci-output.txt 'CI-Prüfung fehlgeschlagen'
+        run: |
+          .github/scripts/report-failure.sh ci-output.txt 'CI-Prüfung fehlgeschlagen'
+          # Formatierung: Korrektur als Diff anzeigen, damit sie ohne lokale Werkzeuge übernommen werden kann
+          if grep -q 'Formatting issues' ci-output.txt; then
+            npx vp check --fix > /dev/null 2>&1 || true
+            git diff > fmt.diff
+            .github/scripts/report-failure.sh fmt.diff 'Formatierung (Korrektur)' 400
+          fi
 
   deploy:
     needs: ci
