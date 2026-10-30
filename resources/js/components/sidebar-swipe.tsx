@@ -8,7 +8,11 @@ const MAX_TIME = 700; // ms
 function blocksSwipe(target: EventTarget | null): boolean {
     let el = target instanceof Element ? target : null;
     while (el && el !== document.body) {
-        if (el.matches('input, textarea, select, [contenteditable="true"], [data-no-swipe]')) {
+        if (
+            el.matches(
+                'input, textarea, select, [contenteditable="true"], [data-no-swipe]',
+            )
+        ) {
             return true;
         }
         if (el instanceof HTMLElement && el.scrollWidth > el.clientWidth + 1) {
@@ -56,7 +60,11 @@ export default function SidebarSwipe() {
             const quick = Date.now() - start.t < MAX_TIME;
             start = null;
             // Deutlich waagrecht, nicht beim senkrechten Scrollen
-            if (!quick || Math.abs(dx) < MIN_DISTANCE || Math.abs(dy) > Math.abs(dx) / 2) {
+            if (
+                !quick ||
+                Math.abs(dx) < MIN_DISTANCE ||
+                Math.abs(dy) > Math.abs(dx) / 2
+            ) {
                 return;
             }
             if (dx > 0 && !openMobile) {
