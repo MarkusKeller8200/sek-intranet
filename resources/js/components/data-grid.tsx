@@ -1675,6 +1675,13 @@ export default function DataGrid<T extends GridRow>({
                                         return (
                                             <td
                                                 key={id}
+                                                // Daten nicht übersetzen (Auswahlwerte und Ja/Nein schon)
+                                                translate={
+                                                    column.type === 'select' ||
+                                                    column.type === 'bool'
+                                                        ? undefined
+                                                        : 'no'
+                                                }
                                                 data-cell={`${index}:${c}`}
                                                 role="gridcell"
                                                 aria-selected={

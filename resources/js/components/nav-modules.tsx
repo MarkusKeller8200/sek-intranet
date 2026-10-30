@@ -1,6 +1,6 @@
-import { Link } from '@inertiajs/react';
-import { ChevronDown } from 'lucide-react';
-import { useState } from 'react';
+import { Link, usePage } from '@inertiajs/react';
+import { ChevronDown, Tag } from 'lucide-react';
+import { Fragment, useState } from 'react';
 import {
     Collapsible,
     CollapsibleContent,
@@ -44,6 +44,39 @@ function writeStored(value: Record<string, boolean>) {
     }
 }
 
+/** Version und Build, verlinkt auf die Seite «Versionen». */
+function VersionLine() {
+    const { appVersion } = usePage().props;
+    const { isCurrentOrParentUrl } = useCurrentUrl();
+
+    return (
+        <div className="px-2 py-1 group-data-[collapsible=icon]:hidden">
+            <Link
+                href="/versionen"
+                className={cn(
+                    'flex items-center gap-2 rounded-md px-2.5 py-1.5 text-xs text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground',
+                    isCurrentOrParentUrl('/versionen') &&
+                        'bg-sidebar-accent text-sidebar-accent-foreground',
+                )}
+                title="Versionen und Änderungen"
+            >
+                <Tag className="size-3.5 shrink-0" />
+                <span>Version {appVersion.version}</span>
+                {appVersion.build && (
+                    <span className="font-mono text-sidebar-foreground/50">
+                        {appVersion.build}
+                    </span>
+                )}
+                {appVersion.prototype && (
+                    <span className="ml-auto rounded border border-sidebar-border px-1 text-[10px] tracking-wide uppercase">
+                        Prototyp
+                    </span>
+                )}
+            </Link>
+        </div>
+    );
+}
+
 export function NavModules({ groups }: { groups: ModuleNavGroup[] }) {
     const { isCurrentOrParentUrl } = useCurrentUrl();
     const { state, isMobile } = useSidebar();
@@ -57,6 +90,8 @@ export function NavModules({ groups }: { groups: ModuleNavGroup[] }) {
         setStored(next);
         writeStored(next);
     };
+
+    const hasPrototype = groups.some((g) => g.key === 'prototyp');
 
     return (
         <>
@@ -76,104 +111,110 @@ export function NavModules({ groups }: { groups: ModuleNavGroup[] }) {
                 const GroupIcon = moduleIcon(group.icon);
 
                 return (
-                    <Collapsible
-                        key={group.key}
-                        open={open}
-                        onOpenChange={(value: boolean) =>
-                            toggle(group.key, value)
-                        }
-                        className="group/collapsible"
-                    >
-                        <SidebarGroup className="px-2 py-0.5">
-                            {/* Hauptmenü: farbige Fläche mit Symbol (in der Symbolleiste ausgeblendet) */}
-                            <CollapsibleTrigger
-                                className={cn(
-                                    'flex h-10 w-full items-center gap-2.5 rounded-lg px-2.5 text-left text-sm font-semibold transition-colors focus-visible:ring-2 focus-visible:ring-sidebar-ring focus-visible:outline-none',
-                                    'group-data-[collapsible=icon]:hidden',
-                                    color.panel,
-                                )}
-                                title={open ? 'Einklappen' : 'Ausklappen'}
-                            >
-                                <GroupIcon
+                    <Fragment key={group.key}>
+                        {group.key === 'prototyp' && <VersionLine />}
+                        <Collapsible
+                            open={open}
+                            onOpenChange={(value: boolean) =>
+                                toggle(group.key, value)
+                            }
+                            className="group/collapsible"
+                        >
+                            <SidebarGroup className="px-2 py-0.5">
+                                {/* Hauptmenü: farbige Fläche mit Symbol (in der Symbolleiste ausgeblendet) */}
+                                <CollapsibleTrigger
                                     className={cn(
-                                        'size-5 shrink-0',
-                                        color.icon,
+                                        'flex h-10 w-full items-center gap-2.5 rounded-lg px-2.5 text-left text-sm font-semibold transition-colors focus-visible:ring-2 focus-visible:ring-sidebar-ring focus-visible:outline-none',
+                                        'group-data-[collapsible=icon]:hidden',
+                                        color.panel,
                                     )}
-                                    aria-hidden
-                                />
-                                <span className="flex-1 truncate">
-                                    {group.title}
-                                </span>
-                                {!open && containsCurrent && (
-                                    <span
+                                    title={open ? 'Einklappen' : 'Ausklappen'}
+                                >
+                                    <GroupIcon
                                         className={cn(
-                                            'size-2 shrink-0 rounded-full',
-                                            color.dot,
+                                            'size-5 shrink-0',
+                                            color.icon,
                                         )}
-                                        title="Enthält die aktuelle Seite"
+                                        aria-hidden
                                     />
-                                )}
-                                <ChevronDown
-                                    className={cn(
-                                        'size-4 shrink-0 opacity-70 transition-transform duration-200',
-                                        open && 'rotate-180',
+                                    <span className="flex-1 truncate">
+                                        {group.title}
+                                    </span>
+                                    {!open && containsCurrent && (
+                                        <span
+                                            className={cn(
+                                                'size-2 shrink-0 rounded-full',
+                                                color.dot,
+                                            )}
+                                            title="Enthält die aktuelle Seite"
+                                        />
                                     )}
-                                />
-                            </CollapsibleTrigger>
-                            <CollapsibleContent>
-                                <SidebarMenu className="py-1">
-                                    {group.items.map((item) => {
-                                        const Icon = moduleIcon(item.icon);
-                                        const current = isCurrentOrParentUrl(
-                                            item.href,
-                                        );
+                                    <ChevronDown
+                                        className={cn(
+                                            'size-4 shrink-0 opacity-70 transition-transform duration-200',
+                                            open && 'rotate-180',
+                                        )}
+                                    />
+                                </CollapsibleTrigger>
+                                <CollapsibleContent>
+                                    <SidebarMenu className="py-1">
+                                        {group.items.map((item) => {
+                                            const Icon = moduleIcon(item.icon);
+                                            const current =
+                                                isCurrentOrParentUrl(item.href);
 
-                                        return (
-                                            <SidebarMenuItem key={item.key}>
-                                                <SidebarMenuButton
-                                                    asChild
-                                                    isActive={current}
-                                                    tooltip={{
-                                                        children: item.planned
-                                                            ? `${item.title} (geplant)`
-                                                            : item.title,
-                                                    }}
-                                                    className={cn(
-                                                        'border-l-2 border-transparent',
-                                                        current && color.bar,
-                                                        item.planned &&
-                                                            'text-sidebar-foreground/60',
-                                                    )}
-                                                >
-                                                    <Link
-                                                        href={item.href}
-                                                        prefetch={!item.planned}
+                                            return (
+                                                <SidebarMenuItem key={item.key}>
+                                                    <SidebarMenuButton
+                                                        asChild
+                                                        isActive={current}
+                                                        tooltip={{
+                                                            children:
+                                                                item.planned
+                                                                    ? `${item.title} (geplant)`
+                                                                    : item.title,
+                                                        }}
+                                                        className={cn(
+                                                            'border-l-2 border-transparent',
+                                                            current &&
+                                                                color.bar,
+                                                            item.planned &&
+                                                                'text-sidebar-foreground/60',
+                                                        )}
                                                     >
-                                                        <Icon
-                                                            className={cn(
-                                                                !item.planned &&
-                                                                    color.icon,
-                                                            )}
-                                                        />
-                                                        <span>
-                                                            {item.title}
-                                                        </span>
-                                                    </Link>
-                                                </SidebarMenuButton>
-                                                {item.planned && (
-                                                    <SidebarMenuBadge className="text-[10px] font-normal text-sidebar-foreground/50">
-                                                        geplant
-                                                    </SidebarMenuBadge>
-                                                )}
-                                            </SidebarMenuItem>
-                                        );
-                                    })}
-                                </SidebarMenu>
-                            </CollapsibleContent>
-                        </SidebarGroup>
-                    </Collapsible>
+                                                        <Link
+                                                            href={item.href}
+                                                            prefetch={
+                                                                !item.planned
+                                                            }
+                                                        >
+                                                            <Icon
+                                                                className={cn(
+                                                                    !item.planned &&
+                                                                        color.icon,
+                                                                )}
+                                                            />
+                                                            <span>
+                                                                {item.title}
+                                                            </span>
+                                                        </Link>
+                                                    </SidebarMenuButton>
+                                                    {item.planned && (
+                                                        <SidebarMenuBadge className="text-[10px] font-normal text-sidebar-foreground/50">
+                                                            geplant
+                                                        </SidebarMenuBadge>
+                                                    )}
+                                                </SidebarMenuItem>
+                                            );
+                                        })}
+                                    </SidebarMenu>
+                                </CollapsibleContent>
+                            </SidebarGroup>
+                        </Collapsible>
+                    </Fragment>
                 );
             })}
+            {!hasPrototype && <VersionLine />}
         </>
     );
 }

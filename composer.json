@@ -65,6 +65,7 @@
             "Composer\\Config::disableProcessTimeout",
             "npm run check",
             "npm run types:check",
+            "node tools/i18n-extract.mjs --check",
             "@test"
         ],
         "types:check": [

@@ -16,6 +16,14 @@
 return [
 
     // json = Dateien (Prototyp). Später: database (PostgreSQL, wie IDA ADR-003).
+    /*
+    | Version (Datei VERSION) und Build aus dem Deployment (Commit, Zeitpunkt).
+    | Änderungen stehen in CHANGELOG.md und auf der Seite «Versionen».
+    */
+    'version' => trim((string) @file_get_contents(base_path('VERSION'))) ?: '0.0.0',
+    'build' => env('INTRANET_BUILD'),
+    'build_date' => env('INTRANET_BUILD_DATE'),
+
     'store' => env('INTRANET_STORE', 'json'),
 
     // Ordner für die JSON-Dateien, relativ zum Projektordner oder absolut.
@@ -336,6 +344,8 @@ return [
                 'datenstrukturen' => ['title' => 'Datenstrukturen', 'icon' => 'Database', 'href' => '/datenstrukturen'],
                 'farbkonzept' => ['title' => 'Farbkonzept', 'icon' => 'Palette', 'href' => '/farbkonzept'],
                 'api' => ['title' => 'API', 'icon' => 'Braces', 'href' => '/api-doku'],
+                'mcp' => ['title' => 'MCP-Schnittstelle', 'icon' => 'Bot', 'href' => '/mcp-konzept'],
+                'sprachkonzept' => ['title' => 'Sprachkonzept', 'icon' => 'Languages', 'href' => '/sprachkonzept'],
             ],
         ],
     ],

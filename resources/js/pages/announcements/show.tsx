@@ -67,7 +67,7 @@ export default function AnnouncementShow({
                         )}
                     </div>
                     <h1 className="text-2xl font-semibold tracking-tight md:text-3xl">
-                        {announcement.title}
+                        <span translate="no">{announcement.title}</span>
                     </h1>
                     <p className="text-sm text-muted-foreground">
                         {formatDateTime(announcement.published_at)}
@@ -76,7 +76,7 @@ export default function AnnouncementShow({
                     </p>
                 </header>
 
-                <div className="leading-relaxed whitespace-pre-line">
+                <div className="leading-relaxed whitespace-pre-line" translate="no">
                     {announcement.body}
                 </div>
             </article>

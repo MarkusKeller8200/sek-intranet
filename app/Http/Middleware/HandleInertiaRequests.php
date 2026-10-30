@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Support\AppVersion;
 use App\Support\ModuleNavigation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
@@ -49,6 +50,7 @@ class HandleInertiaRequests extends Middleware
             ],
             'navigation' => fn (): array => app(ModuleNavigation::class)->groups($user),
             'store' => config('intranet.store'),
+            'appVersion' => AppVersion::info(),
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
         ];
     }

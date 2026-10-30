@@ -8,9 +8,11 @@ use App\Http\Controllers\DataStructureController;
 use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\GridViewController;
+use App\Http\Controllers\McpConceptController;
 use App\Http\Controllers\ModuleController;
 use App\Http\Controllers\PersonController;
 use App\Http\Controllers\PluginController;
+use App\Http\Controllers\VersionController;
 use Illuminate\Support\Facades\Route;
 
 // Anmeldung (Prototyp: Demo-Auswahl; später OIDC Entra ID / Edulog)
@@ -73,6 +75,8 @@ Route::middleware('auth')->group(function () {
 
         Route::get('datenstrukturen', DataStructureController::class)->name('data-structures');
         Route::inertia('farbkonzept', 'color-concept')->name('color-concept');
+        Route::inertia('sprachkonzept', 'language-concept')->name('language-concept');
+        Route::get('mcp-konzept', McpConceptController::class)->name('mcp-concept');
 
         // REST-API: Beschreibung mit Tester und Tokens
         Route::get('api-doku', [ApiDocsController::class, 'show'])->name('api-docs');
@@ -91,6 +95,7 @@ Route::middleware('auth')->group(function () {
             Route::post('plugins/{id}/zugriff', [PluginController::class, 'access'])->name('plugins.access');
         });
     });
+    Route::get('versionen', VersionController::class)->name('versions');
     Route::get('personen', [PersonController::class, 'index'])->name('people.index');
     Route::post('personen/export', [PersonController::class, 'export'])->middleware('throttle:30,1')->name('people.export');
     Route::post('ansichten', [GridViewController::class, 'store'])->middleware('throttle:60,1')->name('grid-views.store');

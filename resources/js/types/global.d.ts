@@ -9,6 +9,12 @@ declare module '@inertiajs/core' {
             auth: Auth;
             options: Options;
             navigation: ModuleNavGroup[];
+            appVersion: {
+                version: string;
+                build: string | null;
+                build_date: string | null;
+                prototype: boolean;
+            };
             store: string;
             sidebarOpen: boolean;
             [key: string]: unknown;

@@ -1,0 +1,64 @@
+# Changelog – SekBülach Intranet
+
+Format angelehnt an [Keep a Changelog](https://keepachangelog.com/de/), Versionen nach
+[Semantic Versioning](https://semver.org/lang/de/) (MAJOR.MINOR.PATCH). Solange die Version mit 0 beginnt, ist das
+Intranet ein Prototyp (nur erfundene Testdaten). Die Versionsnummer steht nur in `VERSION`; neue Einträge kommen
+laufend unter **Unveröffentlicht** und werden beim Erhöhen der Version zur neuen Version.
+
+## [Unveröffentlicht]
+
+## [0.11.0] – 2026-10-30
+
+### Neu
+
+- Versionierung: Version und Build in der Seitenleiste (über «Prototyp»), Seite «Versionen» mit diesem Changelog
+- Sprachen: Deutsch (Standard), Englisch und Zürichdeutsch; Sprachwahl unter Einstellungen → Darstellung und in der
+  Seitenleiste; Konzept unter Prototyp → Sprachkonzept
+- MCP-Schnittstelle (Konzept) für Claude, ChatGPT und Atlassian Rovo unter Prototyp
+
+## [0.10.0] – 2026-10-30
+
+### Neu
+
+- Seitenleiste: Logo über die ganze Breite, Hauptmenüs als farbige Fläche mit Symbol, Splitter für die Breite
+- Menüs «Bestellen» und «Fachstelle ICT» (Platzhalter)
+- Schrift umstellbar (Open Sans, Atkinson Hyperlegible, Inter, Source Serif 4, Systemschrift)
+- Farbkonzept mit Menüfarben; Datenstrukturen ein- und ausklappbar, Prüfung auf vollständiges Schema
+
+## [0.9.0] – 2026-10-30
+
+### Neu
+
+- REST-API v1 mit OpenAPI-Beschreibung, API-Tokens und Tester (Prototyp → API)
+- Personen-Tabelle wie Excel: Zellen, Bereiche, Kopieren/Einfügen, Rückgängig, Filter nach Datentyp, Gruppieren,
+  Fixieren, Export, gespeicherte Ansichten
+- Änderungsverlauf mit Wiederherstellen
+
+## [0.8.0] – 2026-10-30
+
+### Neu
+
+- Personen: alle Felder der Escola-Adressliste (ohne besonders schützenswerte), gruppierte Detailansicht,
+  Sammeländerung und -löschung
+- Plugin Escola: Import der Adressliste (Excel/CSV)
+
+## [0.7.0] – 2026-10-30
+
+### Neu
+
+- Navigation nach Bereichen, ein- und ausklappbar; geplante Module als Platzhalter
+- Plugin-System: Microsoft 365/Entra ID, Jamf, Inventory360, IDA
+
+## [0.6.0] – 2026-10-29
+
+### Neu
+
+- Farbkonzept nach dem Auftritt von sekbuelach.ch
+- Automatisches Deployment auf intranet.sekbuelach.ch mit gemeinsamem Passwort
+
+## [0.1.0] – 2026-10-29
+
+### Neu
+
+- Prototyp auf dem IDA-Stack (Laravel, React, Inertia) mit Dateispeicher statt Datenbank: Start, Mitteilungen,
+  Termine, Dokumente & Links, Personen, Datenstrukturen

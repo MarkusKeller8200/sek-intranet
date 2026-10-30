@@ -1,0 +1,366 @@
+{
+    "Sprache / Language / Sprooch": [
+        "Language / Sprache / Sprooch",
+        "Sprooch / Language / Sprache"
+    ],
+    "aktiv": [
+        "active",
+        "aktiv"
+    ],
+    "Version": [
+        "Version",
+        "Version"
+    ],
+    "Sprache wählen": [
+        "Choose language",
+        "Sprooch wääle"
+    ],
+    "Wirkt sofort auf die ganze Oberfläche, ohne Neuladen.": [
+        "Applies to the whole interface at once, without reloading.",
+        "Wirkt sofort uf di ganz Oberflächi, ooni neu z laade."
+    ],
+    "Grundsätze": [
+        "Principles",
+        "Grundsätz"
+    ],
+    "Sprachen und Codes": [
+        "Languages and codes",
+        "Spraache und Codes"
+    ],
+    "Codes nach BCP {n}. Zürichdeutsch: Sprache gsw (Schweizerdeutsch) mit Unterteilung Kanton Zürich.": [
+        "Codes according to BCP {n}. Zurich German: language gsw (Swiss German) with the subdivision Canton of Zurich.",
+        "Codes nach BCP {n}. Züritüütsch: Sprooch gsw (Schwiizertüütsch) mit de Unterteilig Kanton Züri."
+    ],
+    "Code": [
+        "Code",
+        "Code"
+    ],
+    "HTML lang": [
+        "HTML lang",
+        "HTML lang"
+    ],
+    "Übersetzt": [
+        "Translated",
+        "Übersetzt"
+    ],
+    "Hinweise": [
+        "Notes",
+        "Hiiwiis"
+    ],
+    "Beispiele aus den Katalogen": [
+        "Examples from the catalogues",
+        "Biispiil us de Kataloog"
+    ],
+    "English": [
+        "English",
+        "English"
+    ],
+    "Züritüütsch": [
+        "Zurich German",
+        "Züritüütsch"
+    ],
+    "Fehlende Texte in diesem Browser": [
+        "Missing texts in this browser",
+        "Fäälendi Täxt i däm Browser"
+    ],
+    "Texte, die seit dem Laden ohne Übersetzung angezeigt wurden. Nur in Englisch oder Zürichdeutsch erfasst.": [
+        "Texts shown without a translation since the page was loaded. Only recorded in English or Zurich German.",
+        "Täxt, wo sit em Laade ooni Übersetzig aazeigt worde sind. Nur uf Änglisch oder Züritüütsch erfasst."
+    ],
+    "Aktualisieren": [
+        "Refresh",
+        "Aktualisiere"
+    ],
+    "Keine fehlenden Texte.": [
+        "No missing texts.",
+        "Kei fäälendi Täxt."
+    ],
+    "Mehrsprachige Oberfläche nach dem Vorbild TagStudio: Deutsch als Standard, Englisch und Zürichdeutsch als Alternativen.": [
+        "Multilingual interface modelled on TagStudio: German by default, English and Zurich German as alternatives.",
+        "Mehrspraachigi Oberflächi nach em Vorbild TagStudio: Tüütsch als Standard, Änglisch und Züritüütsch als Alternativä."
+    ],
+    "Standardsprache. Schweizer Rechtschreibung (ss statt ß), Datum TT.MM.JJJJ. Der deutsche Text im Code ist zugleich der Schlüssel.": [
+        "Default language. Swiss spelling (ss instead of ß), dates DD.MM.YYYY. The German text in the code is also the key.",
+        "Standardsprooch. Schwiizer Rächtschriibig (ss statt ß), Datum TT.MM.JJJJ. De tüütsch Täxt im Code isch grad au de Schlüssel."
+    ],
+    "Britisches Englisch, schulnahe Begriffe (staff, school building, term).": [
+        "British English, school terms (staff, school building, term).",
+        "Britischs Änglisch, Schuelbegriff (staff, school building, term)."
+    ],
+    "Zürichdeutsch nach Dieth-Schreibung, locker aber verständlich. Fachbegriffe (Login, Export, API) bleiben.": [
+        "Zurich German in Dieth spelling, relaxed but clear. Technical terms (login, export, API) stay as they are.",
+        "Züritüütsch nach Dieth-Schriibig, locker aber verständlich. Fachbegriff (Login, Export, API) bliibed."
+    ],
+    "Der Code enthält nur deutsche Texte. Übersetzt wird beim Anzeigen: Eine Schicht über der Seite ersetzt Texte und Attribute (title, placeholder, aria-label) anhand der Kataloge.": [
+        "The code contains German texts only. Translation happens on display: a layer over the page replaces texts and attributes (title, placeholder, aria-label) using the catalogues.",
+        "Im Code häts nur tüütschi Täxt. Übersetzt wird bim Aazeige: E Schicht über de Siite ersetzt Täxt und Attribut (title, placeholder, aria-label) mit de Kataloog."
+    ],
+    "Kataloge liegen in resources/js/i{n}n/*.json, je Bereich eine Datei. Ein Eintrag: \"Deutsch\": [\"English\", \"Züritüütsch\"].": [
+        "Catalogues live in resources/js/i{n}n/*.json, one file per area. An entry: \"Deutsch\": [\"English\", \"Züritüütsch\"].",
+        "D Kataloog ligged i resources/js/i{n}n/*.json, pro Bereich e Datei. En Iitrag: \"Deutsch\": [\"English\", \"Züritüütsch\"]."
+    ],
+    "Daten werden nie übersetzt: Namen, Funktionen, Mitteilungen und Termine stehen in Bereichen mit translate=\"no\". Auswahlwerte (Schulhaus, Rolle) schon.": [
+        "Data is never translated: names, functions, announcements and events sit in areas with translate=\"no\". Selection values (school building, role) are translated.",
+        "Date werded nie übersetzt: Näme, Funktione, Mitteilige und Termin stönd i Bereich mit translate=\"no\". Uswaalwärt (Schuelhuus, Rolle) scho."
+    ],
+    "Neue Texte kommen im selben Commit in alle Kataloge. node tools/i{n}n-extract.mjs listet fehlende Einträge, ein Test prüft die Kataloge.": [
+        "New texts go into all catalogues in the same commit. node tools/i{n}n-extract.mjs lists missing entries, a test checks the catalogues.",
+        "Neui Täxt chömed im gliiche Commit i alli Kataloog. node tools/i{n}n-extract.mjs zeigt fäälendi Iiträg, en Test prüeft d Kataloog."
+    ],
+    "Die Sprache gilt je Browser (Einstellungen → Darstellung oder unten in der Seitenleiste). Vor dem ersten Bild wird die Seite kurz verborgen, damit kein Deutsch aufblitzt.": [
+        "The language applies per browser (Settings → Appearance or at the bottom of the sidebar). The page is hidden briefly before the first paint so no German flashes up.",
+        "D Sprooch gilt pro Browser (Iistellige → Darstellig oder une i de Siiteleiste). Vor em erschte Bild wird d Siite churz versteckt, damit kei Tüütsch ufblitzt."
+    ],
+    "Konzept": [
+        "Concept",
+        "Konzept"
+    ],
+    "Geplanter Endpunkt": [
+        "Planned endpoint",
+        "Plante Ändpunkt"
+    ],
+    "noch nicht aktiv": [
+        "not active yet",
+        "no nöd aktiv"
+    ],
+    "Aufbau": [
+        "Architecture",
+        "Ufbau"
+    ],
+    "Das Model Context Protocol (MCP) ist ein offener Standard, über den KI-Assistenten Werkzeuge und Daten anderer Systeme nutzen.": [
+        "The Model Context Protocol (MCP) is an open standard that lets AI assistants use tools and data from other systems.",
+        "S Model Context Protocol (MCP) isch en offne Standard, über dä KI-Assistänte Wärchzüüg und Date vo andere Systeem bruuched."
+    ],
+    "Clients": [
+        "Clients",
+        "Clients"
+    ],
+    "Alle drei verlangen einen öffentlich erreichbaren Server mit HTTPS. Mit OAuth {n}, PKCE und dynamischer Client-Registrierung sind alle drei abgedeckt.": [
+        "All three require a publicly reachable server with HTTPS. OAuth {n} with PKCE and dynamic client registration covers all three.",
+        "Alli drüü verlanged en öffentlich erreichbare Server mit HTTPS. Mit OAuth {n}, PKCE und dynamischer Client-Registrierig sind alli drüü abdeckt."
+    ],
+    "Client": [
+        "Client",
+        "Client"
+    ],
+    "Einbindung": [
+        "Integration",
+        "Iibindig"
+    ],
+    "Anmeldung": [
+        "Sign-in",
+        "Aamäldig"
+    ],
+    "Werkzeuge": [
+        "Tools",
+        "Wärchzüüg"
+    ],
+    "Abgeleitet aus der OpenAPI-Beschreibung der API – eine neue API-Operation erscheint hier automatisch.": [
+        "Derived from the API's OpenAPI description – a new API operation appears here automatically.",
+        "Abgleitet us de OpenAPI-Beschriibig vo de API – e neui API-Operation chunnt da automatisch dezue."
+    ],
+    "Werkzeug": [
+        "Tool",
+        "Wärchzüüg"
+    ],
+    "Phase": [
+        "Phase",
+        "Phase"
+    ],
+    "Phase {n}": [
+        "Phase {n}",
+        "Phase {n}"
+    ],
+    "lesen": [
+        "read",
+        "läse"
+    ],
+    "schreiben": [
+        "write",
+        "schriibe"
+    ],
+    "Datenschutz und Sicherheit": [
+        "Data protection and security",
+        "Dateschutz und Sicherheit"
+    ],
+    "Phasen": [
+        "Phases",
+        "Phase"
+    ],
+    "Offene Fragen": [
+        "Open questions",
+        "Offni Frage"
+    ],
+    "KI-Client": [
+        "AI client",
+        "KI-Client"
+    ],
+    "MCP-Endpunkt /mcp": [
+        "MCP endpoint /mcp",
+        "MCP-Ändpunkt /mcp"
+    ],
+    "Gleiche Regeln wie die API": [
+        "Same rules as the API",
+        "Gliichi Regle wie d API"
+    ],
+    "Daten und Protokoll": [
+        "Data and log",
+        "Date und Protokoll"
+    ],
+    "Lesen: Inhalte": [
+        "Read: content",
+        "Läse: Inhält"
+    ],
+    "Lesen: Personalverzeichnis": [
+        "Read: staff directory",
+        "Läse: Personalverzeichnis"
+    ],
+    "Schreiben mit Bestätigung": [
+        "Write with confirmation",
+        "Schriibe mit Bestätigung"
+    ],
+    "Konzept: Das Intranet als MCP-Server, damit Claude, ChatGPT und Rovo mit den Rechten der angemeldeten Person darauf zugreifen.": [
+        "Concept: the intranet as an MCP server, so Claude, ChatGPT and Rovo can access it with the rights of the signed-in person.",
+        "Konzept: S Intranet als MCP-Server, damit Claude, ChatGPT und Rovo mit de Rächt vo de aagmäldete Person druf zuegriiffed."
+    ],
+    "Benutzerdefinierter Connector (Remote-MCP) in Claude, Claude Desktop und Claude Code. In Team und Enterprise fügen Inhaber den Connector für die ganze Organisation hinzu.": [
+        "Custom connector (remote MCP) in Claude, Claude Desktop and Claude Code. In Team and Enterprise, owners add the connector for the whole organisation.",
+        "Eigne Connector (Remote-MCP) in Claude, Claude Desktop und Claude Code. Bi Team und Enterprise füeged d Inhaber de Connector für di ganz Organisation dezue."
+    ],
+    "OAuth (mit dynamischer Client-Registrierung) oder ohne Anmeldung": [
+        "OAuth (with dynamic client registration) or no sign-in",
+        "OAuth (mit dynamischer Client-Registrierig) oder ooni Aamäldig"
+    ],
+    "Entwicklermodus (Beta) im Web für Plus, Pro, Business, Enterprise und Edu. Nur entfernte Server über HTTPS; schreibende Aktionen fragen vor dem Ausführen nach.": [
+        "Developer mode (beta) on the web for Plus, Pro, Business, Enterprise and Edu. Remote servers over HTTPS only; write actions ask before running.",
+        "Entwicklermodus (Beta) im Web für Plus, Pro, Business, Enterprise und Edu. Nur entfernti Server über HTTPS; schriibendi Aktione fröged vor em Usfüere naa."
+    ],
+    "OAuth oder ohne Anmeldung": [
+        "OAuth or no sign-in",
+        "OAuth oder ooni Aamäldig"
+    ],
+    "Atlassian-Administration → Verbundene Apps → eigenen MCP-Server hinzufügen. Danach in Rovo Chat und Rovo-Agenten nutzbar.": [
+        "Atlassian Administration → Connected apps → add your own MCP server. Then usable in Rovo Chat and Rovo agents.",
+        "Atlassian-Administration → Verbundeni Apps → eigete MCP-Server dezuefüege. Dänn in Rovo Chat und Rovo-Agänte bruuchbar."
+    ],
+    "OAuth {n} mit PKCE und dynamischer Client-Registrierung (Pflicht), Transport Streamable HTTP": [
+        "OAuth {n} with PKCE and dynamic client registration (required), transport Streamable HTTP",
+        "OAuth {n} mit PKCE und dynamischer Client-Registrierig (Pflicht), Transport Streamable HTTP"
+    ],
+    "Claude, ChatGPT oder Rovo. Die Person meldet sich einmal mit ihrem Intranet-Konto an.": [
+        "Claude, ChatGPT or Rovo. The person signs in once with their intranet account.",
+        "Claude, ChatGPT oder Rovo. D Person mäldet sich eimal mit irem Intranet-Konto aa."
+    ],
+    "Streamable HTTP, JSON-RPC {n}. Laravel-Paket laravel/mcp, Anmeldung über OAuth {n} (Laravel Passport, Mcp::oauthRoutes).": [
+        "Streamable HTTP, JSON-RPC {n}. Laravel package laravel/mcp, sign-in via OAuth {n} (Laravel Passport, Mcp::oauthRoutes).",
+        "Streamable HTTP, JSON-RPC {n}. Laravel-Paket laravel/mcp, Aamäldig über OAuth {n} (Laravel Passport, Mcp::oauthRoutes)."
+    ],
+    "Werkzeuge rufen dieselben Policies und Prüfungen auf wie /api/v{n}. Rechte der Person gelten, nicht die des Clients.": [
+        "Tools call the same policies and checks as /api/v{n}. The person's rights apply, not the client's.",
+        "D Wärchzüüg rüefed di gliiche Policies und Prüefige uf wie /api/v{n}. Es gälted d Rächt vo de Person, nöd die vom Client."
+    ],
+    "JSON-Ablage (später PostgreSQL). Jede Änderung im Änderungsverlauf mit Quelle «MCP» und Client-Name.": [
+        "JSON storage (PostgreSQL later). Every change in the change history with source «MCP» and the client name.",
+        "JSON-Ablaag (spöter PostgreSQL). Jedi Änderig im Änderigsverlauf mit Quälle «MCP» und Client-Name."
+    ],
+    "Antworten eines Werkzeugs gehen an den Anbieter des KI-Clients (USA bzw. Atlassian-Cloud). Ohne Vertrag zur Auftragsbearbeitung nach IDG Kanton Zürich keine Personendaten freigeben.": [
+        "A tool's answers go to the AI client's provider (USA or Atlassian Cloud). Release no personal data without a data processing agreement under the IDG of the Canton of Zurich.",
+        "D Antworte vom Wärchzüüg gönd a de Aabieter vom KI-Client (USA bzw. Atlassian-Cloud). Ooni Vertrag zur Uftragsbearbeitig nach IDG Kanton Züri kei Persoonedate freigää."
+    ],
+    "Phase {n} gibt nur Inhalte frei, die ohnehin für alle Mitarbeitenden sichtbar sind: Mitteilungen, Termine, Dokumente, Auswahllisten.": [
+        "Phase {n} only releases content that all staff can see anyway: announcements, events, documents, selection lists.",
+        "Phase {n} git nur Inhält frei, wo sowiso für alli Mitarbeitende sichtbar sind: Mitteilige, Termin, Dokumänt, Uswaallischte."
+    ],
+    "Private Felder, Notfallkontakte und Admin-Felder werden über MCP nie ausgeliefert – auch nicht für die Administration.": [
+        "Private fields, emergency contacts and admin fields are never delivered via MCP – not even to the administration.",
+        "Privati Fälder, Notfallkontakt und Admin-Fälder werded über MCP nie usgliferet – au nöd für d Administration."
+    ],
+    "Schreibende Werkzeuge tragen die Annotation destructiveHint bzw. readOnlyHint=false, damit der Client nachfragt. Die Prüfung im Intranet bleibt massgebend.": [
+        "Write tools carry the annotation destructiveHint or readOnlyHint=false so the client asks first. The check in the intranet remains authoritative.",
+        "Schriibendi Wärchzüüg händ d Annotation destructiveHint bzw. readOnlyHint=false, damit de Client naafrööget. D Prüefig im Intranet bliibt massgäbend."
+    ],
+    "Betrieb nur auf einem Server in der Schweiz (Infomaniak, ADR-{n}). Der heutige Prototyp-Server ist dafür nicht vorgesehen.": [
+        "Operation only on a server in Switzerland (Infomaniak, ADR-{n}). Today's prototype server is not intended for this.",
+        "Betriib nur uf emne Server i de Schwiiz (Infomaniak, ADR-{n}). De hüttig Prototyp-Server isch defür nöd vorgsee."
+    ],
+    "Tokens laufen ab, sind je Client widerrufbar und nur als Hash gespeichert (wie die API-Tokens).": [
+        "Tokens expire, can be revoked per client and are stored as a hash only (like the API tokens).",
+        "Tokens laufed ab, chönd pro Client widerrüefe werde und sind nur als Hash gspeicheret (wie d API-Tokens)."
+    ],
+    "Mitteilungen, Termine, Dokumente, Auswahllisten. Pilot mit Claude in der Schulleitung.": [
+        "Announcements, events, documents, selection lists. Pilot with Claude in the school management.",
+        "Mitteilige, Termin, Dokumänt, Uswaallischte. Pilot mit Claude i de Schuelleitig."
+    ],
+    "Suche nach Name, Funktion, Schulhaus; nur geschäftliche Kontaktdaten. Nach Freigabe durch die Datenschutzbeauftragte.": [
+        "Search by name, function, school building; business contact details only. After approval by the data protection officer.",
+        "Sueche nach Name, Funktion, Schuelhuus; nur gschäftlichi Kontaktdate. Nach de Freigaab dur d Dateschutzbeuftragt."
+    ],
+    "Personen anlegen und ändern nur für die Administration, jede Änderung bestätigt der Client vorher.": [
+        "Creating and changing people for the administration only; the client confirms every change first.",
+        "Persoone aalege und ändere nur für d Administration, jedi Änderig bestätigt de Client vorher."
+    ],
+    "Vorerst nicht vorgesehen. Löschen bleibt im Intranet selbst.": [
+        "Not planned for now. Deleting stays in the intranet itself.",
+        "Vorerscht nöd vorgsee. Lösche bliibt im Intranet sälber."
+    ],
+    "Gibt es für Claude, ChatGPT oder Rovo einen Vertrag, der Personendaten der Volksschule abdeckt?": [
+        "Is there a contract for Claude, ChatGPT or Rovo that covers personal data of the public school?",
+        "Gits für Claude, ChatGPT oder Rovo en Vertrag, wo Persoonedate vo de Volksschuel abdeckt?"
+    ],
+    "Welche Clients werden zugelassen? Rovo passt, wenn die Schule bereits Confluence und Jira nutzt.": [
+        "Which clients will be allowed? Rovo fits if the school already uses Confluence and Jira.",
+        "Weli Clients werded zueglaa? Rovo passt, wänn d Schuel scho Confluence und Jira bruucht."
+    ],
+    "Sollen Schülerinnen und Schüler überhaupt Zugriff erhalten? (Empfehlung: nein)": [
+        "Should pupils get access at all? (Recommendation: no)",
+        "Söled Schüelerinne und Schüeler überhaupt Zuegriff übercho? (Empfehlig: nei)"
+    ],
+    "Wer gibt neue Werkzeuge frei – Fachstelle ICT oder Schulleitung?": [
+        "Who approves new tools – ICT unit or school management?",
+        "Wer git neui Wärchzüüg frei – Fachstell ICT oder Schuelleitig?"
+    ],
+    "Angemeldete Person und Token": [
+        "Signed-in person and token",
+        "Aagmäldeti Person und Token"
+    ],
+    "Personen auflisten": [
+        "List people",
+        "Persoone uflischte"
+    ],
+    "Person anlegen": [
+        "Create person",
+        "Person aalege"
+    ],
+    "Eine Person": [
+        "One person",
+        "Ei Person"
+    ],
+    "Person ändern (nur gesendete Felder)": [
+        "Change person (sent fields only)",
+        "Person ändere (nur gschickti Fälder)"
+    ],
+    "Person löschen": [
+        "Delete person",
+        "Person lösche"
+    ],
+    "Veröffentlichte Mitteilungen": [
+        "Published announcements",
+        "Veröffentlichti Mitteilige"
+    ],
+    "Dokumente und Links": [
+        "Documents and links",
+        "Dokumänt und Links"
+    ],
+    "Auswahllisten (Schulhäuser, Rollen, Kategorien)": [
+        "Selection lists (school buildings, roles, categories)",
+        "Uswaallischte (Schuelhüüser, Rolle, Kategorie)"
+    ],
+    "Felder der Person": [
+        "Fields of the person",
+        "Fälder vo de Person"
+    ],
+    "Zahlen werden beim Nachschlagen ersetzt: «{n} Einträge» und «{n} Einträge» teilen sich einen Katalogeintrag.": [
+        "Numbers are replaced when looking up: «{n} Einträge» and «{n} Einträge» share one catalogue entry.",
+        "Zaale werded bim Naaluege ersetzt: «{n} Einträge» und «{n} Einträge» teiled sich en Kataloogiitrag."
+    ]
+}

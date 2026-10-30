@@ -27,6 +27,12 @@
                         serif: "'Source Serif 4', Georgia, 'Times New Roman', serif",
                         system: "ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif",
                     };
+                    // Andere Sprache: Seite kurz verdecken, bis übersetzt ist (höchstens 1,5 s)
+                    const lang = localStorage.getItem('lang');
+                    if (lang && lang !== 'de-CH') {
+                        document.documentElement.classList.add('i18n-wait');
+                        setTimeout(function () { document.documentElement.classList.remove('i18n-wait'); }, 1500);
+                    }
                     const font = localStorage.getItem('font');
                     if (font && stacks[font]) {
                         document.documentElement.style.setProperty('--font-sans', stacks[font]);
@@ -43,6 +49,10 @@
 
             html.dark {
                 background-color: #131516;
+            }
+
+            html.i18n-wait body {
+                visibility: hidden;
             }
         </style>
 

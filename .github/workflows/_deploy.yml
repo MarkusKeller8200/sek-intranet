@@ -47,6 +47,8 @@ jobs:
       - name: Bauen und starten
         run: |
           ssh vps "cd $TARGET && touch .env && grep -q '^INTRANET_HOST=' .env || echo 'INTRANET_HOST=$INTRANET_HOST' >> .env"
+          # Build-Angaben für die Versionsanzeige (Commit und Zeitpunkt)
+          ssh vps "cd $TARGET && sed -i '/^INTRANET_BUILD/d' .env && echo 'INTRANET_BUILD=${GITHUB_SHA::7}' >> .env && echo 'INTRANET_BUILD_DATE=$(date -u +%Y-%m-%dT%H:%M:%SZ)' >> .env"
           ssh vps "cd $TARGET && docker compose up -d --build --remove-orphans && docker image prune -f"
 
       # Massgebend ist die Prüfung auf dem Server selbst (Traefik, Zertifikat, App).

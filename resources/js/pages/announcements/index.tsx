@@ -102,7 +102,7 @@ export default function AnnouncementsIndex({
                                         />
                                     )}
                                     <h2 className="font-medium">
-                                        {item.title}
+                                        <span translate="no">{item.title}</span>
                                     </h2>
                                     <OptionBadge
                                         list="announcementCategories"
@@ -122,7 +122,7 @@ export default function AnnouncementsIndex({
                                         </Badge>
                                     )}
                                 </div>
-                                <p className="line-clamp-2 text-sm text-muted-foreground">
+                                <p className="line-clamp-2 text-sm text-muted-foreground" translate="no">
                                     {item.body}
                                 </p>
                                 <p className="text-xs text-muted-foreground">

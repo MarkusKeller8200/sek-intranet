@@ -2,6 +2,7 @@ import { Link, usePage } from '@inertiajs/react';
 import AppLogoIcon from '@/components/app-logo-icon';
 import AppWordmark from '@/components/app-wordmark';
 import { NavModules } from '@/components/nav-modules';
+import { LanguageSelect } from '@/components/language-picker';
 import { NavUser } from '@/components/nav-user';
 import { SidebarSplitter } from '@/components/sidebar-splitter';
 import {
@@ -46,6 +47,7 @@ export function AppSidebar() {
                     Prototyp · Speicher:{' '}
                     {store === 'json' ? 'Dateien (JSON)' : store}
                 </div>
+                <LanguageSelect />
                 <NavUser />
             </SidebarFooter>
             <SidebarSplitter />

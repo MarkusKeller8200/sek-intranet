@@ -1,0 +1,702 @@
+{
+    "Aktuelle Mitteilungen": [
+        "Latest announcements",
+        "Aktuelli Mitteilige"
+    ],
+    "Angeheftete zuerst, dann die neuesten": [
+        "Pinned first, then the newest",
+        "Aagheftet zerscht, dänn di neuschte"
+    ],
+    "Nächste Termine": [
+        "Upcoming events",
+        "Nächschti Termin"
+    ],
+    "Keine kommenden Termine.": [
+        "No upcoming events.",
+        "Kei chömendi Termin."
+    ],
+    "Alle Termine": [
+        "All events",
+        "Alli Termin"
+    ],
+    "Noch keine Links erfasst.": [
+        "No links recorded yet.",
+        "Nonig Links erfasst."
+    ],
+    "Kommende Termine": [
+        "Upcoming events",
+        "Chömendi Termin"
+    ],
+    "Keine Mitteilungen": [
+        "No announcements",
+        "Kei Mitteilige"
+    ],
+    "Oben anheften": [
+        "Pin to top",
+        "Obe aahefte"
+    ],
+    "Veröffentlicht ab": [
+        "Published from",
+        "Veröffentlicht ab"
+    ],
+    "Liegt das Datum in der Zukunft, sieht nur die Redaktion die Mitteilung.": [
+        "If the date is in the future, only the editors can see the announcement.",
+        "Isch s Datum i de Zuekunft, gseht nur d Redaktion d Mitteilig."
+    ],
+    "Mitteilung bearbeiten": [
+        "Edit announcement",
+        "Mitteilig bearbeite"
+    ],
+    "Neue Mitteilung": [
+        "New announcement",
+        "Neui Mitteilig"
+    ],
+    "Suchbegriff oder Kategorie anpassen.": [
+        "Adjust search term or category.",
+        "Suechbegriff oder Kategorie aapasse."
+    ],
+    "Informationen für die Mitarbeitenden der Sekundarschule": [
+        "Information for the staff of the secondary school",
+        "Informatione für d Mitarbeitende vo de Sekundarschuel"
+    ],
+    "Mitteilungen durchsuchen": [
+        "Search announcements",
+        "Mitteilige dursueche"
+    ],
+    "Keine Mitteilungen gefunden": [
+        "No announcements found",
+        "Kei Mitteilige gfunde"
+    ],
+    "Angeheftet": [
+        "Pinned",
+        "Aagheftet"
+    ],
+    "Alle Kategorien": [
+        "All categories",
+        "Alli Kategorie"
+    ],
+    "Alle Mitteilungen": [
+        "All announcements",
+        "Alli Mitteilige"
+    ],
+    "Mitteilung löschen?": [
+        "Delete announcement?",
+        "Mitteilig lösche?"
+    ],
+    "Anmeldung nicht eingerichtet": [
+        "Sign-in not set up",
+        "Aamäldig nöd iigrichtet"
+    ],
+    "Die Demo-Anmeldung ist ausgeschaltet. Die Anmeldung mit dem Schulkonto (Entra ID / Edulog) folgt.": [
+        "Demo sign-in is disabled. Sign-in with the school account (Entra ID / Edulog) will follow.",
+        "D Demo-Aamäldig isch usgschaltet. D Aamäldig mit em Schuelkonto (Entra ID / Edulog) chunnt no."
+    ],
+    "Prototyp: Demo-Personen mit erfundenen Daten. Später Anmeldung mit dem Schulkonto.": [
+        "Prototype: demo people with invented data. Later sign-in with the school account.",
+        "Prototyp: Demo-Persone mit erfundne Date. Spöter Aamäldig mit em Schuelkonto."
+    ],
+    "Anmelden": [
+        "Sign in",
+        "Aamälde"
+    ],
+    "Als welche Person möchtest du den Prototyp testen?": [
+        "Which person would you like to test the prototype as?",
+        "Als weli Person wottsch de Prototyp teschte?"
+    ],
+    "Art": [
+        "Type",
+        "Art"
+    ],
+    "Beschreibung (optional)": [
+        "Description (optional)",
+        "Beschriibig (freiwillig)"
+    ],
+    "Eintrag bearbeiten": [
+        "Edit entry",
+        "Iitrag bearbeite"
+    ],
+    "Neuer Eintrag": [
+        "New entry",
+        "Neue Iitrag"
+    ],
+    "Neues Dokument oder Link": [
+        "New document or link",
+        "Neus Dokumänt oder Link"
+    ],
+    "Link auf Webseite": [
+        "Link to website",
+        "Link uf e Websiite"
+    ],
+    "Datei hochladen": [
+        "Upload file",
+        "Datei uelade"
+    ],
+    "Max. {n} MB. Keine Personendaten hochladen (Prototyp).": [
+        "Max. {n} MB. Do not upload personal data (prototype).",
+        "Max. {n} MB. Kei Personedate uelade (Prototyp)."
+    ],
+    "Reglemente, Formulare, Anleitungen und wichtige Webseiten": [
+        "Regulations, forms, guides and important websites",
+        "Reglemänt, Formular, Aaleitige und wichtigi Websiite"
+    ],
+    "Dokumente durchsuchen": [
+        "Search documents",
+        "Dokumänt dursueche"
+    ],
+    "Keine Einträge gefunden": [
+        "No entries found",
+        "Kei Iiträg gfunde"
+    ],
+    "Eintrag löschen?": [
+        "Delete entry?",
+        "Iitrag lösche?"
+    ],
+    "Der Eintrag und die hochgeladene Datei werden endgültig gelöscht.": [
+        "The entry and the uploaded file will be deleted permanently.",
+        "De Iitrag und di ueglade Datei wärded für immer glöscht."
+    ],
+    "Ganztägig": [
+        "All day",
+        "De ganz Tag"
+    ],
+    "Beginn": [
+        "Start",
+        "Aafang"
+    ],
+    "Ende (optional)": [
+        "End (optional)",
+        "Änd (freiwillig)"
+    ],
+    "Termin bearbeiten": [
+        "Edit event",
+        "Termin bearbeite"
+    ],
+    "Neuer Termin": [
+        "New event",
+        "Neue Termin"
+    ],
+    "Vergangene Termine anzeigen": [
+        "Show past events",
+        "Vergangeni Termin aazeige"
+    ],
+    "Anlässe, Konferenzen, Weiterbildungen und Ferien": [
+        "Events, conferences, training and holidays",
+        "Aaläss, Konferänze, Wiiterbildige und Ferie"
+    ],
+    "Keine Termine": [
+        "No events",
+        "Kei Termin"
+    ],
+    "Termin löschen?": [
+        "Delete event?",
+        "Termin lösche?"
+    ],
+    "Was sich im Intranet geändert hat. Versionen nach Semantic Versioning (MAJOR.MINOR.PATCH).": [
+        "What has changed in the intranet. Versions follow Semantic Versioning (MAJOR.MINOR.PATCH).",
+        "Was sich im Intranet gänderet hät. Versione nach Semantic Versioning (MAJOR.MINOR.PATCH)."
+    ],
+    "Logo": [
+        "Logo",
+        "Logo"
+    ],
+    "Offizieller Schriftzug, im Dunkelmodus mit heller Schrift. Signet für App-Symbol und Favicon.": [
+        "Official wordmark, with light lettering in dark mode. Emblem for app icon and favicon.",
+        "Offizielle Schriftzug, im Dunkelmodus mit heller Schrift. Signet für s App-Symbol und Favicon."
+    ],
+    "Grundfarben": [
+        "Base colours",
+        "Grundfarbe"
+    ],
+    "Definiert in resources/css/app.css (hell und dunkel).": [
+        "Defined in resources/css/app.css (light and dark).",
+        "Definiert in resources/css/app.css (hell und dunkel)."
+    ],
+    "Bedienelemente": [
+        "Controls",
+        "Bedienelemänt"
+    ],
+    "Sekundär": [
+        "Secondary",
+        "Sekundär"
+    ],
+    "Statusfarben": [
+        "Status colours",
+        "Statusfarbe"
+    ],
+    "Farben je Auswahlwert": [
+        "Colours per option",
+        "Farbe pro Uswahlwert"
+    ],
+    "Zuordnung in config/intranet.php → colors. Neue Werte dort eintragen, sonst erscheinen sie grau.": [
+        "Mapping in config/intranet.php → colors. Add new values there, otherwise they appear grey.",
+        "Zuewiisig in config/intranet.php → colors. Neui Wärt det iitrage, susch chömed s grau."
+    ],
+    "Gefüllte Badges für Kategorien, Badges mit Punkt für Schulhäuser und Zielgruppen. Termine erhalten zusätzlich einen farbigen Rand links.": [
+        "Filled badges for categories, dotted badges for buildings and audiences. Events also get a coloured left border.",
+        "Gfüllti Badges für Kategorie, Badges mit Punkt für Schuelhüüser und Zielgruppe. Termin überchömed zuesätzlich en farbige Rand links."
+    ],
+    "Navigation (Hauptmenüs)": [
+        "Navigation (main menus)",
+        "Navigation (Hauptmenüs)"
+    ],
+    "Jeder Bereich der Seitenleiste hat eine Farbe und ein Symbol: farbige Fläche für den Kopf, Symbole und Markierung der aktiven Seite in der Bereichsfarbe. Zuordnung in config/intranet.php → modules (color, icon).": [
+        "Each sidebar area has a colour and an icon: coloured header, icons and active-page marker in the area colour. Mapping in config/intranet.php → modules (color, icon).",
+        "Jede Bereich vo de Siiteleischte hät e Farb und es Symbol: farbigi Flächi für de Chopf, Symbol und Markierig vo de aktive Siite i de Bereichsfarb. Zuewiisig in config/intranet.php → modules (color, icon)."
+    ],
+    "Schrift": [
+        "Typeface",
+        "Schrift"
+    ],
+    "Standard ist Open Sans wie auf sekbuelach.ch. Jede Person kann die Schrift unter Einstellungen → Darstellung umstellen (gilt pro Browser).": [
+        "The default is Open Sans as on sekbuelach.ch. Everyone can change the font under Settings → Appearance (per browser).",
+        "Standard isch Open Sans wie uf sekbuelach.ch. Jedi Person cha d Schrift unter Iistellige → Darstellig umstelle (gilt pro Browser)."
+    ],
+    "Schulhäuser": [
+        "School buildings",
+        "Schuelhüüser"
+    ],
+    "Kategorien Mitteilungen": [
+        "Announcement categories",
+        "Kategorie Mitteilige"
+    ],
+    "Arten von Terminen": [
+        "Event types",
+        "Arte vo Termin"
+    ],
+    "Kategorien Dokumente": [
+        "Document categories",
+        "Kategorie Dokumänt"
+    ],
+    "Zielgruppen": [
+        "Audiences",
+        "Zielgruppe"
+    ],
+    "Rollen": [
+        "Roles",
+        "Rolle"
+    ],
+    "Abgeleitet aus dem Auftritt von sekbuelach.ch. Schrift: Open Sans (umstellbar).": [
+        "Derived from the sekbuelach.ch website. Font: Open Sans (changeable).",
+        "Abgleitet vom Uftritt vo sekbuelach.ch. Schrift: Open Sans (umstellbar)."
+    ],
+    "Signet": [
+        "Emblem",
+        "Signet"
+    ],
+    "Primär": [
+        "Primary",
+        "Primär"
+    ],
+    "Logo-Blau": [
+        "Logo blue",
+        "Logo-Blau"
+    ],
+    "Cyan": [
+        "Cyan",
+        "Cyan"
+    ],
+    "Anthrazit": [
+        "Anthracite",
+        "Anthrazit"
+    ],
+    "Fläche": [
+        "Surface",
+        "Flächi"
+    ],
+    "Buttons, Links, aktive Navigation. Kontrast AA ({n}:{n} hell, {n}:{n} dunkel).": [
+        "Buttons, links, active navigation. Contrast AA ({n}:{n} light, {n}:{n} dark).",
+        "Chnöpf, Links, aktivi Navigation. Kontrascht AA ({n}:{n} hell, {n}:{n} dunkel)."
+    ],
+    "Linien, Markierungen, Fokusrahmen, Symbole. Nicht für Fliesstext.": [
+        "Lines, markers, focus rings, icons. Not for body text.",
+        "Linie, Markierige, Fokusrahme, Symbol. Nöd für Fliesstext."
+    ],
+    "Nur dekorativ (Akzentlinien). Nie für Text.": [
+        "Decorative only (accent lines). Never for text.",
+        "Nur dekorativ (Akzäntlinie). Nie für Text."
+    ],
+    "Text. Im Dunkelmodus hell.": [
+        "Text. Light in dark mode.",
+        "Text. Im Dunkelmodus hell."
+    ],
+    "Navigation und ruhige Hintergründe.": [
+        "Navigation and calm backgrounds.",
+        "Navigation und ruhigi Hintergründ."
+    ],
+    "Geplant, noch nicht sichtbar.": [
+        "Planned, not yet visible.",
+        "Planet, nonig sichtbar."
+    ],
+    "Bitte Titel ausfüllen.": [
+        "Please fill in the title.",
+        "Bitte de Titel usfülle."
+    ],
+    "Prototyp mit Testdaten.": [
+        "Prototype with test data.",
+        "Prototyp mit Testdate."
+    ],
+    "Das Schema steht in config/intranet.php (Abschnitt «schema»). Jede Sammlung erhält zusätzlich id (UUID v{n}), created_at und updated_at. Felder, die in den Daten vorkommen, aber nicht im Schema stehen, werden unten markiert.": [
+        "The schema is in config/intranet.php (section «schema»). Each collection also gets id (UUID v{n}), created_at and updated_at. Fields found in the data but not in the schema are marked below.",
+        "S Schema staht in config/intranet.php (Abschnitt «schema»). Jedi Sammlig überchunnt zuesätzlich id (UUID v{n}), created_at und updated_at. Fälder, wo i de Date vorchömed, aber nöd im Schema stönd, wärded une markiert."
+    ],
+    "Sammlungen ohne Schema": [
+        "Collections without schema",
+        "Sammlige ohni Schema"
+    ],
+    "Alle aufklappen": [
+        "Expand all",
+        "Alli uufklappe"
+    ],
+    "Alle zuklappen": [
+        "Collapse all",
+        "Alli zueklappe"
+    ],
+    "Felder ausserhalb des Schemas": [
+        "Fields outside the schema",
+        "Fälder usserhalb vom Schema"
+    ],
+    "Feld": [
+        "Field",
+        "Fäld"
+    ],
+    "Bezeichnung": [
+        "Label",
+        "Bezeichnig"
+    ],
+    "Typ": [
+        "Type",
+        "Typ"
+    ],
+    "PostgreSQL (Vorschlag)": [
+        "PostgreSQL (suggestion)",
+        "PostgreSQL (Vorschlag)"
+    ],
+    "Pflicht": [
+        "Required",
+        "Pflicht"
+    ],
+    "Gruppe": [
+        "Group",
+        "Gruppe"
+    ],
+    "Gefüllt": [
+        "Filled",
+        "Gfüllt"
+    ],
+    "Was der Prototyp speichert – Grundlage für das spätere PostgreSQL-Datenmodell": [
+        "What the prototype stores – basis for the later PostgreSQL data model",
+        "Was de Prototyp spicheret – Grundlag für s spöter PostgreSQL-Datemodell"
+    ],
+    "{n} Datensätze": [
+        "{n} records",
+        "{n} Datesätz"
+    ],
+    "{n} Felder": [
+        "{n} fields",
+        "{n} Fälder"
+    ],
+    "{n} unbekannt": [
+        "{n} unknown",
+        "{n} unbekannt"
+    ],
+    "berechnet": [
+        "computed",
+        "berächnet"
+    ],
+    "Nicht geladene Plugins": [
+        "Plugins not loaded",
+        "Nöd gladeni Plugins"
+    ],
+    "Plugins liegen im Ordner plugins/ (siehe PLUGINS.md).": [
+        "Plugins are in the plugins/ folder (see PLUGINS.md).",
+        "Plugins liged im Ordner plugins/ (lueg PLUGINS.md)."
+    ],
+    "Eingeschaltet": [
+        "Enabled",
+        "Iigschaltet"
+    ],
+    "Einrichten und testen": [
+        "Set up and test",
+        "Iirichte und teschte"
+    ],
+    "Anbindung anderer Systeme per API. Plugins kommen aus dem Repository und werden hier ein- und ausgeschaltet.": [
+        "Connecting other systems via API. Plugins come from the repository and are switched on and off here.",
+        "Aabindig vo andere System per API. Plugins chömed usem Repository und wärded da ii- und usgschaltet."
+    ],
+    "Keine Plugins gefunden": [
+        "No plugins found",
+        "Kei Plugins gfunde"
+    ],
+    "Alle Plugins": [
+        "All plugins",
+        "Alli Plugins"
+    ],
+    "Testen": [
+        "Test",
+        "Teschte"
+    ],
+    "API-Doku": [
+        "API docs",
+        "API-Doku"
+    ],
+    "Protokoll": [
+        "Log",
+        "Protokoll"
+    ],
+    "Schreibende Aktionen erlauben": [
+        "Allow write actions",
+        "Schriibendi Aktione erlaube"
+    ],
+    "Nötig für «Übernehmen» ins Intranet und für Aktionen, die im anderen System etwas ändern. Jede solche Aktion fragt zusätzlich nach.": [
+        "Needed for «Apply» into the intranet and for actions that change something in the other system. Each such action asks again.",
+        "Nötig für «Übernäh» is Intranet und für Aktione, wo im andere System öppis ändered. Jedi sones Aktion fröget no emol naa."
+    ],
+    "Gespeicherte Zugangsdaten löschen": [
+        "Delete stored credentials",
+        "Gspicheret Zuegangsdate lösche"
+    ],
+    "Dieses Plugin bietet keine Aktionen an.": [
+        "This plugin offers no actions.",
+        "Das Plugin bietet kei Aktione aa."
+    ],
+    "Zuerst einschalten und einrichten.": [
+        "Enable and set up first.",
+        "Zerscht iischalte und iirichte."
+    ],
+    "Ja, ausführen": [
+        "Yes, run",
+        "Ja, usfüere"
+    ],
+    "Endpunkt": [
+        "Endpoint",
+        "Ändpunkt"
+    ],
+    "Aufruf": [
+        "Call",
+        "Ufruef"
+    ],
+    "Stand": [
+        "Status",
+        "Stand"
+    ],
+    "Verwendung": [
+        "Use",
+        "Verwändig"
+    ],
+    "Berechtigung": [
+        "Permission",
+        "Berächtigung"
+    ],
+    "Ruft jeden lesenden Endpunkt einmal auf (nur GET).": [
+        "Calls each read endpoint once (GET only).",
+        "Rüeft jede läsende Ändpunkt eimal uf (nur GET)."
+    ],
+    "API-Tester": [
+        "API tester",
+        "API-Tester"
+    ],
+    "Ruft einen Endpunkt mit den gespeicherten Zugangsdaten auf. Zugangsdaten in der Antwort werden geschwärzt.": [
+        "Calls an endpoint with the stored credentials. Credentials in the response are redacted.",
+        "Rüeft en Ändpunkt mit de gspicherete Zuegangsdate uf. Zuegangsdate i de Antwort wärded gschwärzt."
+    ],
+    "Geplant, noch nicht umgesetzt.": [
+        "Planned, not yet implemented.",
+        "Planet, nonig umgsetzt."
+    ],
+    "Schreibend: erst nach Freigabe in den Einstellungen.": [
+        "Writing: only after approval in the settings.",
+        "Schriibend: erscht nach de Freigab i de Iistellige."
+    ],
+    "Schreibenden Aufruf senden?": [
+        "Send writing call?",
+        "Schriibende Ufruef schicke?"
+    ],
+    "Senden": [
+        "Send",
+        "Schicke"
+    ],
+    "Noch keine Läufe.": [
+        "No runs yet.",
+        "Nonig Läuf."
+    ],
+    "Zugangsdaten werden verschlüsselt gespeichert und nie angezeigt.": [
+        "Credentials are stored encrypted and never shown.",
+        "Zuegangsdate wärded verschlüsslet gspicheret und nie aazeigt."
+    ],
+    "Vorschau anzeigen": [
+        "Show preview",
+        "Vorschau aazeige"
+    ],
+    "Die ausgewählten Einträge werden im Intranet angelegt bzw. geändert. Gelöscht wird nichts.": [
+        "The selected entries will be created or changed in the intranet. Nothing is deleted.",
+        "Di uusgwählte Iiträg wärded im Intranet aagleit oder gänderet. Glöscht wird nüt."
+    ],
+    "Diese Aktion ändert Daten im angeschlossenen System.": [
+        "This action changes data in the connected system.",
+        "Die Aktion änderet Date im aagschlossne System."
+    ],
+    "Prüft …": [
+        "Checking …",
+        "Prüeft …"
+    ],
+    "Zugriff prüfen": [
+        "Check access",
+        "Zuegriff prüefe"
+    ],
+    "Sendet …": [
+        "Sending …",
+        "Schickt …"
+    ],
+    "Ausführen": [
+        "Run",
+        "Usfüere"
+    ],
+    "Einstellungen speichern": [
+        "Save settings",
+        "Iistellige spichere"
+    ],
+    "Aktionen": [
+        "Actions",
+        "Aktione"
+    ],
+    "Zugänge (API-Tokens)": [
+        "Access (API tokens)",
+        "Zuegäng (API-Tokens)"
+    ],
+    "Ein Token handelt im Namen der gewählten Person und hat deren Rechte. Gespeichert wird nur ein Hash – das Token wird genau einmal angezeigt.": [
+        "A token acts on behalf of the chosen person and has their permissions. Only a hash is stored – the token is shown exactly once.",
+        "Es Token handlet im Name vo de gwählte Person und hät ihri Rächt. Gspicheret wird nur en Hash – s Token wird gnau eimal aazeigt."
+    ],
+    "Im Namen von": [
+        "On behalf of",
+        "Im Name vo"
+    ],
+    "mir": [
+        "me",
+        "mir"
+    ],
+    "Gültig": [
+        "Valid",
+        "Gültig"
+    ],
+    "{n} Tag": [
+        "{n} day",
+        "{n} Tag"
+    ],
+    "{n} Tage": [
+        "{n} days",
+        "{n} Täg"
+    ],
+    "{n} Jahr": [
+        "{n} year",
+        "{n} Johr"
+    ],
+    "unbegrenzt": [
+        "unlimited",
+        "unbegränzt"
+    ],
+    "darf schreiben": [
+        "may write",
+        "törf schriibe"
+    ],
+    "Token erstellen": [
+        "Create token",
+        "Token erstelle"
+    ],
+    "Neues Token – jetzt kopieren, es wird nicht mehr angezeigt:": [
+        "New token – copy it now, it will not be shown again:",
+        "Neus Token – jetzt kopiere, es wird nümme aazeigt:"
+    ],
+    "Im Tester unten ist es bereits eingesetzt.": [
+        "It has already been inserted in the tester below.",
+        "Im Tester une isch es scho iigsetzt."
+    ],
+    "Noch keine Tokens.": [
+        "No tokens yet.",
+        "Nonig Tokens."
+    ],
+    "Widerrufen": [
+        "Revoke",
+        "Widerrüefe"
+    ],
+    "Body (JSON)": [
+        "Body (JSON)",
+        "Body (JSON)"
+    ],
+    "Als curl kopieren": [
+        "Copy as curl",
+        "Als curl kopiere"
+    ],
+    "Kein Token gesetzt – die Antwort wird {n} sein.": [
+        "No token set – the response will be {n}.",
+        "Kei Token gsetzt – d Antwort wird {n} sii."
+    ],
+    "Tester": [
+        "Tester",
+        "Tester"
+    ],
+    "API-Token": [
+        "API token",
+        "API-Token"
+    ],
+    "z. B. Abgleich IDA": [
+        "e.g. IDA sync",
+        "z. B. Abgliich IDA"
+    ],
+    "REST-API mit OpenAPI-Beschreibung. Endpunkte direkt hier ausprobieren.": [
+        "REST API with OpenAPI description. Try endpoints right here.",
+        "REST-API mit OpenAPI-Beschriibig. Ändpünkt grad da uusprobiere."
+    ],
+    "Widerrufen nicht möglich.": [
+        "Revoking not possible.",
+        "Widerrüefe gaht nöd."
+    ],
+    "Der Body ist kein gültiges JSON.": [
+        "The body is not valid JSON.",
+        "De Body isch kes gültigs JSON."
+    ],
+    "Token nicht erstellt.": [
+        "Token not created.",
+        "Token nöd erstellt."
+    ],
+    "Token kopiert.": [
+        "Token copied.",
+        "Token kopiert."
+    ],
+    "Gültig bis": [
+        "Valid until",
+        "Gültig bis"
+    ],
+    "Zuletzt verwendet": [
+        "Last used",
+        "Zletscht bruucht"
+    ],
+    "Token": [
+        "Token",
+        "Token"
+    ],
+    "Rechte": [
+        "Permissions",
+        "Rächt"
+    ],
+    "nie": [
+        "never",
+        "nie"
+    ],
+    "Pfad": [
+        "path",
+        "Pfad"
+    ],
+    "Abfrage": [
+        "query",
+        "Abfrog"
+    ],
+    ". Das Token bleibt nur in diesem Browser-Tab gespeichert.": [
+        ". The token is only kept in this browser tab.",
+        ". S Token bliibt nur i dem Browser-Tab gspicheret."
+    ],
+    "Basis-URL": [
+        "Base URL",
+        "Basis-URL"
+    ]
+}

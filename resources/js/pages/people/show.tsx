@@ -312,7 +312,15 @@ export default function PersonShow({
                                                 <dt className="text-muted-foreground">
                                                     {field.label}
                                                 </dt>
-                                                <dd className="min-w-0 break-words">
+                                                <dd
+                                                    className="min-w-0 break-words"
+                                                    translate={
+                                                        field.type === 'enum' ||
+                                                        field.type === 'bool'
+                                                            ? undefined
+                                                            : 'no'
+                                                    }
+                                                >
                                                     <Value
                                                         field={field}
                                                         person={person}

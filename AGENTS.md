@@ -24,6 +24,13 @@ Projekt: SekBülach Intranet, Prototyp. Stack und Konventionen wie IDA.
 - REST-API unter `/api/v1` (routes/api.php, `App\Http\Controllers\Api`), Beschreibung in
   `App\Support\OpenApi` nachführen – die Seite «API» (Tester) und `/api/openapi.json` lesen daraus.
   Anmeldung nur mit Token (`api_tokens`, nur Hash gespeichert), Rechte wie die Besitzerin/der Besitzer.
+- Mehrsprachigkeit (siehe `docs/KONZEPT-SPRACHEN.md`): im Code nur deutsche Texte. Jeder neue sichtbare Text
+  kommt im selben Commit in einen Katalog `resources/js/i18n/*.json` als `"Deutsch": ["English", "Züritüütsch"]`
+  (Zahlen als `{n}`). `node tools/i18n-extract.mjs` muss «0 fehlen» melden (läuft in `composer ci:check` mit `--check`). Daten (Namen, Inhalte) mit
+  `translate="no"` schützen.
+- Versionierung: Nummer nur in `VERSION` (SemVer), Änderungen laufend in `CHANGELOG.md` unter «Unveröffentlicht».
+- MCP-Schnittstelle (Konzept, `docs/KONZEPT-MCP.md`): Werkzeuge werden aus `App\Support\OpenApi` abgeleitet
+  (`App\Support\McpConcept`). Neue API-Operationen dort mit Werkzeugnamen ergänzen.
 - Wird ein Schlüssel einer Auswahlliste umbenannt, Umstellung unter `renames` eintragen
   (`php artisan intranet:upgrade` stellt bestehende Daten beim Start um).
 

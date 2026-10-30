@@ -137,14 +137,14 @@ export default function Dashboard({
                                             <Pin className="size-4 text-brand" />
                                         )}
                                         <span className="font-medium">
-                                            {item.title}
+                                            <span translate="no">{item.title}</span>
                                         </span>
                                         <OptionBadge
                                             list="announcementCategories"
                                             value={item.category}
                                         />
                                     </div>
-                                    <p className="line-clamp-2 text-sm text-muted-foreground">
+                                    <p className="line-clamp-2 text-sm text-muted-foreground" translate="no">
                                         {item.body}
                                     </p>
                                     <p className="text-xs text-muted-foreground">
@@ -184,7 +184,7 @@ export default function Dashboard({
                                         className="grid gap-0.5 border-l-2 border-primary/30 pl-3"
                                     >
                                         <span className="text-sm font-medium">
-                                            {event.title}
+                                            <span translate="no">{event.title}</span>
                                         </span>
                                         <span className="text-xs text-muted-foreground">
                                             {formatEventRange(
