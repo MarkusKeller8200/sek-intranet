@@ -20,6 +20,7 @@ class PluginFromOpenApiCommand extends Command
         {quelle : Pfad zu einer OpenAPI-Datei (JSON) oder ID einer Aufzeichnung im API-Recorder}
         {--plugin= : Bestehendes Plugin (id) um fehlende Endpunkte ergänzen}
         {--neu= : Neues Plugin im Ordner plugins/<Ordner> anlegen (z. B. EscolaWeb)}
+        {--host= : Mit --plugin: neue Endpunkte einer weiteren Adresse zuordnen (Schlüssel aus service.hosts)}
         {--dry-run : Nur anzeigen, nichts schreiben}';
 
     protected $description = 'Ergänzt ein Plugin um Endpunkte aus OpenAPI oder legt ein neues Plugin an (Status partial)';
@@ -99,9 +100,18 @@ class PluginFromOpenApiCommand extends Command
             return self::FAILURE;
         }
 
+        $host = $this->option('host');
+        $host = is_string($host) && $host !== '' ? $host : null;
+
         /** @var array<string, mixed> $manifest */
-        $result = PluginGenerator::merge($manifest, $described['endpoints']);
-        PluginManifest::fromArray($result['manifest'], basename(dirname($file)));
+        $result = PluginGenerator::merge($manifest, $described['endpoints'], $host);
+        try {
+            PluginManifest::fromArray($result['manifest'], basename(dirname($file)));
+        } catch (InvalidArgumentException $e) {
+            $this->components->error($e->getMessage().($host !== null ? " – «{$host}» zuerst unter service.hosts eintragen." : ''));
+
+            return self::FAILURE;
+        }
 
         foreach ($result['skipped'] as $line) {
             $this->line("  vorhanden: {$line}");

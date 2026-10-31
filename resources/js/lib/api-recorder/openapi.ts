@@ -195,6 +195,10 @@ export function mergeSchema(a: JsonSchema, b: JsonSchema): JsonSchema {
 const SECRET_KEY =
     /pass(?:word|wort)?|secret|token|auth|session|cookie|key|pin|iban|ahv/i;
 
+/** Felder mit Personenbezug: auch kurze Werte kürzen (z. B. Nachnamen mit drei Buchstaben). */
+const PERSONAL_KEY =
+    /name|first|last|user|mail|phone|telefon|address|adress|street|strasse|city|ort$|zip|plz|birth|geburt/i;
+
 /** Beispielwerte maskieren: Geheimnisse ganz, Texte bis auf Typhinweis. */
 export function mask(value: unknown, key = ''): unknown {
     if (Array.isArray(value)) {
@@ -220,7 +224,12 @@ export function mask(value: unknown, key = ''): unknown {
             return value; // Datum, UUID, URL sind unkritisch
         }
 
-        return value.length <= 3 ? value : `${value.slice(0, 1)}…`;
+        // Kurze Codes (ASC, CH, de) bleiben, alles andere wird gekürzt
+        if (!PERSONAL_KEY.test(key) && /^[A-Za-z0-9_-]{0,3}$/.test(value)) {
+            return value;
+        }
+
+        return value === '' ? '' : `${value.slice(0, 1)}…`;
     }
 
     return value;

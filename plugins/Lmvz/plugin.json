@@ -6,15 +6,23 @@
     "category": "school",
     "author": "SekBülach Intranet",
     "unofficial": true,
-    "description": "Inoffizielle Anbindung an den LMVZ-Webshop: liest öffentliche Artikelseiten (Titel, Artikelnummer, ISBN, Preis). Der LMVZ bietet keine offizielle Schnittstelle; Bestellungen und Lizenzen (LMVZ Digital) folgen erst, wenn die Abläufe mit dem API-Recorder aufgezeichnet und geprüft sind.",
-    "data_notice": "Keine offizielle Schnittstelle: Das Plugin liest öffentliche Shop-Seiten (shop.lmvz.ch) und kann bei Änderungen der Website ohne Vorwarnung ausfallen. Keine Anmeldung, keine Personendaten. Nutzungsbedingungen des LMVZ beachten; Bestellungen weiterhin über den Shop.",
+    "description": "Inoffizielle Anbindung an den LMVZ: Webshop (öffentliche Artikelseiten: Titel, Artikelnummer, ISBN, Preis) und LMVZ Digital (digital.lmvz.ch: Lizenzübersicht der Schule, Benutzer, Gruppen). Der LMVZ bietet keine offizielle Schnittstelle; die Endpunkte von LMVZ Digital stammen aus einer Aufzeichnung mit dem API-Recorder.",
+    "data_notice": "Keine offizielle Schnittstelle: Shop-Seiten und die interne REST-Schnittstelle von LMVZ Digital können sich ohne Vorwarnung ändern. LMVZ Digital enthält Personendaten von Schüler:innen und Lehrpersonen (Namen, E-Mail, Klassen) – nur auf einem Server in der Schweiz und nach Klärung mit dem LMVZ (Nutzungsbedingungen) mit echten Daten verwenden. Das Token gilt nur für digital.lmvz.ch und wird nie an den Shop gesendet.",
     "service": {
-        "name": "LMVZ Webshop (öffentliche Seiten, keine API)",
+        "name": "LMVZ Webshop und LMVZ Digital (keine offizielle API)",
         "home": "https://shop.lmvz.ch",
         "docs": "https://support.lmvz.ch",
         "base": "https://shop.lmvz.ch",
-        "auth": { "type": "none" },
-        "auth_note": "Ohne Anmeldung – nur öffentliche Seiten. Schulkonto-Funktionen (Warenkorb, Bestellungen, Freigabeprozess) erst nach Aufzeichnung mit dem API-Recorder.",
+        "auth": {
+            "type": "header",
+            "hosts": [
+                "digital"
+            ],
+            "header_setting": "auth_header",
+            "prefix_setting": "auth_prefix",
+            "setting": "digital_token"
+        },
+        "auth_note": "Shop: ohne Anmeldung. LMVZ Digital: Anmeldung über das Schulkonto (Keycloak). Das Zugriffstoken aus dem angemeldeten Browser (Entwicklertools → Netzwerk → Kopfzeile «Authorization» einer Anfrage an /rest/…) hier hinterlegen; es läuft nach kurzer Zeit ab. Eine dauerhafte Anmeldung (Dienstkonto, Client Credentials) müsste der LMVZ bereitstellen.",
         "endpoints": [
             {
                 "id": "home",
@@ -54,15 +62,471 @@
                 "status": "planned",
                 "use": "später: Bestellung vorbereiten",
                 "note": "Braucht eine Anmeldung im Shop; Ablauf zuerst mit dem API-Recorder aufzeichnen."
+            },
+            {
+                "id": "d-org",
+                "method": "GET",
+                "path": "/rest/clientpreferences/{orgId}",
+                "host": "digital",
+                "label": "Schule (Organisation)",
+                "status": "partial",
+                "use": "Testen, Schulname",
+                "note": "Aus einer Aufzeichnung mit dem API-Recorder (digital.lmvz.ch, Oktober 2026); keine Hersteller-Doku.",
+                "params": [
+                    {
+                        "name": "orgId",
+                        "required": true,
+                        "help": "Organisations-ID der Schule (Einstellung «org_id»)"
+                    }
+                ]
+            },
+            {
+                "id": "d-licenses",
+                "method": "POST",
+                "path": "/rest/lizenzpakete/{view}/orgId/{orgId}",
+                "host": "digital",
+                "label": "Lizenzübersicht der Schule",
+                "status": "partial",
+                "use": "Aktion «Lizenzübersicht», Kachel",
+                "note": "Liste per POST (lesend). Antwort: licenseOverviewOneYearEP mit gekauften, zugewiesenen und freien Lizenzen je Lehrmittel. Aus einer Aufzeichnung mit dem API-Recorder (digital.lmvz.ch, Oktober 2026); keine Hersteller-Doku.",
+                "effect": "read",
+                "params": [
+                    {
+                        "name": "view",
+                        "required": true,
+                        "help": "Erster Wert im aufgezeichneten Pfad (Bedeutung noch unklar, Einstellung «license_view»)"
+                    },
+                    {
+                        "name": "orgId",
+                        "required": true,
+                        "help": "Organisations-ID der Schule (Einstellung «org_id»)"
+                    }
+                ],
+                "body": {
+                    "sorting": [],
+                    "offset": 0,
+                    "limit": 0
+                }
+            },
+            {
+                "id": "d-person-licenses",
+                "method": "POST",
+                "path": "/rest/lizenzpakete/list/orgId/{orgId}/personId/{personId}",
+                "host": "digital",
+                "label": "Lizenzen einer Person",
+                "status": "partial",
+                "use": "API-Tester",
+                "note": "Liste per POST (lesend). Personendaten (Schüler:innen, Lehrpersonen) – nur auf Schweizer Server mit echten Daten. Aus einer Aufzeichnung mit dem API-Recorder (digital.lmvz.ch, Oktober 2026); keine Hersteller-Doku.",
+                "effect": "read",
+                "params": [
+                    {
+                        "name": "orgId",
+                        "required": true,
+                        "help": "Organisations-ID der Schule (Einstellung «org_id»)"
+                    },
+                    {
+                        "name": "personId",
+                        "required": true,
+                        "help": "ID der Person in LMVZ Digital"
+                    }
+                ],
+                "body": {
+                    "sorting": [],
+                    "offset": 0,
+                    "limit": 500
+                }
+            },
+            {
+                "id": "d-users",
+                "method": "GET",
+                "path": "/rest/organizations/{orgId}/benutzer",
+                "host": "digital",
+                "label": "Benutzer der Schule",
+                "status": "partial",
+                "use": "API-Tester",
+                "note": "Personendaten (Schüler:innen, Lehrpersonen) – nur auf Schweizer Server mit echten Daten. Aus einer Aufzeichnung mit dem API-Recorder (digital.lmvz.ch, Oktober 2026); keine Hersteller-Doku.",
+                "params": [
+                    {
+                        "name": "orgId",
+                        "required": true,
+                        "help": "Organisations-ID der Schule (Einstellung «org_id»)"
+                    },
+                    {
+                        "name": "page",
+                        "default": "0"
+                    },
+                    {
+                        "name": "size",
+                        "default": "500"
+                    },
+                    {
+                        "name": "sort"
+                    }
+                ]
+            },
+            {
+                "id": "d-users-export",
+                "method": "POST",
+                "path": "/rest/benutzer/list/export",
+                "host": "digital",
+                "label": "Benutzerliste exportieren",
+                "status": "partial",
+                "use": "API-Tester",
+                "note": "Liste per POST (lesend); organizationId im Inhalt setzen. Personendaten (Schüler:innen, Lehrpersonen) – nur auf Schweizer Server mit echten Daten. Aus einer Aufzeichnung mit dem API-Recorder (digital.lmvz.ch, Oktober 2026); keine Hersteller-Doku.",
+                "effect": "read",
+                "body": {
+                    "filter": {
+                        "organizationId": 0
+                    },
+                    "orderAndPage": {
+                        "sorting": [],
+                        "offset": 0,
+                        "limit": 0
+                    },
+                    "showGesperrtMode": true
+                }
+            },
+            {
+                "id": "d-user",
+                "method": "GET",
+                "path": "/rest/benutzer/orgId/{orgId}/personId/{personId}",
+                "host": "digital",
+                "label": "Benutzer (Details)",
+                "status": "partial",
+                "use": "API-Tester",
+                "note": "Personendaten (Schüler:innen, Lehrpersonen) – nur auf Schweizer Server mit echten Daten. Aus einer Aufzeichnung mit dem API-Recorder (digital.lmvz.ch, Oktober 2026); keine Hersteller-Doku.",
+                "params": [
+                    {
+                        "name": "orgId",
+                        "required": true,
+                        "help": "Organisations-ID der Schule (Einstellung «org_id»)"
+                    },
+                    {
+                        "name": "personId",
+                        "required": true,
+                        "help": "ID der Person in LMVZ Digital"
+                    }
+                ]
+            },
+            {
+                "id": "d-user-info",
+                "method": "GET",
+                "path": "/rest/benutzer/personinfos/orgId/{orgId}/personId/{personId}",
+                "host": "digital",
+                "label": "Benutzer (Personeninfos)",
+                "status": "partial",
+                "use": "API-Tester",
+                "note": "Personendaten (Schüler:innen, Lehrpersonen) – nur auf Schweizer Server mit echten Daten. Aus einer Aufzeichnung mit dem API-Recorder (digital.lmvz.ch, Oktober 2026); keine Hersteller-Doku.",
+                "params": [
+                    {
+                        "name": "orgId",
+                        "required": true,
+                        "help": "Organisations-ID der Schule (Einstellung «org_id»)"
+                    },
+                    {
+                        "name": "personId",
+                        "required": true,
+                        "help": "ID der Person in LMVZ Digital"
+                    }
+                ]
+            },
+            {
+                "id": "d-user-groups",
+                "method": "GET",
+                "path": "/rest/benutzer/{personId}",
+                "host": "digital",
+                "label": "Gruppen einer Person",
+                "status": "partial",
+                "use": "API-Tester",
+                "note": "Antwort: Liste von Gruppen (Tags). Aus einer Aufzeichnung mit dem API-Recorder (digital.lmvz.ch, Oktober 2026); keine Hersteller-Doku.",
+                "params": [
+                    {
+                        "name": "personId",
+                        "required": true,
+                        "help": "ID der Person in LMVZ Digital"
+                    }
+                ]
+            },
+            {
+                "id": "d-groups",
+                "method": "POST",
+                "path": "/rest/tags",
+                "host": "digital",
+                "label": "Gruppen und Klassen der Schule",
+                "status": "partial",
+                "use": "API-Tester",
+                "note": "Liste per POST (lesend); organizationId im Inhalt setzen. Aus einer Aufzeichnung mit dem API-Recorder (digital.lmvz.ch, Oktober 2026); keine Hersteller-Doku.",
+                "effect": "read",
+                "body": {
+                    "tagFilterData": {
+                        "organizationId": 0
+                    },
+                    "orderAndPage": {
+                        "sorting": [],
+                        "offset": 0,
+                        "limit": 500
+                    }
+                }
+            },
+            {
+                "id": "d-join-codes",
+                "method": "POST",
+                "path": "/rest/beitrittscodes/list/orgId/{orgId}",
+                "host": "digital",
+                "label": "Beitrittscodes",
+                "status": "partial",
+                "use": "API-Tester",
+                "note": "Liste per POST (lesend). Beitrittscodes sind Zugangsdaten – nicht weitergeben oder speichern. Aus einer Aufzeichnung mit dem API-Recorder (digital.lmvz.ch, Oktober 2026); keine Hersteller-Doku.",
+                "effect": "read",
+                "params": [
+                    {
+                        "name": "orgId",
+                        "required": true,
+                        "help": "Organisations-ID der Schule (Einstellung «org_id»)"
+                    }
+                ],
+                "body": {
+                    "filter": {
+                        "activ": true
+                    },
+                    "orderAndPage": {
+                        "sorting": [],
+                        "offset": 0,
+                        "limit": 500
+                    }
+                }
+            },
+            {
+                "id": "d-roles-edit",
+                "method": "GET",
+                "path": "/rest/role/edit/{orgId}",
+                "host": "digital",
+                "label": "Zuweisbare Rollen (Bearbeiten)",
+                "status": "partial",
+                "use": "API-Tester",
+                "note": "Aus einer Aufzeichnung mit dem API-Recorder (digital.lmvz.ch, Oktober 2026); keine Hersteller-Doku.",
+                "params": [
+                    {
+                        "name": "orgId",
+                        "required": true,
+                        "help": "Organisations-ID der Schule (Einstellung «org_id»)"
+                    },
+                    {
+                        "name": "ulmUserId"
+                    },
+                    {
+                        "name": "userName"
+                    }
+                ]
+            },
+            {
+                "id": "d-roles-new",
+                "method": "GET",
+                "path": "/rest/role/new/{orgId}",
+                "host": "digital",
+                "label": "Zuweisbare Rollen (Neu)",
+                "status": "partial",
+                "use": "API-Tester",
+                "note": "Aus einer Aufzeichnung mit dem API-Recorder (digital.lmvz.ch, Oktober 2026); keine Hersteller-Doku.",
+                "params": [
+                    {
+                        "name": "orgId",
+                        "required": true,
+                        "help": "Organisations-ID der Schule (Einstellung «org_id»)"
+                    }
+                ]
+            },
+            {
+                "id": "d-qr-codes",
+                "method": "GET",
+                "path": "/rest/blob/qrCodes/orgId/{orgId}/studentIds/{studentIds}",
+                "host": "digital",
+                "label": "QR-Anmeldecodes (Datei)",
+                "status": "partial",
+                "use": "API-Tester",
+                "note": "Enthält Anmeldecodes von Schüler:innen – nur bewusst aufrufen, nie speichern. Aus einer Aufzeichnung mit dem API-Recorder (digital.lmvz.ch, Oktober 2026); keine Hersteller-Doku.",
+                "danger": true,
+                "test": false,
+                "params": [
+                    {
+                        "name": "orgId",
+                        "required": true,
+                        "help": "Organisations-ID der Schule (Einstellung «org_id»)"
+                    },
+                    {
+                        "name": "studentIds",
+                        "required": true,
+                        "help": "ID(s) der Schüler:innen"
+                    }
+                ]
+            },
+            {
+                "id": "d-qr-codes-show",
+                "method": "GET",
+                "path": "/rest/blob/show/qrCodes/orgId/{orgId}/studentIds/{studentIds}",
+                "host": "digital",
+                "label": "QR-Anmeldecodes (Anzeige)",
+                "status": "partial",
+                "use": "API-Tester",
+                "note": "Enthält Anmeldecodes von Schüler:innen – nur bewusst aufrufen, nie speichern. Aus einer Aufzeichnung mit dem API-Recorder (digital.lmvz.ch, Oktober 2026); keine Hersteller-Doku.",
+                "danger": true,
+                "test": false,
+                "params": [
+                    {
+                        "name": "orgId",
+                        "required": true,
+                        "help": "Organisations-ID der Schule (Einstellung «org_id»)"
+                    },
+                    {
+                        "name": "studentIds",
+                        "required": true
+                    }
+                ]
+            },
+            {
+                "id": "d-user-create",
+                "method": "POST",
+                "path": "/rest/member/orgId/{orgId}",
+                "host": "digital",
+                "label": "Benutzer anlegen",
+                "status": "partial",
+                "use": "später: Schüler:innen/Lehrpersonen anlegen",
+                "note": "Schreibend. Personendaten (Schüler:innen, Lehrpersonen) – nur auf Schweizer Server mit echten Daten. Aus einer Aufzeichnung mit dem API-Recorder (digital.lmvz.ch, Oktober 2026); keine Hersteller-Doku.",
+                "effect": "write",
+                "danger": true,
+                "params": [
+                    {
+                        "name": "orgId",
+                        "required": true,
+                        "help": "Organisations-ID der Schule (Einstellung «org_id»)"
+                    }
+                ],
+                "body": {
+                    "orgRole": "",
+                    "firstName": "",
+                    "lastName": "",
+                    "userName": "",
+                    "email": "",
+                    "student": true,
+                    "passwordSelfManaged": false,
+                    "mailConfirmed": false,
+                    "idpAlias": "",
+                    "validateUniqueMail": true,
+                    "simplifiedLogin": true
+                }
+            },
+            {
+                "id": "d-group-save",
+                "method": "PUT",
+                "path": "/rest/tags/updateTag/orgid/{orgId}",
+                "host": "digital",
+                "label": "Gruppe/Klasse anlegen oder ändern",
+                "status": "partial",
+                "use": "später: Klassen abgleichen",
+                "note": "Schreibend. Aus einer Aufzeichnung mit dem API-Recorder (digital.lmvz.ch, Oktober 2026); keine Hersteller-Doku.",
+                "effect": "write",
+                "danger": true,
+                "params": [
+                    {
+                        "name": "orgId",
+                        "required": true,
+                        "help": "Organisations-ID der Schule (Einstellung «org_id»)"
+                    }
+                ],
+                "body": {
+                    "organizationId": 0,
+                    "name": "",
+                    "schoolClass": true
+                }
+            },
+            {
+                "id": "d-org-default",
+                "method": "PATCH",
+                "path": "/rest/organization/default",
+                "host": "digital",
+                "label": "Standard-Organisation setzen",
+                "status": "partial",
+                "use": "nicht verwenden (Konto-Einstellung)",
+                "note": "Schreibend; ändert die Standard-Schule des angemeldeten Kontos. Aus einer Aufzeichnung mit dem API-Recorder (digital.lmvz.ch, Oktober 2026); keine Hersteller-Doku.",
+                "effect": "write",
+                "danger": true
+            },
+            {
+                "id": "d-avatar-reset",
+                "method": "GET",
+                "path": "/rest/benutzer/resetAvatar/personId/{personId}",
+                "host": "digital",
+                "label": "Avatar zurücksetzen",
+                "status": "partial",
+                "use": "nicht automatisch",
+                "note": "GET mit Wirkung – als schreibend behandelt. Aus einer Aufzeichnung mit dem API-Recorder (digital.lmvz.ch, Oktober 2026); keine Hersteller-Doku.",
+                "effect": "write",
+                "danger": true,
+                "test": false,
+                "params": [
+                    {
+                        "name": "personId",
+                        "required": true,
+                        "help": "ID der Person in LMVZ Digital"
+                    }
+                ]
+            },
+            {
+                "id": "d-password",
+                "method": "GET",
+                "path": "/rest/benutzer/password",
+                "host": "digital",
+                "label": "Passwort-Funktion (Zweck unklar)",
+                "status": "partial",
+                "use": "nicht verwenden",
+                "note": "Zweck aus der Aufzeichnung nicht ersichtlich – als schreibend gesperrt. Aus einer Aufzeichnung mit dem API-Recorder (digital.lmvz.ch, Oktober 2026); keine Hersteller-Doku.",
+                "effect": "write",
+                "danger": true,
+                "test": false
             }
-        ]
+        ],
+        "hosts": {
+            "digital": "https://digital.lmvz.ch"
+        }
     },
     "settings": [
         {
             "key": "max_items",
             "type": "number",
-            "label": "Höchstens Artikel je Abfrage",
+            "label": "Höchstens Artikel je Abfrage (Shop)",
             "default": 20
+        },
+        {
+            "key": "org_id",
+            "type": "text",
+            "label": "Organisations-ID der Schule in LMVZ Digital",
+            "placeholder": "Zahl aus den Adressen /rest/…/orgId/<ID>",
+            "help": "Steht in der Aufzeichnung bzw. in der Adresszeile von digital.lmvz.ch."
+        },
+        {
+            "key": "license_view",
+            "type": "text",
+            "label": "Pfadwert Lizenzübersicht (aus der Aufzeichnung)",
+            "placeholder": "erster Wert nach /rest/lizenzpakete/",
+            "help": "Wert aus der aufgezeichneten Adresse /rest/lizenzpakete/<Wert>/orgId/<ID>."
+        },
+        {
+            "key": "digital_token",
+            "type": "password",
+            "label": "Zugriffstoken LMVZ Digital (kurzlebig)",
+            "default": ""
+        },
+        {
+            "key": "auth_header",
+            "type": "text",
+            "label": "Kopfzeile für das Token",
+            "default": "Authorization"
+        },
+        {
+            "key": "auth_prefix",
+            "type": "text",
+            "label": "Präfix (Bearer oder none)",
+            "default": "Bearer"
         }
     ],
     "actions": [
@@ -79,6 +543,19 @@
                     "placeholder": "https://shop.lmvz.ch/de/Katalog/New-Inspiration/New-Inspiration-3-Workbook-7334.html"
                 }
             ]
+        },
+        {
+            "id": "licenses",
+            "label": "Lizenzübersicht LMVZ Digital",
+            "kind": "read",
+            "options": []
+        }
+    ],
+    "widgets": [
+        {
+            "id": "licenses",
+            "label": "LMVZ-Lizenzen",
+            "ttl": 900
         }
     ]
 }

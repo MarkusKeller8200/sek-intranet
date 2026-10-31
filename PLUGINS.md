@@ -17,7 +17,7 @@ automatisch aus der Beschreibung.
 | Inventory360             | `plugins/Inventory360` | Hardware-Inventar durchsuchen, API-Tester                                                                                                       | vorläufig – API-2.0-Referenz fehlt noch                  |
 | Escola (Datei-Import)    | `plugins/Escola`       | Mitarbeitende aus der Escola-Adressliste (.xlsx/.csv) übernehmen, nur freigegebene Spalten                                                      | fertig – ohne API, per Datei                             |
 | IDA                      | `plugins/Ida`          | Verbindung prüfen, Personen-Ereignisse vormerken                                                                                                | wartet auf die IDA-API                                   |
-| LMVZ (inoffiziell)       | `plugins/Lmvz`         | Artikel im LMVZ-Webshop nachschlagen (Titel, Artikelnummer, ISBN, Listenpreis) aus öffentlichen Artikelseiten                                   | inoffiziell – keine LMVZ-Schnittstelle, liest HTML       |
+| LMVZ (inoffiziell)       | `plugins/Lmvz`         | Shop: Artikel nachschlagen (Titel, Artikelnummer, ISBN, Listenpreis); LMVZ Digital: Lizenzübersicht, Kachel, API-Tester (Benutzer, Gruppen)    | inoffiziell – aus Aufzeichnung, Token kurzlebig          |
 
 ## Datenschutz
 
@@ -170,6 +170,10 @@ plugins/
 | Angabe                    | Bedeutung                                                                                                                                                                                                                                                                                                                                                           |
 | ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `service.base`            | feste Basis-URL; fehlt sie, gilt die Einstellung `base_url` (muss `https://` sein)                                                                                                                                                                                                                                                                                  |
+| `service.hosts`           | weitere Adressen desselben Herstellers (`{"digital": "https://…"}`), je Endpunkt mit `endpoints[].host` gewählt; nur `https://` |
+| `auth.hosts`              | Liste der Adressen, an die die Anmeldung geht (z. B. `["digital"]`); ohne Angabe nur an die Hauptadresse – Zugangsdaten gehen nie an andere Server |
+| `endpoints[].effect`      | `read` oder `write` übersteuert die Methode: Listen per POST sind lesend (ohne Schreibfreigabe), GET-Aufrufe mit Wirkung schreibend |
+| `unofficial: true`        | keine offizielle Herstellerschnittstelle: Kennzeichen «inoffiziell» und Warnhinweis |
 | `{name}` in URLs          | wird durch die Einstellung gleichen Namens ersetzt (z. B. `{tenant_id}`)                                                                                                                                                                                                                                                                                            |
 | `auth.type`               | `none`, `bearer` (`token_setting`), `header` (`setting`, `header`/`header_setting`, `prefix`/`prefix_setting`), `basic` (`username_setting`, `password_setting`), `oauth2_client_credentials` (`token_url`, `scope`, `client_id_setting`, `client_secret_setting`; Token wird bis kurz vor Ablauf zwischengespeichert, relative `token_url` hängt an die Basis-URL) |
 | `endpoints[].status`      | `full` umgesetzt, `partial` teilweise/noch zu bestätigen, `planned` geplant (nicht aufrufbar)                                                                                                                                                                                                                                                                       |
@@ -246,8 +250,9 @@ Für Antworten mit unbekannten Feldern baut `Support\Tabular::from($datensätze,
   Personen, Standorte, Zuordnung Gerät ↔ Person, Antwortfelder. Danach Personen-Abgleich und Kachel.
 - **Jamf:** Token-Pfad (`/api/v1/oauth/token` oder `/api/oauth/token`) an der eigenen Instanz prüfen
   (Einstellung), `computers-inventory` v4, genaue Rechte für MDM-Befehle.
-- **LMVZ (inoffiziell):** Keine offizielle Schnittstelle. Artikelsuche, Warenkorb/Bestellung (Schulkonto,
-  Freigabeprozess) und LMVZ Digital (Lizenzen, digital.lmvz.ch) mit dem API-Recorder aufzeichnen, dem Plugin
-  `lmvz` zuweisen und mit `intranet:plugin-from-openapi` ergänzen. Nutzungsbedingungen klären, bevor mit
+- **LMVZ (inoffiziell):** Keine offizielle Schnittstelle. LMVZ Digital (digital.lmvz.ch) ist aus einer Aufzeichnung
+  übernommen (19 Endpunkte, `partial`): Bedeutung des ersten Pfadwerts der Lizenzübersicht (`license_view`) klären,
+  dauerhafte Anmeldung (statt kurzlebigem Browser-Token) beim LMVZ anfragen. Artikelsuche und Warenkorb/Bestellung
+  noch aufzeichnen und mit `intranet:plugin-from-openapi … --plugin=lmvz [--host=digital]` ergänzen. Nutzungsbedingungen klären, bevor mit
   Anmeldung gearbeitet wird; Plugins mit `"unofficial": true` zeigen einen Warnhinweis.
 - **IDA:** Sobald die IDA-API steht, Endpunkte von `planned` auf `full` setzen und Personen/Lizenzen anbinden.

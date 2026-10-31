@@ -7,6 +7,23 @@ laufend unter **Unveröffentlicht** und werden beim Erhöhen der Version zur neu
 
 ## [Unveröffentlicht]
 
+## [0.21.0] – 2026-10-31
+
+### Neu
+
+- LMVZ-Plugin verbindet LMVZ Digital (digital.lmvz.ch): 19 Endpunkte aus der Aufzeichnung (Status partial),
+  Aktion und Kachel «Lizenzübersicht» (gekauft, zugewiesen, frei, abgelaufen je Lehrmittel – ohne Lizenzschlüssel
+  und Personendaten), Verbindungstest mit Schulname; Benutzer, Gruppen, Beitrittscodes nur im API-Tester
+- Plugins mit mehreren Adressen eines Herstellers (`service.hosts`, `endpoints[].host`); Anmeldung nur an die
+  freigegebenen Adressen (`service.auth.hosts`)
+- `endpoints[].effect`: Listen per POST gelten als lesend, GET-Aufrufe mit Wirkung als schreibend
+- Generator: `--host=<schlüssel>` ordnet neue Endpunkte einer weiteren Adresse zu; IDs ohne `rest/`
+
+### Behoben
+
+- API-Recorder: kurze Beispielwerte (z. B. Nachnamen mit drei Buchstaben) wurden nicht maskiert; Felder mit
+  Personenbezug werden jetzt immer gekürzt
+
 ## [0.20.0] – 2026-10-31
 
 ### Neu

@@ -281,7 +281,8 @@ final class PluginManager
             foreach ($ctx->manifest->endpoints() as $endpoint) {
                 $method = strtoupper((string) ($endpoint['method'] ?? 'GET'));
                 $skip = match (true) {
-                    $method !== 'GET' => 'schreibend – nicht geprüft',
+                    PluginManifest::endpointWrites($endpoint) => 'schreibend – nicht geprüft',
+                    $method !== 'GET' && ! isset($endpoint['body']) => 'braucht Inhalt – im API-Tester prüfen',
                     ($endpoint['status'] ?? 'full') === 'planned' => 'geplant',
                     ($endpoint['test'] ?? true) === false => 'vom Plugin ausgenommen',
                     str_contains((string) $endpoint['path'], '{') && ! $this->hasPathDefaults($endpoint) => 'braucht eine ID',

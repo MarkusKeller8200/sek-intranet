@@ -7,11 +7,12 @@ use App\Plugins\BasePlugin;
 use App\Plugins\PluginContext;
 
 /**
- * LMVZ (Lehrmittelverlag Zürich) – inoffiziell. Es gibt keine offizielle Schnittstelle; das Plugin liest
- * nur öffentliche Artikelseiten des Webshops und wertet Meta-Daten und Seitentext aus.
+ * LMVZ (Lehrmittelverlag Zürich) – inoffiziell. Es gibt keine offizielle Schnittstelle.
  *
- * Grenzen: Die Seiten können sich jederzeit ändern. Es werden nur Adressen auf shop.lmvz.ch abgefragt
- * (keine beliebigen URLs), höchstens «max_items» je Abfrage, ohne Anmeldung.
+ * - Webshop (shop.lmvz.ch): öffentliche Artikelseiten, ohne Anmeldung; nur Adressen auf shop.lmvz.ch.
+ * - LMVZ Digital (digital.lmvz.ch, service.hosts «digital»): interne REST-Schnittstelle aus einer Aufzeichnung
+ *   mit dem API-Recorder; Token nur für diese Adresse (service.auth.hosts). Die Lizenzübersicht enthält keine
+ *   Personendaten; Endpunkte mit Personendaten sind nur im API-Tester verfügbar.
  */
 class Plugin extends BasePlugin
 {
@@ -25,17 +26,121 @@ class Plugin extends BasePlugin
             return ['ok' => false, 'message' => "Der LMVZ-Shop antwortet mit HTTP {$response->status()}."];
         }
 
-        return stripos($response->body(), 'lmvz') !== false
-            ? ['ok' => true, 'message' => 'LMVZ-Shop erreichbar (inoffiziell, öffentliche Seiten).']
-            : ['ok' => false, 'message' => 'Antwort sieht nicht nach dem LMVZ-Shop aus – Aufbau der Website geändert?'];
+        if (stripos($response->body(), 'lmvz') === false) {
+            return ['ok' => false, 'message' => 'Antwort sieht nicht nach dem LMVZ-Shop aus – Aufbau der Website geändert?'];
+        }
+        $message = 'LMVZ-Shop erreichbar (inoffiziell, öffentliche Seiten).';
+
+        // LMVZ Digital nur prüfen, wenn Token und Organisation hinterlegt sind
+        if ($ctx->secret('digital_token') === null || $this->orgId($ctx) === '') {
+            return ['ok' => true, 'message' => $message.' LMVZ Digital: Token und Organisations-ID fehlen noch.'];
+        }
+        $org = $ctx->call('d-org', ['orgId' => $this->orgId($ctx)]);
+
+        return match (true) {
+            $org->successful() => ['ok' => true, 'message' => $message.' LMVZ Digital verbunden: «'.((string) ($org->json('name') ?? '?')).'».'],
+            in_array($org->status(), [401, 403], true) => ['ok' => false, 'message' => $message.' LMVZ Digital: Token abgelaufen oder ohne Berechtigung (HTTP '.$org->status().') – neues Token hinterlegen.'],
+            default => ['ok' => false, 'message' => $message." LMVZ Digital antwortet mit HTTP {$org->status()}."],
+        };
+    }
+
+    public function widget(string $widget, PluginContext $ctx): array
+    {
+        $rows = $this->licenseRows($ctx);
+
+        return ['items' => [
+            ['label' => 'Lehrmittel', 'value' => count($rows)],
+            ['label' => 'Lizenzen zugewiesen', 'value' => array_sum(array_column($rows, 'assigned'))],
+            ['label' => 'frei', 'value' => array_sum(array_column($rows, 'available'))],
+        ]];
     }
 
     public function action(string $action, PluginContext $ctx, array $options): ActionResult
     {
         return match ($action) {
             'lookup' => $this->lookup($ctx, (string) ($options['urls'] ?? '')),
+            'licenses' => $this->licenses($ctx),
             default => parent::action($action, $ctx, $options),
         };
+    }
+
+    private function orgId(PluginContext $ctx): string
+    {
+        return trim((string) $ctx->setting('org_id', ''));
+    }
+
+    /**
+     * Lizenzübersicht der Schule (nur Zahlen je Lehrmittel, keine Personendaten).
+     *
+     * @return list<array<string, mixed>>
+     */
+    private function licenseRows(PluginContext $ctx): array
+    {
+        $org = $this->orgId($ctx);
+        $view = trim((string) $ctx->setting('license_view', ''));
+        if ($org === '' || $view === '') {
+            throw new \InvalidArgumentException('Einstellungen «Organisations-ID» und «Pfadwert Lizenzübersicht» fehlen.');
+        }
+
+        $response = $ctx->call('d-licenses', ['view' => $view, 'orgId' => $org], ['sorting' => [], 'offset' => 0, 'limit' => 0]);
+        if (in_array($response->status(), [401, 403], true)) {
+            throw new \RuntimeException('LMVZ Digital: Token abgelaufen oder ohne Berechtigung – neues Token in den Einstellungen hinterlegen.');
+        }
+        if (! $response->successful()) {
+            throw new \RuntimeException("LMVZ Digital antwortet mit HTTP {$response->status()}.");
+        }
+
+        return self::licenseOverview((array) $response->json());
+    }
+
+    /**
+     * Antwort von /rest/lizenzpakete/…: licenseOverviewOneYearEP → Zeilen. Lizenzschlüssel werden nie übernommen.
+     *
+     * @param  array<mixed>  $data
+     * @return list<array<string, mixed>>
+     */
+    public static function licenseOverview(array $data): array
+    {
+        $rows = [];
+        foreach ((array) ($data['licenseOverviewOneYearEP'] ?? []) as $item) {
+            if (! is_array($item)) {
+                continue;
+            }
+            $rows[] = [
+                'media' => (string) ($item['fullMediaName'] ?? $item['mediaName'] ?? '–'),
+                'part' => (string) ($item['mediaPart'] ?? ''),
+                'model' => (string) ($item['licenseModel'] ?? ''),
+                'duration' => isset($item['licenseDuration']) ? (int) $item['licenseDuration'] : null,
+                'purchased' => (int) ($item['numSlotsPurchased'] ?? $item['numSlotsTotal'] ?? 0),
+                'assigned' => (int) ($item['numSlotsAssigned'] ?? 0),
+                'available' => (int) ($item['numSlotsAvailableTotal'] ?? 0),
+                'expired' => (int) ($item['numSlotsExpired'] ?? 0),
+                'validity' => (string) ($item['validityMsg'] ?? ''),
+            ];
+        }
+
+        return $rows;
+    }
+
+    private function licenses(PluginContext $ctx): ActionResult
+    {
+        try {
+            $rows = $this->licenseRows($ctx);
+        } catch (\InvalidArgumentException|\RuntimeException $e) {
+            return ActionResult::warning($e->getMessage());
+        }
+
+        return ActionResult::table(count($rows).' Lehrmittel mit Lizenzen in LMVZ Digital.', [
+            ['key' => 'media', 'label' => 'Lehrmittel'],
+            ['key' => 'part', 'label' => 'Teil'],
+            ['key' => 'model', 'label' => 'Lizenzmodell'],
+            ['key' => 'duration', 'label' => 'Laufzeit (Monate)'],
+            ['key' => 'purchased', 'label' => 'Gekauft'],
+            ['key' => 'assigned', 'label' => 'Zugewiesen'],
+            ['key' => 'available', 'label' => 'Frei'],
+            ['key' => 'expired', 'label' => 'Abgelaufen'],
+            ['key' => 'validity', 'label' => 'Gültigkeit'],
+        ], $rows);
     }
 
     private function lookup(PluginContext $ctx, string $input): ActionResult

@@ -37,6 +37,10 @@ export type PluginEndpoint = {
     note?: string;
     permission?: string;
     danger?: boolean;
+    /** read/write übersteuert die Methode (Listen per POST, GET mit Wirkung) */
+    effect?: 'read' | 'write';
+    /** Schlüssel aus service.hosts (weitere Adresse des Herstellers) */
+    host?: string;
     params?: PluginEndpointParam[];
     body?: Record<string, unknown>;
 };
@@ -78,6 +82,7 @@ export type PluginInfo = {
         docs: string | null;
         auth: string;
         auth_note: string | null;
+        hosts: Record<string, string>;
         endpoints: PluginEndpoint[];
     };
     settings: PluginField[];

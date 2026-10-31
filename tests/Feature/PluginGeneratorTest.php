@@ -241,4 +241,21 @@ class PluginGeneratorTest extends TestCase
         $this->assertStringContainsString('agent: { disabled: true }', $component);
         $this->assertStringNotContainsString('proxyUrl', $component);
     }
+
+    public function test_endpoints_can_be_assigned_to_a_second_host(): void
+    {
+        $spec = ['openapi' => '3.1.0', 'info' => ['title' => 'Zweite Adresse (erfunden)'], 'paths' => [
+            '/rest/kurse/{id}' => ['get' => ['summary' => 'Kurs']],
+            '/rest/clientpreferences/{id}' => ['get' => ['summary' => 'Schon da']],
+        ]];
+        $file = $this->writeSpec($spec);
+
+        $this->assertSame(1, $this->generate(['quelle' => $file, '--plugin' => 'lmvz', '--host' => 'gibt-es-nicht'])[0]);
+
+        [$code, $out] = $this->generate(['quelle' => $file, '--plugin' => 'lmvz', '--host' => 'digital']);
+        $this->assertSame(0, $code);
+        $this->assertStringContainsString('vorhanden: digital GET /rest/clientpreferences/{}', $out);
+        $endpoint = PluginManifest::fromFile($this->dir.'/Lmvz/plugin.json')->endpoint('kurse-one');
+        $this->assertSame('digital', $endpoint['host'] ?? null);
+    }
 }

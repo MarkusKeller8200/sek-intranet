@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Plugins\PluginManager;
+use App\Plugins\PluginManifest;
 use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\Http;
 use Inertia\Testing\AssertableInertia as Assert;
@@ -35,7 +36,8 @@ class PluginLmvzTest extends TestCase
 
         $this->get('/plugins/lmvz')->assertOk()->assertInertia(fn (Assert $page) => $page
             ->where('plugin.unofficial', true)
-            ->where('plugin.service.auth', 'none'));
+            ->where('plugin.service.auth', 'header')
+            ->where('plugin.service.hosts.digital', 'https://digital.lmvz.ch'));
         $this->get('/plugins/jamf')->assertInertia(fn (Assert $page) => $page->where('plugin.unofficial', false));
     }
 
@@ -93,5 +95,96 @@ class PluginLmvzTest extends TestCase
 
         Http::assertNotSent(fn (Request $r): bool => str_contains($r->url(), 'example.org'));
         Http::assertSent(fn (Request $r): bool => $r->url() === self::PRODUCT);
+    }
+
+    private function enableDigital(bool $allowWrite = false): void
+    {
+        $manager = app(PluginManager::class);
+        $manager->saveSettings('lmvz', [
+            'org_id' => '900', 'license_view' => '7', 'digital_token' => 'test-token-lmvz-123',
+            'auth_header' => 'Authorization', 'auth_prefix' => 'Bearer', '_allow_write' => $allowWrite,
+        ]);
+        $manager->setEnabled('lmvz', true);
+    }
+
+    public function test_digital_token_goes_only_to_digital_lmvz(): void
+    {
+        Http::fake([
+            'shop.lmvz.ch/*' => Http::response('<title>LMVZ Shop</title>'),
+            'digital.lmvz.ch/rest/clientpreferences/900' => Http::response(['entityId' => 900, 'name' => 'Testschule (erfunden)']),
+        ]);
+        $this->enableDigital();
+        $this->signInAs('admin');
+
+        $this->postJson('/plugins/lmvz/test')->assertOk()
+            ->assertJson(['ok' => true])
+            ->assertJsonPath('message', fn (string $m): bool => str_contains($m, 'Testschule (erfunden)'));
+
+        Http::assertSent(fn (Request $r): bool => str_starts_with($r->url(), 'https://digital.lmvz.ch/') && $r->header('Authorization') === ['Bearer test-token-lmvz-123']);
+        Http::assertNotSent(fn (Request $r): bool => str_starts_with($r->url(), 'https://shop.lmvz.ch/') && $r->hasHeader('Authorization'));
+    }
+
+    public function test_license_overview_without_keys_or_people(): void
+    {
+        Http::fake([
+            'digital.lmvz.ch/rest/lizenzpakete/7/orgId/900' => Http::response([
+                'size' => 1,
+                'licenseOverviewOneYearEP' => [[
+                    'fullMediaName' => 'Testlehrmittel digital', 'mediaPart' => 'Lernmedium', 'licenseModel' => 'Online',
+                    'licenseDuration' => 12, 'numSlotsPurchased' => 100, 'numSlotsAssigned' => 60, 'numSlotsAvailableTotal' => 40,
+                    'numSlotsExpired' => 5, 'validityMsg' => '01.08.–31.07.', 'licenseKey' => 'GEHEIM-KEY-1',
+                ]],
+            ]),
+        ]);
+        $this->enableDigital();
+        $this->signInAs('admin');
+
+        $result = $this->postJson('/plugins/lmvz/aktion/licenses', ['options' => []])->assertOk()->json();
+        $this->assertSame('Testlehrmittel digital', $result['rows'][0]['media']);
+        $this->assertSame(40, $result['rows'][0]['available']);
+        $this->assertStringNotContainsString('GEHEIM-KEY-1', (string) json_encode($result));
+
+        // Liste per POST ist lesend: ohne Schreibfreigabe erlaubt, mit Inhalt gesendet
+        Http::assertSent(fn (Request $r): bool => $r->method() === 'POST' && $r['limit'] === 0);
+    }
+
+    public function test_digital_write_endpoints_need_release(): void
+    {
+        Http::fake(['digital.lmvz.ch/*' => Http::response([], 200)]);
+        $this->enableDigital(allowWrite: false);
+        $this->signInAs('admin');
+
+        // Benutzer anlegen (POST) und Avatar zurücksetzen (GET mit Wirkung) sind gesperrt
+        foreach (['d-user-create' => ['orgId' => '900'], 'd-avatar-reset' => ['personId' => '1']] as $endpoint => $params) {
+            $this->postJson('/plugins/lmvz/api', ['endpoint' => $endpoint, 'params' => $params])
+                ->assertJson(['ok' => false]);
+        }
+        Http::assertNothingSent();
+    }
+
+    public function test_hosts_and_effect_are_validated(): void
+    {
+        $base = ['id' => 'xtest', 'api' => 1, 'service' => ['hosts' => ['zwei' => 'https://zwei.example.org'], 'endpoints' => [
+            ['id' => 'a', 'method' => 'POST', 'path' => '/a', 'host' => 'zwei', 'effect' => 'read'],
+        ]]];
+        $manifest = PluginManifest::fromArray($base, 'X');
+        $this->assertFalse(PluginManifest::endpointWrites($manifest->endpoint('a') ?? []));
+        $this->assertTrue(PluginManifest::endpointWrites(['method' => 'GET', 'effect' => 'write']));
+        $this->assertFalse($manifest->authAppliesTo('zwei'), 'ohne auth.hosts nur Hauptadresse');
+
+        foreach ([
+            ['hosts' => ['zwei' => 'http://unsicher.example.org']],
+            ['endpoints' => [['id' => 'b', 'method' => 'GET', 'path' => '/b', 'host' => 'fehlt']]],
+            ['endpoints' => [['id' => 'c', 'method' => 'GET', 'path' => '/c', 'effect' => 'vielleicht']]],
+        ] as $change) {
+            $data = $base;
+            $data['service'] = $change + $data['service'];
+            try {
+                PluginManifest::fromArray($data, 'X');
+                $this->fail('Ungültig angenommen: '.json_encode($change));
+            } catch (\InvalidArgumentException) {
+                $this->addToAssertionCount(1);
+            }
+        }
     }
 }

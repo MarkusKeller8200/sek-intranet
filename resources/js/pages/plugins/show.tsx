@@ -788,8 +788,13 @@ function EndpointsSection({
                                             )}
                                             {e.label}
                                         </TableCell>
-                                        <TableCell className="font-mono text-xs">
+                                        <TableCell className="font-mono text-xs" translate="no">
                                             {e.method} {e.path}
+                                            {e.host && plugin.service.hosts[e.host] && (
+                                                <div className="text-muted-foreground">
+                                                    {new URL(plugin.service.hosts[e.host]).host}
+                                                </div>
+                                            )}
                                         </TableCell>
                                         <TableCell>
                                             <Badge
@@ -879,7 +884,9 @@ function ApiTester({
     const [result, setResult] = useState<PluginResult | null>(null);
     const [busy, setBusy] = useState(false);
     const [confirmOpen, setConfirmOpen] = useState(false);
-    const writing = endpoint.method.toUpperCase() !== 'GET';
+    // Inhalt bei allem ausser GET; schreibend laut «effect» (z. B. Listen per POST sind lesend)
+    const hasBody = endpoint.method.toUpperCase() !== 'GET';
+    const writing = endpoint.effect ? endpoint.effect === 'write' : hasBody;
 
     const send = async () => {
         setBusy(true);
@@ -887,7 +894,7 @@ function ApiTester({
             await postJson<PluginResult>(`/plugins/${plugin.id}/api`, {
                 endpoint: endpoint.id,
                 params,
-                body: writing ? body : null,
+                body: hasBody ? body : null,
             }),
         );
         setBusy(false);
@@ -958,7 +965,7 @@ function ApiTester({
                     </div>
                 )}
 
-                {writing && (
+                {hasBody && (
                     <div className="grid gap-1.5">
                         <Label htmlFor="tester-body">Body (JSON)</Label>
                         <Textarea

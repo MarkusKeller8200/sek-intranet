@@ -31,6 +31,8 @@ final class ManifestOpenApi
                 'Status: '.(self::STATUS_LABELS[$status] ?? $status),
             ]);
 
+            $host = (string) ($endpoint['host'] ?? PluginManifest::DEFAULT_HOST);
+            $hostUrl = $manifest->hosts()[$host] ?? null;
             $paths[$path][$method] = array_filter([
                 'operationId' => (string) $endpoint['id'],
                 'summary' => (string) ($endpoint['label'] ?? $endpoint['id']),
@@ -39,7 +41,12 @@ final class ManifestOpenApi
                 'deprecated' => $status === 'planned' ? true : null,
                 'parameters' => self::parameters($path, $endpoint),
                 'responses' => ['200' => ['description' => 'OK']],
+                'servers' => $hostUrl !== null ? [['url' => $hostUrl]] : null,
             ], fn (mixed $v): bool => $v !== null && $v !== []);
+            // Anmeldung nur, wo sie gilt (service.auth.hosts)
+            if (! $manifest->authAppliesTo($host)) {
+                $paths[$path][$method]['security'] = [];
+            }
         }
 
         $spec = [

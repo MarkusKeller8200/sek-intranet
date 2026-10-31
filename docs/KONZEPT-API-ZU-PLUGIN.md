@@ -59,8 +59,12 @@ php artisan intranet:plugin-from-openapi <datei.json|aufzeichnungs-id> [--plugin
 - `--neu`: Ordner `plugins/<Ordner>/` mit `plugin.json` (Endpunkte, Einstellung `base_url`, Anmeldung aus
   `securitySchemes` mit `password`-Einstellungen), `Plugin.php` (leere Klasse; «Testen» nutzt den ersten
   GET-Endpunkt) und `README.md` (Prüfliste, Endpunkttabelle).
+- `--host=<schlüssel>`: mit `--plugin` die neuen Endpunkte einer weiteren Adresse desselben Herstellers zuordnen
+  (`service.hosts`, z. B. LMVZ: Shop und `digital`); die Anmeldung gilt nur für Adressen in `service.auth.hosts`.
 - `--dry-run`: nur anzeigen.
 - Alle neuen Endpunkte: `status: partial`, `use: API-Tester`, `note` mit Herkunft; nicht-GET mit `danger: true`.
+- Prüfschritt danach von Hand: sprechende IDs und Beschriftungen, Parameter benennen, `effect: read` für Listen per
+  POST, `effect: write` für GET-Aufrufe mit Wirkung, Personendaten in `note` kennzeichnen (Beispiel: `plugins/Lmvz`).
 - Jedes Ergebnis wird vor dem Schreiben mit `PluginManifest::fromArray` geprüft.
 - Läuft nicht mit `APP_ENV=production` (ausser `--dry-run`): Plugins entstehen im Repository (Pull-Request).
 - Im Recorder steht der passende Befehl unter den Knöpfen («Plugin daraus erzeugen», kopierbar).

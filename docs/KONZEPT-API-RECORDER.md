@@ -48,7 +48,9 @@ gewählt: Anmeldedaten würden über den Server laufen.
 - Die Aufzeichnung bleibt im Browser; nichts davon geht an den Server.
 - Gespeichert (Sammlung `api_docs`) werden nur Methode, Pfad, Abfrageparameter, abgeleitete Schemas, Status und
   Beschreibungen. Beispielwerte nur, wenn «Beispielwerte übernehmen» gewählt ist – dann maskiert (Texte gekürzt,
-  E-Mails ersetzt, Felder wie Passwort/Token/PIN als `***`).
+  E-Mails ersetzt, Felder wie Passwort/Token/PIN als `***`). Kurze Werte bleiben nur als Codes (z. B. `ASC`, `CH`);
+  Felder mit Personenbezug (Name, Benutzer, E-Mail, Telefon, Adresse, Ort, PLZ) werden immer gekürzt – auch kurze
+  Nachnamen (seit 0.21.0; ältere Aufzeichnungen mit Beispielwerten neu speichern).
 - Kopfzeilen wie `Authorization`, `Cookie`, Tokens werden in der Anzeige maskiert und nie gespeichert.
 - Nur eigene oder freigegebene Websites aufzeichnen; Nutzungsbedingungen beachten.
 

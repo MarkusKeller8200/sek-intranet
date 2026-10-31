@@ -214,13 +214,13 @@ final class ApiDocs
     }
 
     /**
-     * Endpunkt-ID aus dem Pfad (api/ und v1/ weggelassen, Platzhalter → «one»), eindeutig innerhalb $used.
+     * Endpunkt-ID aus dem Pfad (api/, rest/ und v1/ weggelassen, Platzhalter → «one»), eindeutig innerhalb $used.
      *
      * @param  array<string, true>  $used
      */
     public static function endpointId(string $method, string $path, array &$used): string
     {
-        $parts = array_values(array_filter(explode('/', (string) preg_replace('/\{[^}]*\}/', 'one', strtolower($path))), fn (string $p): bool => $p !== '' && preg_match('/^(api|v\d+)$/', $p) !== 1));
+        $parts = array_values(array_filter(explode('/', (string) preg_replace('/\{[^}]*\}/', 'one', strtolower($path))), fn (string $p): bool => $p !== '' && preg_match('/^(api|rest|v\d+)$/', $p) !== 1));
         $base = (string) preg_replace('/[^a-z0-9]+/', '-', implode('-', $parts));
         $base = trim(($method === 'GET' ? '' : strtolower($method).'-').$base, '-') ?: 'endpoint';
         $id = $base;

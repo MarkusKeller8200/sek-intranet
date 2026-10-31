@@ -22,6 +22,9 @@ final class PluginManifest
 
     public const METHODS = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'];
 
+    /** Schlüssel der Hauptadresse (service.base bzw. Einstellung base_url) */
+    public const DEFAULT_HOST = 'default';
+
     /** full = mit Hersteller-Doku bestätigt, partial = teilweise/aus Aufzeichnung, planned = vorgemerkt */
     public const ENDPOINT_STATUS = ['full', 'partial', 'planned'];
 
@@ -136,6 +139,45 @@ final class PluginManifest
     }
 
     /**
+     * Weitere Adressen desselben Herstellers (service.hosts: Schlüssel → https-Adresse).
+     *
+     * @return array<string, string>
+     */
+    public function hosts(): array
+    {
+        $hosts = $this->service()['hosts'] ?? [];
+
+        return is_array($hosts) ? array_map('strval', array_filter($hosts, 'is_string')) : [];
+    }
+
+    /**
+     * Gilt die Anmeldung für diese Adresse? Ohne service.auth.hosts: nur für die Hauptadresse und
+     * – bei Plugins ohne weitere Adressen – für alle Endpunkte.
+     */
+    public function authAppliesTo(string $host): bool
+    {
+        $only = $this->auth()['hosts'] ?? null;
+
+        return is_array($only) ? in_array($host, $only, true) : $host === self::DEFAULT_HOST;
+    }
+
+    /**
+     * Schreibt ein Endpunkt? Standard: alles ausser GET. «effect» übersteuert, z. B. Listen per POST (read)
+     * oder GET-Aufrufe, die etwas auslösen (write).
+     *
+     * @param  array<string, mixed>  $endpoint
+     */
+    public static function endpointWrites(array $endpoint): bool
+    {
+        $effect = $endpoint['effect'] ?? null;
+        if ($effect === 'read' || $effect === 'write') {
+            return $effect === 'write';
+        }
+
+        return strtoupper((string) ($endpoint['method'] ?? 'GET')) !== 'GET';
+    }
+
+    /**
      * @return list<array<string, mixed>>
      */
     public function endpoints(): array
@@ -209,6 +251,7 @@ final class PluginManifest
                 'home' => $this->service()['home'] ?? null,
                 'docs' => $this->service()['docs'] ?? null,
                 'auth' => $this->auth()['type'] ?? 'none',
+                'hosts' => $this->hosts(),
                 'auth_note' => $this->service()['auth_note'] ?? null,
                 'endpoints' => $this->endpoints(),
             ],
@@ -264,6 +307,12 @@ final class PluginManifest
             }
         }
 
+        foreach ($this->hosts() as $key => $url) {
+            if (preg_match('/^[a-z][a-z0-9_-]{0,30}$/', (string) $key) !== 1 || ! str_starts_with($url, 'https://')) {
+                $fail('service.hosts: Schlüssel klein geschrieben, Adressen nur https://.');
+            }
+        }
+
         $endpointIds = [];
         foreach ($this->endpoints() as $endpoint) {
             if (! is_string($endpoint['id'] ?? null) || ! is_string($endpoint['path'] ?? null)) {
@@ -274,6 +323,12 @@ final class PluginManifest
             }
             if (! in_array($endpoint['status'] ?? 'full', self::ENDPOINT_STATUS, true)) {
                 $fail("Endpunkt «{$endpoint['id']}»: status muss full, partial oder planned sein.");
+            }
+            if (isset($endpoint['effect']) && ! in_array($endpoint['effect'], ['read', 'write'], true)) {
+                $fail("Endpunkt «{$endpoint['id']}»: effect muss read oder write sein.");
+            }
+            if (isset($endpoint['host']) && $endpoint['host'] !== self::DEFAULT_HOST && ! array_key_exists((string) $endpoint['host'], $this->hosts())) {
+                $fail("Endpunkt «{$endpoint['id']}»: Adresse «{$endpoint['host']}» fehlt unter service.hosts.");
             }
             if (isset($endpointIds[$endpoint['id']])) {
                 $fail("Endpunkt-ID «{$endpoint['id']}» doppelt.");

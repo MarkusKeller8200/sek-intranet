@@ -65,26 +65,33 @@ final class PluginGenerator
      *
      * @param  array<string, mixed>  $manifest
      * @param  list<array<string, mixed>>  $endpoints
+     * @param  string|null  $host  Schlüssel aus service.hosts für alle neuen Endpunkte (weitere Adresse des Herstellers)
      * @return array{manifest: array<string, mixed>, added: list<array<string, mixed>>, skipped: list<string>}
      */
-    public static function merge(array $manifest, array $endpoints): array
+    public static function merge(array $manifest, array $endpoints, ?string $host = null): array
     {
+        $key = fn (array $e): string => ((string) ($e['host'] ?? PluginManifest::DEFAULT_HOST)).' '.ApiDocs::normalize((string) ($e['method'] ?? 'GET'), (string) ($e['path'] ?? ''));
         $service = is_array($manifest['service'] ?? null) ? $manifest['service'] : [];
         $existing = is_array($service['endpoints'] ?? null) ? array_values(array_filter($service['endpoints'], 'is_array')) : [];
 
         $known = [];
         $used = [];
         foreach ($existing as $e) {
-            $known[ApiDocs::normalize((string) ($e['method'] ?? 'GET'), (string) ($e['path'] ?? ''))] = (string) ($e['id'] ?? '');
+            $known[$key($e)] = (string) ($e['id'] ?? '');
             $used[(string) ($e['id'] ?? '')] = true;
         }
 
         $added = [];
         $skipped = [];
         foreach ($endpoints as $endpoint) {
-            $key = ApiDocs::normalize((string) $endpoint['method'], (string) $endpoint['path']);
-            if (isset($known[$key])) {
-                $skipped[] = "{$key} (vorhanden als «{$known[$key]}»)";
+            if ($host !== null && $host !== PluginManifest::DEFAULT_HOST) {
+                // «host» direkt nach «path», damit das Manifest lesbar bleibt
+                $endpoint = array_slice($endpoint, 0, 3, true) + ['host' => $host] + $endpoint;
+            }
+            $k = $key($endpoint);
+            $shown = trim((string) preg_replace('/^'.preg_quote(PluginManifest::DEFAULT_HOST, '/').' /', '', $k));
+            if (isset($known[$k])) {
+                $skipped[] = "{$shown} (vorhanden als «{$known[$k]}»)";
 
                 continue;
             }
@@ -95,7 +102,7 @@ final class PluginGenerator
                 $id = "{$base}-{$i}";
             }
             $used[$id] = true;
-            $known[$key] = $id;
+            $known[$k] = $id;
             $endpoint['id'] = $id;
             $existing[] = $endpoint;
             $added[] = $endpoint;

@@ -80,11 +80,17 @@ final class PluginContext
 
     /**
      * Basis-URL aus dem Manifest (service.base) oder der Einstellung «base_url».
-     * Platzhalter {name} werden durch Einstellungen ersetzt.
+     * Weitere Adressen desselben Herstellers stehen unter service.hosts (Schlüssel → https-Adresse) und werden
+     * je Endpunkt mit «host» gewählt. Platzhalter {name} werden durch Einstellungen ersetzt.
      */
-    public function baseUrl(): string
+    public function baseUrl(?string $host = null): string
     {
-        $base = (string) ($this->manifest->service()['base'] ?? $this->setting('base_url', ''));
+        $hosts = $this->manifest->hosts();
+        if ($host !== null && $host !== PluginManifest::DEFAULT_HOST) {
+            $base = $hosts[$host] ?? throw new InvalidArgumentException("Unbekannte Adresse «{$host}» (service.hosts).");
+        } else {
+            $base = (string) ($this->manifest->service()['base'] ?? $this->setting('base_url', ''));
+        }
         $base = rtrim($this->fill($base), '/');
 
         if ($base === '' || ! str_starts_with($base, 'https://')) {
@@ -94,9 +100,12 @@ final class PluginContext
         return $base;
     }
 
-    public function http(): PendingRequest
+    /**
+     * @param  string|null  $host  Schlüssel aus service.hosts (null = Hauptadresse)
+     */
+    public function http(?string $host = null): PendingRequest
     {
-        $request = Http::baseUrl($this->baseUrl())
+        $request = Http::baseUrl($this->baseUrl($host))
             ->acceptJson()
             ->withUserAgent('SekBuelach-Intranet/'.(string) ($this->manifest->data['version'] ?? '1').' (Plugin '.$this->manifest->id().')')
             ->connectTimeout(5)
@@ -115,7 +124,8 @@ final class PluginContext
                 throw: false,
             );
 
-        return $this->authenticate($request);
+        // Anmeldung nur an die Adressen, für die sie gilt (service.auth.hosts), nie an andere Server
+        return $this->manifest->authAppliesTo($host ?? PluginManifest::DEFAULT_HOST) ? $this->authenticate($request) : $request;
     }
 
     /**
@@ -130,7 +140,7 @@ final class PluginContext
             ?? throw new InvalidArgumentException("Unbekannter Endpunkt «{$endpointId}».");
 
         $method = strtoupper((string) ($endpoint['method'] ?? 'GET'));
-        if ($method !== 'GET') {
+        if (PluginManifest::endpointWrites($endpoint)) {
             $this->requireWrite();
         }
 
@@ -163,7 +173,8 @@ final class PluginContext
         }
 
         $this->log("{$method} {$path}");
-        $request = $this->http()->withQueryParameters($query);
+        $host = isset($endpoint['host']) ? (string) $endpoint['host'] : null;
+        $request = $this->http($host)->withQueryParameters($query);
 
         $response = $body === null
             ? $request->send($method, $path)
