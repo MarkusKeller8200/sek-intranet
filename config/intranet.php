@@ -216,7 +216,8 @@ return [
                     'title' => 'Escola',
                     'icon' => 'School',
                     'description' => 'Schulverwaltung Escola. Escola erlaubt das Einbetten nur auf www.sekbuelach.ch selbst (frame-ancestors \'self\') – deshalb eigener Tab bzw. Browser-Erweiterung.',
-                    'embed' => ['url' => env('INTRANET_APP_ESCOLA_URL', 'https://www.sekbuelach.ch/escola/login'), 'open' => 'tab'],
+                    // system: IDs in Adressen der Anwendung mit der Datenherkunft (PersonLinks) abgleichen
+                    'embed' => ['url' => env('INTRANET_APP_ESCOLA_URL', 'https://www.sekbuelach.ch/escola/login'), 'open' => 'tab', 'system' => 'escola'],
                 ],
                 'apple-school-manager' => [
                     'title' => 'Apple School Manager',
@@ -228,7 +229,13 @@ return [
                     'title' => 'Jamf Pro',
                     'icon' => 'Tablet',
                     'description' => 'Jamf Pro (Geräteverwaltung iPads und Macs). Adresse der eigenen Instanz in der Server-.env (INTRANET_APP_JAMF_URL); Daten im Intranet über das Plugin «Jamf Pro».',
-                    'embed' => ['url' => env('INTRANET_APP_JAMF_URL'), 'open' => 'both'],
+                    'embed' => ['url' => env('INTRANET_APP_JAMF_URL'), 'open' => 'both', 'system' => 'jamf'],
+                ],
+                'lmvz-digital' => [
+                    'title' => 'LMVZ Digital',
+                    'icon' => 'BookMarked',
+                    'description' => 'Lehrmittel-Lizenzen des LMVZ (inoffiziell). Über die Browser-Erweiterung: Lizenzübersicht mit der Anmeldung im Tab abrufen – ohne Token im Intranet.',
+                    'embed' => ['url' => 'https://digital.lmvz.ch', 'open' => 'extension'],
                 ],
             ],
         ],

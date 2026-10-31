@@ -15,7 +15,9 @@
         "base": "https://shop.lmvz.ch",
         "auth": {
             "type": "header",
-            "hosts": ["digital"],
+            "hosts": [
+                "digital"
+            ],
             "header_setting": "auth_header",
             "prefix_setting": "auth_prefix",
             "setting": "digital_token"
@@ -74,7 +76,8 @@
                     {
                         "name": "orgId",
                         "required": true,
-                        "help": "Organisations-ID der Schule (Einstellung «org_id»)"
+                        "help": "Organisations-ID der Schule (Einstellung «org_id»)",
+                        "setting": "org_id"
                     }
                 ]
             },
@@ -92,12 +95,14 @@
                     {
                         "name": "view",
                         "required": true,
-                        "help": "Erster Wert im aufgezeichneten Pfad (Bedeutung noch unklar, Einstellung «license_view»)"
+                        "help": "Erster Wert im aufgezeichneten Pfad (Bedeutung noch unklar, Einstellung «license_view»)",
+                        "setting": "license_view"
                     },
                     {
                         "name": "orgId",
                         "required": true,
-                        "help": "Organisations-ID der Schule (Einstellung «org_id»)"
+                        "help": "Organisations-ID der Schule (Einstellung «org_id»)",
+                        "setting": "org_id"
                     }
                 ],
                 "body": {
@@ -120,7 +125,8 @@
                     {
                         "name": "orgId",
                         "required": true,
-                        "help": "Organisations-ID der Schule (Einstellung «org_id»)"
+                        "help": "Organisations-ID der Schule (Einstellung «org_id»)",
+                        "setting": "org_id"
                     },
                     {
                         "name": "personId",
@@ -147,7 +153,8 @@
                     {
                         "name": "orgId",
                         "required": true,
-                        "help": "Organisations-ID der Schule (Einstellung «org_id»)"
+                        "help": "Organisations-ID der Schule (Einstellung «org_id»)",
+                        "setting": "org_id"
                     },
                     {
                         "name": "page",
@@ -197,7 +204,8 @@
                     {
                         "name": "orgId",
                         "required": true,
-                        "help": "Organisations-ID der Schule (Einstellung «org_id»)"
+                        "help": "Organisations-ID der Schule (Einstellung «org_id»)",
+                        "setting": "org_id"
                     },
                     {
                         "name": "personId",
@@ -219,7 +227,8 @@
                     {
                         "name": "orgId",
                         "required": true,
-                        "help": "Organisations-ID der Schule (Einstellung «org_id»)"
+                        "help": "Organisations-ID der Schule (Einstellung «org_id»)",
+                        "setting": "org_id"
                     },
                     {
                         "name": "personId",
@@ -280,7 +289,8 @@
                     {
                         "name": "orgId",
                         "required": true,
-                        "help": "Organisations-ID der Schule (Einstellung «org_id»)"
+                        "help": "Organisations-ID der Schule (Einstellung «org_id»)",
+                        "setting": "org_id"
                     }
                 ],
                 "body": {
@@ -307,7 +317,8 @@
                     {
                         "name": "orgId",
                         "required": true,
-                        "help": "Organisations-ID der Schule (Einstellung «org_id»)"
+                        "help": "Organisations-ID der Schule (Einstellung «org_id»)",
+                        "setting": "org_id"
                     },
                     {
                         "name": "ulmUserId"
@@ -330,7 +341,8 @@
                     {
                         "name": "orgId",
                         "required": true,
-                        "help": "Organisations-ID der Schule (Einstellung «org_id»)"
+                        "help": "Organisations-ID der Schule (Einstellung «org_id»)",
+                        "setting": "org_id"
                     }
                 ]
             },
@@ -349,7 +361,8 @@
                     {
                         "name": "orgId",
                         "required": true,
-                        "help": "Organisations-ID der Schule (Einstellung «org_id»)"
+                        "help": "Organisations-ID der Schule (Einstellung «org_id»)",
+                        "setting": "org_id"
                     },
                     {
                         "name": "studentIds",
@@ -373,7 +386,8 @@
                     {
                         "name": "orgId",
                         "required": true,
-                        "help": "Organisations-ID der Schule (Einstellung «org_id»)"
+                        "help": "Organisations-ID der Schule (Einstellung «org_id»)",
+                        "setting": "org_id"
                     },
                     {
                         "name": "studentIds",
@@ -396,7 +410,8 @@
                     {
                         "name": "orgId",
                         "required": true,
-                        "help": "Organisations-ID der Schule (Einstellung «org_id»)"
+                        "help": "Organisations-ID der Schule (Einstellung «org_id»)",
+                        "setting": "org_id"
                     }
                 ],
                 "body": {
@@ -428,7 +443,8 @@
                     {
                         "name": "orgId",
                         "required": true,
-                        "help": "Organisations-ID der Schule (Einstellung «org_id»)"
+                        "help": "Organisations-ID der Schule (Einstellung «org_id»)",
+                        "setting": "org_id"
                     }
                 ],
                 "body": {

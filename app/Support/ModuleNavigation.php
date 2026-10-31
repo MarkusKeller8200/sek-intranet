@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Gate;
  * Module aus config/intranet.php → modules: Navigation (Seitenleiste) und Platzhalter.
  *
  * @phpstan-type Module array{key: string, title: string, icon: string, href: string, planned: bool, external: string|null, open: string|null, collapse?: bool, children?: list<array<string, mixed>>}
- * @phpstan-type Embedded array{key: string, title: string, icon: string, group: string, color: string, description: string, collapse: bool, url: string|null, open: string, repo: string|null, stack: string|null, allowed: bool}
+ * @phpstan-type Embedded array{key: string, title: string, icon: string, group: string, color: string, description: string, collapse: bool, url: string|null, open: string, repo: string|null, stack: string|null, system: string|null, allowed: bool}
  * @phpstan-type Group array{key: string, title: string, color: string, icon: string, items: list<Module>}
  */
 class ModuleNavigation
@@ -224,7 +224,7 @@ class ModuleNavigation
      * Einbindung mit Vorgabe (config/.env) und – falls gespeichert – Einstellung aus dem Menü «Einstellungen».
      *
      * @param  array<mixed>  $module
-     * @return array{url: string|null, open: string, repo: string|null, stack: string|null, allowed: bool}|null
+     * @return array{url: string|null, open: string, repo: string|null, stack: string|null, system: string|null, allowed: bool}|null
      */
     private function embed(array $module, ?string $key = null): ?array
     {
@@ -242,6 +242,8 @@ class ModuleNavigation
             'open' => in_array($open, ModuleSettings::OPEN_MODES, true) ? $open : 'both',
             'repo' => isset($embed['repo']) && is_string($embed['repo']) ? $embed['repo'] : null,
             'stack' => isset($embed['stack']) && is_string($embed['stack']) ? $embed['stack'] : null,
+            // System der Datenherkunft (PersonLinks), z. B. escola: IDs aus Adressen der Anwendung zuordnen
+            'system' => isset($embed['system']) && is_string($embed['system']) ? $embed['system'] : null,
             // Anbieter erlaubt das Einbetten nachweislich (z. B. Escola): keine automatische Prüfung nötig
             // gilt nur für die vorgegebene Adresse – eine andere Adresse wird wieder geprüft
             'allowed' => ($embed['allowed'] ?? false) === true && $url === ($embed['url'] ?? null),

@@ -20,7 +20,7 @@ class EmbedController extends Controller
         abort_if($module === null, 404);
 
         $frame = match (true) {
-            $module['url'] === null || in_array($module['open'], ['tab', 'extension'], true) => null,
+            $module['url'] === null || in_array($module['open'], ['tab', 'extension', 'split'], true) => null,
             $module['allowed'] => ['embeddable' => true, 'reason' => 'Einbetten vom Anbieter erlaubt'],
             default => FrameCheck::check($module['url']),
         };
@@ -28,6 +28,8 @@ class EmbedController extends Controller
         return Inertia::render('modules/embed', [
             'module' => $module,
             'frame' => $frame,
+            // Über die Browser-Erweiterung: lesende Abrufe der Plugins für diese Anwendung
+            'endpoints' => in_array($module['open'], ['extension', 'split'], true) ? ConnectorController::endpointsFor($module['url'], $request->user()) : [],
         ]);
     }
 }

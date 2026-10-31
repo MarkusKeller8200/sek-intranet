@@ -3,6 +3,7 @@
     const site = document.getElementById('site');
     const recorder = document.getElementById('recorder');
     const toggle = document.getElementById('toggle');
+    const connect = document.getElementById('connect');
     const [tab] = await chrome.tabs.query({
         active: true,
         currentWindow: true,
@@ -39,6 +40,20 @@
         toggle.disabled = !origin || origin === intranet;
     };
     render();
+    connect.disabled = !origin || origin === intranet;
+    connect.addEventListener('click', () => {
+        chrome.permissions.request({ origins: [origin + '/*'] }).then((granted) => {
+            if (!granted) {
+                recorder.textContent = 'Ohne Freigabe kann das Intranet diese Website nicht erreichen.';
+
+                return;
+            }
+            chrome.runtime.sendMessage({ kind: 'connect', tabId: tab.id }).then(() => {
+                connect.textContent = '✓ Verbunden';
+                connect.disabled = true;
+            });
+        });
+    });
 
     toggle.addEventListener('click', () => {
         if (recording) {

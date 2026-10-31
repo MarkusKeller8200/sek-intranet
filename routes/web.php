@@ -6,6 +6,7 @@ use App\Http\Controllers\ApiRecorderController;
 use App\Http\Controllers\ApiViewController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BrowserExtensionController;
+use App\Http\Controllers\ConnectorController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DataStructureController;
 use App\Http\Controllers\DeviceHandoutController;
@@ -36,6 +37,7 @@ Route::middleware('auth')->group(function () {
     Route::get('start', DashboardController::class)->name('dashboard');
     Route::get('module/{key}', [ModuleController::class, 'show'])->where('key', '[a-z0-9-]+')->name('modules.show');
     Route::get('einbindung/{key}', [EmbedController::class, 'show'])->where('key', '[a-z0-9-]+')->name('embeds.show');
+    Route::post('einbindung/{key}/kontext', [ConnectorController::class, 'context'])->middleware('throttle:120,1')->name('embed.context');
 
     // Mitteilungen
     Route::middleware('can:manage-content')->group(function () {

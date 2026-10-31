@@ -27,7 +27,7 @@ import { Label } from '@/components/ui/label';
 import { t } from '@/lib/i18n';
 import { moduleIcon } from '@/lib/module-icons';
 
-type Mode = 'embed' | 'both' | 'tab' | 'extension';
+type Mode = 'embed' | 'both' | 'tab' | 'extension' | 'split';
 
 type Item = {
     key: string;
@@ -49,6 +49,7 @@ export const MODE_LABELS: Record<Mode, string> = {
     both: 'Im Intranet (iFrame) mit Knopf «Neuer Tab»',
     tab: 'Eigenes Fenster (neuer Tab)',
     extension: 'Über die Browser-Erweiterung',
+    split: 'Nebeneinander mit dem Intranet (Browser-Erweiterung)',
 };
 
 function ItemCard({ item }: { item: Item }) {

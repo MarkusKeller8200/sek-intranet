@@ -37,8 +37,8 @@ class ModuleSettingsTest extends TestCase
 
         $this->get('/einstellungen/fachanwendungen')->assertOk()->assertInertia(fn (Assert $page) => $page
             ->component('module-settings')
-            ->where('items', fn ($items): bool => collect($items)->pluck('key')->all() === ['cmi', 'escola', 'apple-school-manager', 'jamf-pro'])
-            ->where('modes', ['embed', 'both', 'tab', 'extension']));
+            ->where('items', fn ($items): bool => collect($items)->pluck('key')->all() === ['cmi', 'escola', 'apple-school-manager', 'jamf-pro', 'lmvz-digital'])
+            ->where('modes', ['embed', 'both', 'tab', 'extension', 'split']));
         $this->get('/einstellungen/einbindungen')->assertInertia(fn (Assert $page) => $page
             ->where('items', fn ($items): bool => collect($items)->contains('key', 'lehrplan21') && ! collect($items)->contains('key', 'cmi')));
 
@@ -100,7 +100,7 @@ class ModuleSettingsTest extends TestCase
         $zip->close();
 
         $this->assertSame(3, $manifest['manifest_version']);
-        $this->assertSame([rtrim((string) config('app.url'), '/').'/*'], $manifest['host_permissions']);
+        $this->assertSame(rtrim((string) config('app.url'), '/').'/*', $manifest['host_permissions'][0]);
         $this->assertSame(config('intranet.version'), $manifest['version']);
         $this->assertSame(['https://*/*'], $manifest['optional_host_permissions'], 'andere Websites nur nach Freigabe');
 

@@ -1,5 +1,6 @@
 import { Head, Link } from '@inertiajs/react';
 import {
+    Columns2,
     ExternalLink,
     GitBranch,
     Info,
@@ -21,7 +22,13 @@ import {
     CardTitle,
 } from '@/components/ui/card';
 import { isColorName, palette } from '@/lib/colors';
-import { connectorVersion, openWithConnector } from '@/lib/connector';
+import TabConnection from '@/components/tab-connection';
+import type { TabEndpoint } from '@/components/tab-connection';
+import {
+    connectorVersion,
+    openWithConnector,
+    splitWithConnector,
+} from '@/lib/connector';
 import { moduleIcon } from '@/lib/module-icons';
 import { cn } from '@/lib/utils';
 
@@ -35,7 +42,7 @@ type Embedded = {
     /** Fachanwendung: Seitenmenü beim Öffnen einklappen */
     collapse: boolean;
     url: string | null;
-    open: 'embed' | 'tab' | 'both' | 'extension';
+    open: 'embed' | 'tab' | 'both' | 'extension' | 'split';
     repo: string | null;
     stack: string | null;
 };
@@ -53,9 +60,11 @@ const steps = [
 export default function Embed({
     module,
     frame,
+    endpoints = [],
 }: {
     module: Embedded;
     frame: Frame;
+    endpoints?: TabEndpoint[];
 }) {
     const Icon = moduleIcon(module.icon);
     const color = isColorName(module.color)
@@ -78,7 +87,7 @@ export default function Embed({
         }
     }, [module.key, module.collapse, isMobile, setOpen]);
 
-    const viaExtension = module.open === 'extension';
+    const viaExtension = module.open === 'extension' || module.open === 'split';
     const canEmbed =
         module.url !== null &&
         module.open !== 'tab' &&
@@ -98,9 +107,13 @@ export default function Embed({
             openedFor.current !== module.key
         ) {
             openedFor.current = module.key;
-            setOpened(openWithConnector(module.url, module.title));
+            setOpened(
+                module.open === 'split'
+                    ? splitWithConnector(module.url, module.key)
+                    : openWithConnector(module.url, module.title, module.key),
+            );
         }
-    }, [viaExtension, extension, module.url, module.key, module.title]);
+    }, [viaExtension, extension, module.url, module.key, module.title, module.open]);
 
     return (
         <>
@@ -194,25 +207,42 @@ export default function Embed({
                             </CardTitle>
                             <CardDescription>
                                 {extension
-                                    ? 'Die Anwendung läuft in einem eigenen Tab, gruppiert mit dem Intranet. Aufzeichnen für den API-Recorder: Symbol der Erweiterung im Tab der Anwendung.'
+                                    ? 'Die Anwendung läuft in einem eigenen Tab neben dem Intranet oder «Nebeneinander» in einem zweiten Fenster. Website einmal verbinden: Symbol der Erweiterung im Tab der Anwendung → «Website verbinden».'
                                     : 'Für diese Anwendung ist «Über die Browser-Erweiterung» eingestellt. Ohne Erweiterung öffnet sie in einem normalen Tab.'}
                             </CardDescription>
                         </CardHeader>
                         <CardContent className="flex flex-wrap gap-2">
                             {extension ? (
-                                <Button
-                                    onClick={() =>
-                                        setOpened(
-                                            openWithConnector(
-                                                module.url ?? '',
-                                                module.title,
-                                            ),
-                                        )
-                                    }
-                                >
-                                    <Puzzle />{' '}
-                                    {opened ? 'Erneut öffnen' : 'Öffnen'}
-                                </Button>
+                                <>
+                                    <Button
+                                        onClick={() =>
+                                            setOpened(
+                                                openWithConnector(
+                                                    module.url ?? '',
+                                                    module.title,
+                                                    module.key,
+                                                ),
+                                            )
+                                        }
+                                    >
+                                        <Puzzle />{' '}
+                                        {opened ? 'Erneut öffnen' : 'Öffnen'}
+                                    </Button>
+                                    <Button
+                                        variant="outline"
+                                        onClick={() =>
+                                            setOpened(
+                                                splitWithConnector(
+                                                    module.url ?? '',
+                                                    module.key,
+                                                ),
+                                            )
+                                        }
+                                        data-testid="split-view"
+                                    >
+                                        <Columns2 /> Nebeneinander
+                                    </Button>
+                                </>
                             ) : (
                                 <Button variant="outline" asChild>
                                     <Link href="/einstellungen/browser-erweiterung">
@@ -223,6 +253,10 @@ export default function Embed({
                             )}
                         </CardContent>
                     </Card>
+                )}
+
+                {module.url !== null && viaExtension && extension && (
+                    <TabConnection appKey={module.key} endpoints={endpoints} />
                 )}
 
                 {module.url !== null && !canEmbed && !viaExtension && (
