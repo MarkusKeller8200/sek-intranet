@@ -1,8 +1,9 @@
-import { Head } from '@inertiajs/react';
+import { Head, Link } from '@inertiajs/react';
 import {
     ExternalLink,
     GitBranch,
     Info,
+    Puzzle,
     RefreshCw,
     ShieldAlert,
 } from 'lucide-react';
@@ -18,6 +19,7 @@ import {
     CardTitle,
 } from '@/components/ui/card';
 import { isColorName, palette } from '@/lib/colors';
+import { connectorVersion, openWithConnector } from '@/lib/connector';
 import { moduleIcon } from '@/lib/module-icons';
 import { cn } from '@/lib/utils';
 
@@ -31,7 +33,7 @@ type Embedded = {
     /** Fachanwendung: Seitenmenü beim Öffnen einklappen */
     collapse: boolean;
     url: string | null;
-    open: 'embed' | 'tab' | 'both';
+    open: 'embed' | 'tab' | 'both' | 'extension';
     repo: string | null;
     stack: string | null;
 };
@@ -74,11 +76,24 @@ export default function Embed({
         }
     }, [module.key, module.collapse, isMobile, setOpen]);
 
+    const viaExtension = module.open === 'extension';
     const canEmbed =
         module.url !== null &&
         module.open !== 'tab' &&
+        !viaExtension &&
         frame?.embeddable !== false;
     const showTab = module.url !== null && module.open !== 'embed';
+
+    // «Über die Browser-Erweiterung»: einmal je Aufruf automatisch im eigenen Tab öffnen
+    const [extension] = useState(() => connectorVersion());
+    const [opened, setOpened] = useState(false);
+    const openedFor = useRef<string | null>(null);
+    useEffect(() => {
+        if (viaExtension && extension && module.url && openedFor.current !== module.key) {
+            openedFor.current = module.key;
+            setOpened(openWithConnector(module.url, module.title));
+        }
+    }, [viaExtension, extension, module.url, module.key, module.title]);
 
     return (
         <>
@@ -161,7 +176,38 @@ export default function Embed({
                     </Card>
                 )}
 
-                {module.url !== null && !canEmbed && (
+                {module.url !== null && viaExtension && (
+                    <Card data-testid="extension-card">
+                        <CardHeader>
+                            <CardTitle className="flex items-center gap-2">
+                                <Puzzle className="size-5 text-brand" />
+                                {extension
+                                    ? 'Über die Browser-Erweiterung geöffnet'
+                                    : 'Browser-Erweiterung nicht gefunden'}
+                            </CardTitle>
+                            <CardDescription>
+                                {extension
+                                    ? 'Die Anwendung läuft in einem eigenen Tab, gruppiert mit dem Intranet. Aufzeichnen für den API-Recorder: Symbol der Erweiterung im Tab der Anwendung.'
+                                    : 'Für diese Anwendung ist «Über die Browser-Erweiterung» eingestellt. Ohne Erweiterung öffnet sie in einem normalen Tab.'}
+                            </CardDescription>
+                        </CardHeader>
+                        <CardContent className="flex flex-wrap gap-2">
+                            {extension ? (
+                                <Button onClick={() => setOpened(openWithConnector(module.url ?? '', module.title))}>
+                                    <Puzzle /> {opened ? 'Erneut öffnen' : 'Öffnen'}
+                                </Button>
+                            ) : (
+                                <Button variant="outline" asChild>
+                                    <Link href="/einstellungen/browser-erweiterung">
+                                        <Puzzle /> Browser-Erweiterung einrichten
+                                    </Link>
+                                </Button>
+                            )}
+                        </CardContent>
+                    </Card>
+                )}
+
+                {module.url !== null && !canEmbed && !viaExtension && (
                     <Card>
                         <CardHeader>
                             <CardTitle className="flex items-center gap-2">

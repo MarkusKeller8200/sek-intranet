@@ -62,6 +62,13 @@ Escola liegt auf derselben Domain wie das Intranet (`sekbuelach.ch`) und erlaubt
 «In neuem Tab öffnen» bleibt als Ausweg. Bessere Lösung als ein Rahmen wäre eine Anmeldung per SSO
 (Edulog/Microsoft) mit Escola als eigener Tab; Daten aus Escola kommen ohnehin über das Plugin «Escola».
 
+## Einstellungen (ab 0.23.0)
+
+Adresse und Art des Öffnens jeder Einbindung lassen sich unter **Einstellungen → Fachanwendungen** bzw.
+**Weitere Einbindungen** ändern (Sammlung `module_settings`, übersteuert Konfiguration und `.env`). Öffnen:
+iFrame, iFrame mit Knopf «Neuer Tab», eigenes Fenster oder über die Browser-Erweiterung
+([KONZEPT-BROWSER-CONNECTOR.md](KONZEPT-BROWSER-CONNECTOR.md)).
+
 ## Erwartung bei den fremden Seiten
 
 SharePoint Online und Atlassian Cloud (Jira Service Management, Confluence) erlauben das Einbetten in fremde

@@ -44,6 +44,11 @@ Projekt: SekBülach Intranet, Prototyp. Stack und Konventionen wie IDA.
   `partial` ins Manifest übernehmen und erst nach Abgleich mit der Hersteller-Doku `full` setzen. Dafür
   `php artisan intranet:plugin-from-openapi` verwenden (nie in Produktion). API-Ansichten nur über
   `components/api-reference.tsx` (Scalar ohne Telemetrie, fremde Schriften und Proxy).
+- Einstellungen der Menüpunkte (Menü «Einstellungen», `App\Support\ModuleSettings`): Adressen und Art des Öffnens
+  von Einbindungen nicht hart codieren, wenn sie je Schule verschieden sind – Vorgabe in `config/intranet.php`
+  bzw. `.env`, Anpassung über das Menü. Browser-Erweiterung `browser-extension/` (docs/KONZEPT-BROWSER-CONNECTOR.md):
+  Nachrichten nur über `resources/js/lib/connector.ts`; Erfassung in `background.js` und
+  `lib/api-recorder/capture.ts` gemeinsam nachführen.
 - Wird ein Schlüssel einer Auswahlliste umbenannt, Umstellung unter `renames` eintragen
   (`php artisan intranet:upgrade` stellt bestehende Daten beim Start um).
 

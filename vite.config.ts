@@ -59,6 +59,8 @@ export default defineConfig({
             'public/**',
             'bootstrap/ssr/**',
             'tailwind.config.js',
+            // Browser-Erweiterung: eigenes Artefakt mit chrome.*-Globalen, wird nicht gebündelt
+            'browser-extension/**',
             'resources/js/actions/**',
             'resources/js/components/ui/*',
             'resources/js/routes/**',

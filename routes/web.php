@@ -5,6 +5,7 @@ use App\Http\Controllers\ApiDocsController;
 use App\Http\Controllers\ApiRecorderController;
 use App\Http\Controllers\ApiViewController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\BrowserExtensionController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DataStructureController;
 use App\Http\Controllers\DeviceHandoutController;
@@ -14,6 +15,7 @@ use App\Http\Controllers\EventController;
 use App\Http\Controllers\GridViewController;
 use App\Http\Controllers\McpConceptController;
 use App\Http\Controllers\ModuleController;
+use App\Http\Controllers\ModuleSettingsController;
 use App\Http\Controllers\PersonController;
 use App\Http\Controllers\PersonLinkController;
 use App\Http\Controllers\PluginController;
@@ -97,6 +99,13 @@ Route::middleware('auth')->group(function () {
         Route::get('mcp-konzept', McpConceptController::class)->name('mcp-concept');
 
         // REST-API: Beschreibung mit Tester und Tokens
+        // Menü «Einstellungen»: Einstellungen der Menüpunkte, Browser-Erweiterung
+        Route::get('einstellungen/browser-erweiterung', [BrowserExtensionController::class, 'show'])->name('browser-extension');
+        Route::get('einstellungen/browser-erweiterung/download', [BrowserExtensionController::class, 'download'])->name('browser-extension.download');
+        Route::get('einstellungen/{section}', [ModuleSettingsController::class, 'index'])->whereIn('section', ['fachanwendungen', 'einbindungen'])->name('module-settings');
+        Route::put('einstellungen/menuepunkt/{key}', [ModuleSettingsController::class, 'update'])->name('module-settings.update');
+        Route::delete('einstellungen/menuepunkt/{key}', [ModuleSettingsController::class, 'destroy'])->name('module-settings.destroy');
+
         Route::get('api-doku', [ApiDocsController::class, 'show'])->name('api-docs');
         Route::get('api-doku/referenz', [ApiViewController::class, 'own'])->name('api-docs.reference');
         Route::get('api-recorder', [ApiRecorderController::class, 'index'])->name('api-recorder');

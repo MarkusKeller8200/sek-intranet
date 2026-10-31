@@ -502,6 +502,18 @@ return [
                 ],
             ],
         ],
+        // Einstellungen der einzelnen Menüpunkte (nur Administration), gespeichert in module_settings
+        'einstellungen' => [
+            'title' => 'Einstellungen',
+            'color' => 'slate',
+            'icon' => 'Settings',
+            'can' => 'manage-users',
+            'items' => [
+                'einstellungen-fachanwendungen' => ['title' => 'Fachanwendungen', 'icon' => 'AppWindow', 'href' => '/einstellungen/fachanwendungen'],
+                'einstellungen-einbindungen' => ['title' => 'Weitere Einbindungen', 'icon' => 'Globe', 'href' => '/einstellungen/einbindungen'],
+                'browser-erweiterung' => ['title' => 'Browser-Erweiterung', 'icon' => 'Puzzle', 'href' => '/einstellungen/browser-erweiterung'],
+            ],
+        ],
         'prototyp' => [
             'title' => 'Prototyp',
             'color' => 'slate',
@@ -754,6 +766,16 @@ return [
             ],
         ],
 
+        'module_settings' => [
+            'label' => 'System: Einstellungen der Menüpunkte',
+            'description' => 'Menü «Einstellungen»: Adresse und Art des Öffnens je Fachanwendung bzw. Einbindung. Übersteuert config/intranet.php und die .env.',
+            'fields' => [
+                'key' => ['type' => 'string', 'required' => true, 'label' => 'Menüpunkt (Schlüssel)'],
+                'url' => ['type' => 'string', 'required' => false, 'label' => 'Adresse (https)'],
+                'open' => ['type' => 'string', 'required' => false, 'label' => 'Öffnen (embed, both, tab, extension)'],
+                'updated_by' => ['type' => 'ref', 'references' => 'users', 'required' => false, 'label' => 'Geändert von'],
+            ],
+        ],
         'api_docs' => [
             'label' => 'System: API-Dokumentationen (API-Recorder)',
             'description' => 'Mit dem API-Recorder erfasste Endpunkte fremder Websites: Methode, Pfad, abgeleitete Schemas, optional maskierte Beispiele. Keine Rohdaten.',

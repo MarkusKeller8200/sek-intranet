@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="de-CH">
+<head>
+<meta charset="utf-8">
+<title>SBI-Connector</title>
+<style>
+body { width: 300px; margin: 0; padding: 12px; font: 13px system-ui, sans-serif; color: #1f2937; }
+h1 { font-size: 14px; margin: 0 0 8px; }
+p { margin: 6px 0; }
+.muted { color: #6b7280; font-size: 12px; }
+button { width: 100%; margin-top: 8px; padding: 8px; border: 0; border-radius: 6px; background: #005ea8; color: #fff; font-weight: 600; cursor: pointer; }
+button.stop { background: #c81e1e; }
+button:disabled { background: #9ca3af; cursor: default; }
+code { font-size: 11px; word-break: break-all; }
+</style>
+</head>
+<body>
+<h1>SBI-Connector</h1>
+<p id="site" class="muted"></p>
+<p id="recorder"></p>
+<button id="toggle" disabled>Aufnahme starten</button>
+<p class="muted">Aufnahme nur für Websites, die du aufzeichnen darfst. Die Erweiterung fragt einmal je Website nach der Freigabe. Gespeichert wird im Intranet nur, was du im API-Recorder aufnimmst.</p>
+<script src="popup.js"></script>
+</body>
+</html>

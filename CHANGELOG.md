@@ -7,6 +7,24 @@ laufend unter **Unveröffentlicht** und werden beim Erhöhen der Version zur neu
 
 ## [Unveröffentlicht]
 
+## [0.23.0] – 2026-10-31
+
+### Neu
+
+- Menü «Einstellungen» oberhalb von Prototyp (Administration): Einstellungen der einzelnen Menüpunkte.
+  Fachanwendungen und weitere Einbindungen: Adresse (https) und Öffnen – im Intranet (iFrame), iFrame mit Knopf
+  «Neuer Tab», eigenes Fenster oder über die Browser-Erweiterung; «Vorgabe wiederherstellen», Änderungsverlauf
+- Browser-Erweiterung «SBI-Connector» (Prototyp, Edge/Chrome, `browser-extension/`): Fachanwendungen im eigenen
+  Tab gruppiert mit dem Intranet; Aufzeichnung für den API-Recorder ohne Lesezeichen und Konsole, auch auf Seiten,
+  die Lesezeichen blockieren, Aufnahme läuft nach dem Neuladen weiter; Download als ZIP unter Einstellungen
+- Konzept Browser-Connector (docs/KONZEPT-BROWSER-CONNECTOR.md): Wege A/B/C, Stufe 1 Erweiterung, Stufe 2 Dienst
+  auf dem Server
+- Sammlung `module_settings` (Datenstrukturen)
+
+### Geändert
+
+- Bestätigte Einbettung (Escola) gilt nur für die vorgegebene Adresse; eine geänderte Adresse wird wieder geprüft
+
 ## [0.22.2] – 2026-10-31
 
 ### Geändert

@@ -1,6 +1,8 @@
 import type { LucideIcon } from 'lucide-react';
 import {
     Apple,
+    Puzzle,
+    Settings,
     AppWindow,
     BadgeCheck,
     BookMarked,
@@ -67,6 +69,8 @@ import {
  */
 const icons: Record<string, LucideIcon> = {
     Apple,
+    Puzzle,
+    Settings,
     AppWindow,
     BadgeCheck,
     BookMarked,
