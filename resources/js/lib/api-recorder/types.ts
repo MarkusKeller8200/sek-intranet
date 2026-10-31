@@ -65,7 +65,10 @@ export type PluginCatalogEntry = {
 
 /** Gleicher Vergleich wie App\\Support\\ApiDocs::normalize(). */
 export function normalizeEndpoint(method: string, path: string): string {
-    const p = path.toLowerCase().replace(/\/+$/, '').replace(/\{[^}]*\}/g, '{}');
+    const p = path
+        .toLowerCase()
+        .replace(/\/+$/, '')
+        .replace(/\{[^}]*\}/g, '{}');
 
     return `${method.toUpperCase()} ${p === '' ? '/' : p}`;
 }

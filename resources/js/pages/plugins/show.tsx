@@ -257,16 +257,23 @@ function RecordingsCard({ recordings }: { recordings: Recording[] }) {
             <CardHeader>
                 <CardTitle>Aufgezeichnete Endpunkte (API-Recorder)</CardTitle>
                 <CardDescription>
-                    Mit dem API-Recorder erfasste Endpunkte. «fehlt» = noch nicht im
-                    Plugin; der Entwurf lässt sich in plugin.json übernehmen.
+                    Mit dem API-Recorder erfasste Endpunkte. «fehlt» = noch
+                    nicht im Plugin; der Entwurf lässt sich in plugin.json
+                    übernehmen.
                 </CardDescription>
             </CardHeader>
             <CardContent className="grid gap-4">
                 {recordings.map((rec) => {
-                    const missing = rec.operations.filter((o) => o.endpoint === null);
+                    const missing = rec.operations.filter(
+                        (o) => o.endpoint === null,
+                    );
 
                     return (
-                        <div key={rec.id} className="grid gap-2" data-testid="recording">
+                        <div
+                            key={rec.id}
+                            className="grid gap-2"
+                            data-testid="recording"
+                        >
                             <div className="flex flex-wrap items-center gap-2 text-sm">
                                 <Link
                                     href={`/api-recorder/${rec.id}`}
@@ -279,8 +286,15 @@ function RecordingsCard({ recordings }: { recordings: Recording[] }) {
                                     {`${rec.operations.length - missing.length} von ${rec.operations.length} im Plugin`}
                                 </Badge>
                                 {missing.length > 0 && (
-                                    <Button variant="outline" size="sm" className="ml-auto" asChild>
-                                        <a href={`/api-recorder/${rec.id}/plugin-entwurf`}>
+                                    <Button
+                                        variant="outline"
+                                        size="sm"
+                                        className="ml-auto"
+                                        asChild
+                                    >
+                                        <a
+                                            href={`/api-recorder/${rec.id}/plugin-entwurf`}
+                                        >
                                             Entwurf für plugin.json
                                         </a>
                                     </Button>
@@ -288,17 +302,31 @@ function RecordingsCard({ recordings }: { recordings: Recording[] }) {
                             </div>
                             <ul className="grid gap-1 text-xs">
                                 {rec.operations.map((op) => (
-                                    <li key={op.key} className="flex items-center gap-2">
-                                        <code className="w-14 shrink-0 font-semibold" translate="no">
+                                    <li
+                                        key={op.key}
+                                        className="flex items-center gap-2"
+                                    >
+                                        <code
+                                            className="w-14 shrink-0 font-semibold"
+                                            translate="no"
+                                        >
                                             {op.method}
                                         </code>
-                                        <code className="truncate" translate="no">
+                                        <code
+                                            className="truncate"
+                                            translate="no"
+                                        >
                                             {op.path}
                                         </code>
-                                        <span className="truncate text-muted-foreground">{op.summary}</span>
+                                        <span className="truncate text-muted-foreground">
+                                            {op.summary}
+                                        </span>
                                         <span className="ml-auto shrink-0">
                                             {op.endpoint ? (
-                                                <code className="text-emerald-700 dark:text-emerald-400" translate="no">
+                                                <code
+                                                    className="text-emerald-700 dark:text-emerald-400"
+                                                    translate="no"
+                                                >
                                                     {op.endpoint}
                                                 </code>
                                             ) : (

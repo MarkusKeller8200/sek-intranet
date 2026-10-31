@@ -85,7 +85,10 @@ export default function ApiRecorderIndex({ docs }: { docs: ListedDoc[] }) {
                 />
 
                 {docs.length === 0 ? (
-                    <EmptyState icon={Radio} title="Noch keine API aufgezeichnet">
+                    <EmptyState
+                        icon={Radio}
+                        title="Noch keine API aufgezeichnet"
+                    >
                         Mit «Neue API aufzeichnen» eine Website öffnen und ihre
                         Anfragen mitschneiden.
                     </EmptyState>
@@ -99,20 +102,36 @@ export default function ApiRecorderIndex({ docs }: { docs: ListedDoc[] }) {
                             </CardDescription>
                         </CardHeader>
                         <CardContent className="overflow-x-auto">
-                            <table className="w-full text-sm" data-testid="api-list">
+                            <table
+                                className="w-full text-sm"
+                                data-testid="api-list"
+                            >
                                 <thead className="text-left text-xs text-muted-foreground">
                                     <tr className="border-b">
-                                        <th className="py-2 pr-3 font-medium">Name</th>
-                                        <th className="py-2 pr-3 font-medium">URL</th>
-                                        <th className="py-2 pr-3 font-medium">Endpunkte</th>
-                                        <th className="py-2 pr-3 font-medium">Plugin</th>
-                                        <th className="py-2 pr-3 font-medium">Zuletzt aufgezeichnet</th>
+                                        <th className="py-2 pr-3 font-medium">
+                                            Name
+                                        </th>
+                                        <th className="py-2 pr-3 font-medium">
+                                            URL
+                                        </th>
+                                        <th className="py-2 pr-3 font-medium">
+                                            Endpunkte
+                                        </th>
+                                        <th className="py-2 pr-3 font-medium">
+                                            Plugin
+                                        </th>
+                                        <th className="py-2 pr-3 font-medium">
+                                            Zuletzt aufgezeichnet
+                                        </th>
                                         <th className="py-2" />
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {docs.map((doc) => (
-                                        <tr key={doc.id} className="border-b align-middle last:border-0">
+                                        <tr
+                                            key={doc.id}
+                                            className="border-b align-middle last:border-0"
+                                        >
                                             <td className="py-2 pr-3">
                                                 <Link
                                                     href={`/api-recorder/${doc.id}`}
@@ -122,15 +141,26 @@ export default function ApiRecorderIndex({ docs }: { docs: ListedDoc[] }) {
                                                     {doc.title}
                                                 </Link>
                                                 {doc.description && (
-                                                    <div className="max-w-xs truncate text-xs text-muted-foreground" translate="no">
+                                                    <div
+                                                        className="max-w-xs truncate text-xs text-muted-foreground"
+                                                        translate="no"
+                                                    >
                                                         {doc.description}
                                                     </div>
                                                 )}
                                             </td>
-                                            <td className="py-2 pr-3 font-mono text-xs" translate="no">
-                                                {hostOf(doc.start_url || doc.base_url) || '–'}
+                                            <td
+                                                className="py-2 pr-3 font-mono text-xs"
+                                                translate="no"
+                                            >
+                                                {hostOf(
+                                                    doc.start_url ||
+                                                        doc.base_url,
+                                                ) || '–'}
                                             </td>
-                                            <td className="py-2 pr-3">{doc.operations.length}</td>
+                                            <td className="py-2 pr-3">
+                                                {doc.operations.length}
+                                            </td>
                                             <td className="py-2 pr-3">
                                                 {doc.plugin_name ? (
                                                     <span className="flex flex-wrap items-center gap-1.5">
@@ -149,20 +179,34 @@ export default function ApiRecorderIndex({ docs }: { docs: ListedDoc[] }) {
                                                                 {`${doc.missing} fehlen`}
                                                             </Badge>
                                                         ) : (
-                                                            <Badge variant="outline">vollständig</Badge>
+                                                            <Badge variant="outline">
+                                                                vollständig
+                                                            </Badge>
                                                         )}
                                                     </span>
                                                 ) : (
-                                                    <span className="text-muted-foreground">–</span>
+                                                    <span className="text-muted-foreground">
+                                                        –
+                                                    </span>
                                                 )}
                                             </td>
                                             <td className="py-2 pr-3 text-xs whitespace-nowrap text-muted-foreground">
-                                                {formatDateTime(doc.recorded_at ?? doc.updated_at)}
+                                                {formatDateTime(
+                                                    doc.recorded_at ??
+                                                        doc.updated_at,
+                                                )}
                                             </td>
                                             <td className="py-2 text-right whitespace-nowrap">
-                                                <Button variant="outline" size="sm" asChild>
-                                                    <Link href={`/api-recorder/${doc.id}`}>
-                                                        <Radio /> Öffnen & weiter aufzeichnen
+                                                <Button
+                                                    variant="outline"
+                                                    size="sm"
+                                                    asChild
+                                                >
+                                                    <Link
+                                                        href={`/api-recorder/${doc.id}`}
+                                                    >
+                                                        <Radio /> Öffnen &
+                                                        weiter aufzeichnen
                                                     </Link>
                                                 </Button>
                                                 <Button
@@ -171,8 +215,13 @@ export default function ApiRecorderIndex({ docs }: { docs: ListedDoc[] }) {
                                                     className="size-8"
                                                     title="OpenAPI-Datei (JSON)"
                                                     aria-label="OpenAPI-Datei (JSON)"
-                                                    disabled={doc.operations.length === 0}
-                                                    onClick={() => downloadSpec(doc)}
+                                                    disabled={
+                                                        doc.operations
+                                                            .length === 0
+                                                    }
+                                                    onClick={() =>
+                                                        downloadSpec(doc)
+                                                    }
                                                 >
                                                     <Download />
                                                 </Button>
@@ -184,7 +233,9 @@ export default function ApiRecorderIndex({ docs }: { docs: ListedDoc[] }) {
                                                     aria-label="Plugin-Entwurf (fehlende Endpunkte)"
                                                     asChild
                                                 >
-                                                    <a href={`/api-recorder/${doc.id}/plugin-entwurf`}>
+                                                    <a
+                                                        href={`/api-recorder/${doc.id}/plugin-entwurf`}
+                                                    >
                                                         <FileJson />
                                                     </a>
                                                 </Button>
@@ -194,7 +245,9 @@ export default function ApiRecorderIndex({ docs }: { docs: ListedDoc[] }) {
                                                     className="size-8"
                                                     title="Löschen"
                                                     aria-label="Löschen"
-                                                    onClick={() => void remove(doc)}
+                                                    onClick={() =>
+                                                        void remove(doc)
+                                                    }
                                                 >
                                                     <Trash2 />
                                                 </Button>

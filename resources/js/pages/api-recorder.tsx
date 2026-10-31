@@ -346,7 +346,14 @@ export default function ApiRecorder({
                 updated_at: saved.updated_at,
                 recorded_at: saved.recorded_at,
             }));
-            setSavedJson(JSON.stringify({ ...doc, id: saved.id, updated_at: saved.updated_at, recorded_at: saved.recorded_at }));
+            setSavedJson(
+                JSON.stringify({
+                    ...doc,
+                    id: saved.id,
+                    updated_at: saved.updated_at,
+                    recorded_at: saved.recorded_at,
+                }),
+            );
             if (!doc.id && saved.id) {
                 // Neue API: Adresse auf /api-recorder/<id> setzen (Neuladen öffnet sie wieder)
                 window.history.replaceState(
@@ -381,7 +388,10 @@ export default function ApiRecorder({
     }, [doc, dirty, saving]);
 
     const remove = async () => {
-        if (!doc.id || !window.confirm(t('Diese API und ihre Dokumentation löschen?'))) {
+        if (
+            !doc.id ||
+            !window.confirm(t('Diese API und ihre Dokumentation löschen?'))
+        ) {
             return;
         }
         const token = decodeURIComponent(
@@ -445,7 +455,10 @@ export default function ApiRecorder({
                     title={doc.title.trim() || 'Neue API aufzeichnen'}
                     description="Website im eigenen Tab bedienen, Anfragen und Antworten mitschneiden, Endpunkte dokumentieren und als OpenAPI-Datei (Swagger) speichern. Gespeicherte Endpunkte bleiben erhalten; neue Aufzeichnungen ergänzen sie."
                     actions={
-                        <span className="text-xs text-muted-foreground" data-testid="save-state">
+                        <span
+                            className="text-xs text-muted-foreground"
+                            data-testid="save-state"
+                        >
                             {saving
                                 ? 'Speichert …'
                                 : dirty
@@ -465,7 +478,9 @@ export default function ApiRecorder({
                             Name
                             <Input
                                 value={doc.title}
-                                onChange={(e) => setDoc({ ...doc, title: e.target.value })}
+                                onChange={(e) =>
+                                    setDoc({ ...doc, title: e.target.value })
+                                }
                                 placeholder="z. B. Escola Web, Jamf Pro"
                                 data-testid="api-name"
                             />
@@ -475,10 +490,17 @@ export default function ApiRecorder({
                             <select
                                 className="h-9 rounded-md border border-input bg-background px-2 text-sm"
                                 value={doc.plugin_id ?? ''}
-                                onChange={(e) => setDoc({ ...doc, plugin_id: e.target.value || null })}
+                                onChange={(e) =>
+                                    setDoc({
+                                        ...doc,
+                                        plugin_id: e.target.value || null,
+                                    })
+                                }
                                 data-testid="api-plugin"
                             >
-                                <option value="">– keinem Plugin zugewiesen –</option>
+                                <option value="">
+                                    – keinem Plugin zugewiesen –
+                                </option>
                                 {plugins.map((p) => (
                                     <option key={p.id} value={p.id}>
                                         {p.name}
@@ -490,7 +512,9 @@ export default function ApiRecorder({
                             Basis-URL der API
                             <Input
                                 value={doc.base_url}
-                                onChange={(e) => setDoc({ ...doc, base_url: e.target.value })}
+                                onChange={(e) =>
+                                    setDoc({ ...doc, base_url: e.target.value })
+                                }
                                 placeholder="https://api.beispiel.ch"
                                 translate="no"
                             />
@@ -499,7 +523,12 @@ export default function ApiRecorder({
                             Beschreibung
                             <Input
                                 value={doc.description}
-                                onChange={(e) => setDoc({ ...doc, description: e.target.value })}
+                                onChange={(e) =>
+                                    setDoc({
+                                        ...doc,
+                                        description: e.target.value,
+                                    })
+                                }
                             />
                         </label>
                         {doc.operations.length > 0 && (
@@ -537,7 +566,10 @@ export default function ApiRecorder({
                             <Input
                                 value={doc.start_url ?? ''}
                                 onChange={(e) =>
-                                    setDoc({ ...doc, start_url: e.target.value })
+                                    setDoc({
+                                        ...doc,
+                                        start_url: e.target.value,
+                                    })
                                 }
                                 onKeyDown={(e) =>
                                     e.key === 'Enter' && openWindow()
@@ -1041,15 +1073,28 @@ export default function ApiRecorder({
                                                 </td>
                                                 {plugin && (
                                                     <td className="px-2 py-1.5 text-xs whitespace-nowrap">
-                                                        {pluginEndpoints.get(normalizeEndpoint(op.method, op.path)) ? (
+                                                        {pluginEndpoints.get(
+                                                            normalizeEndpoint(
+                                                                op.method,
+                                                                op.path,
+                                                            ),
+                                                        ) ? (
                                                             <span className="flex items-center gap-1 text-emerald-700 dark:text-emerald-400">
                                                                 <Check className="size-3.5" />
                                                                 <code translate="no">
-                                                                    {pluginEndpoints.get(normalizeEndpoint(op.method, op.path))}
+                                                                    {pluginEndpoints.get(
+                                                                        normalizeEndpoint(
+                                                                            op.method,
+                                                                            op.path,
+                                                                        ),
+                                                                    )}
                                                                 </code>
                                                             </span>
                                                         ) : (
-                                                            <Badge variant="outline" className="border-amber-300 text-amber-800 dark:text-amber-300">
+                                                            <Badge
+                                                                variant="outline"
+                                                                className="border-amber-300 text-amber-800 dark:text-amber-300"
+                                                            >
                                                                 fehlt
                                                             </Badge>
                                                         )}
@@ -1319,7 +1364,10 @@ ApiRecorder.layout = (props: { current: ApiDoc | null }) => ({
     breadcrumbs: [
         { title: 'API-Recorder', href: '/api-recorder' },
         props.current?.id
-            ? { title: props.current.title, href: `/api-recorder/${props.current.id}` }
+            ? {
+                  title: props.current.title,
+                  href: `/api-recorder/${props.current.id}`,
+              }
             : { title: 'Neue API', href: '/api-recorder/neu' },
     ],
 });
