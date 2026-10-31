@@ -10,14 +10,14 @@ automatisch aus der Beschreibung.
 
 ## Mitgelieferte Plugins
 
-| Plugin                   | Ordner                 | Kann                                                                                                                                            | Stand                                                    |
-| ------------------------ | ---------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------- |
-| Microsoft 365 / Entra ID | `plugins/Entra`        | Personen übernehmen (alle oder eine Gruppe), Person nachschlagen, zu Gruppe hinzufügen, Kachel (Tenant, Benutzer, Gruppen), prüft neue Personen | nach Microsoft-Doku verifiziert                          |
-| Jamf Pro                 | `plugins/Jamf`         | Geräte einer Person, iPad-Übersicht, Inventar aktualisieren (MDM), iPad zuweisen, Kachel (iPads, Macs), meldet Geräte deaktivierter Personen    | grösstenteils verifiziert, Rest als «teilweise» markiert |
-| Inventory360             | `plugins/Inventory360` | Verbindung prüfen, Inventar durchsuchen, Gerät nach Inventarnummer, Hardware-Kategorien, API-Tester (40 Endpunkte) | nach API-2.0-Referenz; Antwortfelder an der eigenen Instanz prüfen |
-| Escola (Datei-Import)    | `plugins/Escola`       | Mitarbeitende aus der Escola-Adressliste (.xlsx/.csv) übernehmen, nur freigegebene Spalten                                                      | fertig – ohne API, per Datei                             |
-| IDA                      | `plugins/Ida`          | Verbindung prüfen, Personen-Ereignisse vormerken                                                                                                | wartet auf die IDA-API                                   |
-| LMVZ (inoffiziell)       | `plugins/Lmvz`         | Shop: Artikel nachschlagen (Titel, Artikelnummer, ISBN, Listenpreis); LMVZ Digital: Lizenzübersicht, Kachel, API-Tester (Benutzer, Gruppen)     | inoffiziell – aus Aufzeichnung, Token kurzlebig          |
+| Plugin                   | Ordner                 | Kann                                                                                                                                            | Stand                                                              |
+| ------------------------ | ---------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------ |
+| Microsoft 365 / Entra ID | `plugins/Entra`        | Personen übernehmen (alle oder eine Gruppe), Person nachschlagen, zu Gruppe hinzufügen, Kachel (Tenant, Benutzer, Gruppen), prüft neue Personen | nach Microsoft-Doku verifiziert                                    |
+| Jamf Pro                 | `plugins/Jamf`         | Geräte einer Person, iPad-Übersicht, Inventar aktualisieren (MDM), iPad zuweisen, Kachel (iPads, Macs), meldet Geräte deaktivierter Personen    | grösstenteils verifiziert, Rest als «teilweise» markiert           |
+| Inventory360             | `plugins/Inventory360` | Verbindung prüfen, Inventar durchsuchen, Gerät nach Inventarnummer, Hardware-Kategorien, API-Tester (40 Endpunkte)                              | nach API-2.0-Referenz; Antwortfelder an der eigenen Instanz prüfen |
+| Escola (Datei-Import)    | `plugins/Escola`       | Mitarbeitende aus der Escola-Adressliste (.xlsx/.csv) übernehmen, nur freigegebene Spalten                                                      | fertig – ohne API, per Datei                                       |
+| IDA                      | `plugins/Ida`          | Verbindung prüfen, Personen-Ereignisse vormerken                                                                                                | wartet auf die IDA-API                                             |
+| LMVZ (inoffiziell)       | `plugins/Lmvz`         | Shop: Artikel nachschlagen (Titel, Artikelnummer, ISBN, Listenpreis); LMVZ Digital: Lizenzübersicht, Kachel, API-Tester (Benutzer, Gruppen)     | inoffiziell – aus Aufzeichnung, Token kurzlebig                    |
 
 ## Datenschutz
 

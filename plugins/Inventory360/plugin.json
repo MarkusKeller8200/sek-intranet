@@ -496,18 +496,9 @@
             "label": "Präfix",
             "default": "none",
             "choices": [
-                [
-                    "none",
-                    "ohne (laut Referenz)"
-                ],
-                [
-                    "Bearer",
-                    "Bearer"
-                ],
-                [
-                    "Token",
-                    "Token"
-                ]
+                ["none", "ohne (laut Referenz)"],
+                ["Bearer", "Bearer"],
+                ["Token", "Token"]
             ],
             "help": "Laut API-2.0-Referenz ohne Präfix."
         }
