@@ -121,6 +121,10 @@ final class ManifestOpenApi
                 'tokenUrl' => (string) ($auth['token_url'] ?? '/oauth/token'),
                 'scopes' => new \stdClass,
             ]]],
+            'oauth2_password' => ['type' => 'oauth2', 'flows' => ['password' => [
+                'tokenUrl' => (string) ($auth['token_url'] ?? '/oauth/token'),
+                'scopes' => new \stdClass,
+            ]]],
             default => null,
         };
     }

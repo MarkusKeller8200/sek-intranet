@@ -6,6 +6,7 @@ export const categoryLabels: Record<string, string> = {
     devices: 'Geräte',
     inventory: 'Inventar',
     school: 'Schul-IT',
+    communication: 'Kommunikation',
     other: 'Sonstiges',
 };
 

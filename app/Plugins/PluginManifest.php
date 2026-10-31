@@ -16,7 +16,7 @@ final class PluginManifest
 
     public const SETTING_TYPES = ['text', 'url', 'password', 'select', 'check', 'number', 'textarea'];
 
-    public const AUTH_TYPES = ['none', 'bearer', 'header', 'basic', 'oauth2_client_credentials'];
+    public const AUTH_TYPES = ['none', 'bearer', 'header', 'basic', 'oauth2_client_credentials', 'oauth2_password'];
 
     public const ACTION_KINDS = ['read', 'import', 'write'];
 

@@ -1,0 +1,638 @@
+{
+    "id": "epost",
+    "name": "ePost (Schweizerische Post)",
+    "version": "0.1",
+    "api": 1,
+    "category": "communication",
+    "author": "SekBülach Intranet",
+    "description": "ePost Communication Platform der Schweizerischen Post (KLARA): Briefe digital in den ePost-Briefkasten, per E-Mail, SMS oder als gedruckten Brief versenden, Versandstatus und Monitoring, Identitätsabgleich, Posteingang des eigenen ePost-Briefkastens, ePost Sign. Im Prototyp nur lesend; Versand folgt.",
+    "data_notice": "Für Versand und Identitätsabgleich gehen Namen, Adressen, E-Mail und Mobilnummern der Empfänger:innen (z. B. Eltern) an die Post. Mit echten Daten erst auf dem Schweizer Server, nach Vertrag mit der Post und Klärung nach IDG. Auf dem Testserver nur mit der ePost-Testumgebung und erfundenen Daten arbeiten.",
+    "service": {
+        "name": "ePost Communication Platform / KLARA Public API",
+        "home": "https://www.epost.ch",
+        "docs": "https://developer.epost.ch/docs/api-docs/hvshdeijjdlzq-e-post-communication-platform-business-documentation",
+        "auth": {
+            "type": "oauth2_password",
+            "token_url": "/core/latest/token",
+            "username_setting": "username",
+            "password_setting": "password",
+            "form": {
+                "tenant_id": "tenant_id",
+                "company_id": "company_id"
+            },
+            "api_key_setting": "api_key",
+            "api_key_header": "X-API-KEY"
+        },
+        "auth_note": "Anmeldung mit dem KLARA/ePost-Konto der Schule (am besten ein eigenes Dienstkonto): Benutzername und Passwort, dazu Mandant (tenant_id) und Firma (company_id) – beide zeigt die Aktion «Mandanten anzeigen». Das Intranet holt damit ein Zugriffstoken (POST /core/latest/token, grant_type password) und erneuert es vor Ablauf. Alternativ ein API-Schlüssel (Kopfzeile X-API-KEY), falls die Post einen ausstellt. Test: Konto auf test.klara-epost.tech registrieren und das Widget «eLetter: Versand» aktivieren.",
+        "endpoints": [
+            {
+                "id": "deliveries",
+                "method": "POST",
+                "path": "/epost/v2/deliveries",
+                "label": "Versand erstellen (eLetter, E-Mail, SMS, Brief)",
+                "status": "partial",
+                "danger": true,
+                "note": "multipart/form-data: metadata (JSON) und files (PDF/A); Identitätsabgleich beim Versand. Enthält Personendaten von Empfänger:innen.",
+                "use": "später: Elternbriefe versenden"
+            },
+            {
+                "id": "synchronous-deliveries",
+                "method": "POST",
+                "path": "/epost/v2/synchronous-deliveries",
+                "label": "Versand erstellen (synchron, mit Status)",
+                "status": "partial",
+                "danger": true,
+                "note": "multipart/form-data. Enthält Personendaten von Empfänger:innen."
+            },
+            {
+                "id": "single-file-deliveries",
+                "method": "POST",
+                "path": "/epost/v2/single-file-deliveries",
+                "label": "Einzelnes Dokument versenden",
+                "status": "partial",
+                "danger": true,
+                "note": "Laut Hersteller zum Ausprobieren gedacht. Enthält Personendaten von Empfänger:innen."
+            },
+            {
+                "id": "delivery-status",
+                "method": "GET",
+                "path": "/epost/v2/deliveries/{delivery_id}/status",
+                "label": "Status eines Versands",
+                "status": "partial",
+                "params": [
+                    {
+                        "name": "delivery_id",
+                        "required": true
+                    }
+                ]
+            },
+            {
+                "id": "iletter-response",
+                "method": "GET",
+                "path": "/epost/v2/iletters/{iletter_id}/response-files/{response_file_id}/content",
+                "label": "Antwortdatei zu einem iLetter",
+                "status": "partial",
+                "params": [
+                    {
+                        "name": "iletter_id",
+                        "required": true
+                    },
+                    {
+                        "name": "response_file_id",
+                        "required": true
+                    }
+                ],
+                "note": "Enthält Personendaten von Empfänger:innen."
+            },
+            {
+                "id": "monitoring",
+                "method": "GET",
+                "path": "/epost/deliveries/monitoring",
+                "label": "Versandübersicht (Monitoring)",
+                "status": "partial",
+                "params": [
+                    {
+                        "name": "limit",
+                        "default": "20"
+                    },
+                    {
+                        "name": "offset",
+                        "default": "0"
+                    },
+                    {
+                        "name": "sort",
+                        "default": "DESC",
+                        "help": "DESC = neueste zuerst"
+                    },
+                    {
+                        "name": "delivery-id",
+                        "help": "nur dieser Versand"
+                    }
+                ],
+                "use": "Verbindungstest, Versandübersicht",
+                "note": "Antwort enthält die Empfängerdaten (unhashedCredentials). Enthält Personendaten von Empfänger:innen."
+            },
+            {
+                "id": "preview-channels",
+                "method": "POST",
+                "path": "/epost/preview/delivery-channels",
+                "label": "Vorschau Versandkanäle (ohne Versand)",
+                "status": "partial",
+                "params": [
+                    {
+                        "name": "preview-option",
+                        "help": "1. oder alle Kanäle"
+                    }
+                ],
+                "danger": true,
+                "note": "Übermittelt Dokumente und Empfängerdaten an ePost, versendet aber nichts. Enthält Personendaten von Empfänger:innen."
+            },
+            {
+                "id": "preview-channels-status",
+                "method": "GET",
+                "path": "/epost/preview/delivery-channels/{preview_id}/status",
+                "label": "Ergebnis Vorschau Versandkanäle",
+                "status": "partial",
+                "params": [
+                    {
+                        "name": "preview_id",
+                        "required": true
+                    }
+                ]
+            },
+            {
+                "id": "preview-prices",
+                "method": "POST",
+                "path": "/epost/preview/delivery-prices",
+                "label": "Vorschau Preise (ohne Versand)",
+                "status": "partial",
+                "danger": true,
+                "note": "Übermittelt Dokumente und Empfängerdaten an ePost. Enthält Personendaten von Empfänger:innen."
+            },
+            {
+                "id": "preview-prices-status",
+                "method": "GET",
+                "path": "/epost/preview/delivery-prices/{preview_id}/status",
+                "label": "Ergebnis Vorschau Preise",
+                "status": "partial",
+                "params": [
+                    {
+                        "name": "preview_id",
+                        "required": true
+                    }
+                ]
+            },
+            {
+                "id": "standard-matchings",
+                "method": "POST",
+                "path": "/epost/v2/standard-matchings",
+                "label": "Identitätsabgleich (Standard)",
+                "status": "partial",
+                "danger": true,
+                "note": "Übermittelt Empfängerdaten (E-Mail, Mobilnummer, Adresse) an ePost. Enthält Personendaten von Empfänger:innen."
+            },
+            {
+                "id": "standard-matching-runs",
+                "method": "POST",
+                "path": "/epost/v2/standard-matching-runs",
+                "label": "Abgleich-Lauf starten (Standard)",
+                "status": "partial",
+                "danger": true,
+                "note": "Enthält Personendaten von Empfänger:innen."
+            },
+            {
+                "id": "standard-matching-run-processing",
+                "method": "GET",
+                "path": "/epost/v2/standard-matching-runs/processing/{matching_run_id}",
+                "label": "Abgleich-Lauf: Fortschritt (Standard)",
+                "status": "partial",
+                "params": [
+                    {
+                        "name": "matching_run_id",
+                        "required": true
+                    }
+                ]
+            },
+            {
+                "id": "standard-matching-run",
+                "method": "GET",
+                "path": "/epost/v2/standard-matching-runs/{matching_run_id}",
+                "label": "Abgleich-Lauf: Ergebnis (Standard)",
+                "status": "partial",
+                "params": [
+                    {
+                        "name": "matching_run_id",
+                        "required": true
+                    }
+                ],
+                "note": "Enthält Personendaten von Empfänger:innen."
+            },
+            {
+                "id": "matchings",
+                "method": "POST",
+                "path": "/epost/v2/matchings",
+                "label": "Identitätsabgleich (mit Rückmeldung je Empfänger)",
+                "status": "partial",
+                "danger": true,
+                "note": "Enthält Personendaten von Empfänger:innen."
+            },
+            {
+                "id": "matching-runs",
+                "method": "POST",
+                "path": "/epost/v2/matching-runs",
+                "label": "Abgleich-Lauf starten (mit Rückmeldung)",
+                "status": "partial",
+                "danger": true,
+                "note": "Enthält Personendaten von Empfänger:innen."
+            },
+            {
+                "id": "matching-run-processing",
+                "method": "GET",
+                "path": "/epost/v2/matching-runs/processing/{matching_run_id}",
+                "label": "Abgleich-Lauf: Fortschritt",
+                "status": "partial",
+                "params": [
+                    {
+                        "name": "matching_run_id",
+                        "required": true
+                    }
+                ]
+            },
+            {
+                "id": "matching-run",
+                "method": "GET",
+                "path": "/epost/v2/matching-runs/{matching_run_id}",
+                "label": "Abgleich-Lauf: Ergebnis",
+                "status": "partial",
+                "params": [
+                    {
+                        "name": "matching_run_id",
+                        "required": true
+                    }
+                ],
+                "note": "Enthält Personendaten von Empfänger:innen."
+            },
+            {
+                "id": "recipients",
+                "method": "GET",
+                "path": "/epost/v2/recipients",
+                "label": "Gehashte Empfängerdaten (Matching-Lookup)",
+                "status": "partial",
+                "note": "Nur für ausgewählte Partner freigeschaltet."
+            },
+            {
+                "id": "onboarding",
+                "method": "POST",
+                "path": "/epost/onboarding",
+                "label": "Onboarding von Nutzer:innen (Zugangsdaten ergänzen)",
+                "status": "partial",
+                "danger": true,
+                "note": "Enthält Personendaten von Empfänger:innen."
+            },
+            {
+                "id": "letters",
+                "method": "GET",
+                "path": "/epost/v2/letters",
+                "label": "Briefe im eigenen Briefkasten",
+                "status": "partial",
+                "use": "Aktion «Posteingang»",
+                "params": [
+                    {
+                        "name": "limit",
+                        "default": "20"
+                    },
+                    {
+                        "name": "offset",
+                        "default": "0"
+                    },
+                    {
+                        "name": "read-status",
+                        "help": "READ oder UNREAD"
+                    },
+                    {
+                        "name": "from-date"
+                    },
+                    {
+                        "name": "to-date"
+                    },
+                    {
+                        "name": "letter-folder"
+                    }
+                ]
+            },
+            {
+                "id": "letters-count",
+                "method": "GET",
+                "path": "/epost/v2/letters/inbox/count",
+                "label": "Ungelesene Briefe (Anzahl)",
+                "status": "partial",
+                "use": "Aktion «Posteingang»",
+                "note": "Antwort: Zahl."
+            },
+            {
+                "id": "letters-search",
+                "method": "GET",
+                "path": "/epost/v2/letters/search",
+                "label": "Briefe suchen",
+                "status": "partial"
+            },
+            {
+                "id": "letters-deleted",
+                "method": "GET",
+                "path": "/epost/v2/letters/deleted",
+                "label": "Gelöschte Briefe",
+                "status": "partial"
+            },
+            {
+                "id": "letter",
+                "method": "GET",
+                "path": "/epost/v2/letters/{letter_id}",
+                "label": "Brief (einzeln)",
+                "status": "partial",
+                "params": [
+                    {
+                        "name": "letter_id",
+                        "required": true
+                    }
+                ]
+            },
+            {
+                "id": "letter-content",
+                "method": "GET",
+                "path": "/epost/v2/letters/{letter_id}/content",
+                "label": "Inhalt eines Briefs (Datei)",
+                "status": "partial",
+                "params": [
+                    {
+                        "name": "letter_id",
+                        "required": true
+                    }
+                ]
+            },
+            {
+                "id": "letter-thumbnail",
+                "method": "GET",
+                "path": "/epost/v2/letters/{letter_id}/thumbnail",
+                "label": "Vorschaubild eines Briefs",
+                "status": "partial",
+                "params": [
+                    {
+                        "name": "letter_id",
+                        "required": true
+                    }
+                ]
+            },
+            {
+                "id": "letters-read",
+                "method": "POST",
+                "path": "/epost/v2/letters/read",
+                "label": "Briefe als gelesen/ungelesen markieren",
+                "status": "partial",
+                "danger": true
+            },
+            {
+                "id": "letter-accept",
+                "method": "POST",
+                "path": "/epost/v2/letters/{letter_id}/accept",
+                "label": "Brief annehmen",
+                "status": "partial",
+                "params": [
+                    {
+                        "name": "letter_id",
+                        "required": true
+                    }
+                ],
+                "danger": true
+            },
+            {
+                "id": "letter-reject",
+                "method": "POST",
+                "path": "/epost/v2/letters/{letter_id}/reject",
+                "label": "Brief ablehnen",
+                "status": "partial",
+                "params": [
+                    {
+                        "name": "letter_id",
+                        "required": true
+                    }
+                ],
+                "danger": true
+            },
+            {
+                "id": "letter-archive",
+                "method": "PATCH",
+                "path": "/epost/v2/letters/{letter_id}/archive",
+                "label": "Brief archivieren",
+                "status": "partial",
+                "params": [
+                    {
+                        "name": "letter_id",
+                        "required": true
+                    }
+                ],
+                "danger": true
+            },
+            {
+                "id": "letter-restore",
+                "method": "POST",
+                "path": "/epost/v2/letters/{letter_id}/restore",
+                "label": "Gelöschten Brief wiederherstellen",
+                "status": "partial",
+                "params": [
+                    {
+                        "name": "letter_id",
+                        "required": true
+                    }
+                ],
+                "danger": true
+            },
+            {
+                "id": "letter-delete",
+                "method": "DELETE",
+                "path": "/epost/v2/letters/{letter_id}",
+                "label": "Brief löschen",
+                "status": "partial",
+                "params": [
+                    {
+                        "name": "letter_id",
+                        "required": true
+                    }
+                ],
+                "danger": true
+            },
+            {
+                "id": "signing-processes",
+                "method": "GET",
+                "path": "/epost/signing/processes",
+                "label": "Signaturprozesse",
+                "status": "partial"
+            },
+            {
+                "id": "signing-process",
+                "method": "GET",
+                "path": "/epost/signing/processes/{process_id}",
+                "label": "Signaturprozess (einzeln)",
+                "status": "partial",
+                "params": [
+                    {
+                        "name": "process_id",
+                        "required": true
+                    }
+                ]
+            },
+            {
+                "id": "signing-document",
+                "method": "GET",
+                "path": "/epost/signing/processes/{process_id}/document",
+                "label": "Signiertes Dokument",
+                "status": "partial",
+                "params": [
+                    {
+                        "name": "process_id",
+                        "required": true
+                    }
+                ]
+            },
+            {
+                "id": "signing-create",
+                "method": "POST",
+                "path": "/epost/signing/processes",
+                "label": "Dokument zum Signieren einreichen",
+                "status": "partial",
+                "danger": true,
+                "note": "Enthält Personendaten von Empfänger:innen."
+            },
+            {
+                "id": "signing-update",
+                "method": "PATCH",
+                "path": "/epost/signing/processes/{process_id}",
+                "label": "Signaturprozess ändern",
+                "status": "partial",
+                "params": [
+                    {
+                        "name": "process_id",
+                        "required": true
+                    }
+                ],
+                "danger": true
+            },
+            {
+                "id": "signing-participant",
+                "method": "PATCH",
+                "path": "/epost/signing/processes/{process_id}/participants/{participant_id}",
+                "label": "Teilnehmende:n ändern",
+                "status": "partial",
+                "params": [
+                    {
+                        "name": "process_id",
+                        "required": true
+                    },
+                    {
+                        "name": "participant_id",
+                        "required": true
+                    }
+                ],
+                "danger": true
+            },
+            {
+                "id": "signing-billing-companies",
+                "method": "GET",
+                "path": "/epost/signing/billing-companies",
+                "label": "Firmen für die Verrechnung",
+                "status": "partial"
+            },
+            {
+                "id": "signing-allowlist",
+                "method": "GET",
+                "path": "/epost/signing/billing-allowlist",
+                "label": "Verrechnungs-Freigaben",
+                "status": "partial"
+            },
+            {
+                "id": "signing-allowlist-add",
+                "method": "POST",
+                "path": "/epost/signing/billing-allowlist",
+                "label": "Verrechnungs-Freigabe hinzufügen",
+                "status": "partial",
+                "danger": true
+            },
+            {
+                "id": "signing-allowlist-remove",
+                "method": "DELETE",
+                "path": "/epost/signing/billing-allowlist/{entry_id}",
+                "label": "Verrechnungs-Freigabe entfernen",
+                "status": "partial",
+                "params": [
+                    {
+                        "name": "entry_id",
+                        "required": true
+                    }
+                ],
+                "danger": true
+            }
+        ]
+    },
+    "settings": [
+        {
+            "key": "base_url",
+            "type": "select",
+            "label": "Umgebung",
+            "default": "https://api-test.klara-epost.tech",
+            "required": true,
+            "choices": [
+                [
+                    "https://api-test.klara-epost.tech",
+                    "Test (api-test.klara-epost.tech)"
+                ],
+                [
+                    "https://api.epost.ch",
+                    "Produktion (api.epost.ch)"
+                ]
+            ],
+            "help": "Im Prototyp nur die Testumgebung verwenden."
+        },
+        {
+            "key": "username",
+            "type": "text",
+            "label": "Benutzername (E-Mail des KLARA/ePost-Kontos)",
+            "required": true
+        },
+        {
+            "key": "password",
+            "type": "password",
+            "label": "Passwort",
+            "required": true
+        },
+        {
+            "key": "tenant_id",
+            "type": "text",
+            "label": "Mandant (tenant_id)",
+            "help": "Aus «Mandanten anzeigen»."
+        },
+        {
+            "key": "company_id",
+            "type": "text",
+            "label": "Firma (company_id)",
+            "help": "Aus «Mandanten anzeigen»."
+        },
+        {
+            "key": "api_key",
+            "type": "password",
+            "label": "API-Schlüssel (optional, statt Passwort-Anmeldung)"
+        }
+    ],
+    "actions": [
+        {
+            "id": "tenants",
+            "label": "Mandanten anzeigen",
+            "kind": "read",
+            "options": []
+        },
+        {
+            "id": "inbox",
+            "label": "Posteingang",
+            "kind": "read",
+            "options": [
+                {
+                    "key": "limit",
+                    "type": "number",
+                    "label": "Anzahl",
+                    "default": 20
+                }
+            ]
+        },
+        {
+            "id": "deliveries",
+            "label": "Versandübersicht",
+            "kind": "read",
+            "options": [
+                {
+                    "key": "limit",
+                    "type": "number",
+                    "label": "Anzahl",
+                    "default": 20
+                }
+            ]
+        }
+    ]
+}

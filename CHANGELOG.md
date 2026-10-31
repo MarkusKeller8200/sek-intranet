@@ -7,6 +7,18 @@ laufend unter **Unveröffentlicht** und werden beim Erhöhen der Version zur neu
 
 ## [Unveröffentlicht]
 
+## [0.26.0] – 2026-10-31
+
+### Neu
+
+- Plugin «ePost (Schweizerische Post)»: ePost Communication Platform / KLARA Public API mit 44 Endpunkten aus der
+  OpenAPI der Post (Versand über eLetter, E-Mail, SMS und Brief, Vorschau von Kanälen und Preisen, Monitoring,
+  Identitätsabgleich, digitaler Briefkasten, ePost Sign). Umgebung Test oder Produktion wählbar
+- Aktionen «Mandanten anzeigen», «Posteingang» (ungelesene Briefe) und «Versandübersicht» (ohne Empfängerdaten);
+  alles Schreibende (Versand, Abgleich, Briefe ändern) nur im API-Tester mit Schreibfreigabe und Rückfrage
+- Plugin-System: Anmeldetyp `oauth2_password` (Passwort-Anmeldung mit Zusatzfeldern, Token wird zwischengespeichert;
+  alternativ API-Schlüssel); Plugin-Kategorie «Kommunikation»
+
 ## [0.25.0] – 2026-10-31
 
 ### Geändert

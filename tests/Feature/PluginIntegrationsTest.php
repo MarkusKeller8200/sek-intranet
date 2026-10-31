@@ -34,7 +34,7 @@ class PluginIntegrationsTest extends TestCase
     {
         $manager = app(PluginManager::class);
 
-        $this->assertSame(['entra', 'escola', 'ida', 'inventory360', 'jamf', 'lmvz'], array_keys($manager->all()));
+        $this->assertSame(['entra', 'epost', 'escola', 'ida', 'inventory360', 'jamf', 'lmvz'], array_keys($manager->all()));
         $this->assertSame([], $manager->loadErrors());
     }
 
@@ -201,6 +201,59 @@ class PluginIntegrationsTest extends TestCase
 
         $this->postJson('/plugins/inventory360/aktion/device', ['options' => ['inventorynumber' => '999']])->assertOk()->assertJsonFragment(['message' => 'Kein Gerät mit Inventarnummer 999 gefunden.']);
         $this->postJson('/plugins/inventory360/aktion/device', ['options' => ['inventorynumber' => '../x']])->assertOk()->assertJsonFragment(['message' => 'Bitte eine gültige Inventarnummer angeben.']);
+    }
+
+    public function test_epost_lists_tenants_then_uses_password_token(): void
+    {
+        Http::fake([
+            'api-test.klara-epost.tech/core/latest/tenants' => Http::response([['tenant_id' => 't-1', 'company_id' => 42, 'company_name' => 'Testschule AG']]),
+            'api-test.klara-epost.tech/core/latest/token' => Http::response(['access_token' => 'epost-access-token-123', 'expires_in' => 300]),
+            'api-test.klara-epost.tech/epost/deliveries/monitoring*' => Http::response([[
+                'deliveryId' => 7, 'documentTitle' => 'Elternbrief Test', 'channel' => 'DIGITAL', 'status' => 'DELIVERED', 'cost' => 0.5,
+                'unhashedCredentials' => ['firstName' => 'Erika', 'lastName' => 'Erfunden', 'email' => 'erika@example.test'],
+            ]]),
+            'api-test.klara-epost.tech/epost/v2/letters/inbox/count' => Http::response('3'),
+            'api-test.klara-epost.tech/epost/v2/letters*' => Http::response([['id' => 'l1', 'letterTitle' => 'Rechnung Test', 'receivedDateTime' => '2026-10-30T08:00:00Z', 'readStatus' => 'UNREAD']]),
+        ]);
+
+        $this->enable('epost', ['base_url' => 'https://api-test.klara-epost.tech', 'username' => 'ict@example.test', 'password' => 'geheim-test-pw']);
+        $this->signInAs('admin');
+
+        // Ohne Mandant: Hinweis und Liste der Mandanten
+        $this->postJson('/plugins/epost/test')->assertOk()->assertJson(['ok' => false])->assertJsonFragment(['message' => 'Anmeldung möglich. Mandant und Firma noch eintragen (Aktion «Mandanten anzeigen»): 1 gefunden.']);
+        $tenants = $this->postJson('/plugins/epost/aktion/tenants')->assertOk()->json();
+        $this->assertSame(['company_name' => 'Testschule AG', 'tenant_id' => 't-1', 'company_id' => '42'], $tenants['rows'][0]);
+
+        app(PluginManager::class)->saveSettings('epost', ['base_url' => 'https://api-test.klara-epost.tech', 'username' => 'ict@example.test', 'tenant_id' => 't-1', 'company_id' => '42', '_allow_write' => false]);
+
+        $this->postJson('/plugins/epost/test')->assertOk()->assertJson(['ok' => true, 'message' => 'Verbunden mit der ePost-Testumgebung, Versandübersicht lesbar.']);
+        Http::assertSent(fn (Request $r): bool => str_ends_with($r->url(), '/core/latest/token')
+            && $r['grant_type'] === 'password' && $r['tenant_id'] === 't-1' && $r['company_id'] === '42' && $r['password'] === 'geheim-test-pw');
+        Http::assertSent(fn (Request $r): bool => str_contains($r->url(), '/monitoring') && $r->hasHeader('Authorization', 'Bearer epost-access-token-123'));
+
+        // Versandübersicht ohne Empfängerdaten
+        $result = $this->postJson('/plugins/epost/aktion/deliveries')->assertOk()->json();
+        $this->assertSame('Elternbrief Test', $result['rows'][0]['title']);
+        $this->assertStringNotContainsString('Erfunden', json_encode($result, JSON_THROW_ON_ERROR));
+
+        $inbox = $this->postJson('/plugins/epost/aktion/inbox')->assertOk()->json();
+        $this->assertStringStartsWith('3 ungelesen.', $inbox['message']);
+        $this->assertSame('Rechnung Test', $inbox['rows'][0]['letterTitle']);
+
+        // Versand nur mit Schreibfreigabe
+        $this->assertTrue(app(PluginManager::class)->all()['epost']['manifest']->endpoint('deliveries')['danger']);
+    }
+
+    public function test_epost_prefers_api_key_when_set(): void
+    {
+        Http::fake(['api-test.klara-epost.tech/epost/deliveries/monitoring*' => Http::response([])]);
+
+        $this->enable('epost', ['base_url' => 'https://api-test.klara-epost.tech', 'api_key' => 'epost-key-123456']);
+        $this->signInAs('admin');
+
+        $this->postJson('/plugins/epost/test')->assertOk()->assertJson(['ok' => true]);
+        Http::assertSent(fn (Request $r): bool => $r->hasHeader('X-API-KEY', 'epost-key-123456') && ! $r->hasHeader('Authorization'));
+        Http::assertNotSent(fn (Request $r): bool => str_contains($r->url(), '/core/latest/token'));
     }
 
     public function test_ida_checks_health_without_token(): void

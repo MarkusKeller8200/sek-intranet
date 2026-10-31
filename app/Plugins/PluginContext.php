@@ -220,6 +220,10 @@ final class PluginContext
                 $this->required((string) $auth['password_setting']),
             ),
             'oauth2_client_credentials' => $request->withToken($this->oauthToken($auth)),
+            // Passwort-Anmeldung (z. B. KLARA/ePost); ist ein API-Schlüssel hinterlegt, gilt dieser
+            'oauth2_password' => $this->apiKey($auth) !== null
+                ? $request->withHeaders([(string) ($auth['api_key_header'] ?? 'X-API-KEY') => (string) $this->apiKey($auth)])
+                : $request->withToken($this->oauthToken($auth)),
             default => $request,
         };
     }
@@ -248,29 +252,55 @@ final class PluginContext
     }
 
     /**
-     * Holt (und merkt sich bis kurz vor Ablauf) ein Zugriffstoken per Client Credentials.
+     * @param  array<string, mixed>  $auth
+     */
+    private function apiKey(array $auth): ?string
+    {
+        if (! isset($auth['api_key_setting'])) {
+            return null;
+        }
+        $key = $this->secret((string) $auth['api_key_setting']) ?? $this->setting((string) $auth['api_key_setting']);
+
+        return is_scalar($key) && (string) $key !== '' ? (string) $key : null;
+    }
+
+    /**
+     * Holt (und merkt sich bis kurz vor Ablauf) ein Zugriffstoken per Client Credentials
+     * oder Passwort-Anmeldung (oauth2_password, mit Zusatzfeldern aus «form»: Feld → Einstellung).
      *
      * @param  array<string, mixed>  $auth
      */
     private function oauthToken(array $auth): string
     {
-        $clientId = (string) $this->setting((string) ($auth['client_id_setting'] ?? 'client_id'), '');
-        $clientSecret = $this->required((string) ($auth['client_secret_setting'] ?? 'client_secret'));
         $tokenUrl = $this->fill((string) $auth['token_url']);
-
         if (! str_starts_with($tokenUrl, 'https://')) {
             $tokenUrl = $this->baseUrl().'/'.ltrim($tokenUrl, '/');
         }
 
-        $cacheKey = 'plugin-token:'.$this->manifest->id().':'.hash('sha256', $tokenUrl.'|'.$clientId.'|'.$clientSecret);
+        if (($auth['type'] ?? '') === 'oauth2_password') {
+            $form = [
+                'grant_type' => 'password',
+                'username' => $this->required((string) ($auth['username_setting'] ?? 'username')),
+                'password' => $this->required((string) ($auth['password_setting'] ?? 'password')),
+            ];
+            foreach ((array) ($auth['form'] ?? []) as $field => $setting) {
+                $form[(string) $field] = $this->required((string) $setting);
+            }
+        } else {
+            $form = [
+                'grant_type' => 'client_credentials',
+                'client_id' => (string) $this->setting((string) ($auth['client_id_setting'] ?? 'client_id'), ''),
+                'client_secret' => $this->required((string) ($auth['client_secret_setting'] ?? 'client_secret')),
+            ];
+        }
+        if (isset($auth['scope'])) {
+            $form['scope'] = $this->fill((string) $auth['scope']);
+        }
+
+        $cacheKey = 'plugin-token:'.$this->manifest->id().':'.hash('sha256', $tokenUrl.'|'.json_encode($form));
         $cached = Cache::get($cacheKey);
         if (is_string($cached) && $cached !== '') {
             return $cached;
-        }
-
-        $form = ['grant_type' => 'client_credentials', 'client_id' => $clientId, 'client_secret' => $clientSecret];
-        if (isset($auth['scope'])) {
-            $form['scope'] = $this->fill((string) $auth['scope']);
         }
 
         $response = Http::asForm()->acceptJson()->connectTimeout(5)->timeout(20)->post($tokenUrl, $form);
