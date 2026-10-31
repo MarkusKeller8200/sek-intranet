@@ -3,6 +3,11 @@
 // Werte mit solchen Schlüsseln nie anzeigen (Lizenzschlüssel, Tokens, Passwörter)
 const HIDDEN = /key|token|pass|secret|pin|code/i;
 
+/** Einfacher Wert als Text (Objekte und Listen bleiben leer). */
+function cellText(value: unknown): string {
+    return typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean' ? String(value) : '';
+}
+
 /** Erste Liste von Objekten in einer Antwort als Tabelle (höchstens 10 Spalten, geheime Felder ausgeblendet). */
 export function toTable(
     json: unknown,
@@ -34,7 +39,7 @@ export function toTable(
                     .slice(0, 500)
                     .map((v) =>
                         columns.map((c) =>
-                            String((v as Record<string, unknown>)[c] ?? ''),
+                            cellText((v as Record<string, unknown>)[c]),
                         ),
                     ),
             };

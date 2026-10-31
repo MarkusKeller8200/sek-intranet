@@ -133,8 +133,8 @@ export function onTabContext(
             event.data.key === key
         ) {
             callback(
-                String(event.data.url ?? ''),
-                String(event.data.title ?? ''),
+                typeof event.data.url === 'string' ? event.data.url : '',
+                typeof event.data.title === 'string' ? event.data.title : '',
             );
         }
     };
