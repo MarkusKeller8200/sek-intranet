@@ -14,7 +14,7 @@ automatisch aus der Beschreibung.
 | ------------------------ | ---------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------- |
 | Microsoft 365 / Entra ID | `plugins/Entra`        | Personen übernehmen (alle oder eine Gruppe), Person nachschlagen, zu Gruppe hinzufügen, Kachel (Tenant, Benutzer, Gruppen), prüft neue Personen | nach Microsoft-Doku verifiziert                          |
 | Jamf Pro                 | `plugins/Jamf`         | Geräte einer Person, iPad-Übersicht, Inventar aktualisieren (MDM), iPad zuweisen, Kachel (iPads, Macs), meldet Geräte deaktivierter Personen    | grösstenteils verifiziert, Rest als «teilweise» markiert |
-| Inventory360             | `plugins/Inventory360` | Hardware-Inventar durchsuchen, API-Tester                                                                                                       | vorläufig – API-2.0-Referenz fehlt noch                  |
+| Inventory360             | `plugins/Inventory360` | Verbindung prüfen, Inventar durchsuchen, Gerät nach Inventarnummer, Hardware-Kategorien, API-Tester (40 Endpunkte) | nach API-2.0-Referenz; Antwortfelder an der eigenen Instanz prüfen |
 | Escola (Datei-Import)    | `plugins/Escola`       | Mitarbeitende aus der Escola-Adressliste (.xlsx/.csv) übernehmen, nur freigegebene Spalten                                                      | fertig – ohne API, per Datei                             |
 | IDA                      | `plugins/Ida`          | Verbindung prüfen, Personen-Ereignisse vormerken                                                                                                | wartet auf die IDA-API                                   |
 | LMVZ (inoffiziell)       | `plugins/Lmvz`         | Shop: Artikel nachschlagen (Titel, Artikelnummer, ISBN, Listenpreis); LMVZ Digital: Lizenzübersicht, Kachel, API-Tester (Benutzer, Gruppen)     | inoffiziell – aus Aufzeichnung, Token kurzlebig          |
@@ -249,8 +249,10 @@ Für Antworten mit unbekannten Feldern baut `Support\Tabular::from($datensätze,
 
 ## Offene Punkte je Plugin
 
-- **Inventory360:** API-2.0-Referenz (oder OpenAPI/Swagger-Datei) beschaffen: Art der Token-Übergabe,
-  Personen, Standorte, Zuordnung Gerät ↔ Person, Antwortfelder. Danach Personen-Abgleich und Kachel.
+- **Inventory360:** Endpunkte seit 0.25.0 aus der API-2.0-Referenz (apidoc, docs.enteksystems.de/inventory360/api/2.0/):
+  Token unverändert in «Authorization», Listen mit `per_page` als `{_query, results}`. Offen: Antwortfelder an der
+  eigenen Instanz prüfen (Referenz beschreibt sie kaum), Zuordnung Gerät ↔ Person (Felder `owner`/`user_id` der
+  Hardware, `GET /users/byEmail/{email}`) für Personen-Abgleich und Kachel – erst auf dem Schweizer Server.
 - **Jamf:** Token-Pfad (`/api/v1/oauth/token` oder `/api/oauth/token`) an der eigenen Instanz prüfen
   (Einstellung), `computers-inventory` v4, genaue Rechte für MDM-Befehle.
 - **LMVZ (inoffiziell):** Keine offizielle Schnittstelle. LMVZ Digital (digital.lmvz.ch) ist aus einer Aufzeichnung

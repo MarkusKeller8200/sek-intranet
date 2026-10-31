@@ -7,6 +7,19 @@ laufend unter **Unveröffentlicht** und werden beim Erhöhen der Version zur neu
 
 ## [Unveröffentlicht]
 
+## [0.25.0] – 2026-10-31
+
+### Geändert
+
+- Plugin Inventory360 nach der API-2.0-Referenz von enteksystems: 40 Endpunkte (Hardware, Software, Lizenzen,
+  Verträge, Standorte/Räume, Benutzer, Mitarbeitende, Status, eigene Rechte, Version …), schreibende nur mit Rückfrage
+- Token-Übergabe: Vorgabe jetzt «Authorization» ohne Präfix (laut Referenz); Bearer/Token weiterhin wählbar
+- Verbindungstest zeigt die Anzahl Geräte; Suche mit Seitenangabe («50 von 1200»)
+
+### Neu
+
+- Inventory360-Aktionen «Gerät anzeigen» (nach Inventarnummer) und «Hardware-Kategorien»
+
 ## [0.24.0] – 2026-10-31
 
 ### Neu

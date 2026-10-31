@@ -1,12 +1,12 @@
 {
     "id": "inventory360",
     "name": "Inventory360",
-    "version": "0.9",
+    "version": "1.0",
     "api": 1,
     "category": "inventory",
     "author": "SekBülach Intranet",
-    "description": "Hardware-Inventar aus Inventory360 (enteksystems, API 2.0): Inventar durchsuchen, Gerät nach Inventarnummer anzeigen. Weitere Funktionen folgen, sobald die API-2.0-Referenz vorliegt.",
-    "data_notice": "Inventory360 kann Personenzuordnungen zu Geräten enthalten.",
+    "description": "Hardware-Inventar aus Inventory360 (enteksystems, API 2.0): Verbindung prüfen, Inventar durchsuchen, Gerät nach Inventarnummer, Hardware-Kategorien; alle lesenden Endpunkte der API-2.0-Referenz im API-Tester.",
+    "data_notice": "Inventory360 enthält Zuordnungen von Geräten zu Personen (Besitzer, Benutzer, Mitarbeitende). Auf dem Testserver (nicht in der Schweiz) nur die Verbindung prüfen.",
     "service": {
         "name": "Inventory360 API 2.0",
         "home": "https://www.enteksystems.de",
@@ -18,7 +18,7 @@
             "header_setting": "auth_header",
             "prefix_setting": "auth_prefix"
         },
-        "auth_note": "In Inventory360 unter Admin → API → «Hinzufügen» einen Zugang anlegen (Lesen, bei Bedarf Schreiben). Das erzeugte Token hier eintragen. Wie das Token übergeben wird (Kopfzeile, Präfix), steht in der API-2.0-Referenz – Standard: «Authorization: Bearer …».",
+        "auth_note": "In Inventory360 unter Admin → API → «Hinzufügen» einen Zugang anlegen (nur Lesen genügt). Laut API-2.0-Referenz wird das Token unverändert in der Kopfzeile «Authorization» übergeben (ohne «Bearer»). Prüfen lässt es sich ohne Kopfzeile mit POST /checkToken.",
         "endpoints": [
             {
                 "id": "hardware",
@@ -26,14 +26,399 @@
                 "path": "/api/2.0/assets/hardware",
                 "label": "Hardware-Inventar",
                 "status": "partial",
-                "use": "Testen, Inventar durchsuchen",
-                "note": "Laut Admin-Doku; Antwortfelder noch nicht verifiziert.",
+                "use": "Verbindungstest, Inventar durchsuchen",
+                "note": "Mit per_page Antwort {_query:{total,pages,page,next,prev}, results:[…]}, sonst Liste. Felder ausser id, inventorynumber, name in der Referenz nicht beschrieben.",
                 "params": [
-                    { "name": "per_page", "default": "50" },
-                    { "name": "page", "default": "1" },
-                    { "name": "search", "example": "Inventarnummer oder Name" },
-                    { "name": "discovery", "help": "0 oder 1" }
+                    {
+                        "name": "search",
+                        "example": "Inventarnummer oder Name"
+                    },
+                    {
+                        "name": "per_page",
+                        "default": "50"
+                    },
+                    {
+                        "name": "page",
+                        "default": "1"
+                    },
+                    {
+                        "name": "hwcat_id",
+                        "help": "Kategorie-ID, mehrere mit Komma"
+                    },
+                    {
+                        "name": "hwtype_id",
+                        "help": "Typ-ID, mehrere mit Komma"
+                    },
+                    {
+                        "name": "discovery",
+                        "help": "0 oder 1: mit Discovery-Daten"
+                    },
+                    {
+                        "name": "scancodes",
+                        "help": "0 oder 1: mit Scancodes"
+                    }
                 ]
+            },
+            {
+                "id": "hardware-get",
+                "method": "GET",
+                "path": "/api/2.0/assets/hardware/{inventorynumber}",
+                "label": "Gerät nach Inventarnummer",
+                "status": "partial",
+                "use": "Aktion «Gerät anzeigen»",
+                "params": [
+                    {
+                        "name": "inventorynumber",
+                        "required": true
+                    },
+                    {
+                        "name": "discovery",
+                        "help": "0 oder 1"
+                    }
+                ]
+            },
+            {
+                "id": "hardware-discovery",
+                "method": "GET",
+                "path": "/api/2.0/assets/hardware/{inventorynumber}/discovery",
+                "label": "Discovery-Daten eines Geräts",
+                "status": "partial",
+                "params": [
+                    {
+                        "name": "inventorynumber",
+                        "required": true
+                    }
+                ]
+            },
+            {
+                "id": "hardware-files",
+                "method": "GET",
+                "path": "/api/2.0/assets/hardware/{inventorynumber}/files",
+                "label": "Dateien eines Geräts",
+                "status": "partial",
+                "params": [
+                    {
+                        "name": "inventorynumber",
+                        "required": true
+                    }
+                ]
+            },
+            {
+                "id": "hardwarecategories",
+                "method": "GET",
+                "path": "/api/2.0/base/hardwarecategories",
+                "label": "Hardware-Kategorien",
+                "status": "partial",
+                "use": "Aktion «Hardware-Kategorien»"
+            },
+            {
+                "id": "hardwaretypes",
+                "method": "GET",
+                "path": "/api/2.0/base/hardwaretypes",
+                "label": "Hardware-Typen",
+                "status": "partial"
+            },
+            {
+                "id": "assettypes",
+                "method": "GET",
+                "path": "/api/2.0/base/assetTypes",
+                "label": "Asset-Typen",
+                "status": "partial"
+            },
+            {
+                "id": "basemodels",
+                "method": "GET",
+                "path": "/api/2.0/base/basemodels",
+                "label": "Basismodelle",
+                "status": "partial"
+            },
+            {
+                "id": "software",
+                "method": "GET",
+                "path": "/api/2.0/assets/software",
+                "label": "Software",
+                "status": "partial",
+                "params": [
+                    {
+                        "name": "search",
+                        "help": "Suchfilter"
+                    }
+                ]
+            },
+            {
+                "id": "software-get",
+                "method": "GET",
+                "path": "/api/2.0/assets/software/{id}",
+                "label": "Software (einzeln)",
+                "status": "partial",
+                "params": [
+                    {
+                        "name": "id",
+                        "required": true
+                    }
+                ]
+            },
+            {
+                "id": "licenses",
+                "method": "GET",
+                "path": "/api/2.0/assets/licenses",
+                "label": "Lizenzen",
+                "status": "partial",
+                "use": "später: Lizenzen",
+                "params": [
+                    {
+                        "name": "search",
+                        "help": "Suchfilter"
+                    }
+                ]
+            },
+            {
+                "id": "license-get",
+                "method": "GET",
+                "path": "/api/2.0/assets/licenses/{id}",
+                "label": "Lizenz (einzeln)",
+                "status": "partial",
+                "params": [
+                    {
+                        "name": "id",
+                        "required": true
+                    }
+                ]
+            },
+            {
+                "id": "contracts",
+                "method": "GET",
+                "path": "/api/2.0/assets/contracts",
+                "label": "Verträge",
+                "status": "partial"
+            },
+            {
+                "id": "leasing",
+                "method": "GET",
+                "path": "/api/2.0/assets/leasing",
+                "label": "Leasing",
+                "status": "partial"
+            },
+            {
+                "id": "orders",
+                "method": "GET",
+                "path": "/api/2.0/assets/orders",
+                "label": "Bestellungen",
+                "status": "partial"
+            },
+            {
+                "id": "supplies",
+                "method": "GET",
+                "path": "/api/2.0/assets/supplies",
+                "label": "Verbrauchsmaterial",
+                "status": "partial"
+            },
+            {
+                "id": "printersupplies",
+                "method": "GET",
+                "path": "/api/2.0/assets/printersupplies",
+                "label": "Druckerzubehör",
+                "status": "partial"
+            },
+            {
+                "id": "phonecontracts",
+                "method": "GET",
+                "path": "/api/2.0/assets/phonecontracts",
+                "label": "Telefonverträge",
+                "status": "partial"
+            },
+            {
+                "id": "simcards",
+                "method": "GET",
+                "path": "/api/2.0/assets/simcards",
+                "label": "SIM-Karten",
+                "status": "partial"
+            },
+            {
+                "id": "maintenances",
+                "method": "GET",
+                "path": "/api/2.0/maintenances",
+                "label": "Wartungen",
+                "status": "partial"
+            },
+            {
+                "id": "inventories",
+                "method": "GET",
+                "path": "/api/2.0/inventories",
+                "label": "Inventuren",
+                "status": "partial"
+            },
+            {
+                "id": "locations",
+                "method": "GET",
+                "path": "/api/2.0/base/locations",
+                "label": "Standorte",
+                "status": "partial"
+            },
+            {
+                "id": "buildings",
+                "method": "GET",
+                "path": "/api/2.0/base/buildings",
+                "label": "Gebäude",
+                "status": "partial"
+            },
+            {
+                "id": "floors",
+                "method": "GET",
+                "path": "/api/2.0/base/floors",
+                "label": "Stockwerke",
+                "status": "partial"
+            },
+            {
+                "id": "rooms",
+                "method": "GET",
+                "path": "/api/2.0/base/rooms",
+                "label": "Räume",
+                "status": "partial",
+                "params": [
+                    {
+                        "name": "search",
+                        "help": "Suchfilter"
+                    }
+                ]
+            },
+            {
+                "id": "branches",
+                "method": "GET",
+                "path": "/api/2.0/base/branches",
+                "label": "Niederlassungen",
+                "status": "partial"
+            },
+            {
+                "id": "organizations",
+                "method": "GET",
+                "path": "/api/2.0/base/organizations",
+                "label": "Organisationen",
+                "status": "partial"
+            },
+            {
+                "id": "departments",
+                "method": "GET",
+                "path": "/api/2.0/base/departments",
+                "label": "Abteilungen",
+                "status": "partial"
+            },
+            {
+                "id": "costcenters",
+                "method": "GET",
+                "path": "/api/2.0/base/costcenters",
+                "label": "Kostenstellen",
+                "status": "partial"
+            },
+            {
+                "id": "users",
+                "method": "GET",
+                "path": "/api/2.0/users",
+                "label": "Benutzer (Personen)",
+                "status": "partial",
+                "use": "später: Personen abgleichen",
+                "note": "Personendaten.",
+                "params": [
+                    {
+                        "name": "search",
+                        "help": "Suchfilter"
+                    }
+                ]
+            },
+            {
+                "id": "user-get",
+                "method": "GET",
+                "path": "/api/2.0/users/{id}",
+                "label": "Benutzer (einzeln)",
+                "status": "partial",
+                "note": "Personendaten.",
+                "params": [
+                    {
+                        "name": "id",
+                        "required": true
+                    }
+                ]
+            },
+            {
+                "id": "user-by-email",
+                "method": "GET",
+                "path": "/api/2.0/users/byEmail/{email}",
+                "label": "Benutzer nach E-Mail",
+                "status": "partial",
+                "use": "später: Abgleich über die Schul-E-Mail",
+                "note": "Personendaten.",
+                "params": [
+                    {
+                        "name": "email",
+                        "required": true
+                    }
+                ]
+            },
+            {
+                "id": "user-by-username",
+                "method": "GET",
+                "path": "/api/2.0/users/byUsername/{username}",
+                "label": "Benutzer nach Benutzername",
+                "status": "partial",
+                "note": "Personendaten.",
+                "params": [
+                    {
+                        "name": "username",
+                        "required": true
+                    }
+                ]
+            },
+            {
+                "id": "employees",
+                "method": "GET",
+                "path": "/api/2.0/employees",
+                "label": "Mitarbeitende",
+                "status": "partial",
+                "note": "Personendaten.",
+                "params": [
+                    {
+                        "name": "search",
+                        "help": "Suchfilter"
+                    }
+                ]
+            },
+            {
+                "id": "customizing-fields",
+                "method": "GET",
+                "path": "/api/2.0/customizing/fields",
+                "label": "Eigene Felder",
+                "status": "partial"
+            },
+            {
+                "id": "status",
+                "method": "GET",
+                "path": "/api/2.0/status",
+                "label": "Zustand und Kennzahlen",
+                "status": "partial"
+            },
+            {
+                "id": "settings",
+                "method": "GET",
+                "path": "/api/2.0/settings",
+                "label": "Einstellungen der Instanz",
+                "status": "partial"
+            },
+            {
+                "id": "me",
+                "method": "POST",
+                "path": "/api/2.0/me",
+                "label": "Eigener API-Zugang und Rechte",
+                "status": "partial",
+                "note": "Zeigt die Rechte des Tokens (z. B. HARDWARE_SHOW, HARDWARE_MODIFY).",
+                "effect": "read"
+            },
+            {
+                "id": "version",
+                "method": "POST",
+                "path": "/api/2.0/version",
+                "label": "Version der Instanz",
+                "status": "partial",
+                "effect": "read"
             },
             {
                 "id": "hardware-update",
@@ -41,52 +426,46 @@
                 "path": "/api/2.0/assets/hardware/{inventorynumber}",
                 "label": "Hardware ändern",
                 "status": "partial",
+                "use": "API-Tester (z. B. Kostenstellen, Standort, Besitzer)",
+                "params": [
+                    {
+                        "name": "inventorynumber",
+                        "required": true
+                    }
+                ],
                 "danger": true,
-                "use": "API-Tester (z. B. Kostenstellen)",
-                "params": [{ "name": "inventorynumber", "required": true }],
                 "body": {
                     "costcenters": [
-                        { "name": "Schulhaus Hinterbirch", "percentage": 100 }
+                        {
+                            "name": "Schulhaus Hinterbirch",
+                            "percentage": 100
+                        }
                     ]
                 }
             },
             {
-                "id": "software",
-                "method": "GET",
-                "path": "/api/2.0/assets/software/{id}",
-                "label": "Software-Lizenz",
-                "status": "partial",
-                "use": "API-Tester",
-                "params": [{ "name": "id", "required": true }]
-            },
-            {
-                "id": "software-assign",
+                "id": "software-update",
                 "method": "PUT",
                 "path": "/api/2.0/assets/software/{id}",
-                "label": "Software zuweisen (Personen/Hardware)",
+                "label": "Software ändern (z. B. Zuweisung)",
                 "status": "partial",
-                "danger": true,
                 "use": "später: Lizenzzuweisung",
-                "params": [{ "name": "id", "required": true }],
-                "body": { "users": [{ "user_id": 1, "comment": "Intranet" }] }
-            },
-            {
-                "id": "persons",
-                "method": "GET",
-                "path": "/api/2.0/base/persons",
-                "label": "Personen",
-                "status": "planned",
-                "use": "später: Personen abgleichen",
-                "note": "Pfad noch nicht bekannt (API-2.0-Referenz nötig)."
-            },
-            {
-                "id": "assignments",
-                "method": "GET",
-                "path": "/api/2.0/assets/hardware/{inventorynumber}/assignments",
-                "label": "Zuordnung Gerät ↔ Person",
-                "status": "planned",
-                "use": "später: Geräte einer Person",
-                "note": "Pfad noch nicht bekannt."
+                "note": "Aufbau der Zuweisung in der Referenz nicht beschrieben.",
+                "params": [
+                    {
+                        "name": "id",
+                        "required": true
+                    }
+                ],
+                "danger": true,
+                "body": {
+                    "users": [
+                        {
+                            "user_id": 1,
+                            "comment": "Intranet"
+                        }
+                    ]
+                }
             }
         ]
     },
@@ -96,7 +475,8 @@
             "type": "url",
             "label": "Adresse der Inventory360-Instanz",
             "required": true,
-            "placeholder": "https://sekbuelach.inventory360.de"
+            "placeholder": "https://sekbuelach.inventory360.de",
+            "help": "Ohne /api/2.0 am Ende."
         },
         {
             "key": "api_token",
@@ -114,12 +494,22 @@
             "key": "auth_prefix",
             "type": "select",
             "label": "Präfix",
-            "default": "Bearer",
+            "default": "none",
             "choices": [
-                ["Bearer", "Bearer"],
-                ["Token", "Token"],
-                ["none", "ohne"]
-            ]
+                [
+                    "none",
+                    "ohne (laut Referenz)"
+                ],
+                [
+                    "Bearer",
+                    "Bearer"
+                ],
+                [
+                    "Token",
+                    "Token"
+                ]
+            ],
+            "help": "Laut API-2.0-Referenz ohne Präfix."
         }
     ],
     "actions": [
@@ -140,6 +530,25 @@
                     "default": 50
                 }
             ]
+        },
+        {
+            "id": "device",
+            "label": "Gerät anzeigen",
+            "kind": "read",
+            "options": [
+                {
+                    "key": "inventorynumber",
+                    "type": "text",
+                    "label": "Inventarnummer",
+                    "required": true
+                }
+            ]
+        },
+        {
+            "id": "categories",
+            "label": "Hardware-Kategorien",
+            "kind": "read",
+            "options": []
         }
     ]
 }

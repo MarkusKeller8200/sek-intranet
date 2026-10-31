@@ -175,6 +175,34 @@ class PluginIntegrationsTest extends TestCase
         $this->assertSame('Beamer Zimmer 104', $result['rows'][0]['name']);
     }
 
+    public function test_inventory360_follows_api_reference(): void
+    {
+        Http::fake([
+            'inventory.example.test/api/2.0/assets/hardware/101001' => Http::response(['id' => 12, 'inventorynumber' => 101001, 'name' => 'Beamer 104', 'room' => ['x' => 1]]),
+            'inventory.example.test/api/2.0/assets/hardware/999' => Http::response([], 404),
+            'inventory.example.test/api/2.0/assets/hardware*' => Http::response([
+                '_query' => ['total' => 70, 'pages' => 70, 'page' => 1],
+                'results' => [['id' => 12, 'inventorynumber' => 101001, 'name' => 'Beamer 104']],
+            ]),
+        ]);
+
+        // Vorgabe laut Referenz: Token unverändert in «Authorization»
+        $this->enable('inventory360', ['base_url' => 'https://inventory.example.test', 'api_token' => 'inv-token-123456']);
+        $this->signInAs('admin');
+
+        $this->postJson('/plugins/inventory360/test')->assertOk()->assertJson(['ok' => true, 'message' => 'Verbunden, Hardware-Inventar lesbar (70 Geräte).']);
+        Http::assertSent(fn (Request $r): bool => $r->hasHeader('Authorization', 'inv-token-123456'));
+
+        $result = $this->postJson('/plugins/inventory360/aktion/search', ['options' => ['search' => 'Beamer', 'per_page' => 1]])->assertOk()->json();
+        $this->assertSame('1 von 70 Einträgen (erste Seite).', $result['message']);
+
+        $device = $this->postJson('/plugins/inventory360/aktion/device', ['options' => ['inventorynumber' => '101001']])->assertOk()->json();
+        $this->assertSame(['id', 'inventorynumber', 'name'], array_column($device['rows'], 'field'));
+
+        $this->postJson('/plugins/inventory360/aktion/device', ['options' => ['inventorynumber' => '999']])->assertOk()->assertJsonFragment(['message' => 'Kein Gerät mit Inventarnummer 999 gefunden.']);
+        $this->postJson('/plugins/inventory360/aktion/device', ['options' => ['inventorynumber' => '../x']])->assertOk()->assertJsonFragment(['message' => 'Bitte eine gültige Inventarnummer angeben.']);
+    }
+
     public function test_ida_checks_health_without_token(): void
     {
         Http::fake(['ida.example.test/up' => Http::response('<html>ok</html>')]);
