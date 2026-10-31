@@ -5,7 +5,11 @@ const HIDDEN = /key|token|pass|secret|pin|code/i;
 
 /** Einfacher Wert als Text (Objekte und Listen bleiben leer). */
 function cellText(value: unknown): string {
-    return typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean' ? String(value) : '';
+    return typeof value === 'string' ||
+        typeof value === 'number' ||
+        typeof value === 'boolean'
+        ? String(value)
+        : '';
 }
 
 /** Erste Liste von Objekten in einer Antwort als Tabelle (höchstens 10 Spalten, geheime Felder ausgeblendet). */
