@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Gate;
  * Module aus config/intranet.php → modules: Navigation (Seitenleiste) und Platzhalter.
  *
  * @phpstan-type Module array{key: string, title: string, icon: string, href: string, planned: bool, external: string|null, open: string|null, collapse?: bool, children?: list<array<string, mixed>>}
- * @phpstan-type Embedded array{key: string, title: string, icon: string, group: string, color: string, description: string, collapse: bool, url: string|null, open: string, repo: string|null, stack: string|null}
+ * @phpstan-type Embedded array{key: string, title: string, icon: string, group: string, color: string, description: string, collapse: bool, url: string|null, open: string, repo: string|null, stack: string|null, allowed: bool}
  * @phpstan-type Group array{key: string, title: string, color: string, icon: string, items: list<Module>}
  */
 class ModuleNavigation
@@ -187,7 +187,7 @@ class ModuleNavigation
 
     /**
      * @param  array<mixed>  $module
-     * @return array{url: string|null, open: string, repo: string|null, stack: string|null}|null
+     * @return array{url: string|null, open: string, repo: string|null, stack: string|null, allowed: bool}|null
      */
     private function embed(array $module): ?array
     {
@@ -204,6 +204,8 @@ class ModuleNavigation
             'open' => in_array($open, ['embed', 'tab', 'both'], true) ? $open : 'both',
             'repo' => isset($embed['repo']) && is_string($embed['repo']) ? $embed['repo'] : null,
             'stack' => isset($embed['stack']) && is_string($embed['stack']) ? $embed['stack'] : null,
+            // Anbieter erlaubt das Einbetten nachweislich (z. B. Escola): keine automatische Prüfung nötig
+            'allowed' => ($embed['allowed'] ?? false) === true,
         ];
     }
 

@@ -7,6 +7,13 @@ laufend unter **Unveröffentlicht** und werden beim Erhöhen der Version zur neu
 
 ## [Unveröffentlicht]
 
+## [0.22.1] – 2026-10-31
+
+### Geändert
+
+- Escola öffnet immer im Intranet-Rahmen (Einbetten von Escola bestätigt, `embed.allowed`), ohne automatische
+  Prüfung; Rahmen erlaubt zusätzlich Dialoge (Bestätigungen in Fachanwendungen)
+
 ## [0.22.0] – 2026-10-31
 
 ### Neu

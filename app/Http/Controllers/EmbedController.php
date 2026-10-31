@@ -19,7 +19,11 @@ class EmbedController extends Controller
         $module = $modules->embedded($key, $request->user());
         abort_if($module === null, 404);
 
-        $frame = $module['url'] !== null && $module['open'] !== 'tab' ? FrameCheck::check($module['url']) : null;
+        $frame = match (true) {
+            $module['url'] === null || $module['open'] === 'tab' => null,
+            $module['allowed'] => ['embeddable' => true, 'reason' => 'Einbetten vom Anbieter erlaubt'],
+            default => FrameCheck::check($module['url']),
+        };
 
         return Inertia::render('modules/embed', [
             'module' => $module,

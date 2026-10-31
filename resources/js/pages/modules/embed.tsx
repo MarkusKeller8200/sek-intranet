@@ -197,7 +197,7 @@ export default function Embed({
                             title={module.title}
                             className="min-h-[calc(100vh-12rem)] w-full flex-1 rounded-lg border bg-background"
                             // Anmeldung und Formulare der eingebundenen Seite zulassen, sonst nichts
-                            sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox allow-downloads"
+                            sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox allow-downloads allow-modals"
                             referrerPolicy="strict-origin-when-cross-origin"
                             allow="clipboard-write"
                         />

@@ -31,13 +31,16 @@ class FachanwendungenTest extends TestCase
 
     public function test_fachanwendung_page_collapses_sidebar(): void
     {
-        Http::fake(['*' => Http::response('', 200)]);
+        // Escola erlaubt das Einbetten (bestätigt): keine Prüfung, Rahmen auch wenn die Prüfung anders ausfiele
+        Http::fake(['*' => Http::response('', 200, ['X-Frame-Options' => 'SAMEORIGIN'])]);
         $this->signInAs('lehrperson');
 
         $this->get('/einbindung/escola')->assertOk()->assertInertia(fn (Assert $page) => $page
             ->component('modules/embed')
             ->where('module.collapse', true)
-            ->where('module.group', 'Kommunikation'));
+            ->where('module.group', 'Kommunikation')
+            ->where('frame.embeddable', true));
+        Http::assertNotSent(fn ($r): bool => str_contains($r->url(), 'sekbuelach.ch/escola'));
 
         // Andere Einbindungen lassen das Seitenmenü offen
         $this->get('/einbindung/lehrplan21')->assertInertia(fn (Assert $page) => $page->where('module.collapse', false));

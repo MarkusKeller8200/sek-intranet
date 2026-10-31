@@ -212,8 +212,8 @@ return [
                         'escola' => [
                             'title' => 'Escola',
                             'icon' => 'School',
-                            'description' => 'Schulverwaltung Escola. Gleiche Domain wie das Intranet (sekbuelach.ch): Anmeldung im Rahmen möglich, sofern Escola das Einbetten erlaubt – sonst neuer Tab.',
-                            'embed' => ['url' => env('INTRANET_APP_ESCOLA_URL', 'https://www.sekbuelach.ch/escola/login'), 'open' => 'both'],
+                            'description' => 'Schulverwaltung Escola im Intranet-Rahmen. Escola erlaubt das Einbetten; gleiche Domain wie das Intranet (sekbuelach.ch), die Anmeldung bleibt im Rahmen erhalten.',
+                            'embed' => ['url' => env('INTRANET_APP_ESCOLA_URL', 'https://www.sekbuelach.ch/escola/login'), 'open' => 'both', 'allowed' => true],
                         ],
                         'apple-school-manager' => [
                             'title' => 'Apple School Manager',

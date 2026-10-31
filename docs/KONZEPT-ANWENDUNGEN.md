@@ -56,9 +56,9 @@ ganze Breite hat.
 | Apple School Manager | `https://school.apple.com`                                                              | immer neuer Tab (Apple verbietet das Einbetten)        |
 | Jamf Pro             | `.env` `INTRANET_APP_JAMF_URL`                                                          | Rahmen, falls erlaubt, sonst neuer Tab (Daten: Plugin) |
 
-Escola liegt auf derselben Domain wie das Intranet (`sekbuelach.ch`). Deshalb funktioniert die Anmeldung im
-Rahmen – sofern Escola das Einbetten erlaubt (`X-Frame-Options`/`frame-ancestors`; prüft der Server automatisch).
-Verbietet Escola es, öffnet der Knopf einen neuen Tab. Bessere Lösung als ein Rahmen wäre eine Anmeldung per SSO
+Escola liegt auf derselben Domain wie das Intranet (`sekbuelach.ch`) und erlaubt das Einbetten (bestätigt,
+`embed.allowed: true` überspringt die automatische Prüfung). Die Anmeldung bleibt im Rahmen erhalten.
+«In neuem Tab öffnen» bleibt als Ausweg. Bessere Lösung als ein Rahmen wäre eine Anmeldung per SSO
 (Edulog/Microsoft) mit Escola als eigener Tab; Daten aus Escola kommen ohnehin über das Plugin «Escola».
 
 ## Erwartung bei den fremden Seiten
