@@ -64,7 +64,9 @@ export default function PluginsIndex({
     const testOne = async (plugin: PluginInfo) => {
         setBusy(plugin.id);
         const start = performance.now();
-        const result = await postJson<PluginResult>(`/plugins/${plugin.id}/test`);
+        const result = await postJson<PluginResult>(
+            `/plugins/${plugin.id}/test`,
+        );
         setChecks((c) => ({
             ...c,
             [plugin.id]: {
@@ -82,9 +84,7 @@ export default function PluginsIndex({
             PluginResult & { results?: ({ id: string } & Check)[] }
         >('/plugins/verbindungen-testen');
         setChecks(
-            Object.fromEntries(
-                (result.results ?? []).map((r) => [r.id, r]),
-            ),
+            Object.fromEntries((result.results ?? []).map((r) => [r.id, r])),
         );
         setBusy(null);
         router.reload({ only: ['plugins'] });

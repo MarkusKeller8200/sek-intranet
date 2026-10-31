@@ -49,7 +49,8 @@ function writeStored(value: Record<string, boolean>) {
 
 export function NavModules({ groups }: { groups: ModuleNavGroup[] }) {
     const { isCurrentOrParentUrl } = useCurrentUrl();
-    const { state, isMobile, openMobile, setOpenMobile, setOpen } = useSidebar();
+    const { state, isMobile, openMobile, setOpenMobile, setOpen } =
+        useSidebar();
     const [stored, setStored] = useState<Record<string, boolean>>(readStored);
     // Mobil: bei jedem Öffnen des Menüs alle Hauptmenüs eingeklappt, nicht gemerkt
     const [mobileGroups, setMobileGroups] = useState<Record<string, boolean>>(
@@ -92,7 +93,9 @@ export function NavModules({ groups }: { groups: ModuleNavGroup[] }) {
                 const containsCurrent = group.items.some(
                     (item) =>
                         isCurrentOrParentUrl(item.href) ||
-                        (item.children ?? []).some((c) => isCurrentOrParentUrl(c.href)),
+                        (item.children ?? []).some((c) =>
+                            isCurrentOrParentUrl(c.href),
+                        ),
                 );
                 // Standard: offen, wenn die Gruppe Umgesetztes enthält
                 const defaultOpen = group.items.some((item) => !item.planned);
@@ -157,15 +160,23 @@ export function NavModules({ groups }: { groups: ModuleNavGroup[] }) {
                                             // Untermenü: in der Symbolleiste flach, sonst aufklappbar
                                             if (item.children) {
                                                 return iconOnly ? (
-                                                    item.children.map((child) => (
-                                                        <MenuEntry
-                                                            key={child.key}
-                                                            item={child}
-                                                            color={color}
-                                                            current={isCurrentOrParentUrl(child.href)}
-                                                            onSelect={() => afterSelect(child)}
-                                                        />
-                                                    ))
+                                                    item.children.map(
+                                                        (child) => (
+                                                            <MenuEntry
+                                                                key={child.key}
+                                                                item={child}
+                                                                color={color}
+                                                                current={isCurrentOrParentUrl(
+                                                                    child.href,
+                                                                )}
+                                                                onSelect={() =>
+                                                                    afterSelect(
+                                                                        child,
+                                                                    )
+                                                                }
+                                                            />
+                                                        ),
+                                                    )
                                                 ) : (
                                                     <SubMenu
                                                         key={item.key}
@@ -173,13 +184,34 @@ export function NavModules({ groups }: { groups: ModuleNavGroup[] }) {
                                                         color={color}
                                                         open={
                                                             isMobile
-                                                                ? (mobileGroups[`sub:${item.key}`] ??
-                                                                  item.children.some((c) => isCurrentOrParentUrl(c.href)))
-                                                                : (stored[`sub:${item.key}`] ??
-                                                                  item.children.some((c) => isCurrentOrParentUrl(c.href)))
+                                                                ? (mobileGroups[
+                                                                      `sub:${item.key}`
+                                                                  ] ??
+                                                                  item.children.some(
+                                                                      (c) =>
+                                                                          isCurrentOrParentUrl(
+                                                                              c.href,
+                                                                          ),
+                                                                  ))
+                                                                : (stored[
+                                                                      `sub:${item.key}`
+                                                                  ] ??
+                                                                  item.children.some(
+                                                                      (c) =>
+                                                                          isCurrentOrParentUrl(
+                                                                              c.href,
+                                                                          ),
+                                                                  ))
                                                         }
-                                                        onOpenChange={(value) => toggle(`sub:${item.key}`, value)}
-                                                        isCurrent={isCurrentOrParentUrl}
+                                                        onOpenChange={(value) =>
+                                                            toggle(
+                                                                `sub:${item.key}`,
+                                                                value,
+                                                            )
+                                                        }
+                                                        isCurrent={
+                                                            isCurrentOrParentUrl
+                                                        }
                                                         onSelect={afterSelect}
                                                     />
                                                 );
@@ -190,8 +222,12 @@ export function NavModules({ groups }: { groups: ModuleNavGroup[] }) {
                                                     key={item.key}
                                                     item={item}
                                                     color={color}
-                                                    current={isCurrentOrParentUrl(item.href)}
-                                                    onSelect={() => afterSelect(item)}
+                                                    current={isCurrentOrParentUrl(
+                                                        item.href,
+                                                    )}
+                                                    onSelect={() =>
+                                                        afterSelect(item)
+                                                    }
                                                 />
                                             );
                                         })}
@@ -222,17 +258,32 @@ function EntryLink({
     color,
     onSelect,
     ...rest
-}: { item: ModuleNavItem; color: GroupColor; onSelect: () => void } & SlotProps) {
+}: {
+    item: ModuleNavItem;
+    color: GroupColor;
+    onSelect: () => void;
+} & SlotProps) {
     const Icon = moduleIcon(item.icon);
 
     return item.open === 'tab' && item.external ? (
-        <a {...rest} href={item.external} target="_blank" rel="noopener noreferrer" onClick={onSelect}>
+        <a
+            {...rest}
+            href={item.external}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={onSelect}
+        >
             <Icon className={color.icon} />
             <span>{item.title}</span>
             <ExternalLink className="ml-auto size-3 opacity-50" />
         </a>
     ) : (
-        <Link {...rest} href={item.href} prefetch={!item.planned} onClick={onSelect}>
+        <Link
+            {...rest}
+            href={item.href}
+            prefetch={!item.planned}
+            onClick={onSelect}
+        >
             <Icon className={cn(!item.planned && color.icon)} />
             <span>{item.title}</span>
         </Link>
@@ -255,7 +306,11 @@ function MenuEntry({
             <SidebarMenuButton
                 asChild
                 isActive={current}
-                tooltip={{ children: item.planned ? `${item.title} (geplant)` : item.title }}
+                tooltip={{
+                    children: item.planned
+                        ? `${item.title} (geplant)`
+                        : item.title,
+                }}
                 className={cn(
                     'border-l-2 border-transparent',
                     current && color.bar,
@@ -298,13 +353,19 @@ function SubMenu({
             <SidebarMenuItem data-testid={`submenu-${item.key}`}>
                 <CollapsibleTrigger asChild>
                     <SidebarMenuButton
-                        className={cn('border-l-2 border-transparent', containsCurrent && !open && color.bar)}
+                        className={cn(
+                            'border-l-2 border-transparent',
+                            containsCurrent && !open && color.bar,
+                        )}
                         aria-expanded={open}
                     >
                         <Icon className={color.icon} />
                         <span>{item.title}</span>
                         <ChevronDown
-                            className={cn('ml-auto size-4 opacity-70 transition-transform duration-200', open && 'rotate-180')}
+                            className={cn(
+                                'ml-auto size-4 opacity-70 transition-transform duration-200',
+                                open && 'rotate-180',
+                            )}
                         />
                     </SidebarMenuButton>
                 </CollapsibleTrigger>
@@ -316,21 +377,32 @@ function SubMenu({
 
                             return (
                                 <SidebarMenuSubItem key={child.key}>
-                                    <SidebarMenuSubButton asChild isActive={current}>
-                                        {child.open === 'tab' && child.external ? (
+                                    <SidebarMenuSubButton
+                                        asChild
+                                        isActive={current}
+                                    >
+                                        {child.open === 'tab' &&
+                                        child.external ? (
                                             <a
                                                 href={child.external}
                                                 target="_blank"
                                                 rel="noopener noreferrer"
                                                 onClick={() => onSelect(child)}
                                             >
-                                                <ChildIcon className={color.icon} />
+                                                <ChildIcon
+                                                    className={color.icon}
+                                                />
                                                 <span>{child.title}</span>
                                                 <ExternalLink className="ml-auto size-3 opacity-50" />
                                             </a>
                                         ) : (
-                                            <Link href={child.href} onClick={() => onSelect(child)}>
-                                                <ChildIcon className={color.icon} />
+                                            <Link
+                                                href={child.href}
+                                                onClick={() => onSelect(child)}
+                                            >
+                                                <ChildIcon
+                                                    className={color.icon}
+                                                />
                                                 <span>{child.title}</span>
                                             </Link>
                                         )}

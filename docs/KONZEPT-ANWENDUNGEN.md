@@ -49,12 +49,12 @@ Kommunikation → **Fachanwendungen** ist ein Untermenü (`items` innerhalb des 
 `collapse_sidebar: true`: Beim Öffnen einer Fachanwendung klappt das Seitenmenü ein, damit die Anwendung die
 ganze Breite hat.
 
-| Fachanwendung        | Adresse                                         | Einbindung                                              |
-| -------------------- | ----------------------------------------------- | ------------------------------------------------------- |
-| CMI                  | `.env` `INTRANET_APP_CMI_URL`                   | Rahmen, falls erlaubt, sonst neuer Tab                  |
-| Escola               | `https://www.sekbuelach.ch/escola/login` (`.env` `INTRANET_APP_ESCOLA_URL` übersteuert) | Rahmen, falls erlaubt, sonst neuer Tab |
-| Apple School Manager | `https://school.apple.com`                      | immer neuer Tab (Apple verbietet das Einbetten)        |
-| Jamf Pro             | `.env` `INTRANET_APP_JAMF_URL`                  | Rahmen, falls erlaubt, sonst neuer Tab (Daten: Plugin) |
+| Fachanwendung        | Adresse                                                                                 | Einbindung                                             |
+| -------------------- | --------------------------------------------------------------------------------------- | ------------------------------------------------------ |
+| CMI                  | `.env` `INTRANET_APP_CMI_URL`                                                           | Rahmen, falls erlaubt, sonst neuer Tab                 |
+| Escola               | `https://www.sekbuelach.ch/escola/login` (`.env` `INTRANET_APP_ESCOLA_URL` übersteuert) | Rahmen, falls erlaubt, sonst neuer Tab                 |
+| Apple School Manager | `https://school.apple.com`                                                              | immer neuer Tab (Apple verbietet das Einbetten)        |
+| Jamf Pro             | `.env` `INTRANET_APP_JAMF_URL`                                                          | Rahmen, falls erlaubt, sonst neuer Tab (Daten: Plugin) |
 
 Escola liegt auf derselben Domain wie das Intranet (`sekbuelach.ch`). Deshalb funktioniert die Anmeldung im
 Rahmen – sofern Escola das Einbetten erlaubt (`X-Frame-Options`/`frame-ancestors`; prüft der Server automatisch).
