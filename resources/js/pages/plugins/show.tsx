@@ -1,6 +1,7 @@
 import { Head, Link, router, useForm } from '@inertiajs/react';
 import {
     ArrowLeft,
+    BookOpen,
     ExternalLink,
     FlaskConical,
     Play,
@@ -154,6 +155,13 @@ export default function PluginShow({
                             >
                                 <FlaskConical /> Testen
                             </Button>
+                            {plugin.service.endpoints.length > 0 && (
+                                <Button variant="outline" asChild>
+                                    <Link href={`/plugins/${plugin.id}/api-ansicht`}>
+                                        <BookOpen /> API-Ansicht
+                                    </Link>
+                                </Button>
+                            )}
                         </>
                     }
                 />

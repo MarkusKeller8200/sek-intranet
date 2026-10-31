@@ -234,6 +234,8 @@ Für Antworten mit unbekannten Feldern baut `Support\Tabular::from($datensätze,
 - Fehler eines Plugins brechen nie die Aktion im Intranet ab (Ereignisse laufen danach, Fehler ins Protokoll).
 - Endpunkte nur aus der Hersteller-Doku übernehmen; Unbestätigtes als `partial` mit `note`, Fehlendes als `planned`.
 - Für jedes Plugin Tests mit `Http::fake()` schreiben (Vorlage: `tests/Feature/PluginIntegrationsTest.php`).
+- Endpunkte aus einer OpenAPI-Datei oder einer Aufzeichnung des API-Recorders nicht abtippen, sondern mit
+  `php artisan intranet:plugin-from-openapi` übernehmen (`docs/KONZEPT-API-ZU-PLUGIN.md`); Ergebnis ist `partial`.
 
 ## Offene Punkte je Plugin
 

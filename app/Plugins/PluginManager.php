@@ -82,6 +82,12 @@ final class PluginManager
         return $this->errors;
     }
 
+    /** Ordner mit den Plugins (plugins/). */
+    public function path(): string
+    {
+        return $this->path;
+    }
+
     public function manifest(string $id): PluginManifest
     {
         return ($this->all()[$id] ?? throw new InvalidArgumentException("Plugin «{$id}» nicht gefunden."))['manifest'];

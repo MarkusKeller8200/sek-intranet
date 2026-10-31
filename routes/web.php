@@ -3,6 +3,7 @@
 use App\Http\Controllers\AnnouncementController;
 use App\Http\Controllers\ApiDocsController;
 use App\Http\Controllers\ApiRecorderController;
+use App\Http\Controllers\ApiViewController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DataStructureController;
@@ -97,9 +98,11 @@ Route::middleware('auth')->group(function () {
 
         // REST-API: Beschreibung mit Tester und Tokens
         Route::get('api-doku', [ApiDocsController::class, 'show'])->name('api-docs');
+        Route::get('api-doku/referenz', [ApiViewController::class, 'own'])->name('api-docs.reference');
         Route::get('api-recorder', [ApiRecorderController::class, 'index'])->name('api-recorder');
         Route::get('api-recorder/neu', [ApiRecorderController::class, 'create'])->name('api-recorder.create');
         Route::get('api-recorder/{id}', [ApiRecorderController::class, 'show'])->name('api-recorder.show');
+        Route::get('api-recorder/{id}/ansicht', [ApiViewController::class, 'recording'])->name('api-recorder.view');
         Route::get('api-recorder/{id}/plugin-entwurf', [ApiRecorderController::class, 'pluginDraft'])->name('api-recorder.plugin-draft');
         Route::post('api-recorder', [ApiRecorderController::class, 'store'])->middleware('throttle:120,1')->name('api-recorder.store');
         Route::delete('api-recorder/{id}', [ApiRecorderController::class, 'destroy'])->name('api-recorder.destroy');
@@ -109,6 +112,7 @@ Route::middleware('auth')->group(function () {
         // Plugins (Anbindung anderer Systeme per API)
         Route::get('plugins', [PluginController::class, 'index'])->name('plugins.index');
         Route::get('plugins/{id}', [PluginController::class, 'show'])->name('plugins.show');
+        Route::get('plugins/{id}/api-ansicht', [ApiViewController::class, 'plugin'])->name('plugins.api-view');
         Route::post('plugins/{id}/schalter', [PluginController::class, 'toggle'])->name('plugins.toggle');
         Route::put('plugins/{id}/einstellungen', [PluginController::class, 'settings'])->name('plugins.settings');
         Route::middleware('throttle:60,1')->group(function () {

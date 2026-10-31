@@ -41,7 +41,9 @@ Projekt: SekBülach Intranet, Prototyp. Stack und Konventionen wie IDA.
 - Importe: Personen zuerst über die Datenherkunft (`PersonLinks`, System + ID) suchen, dann über die E-Mail;
   `PeopleImport` mit Systemschlüssel und `_external_id` verwenden.
 - API-Recorder (`docs/KONZEPT-API-ZU-PLUGIN.md`): Aufzeichnungen einem Plugin zuweisen; Entwürfe daraus nur als
-  `partial` ins Manifest übernehmen und erst nach Abgleich mit der Hersteller-Doku `full` setzen.
+  `partial` ins Manifest übernehmen und erst nach Abgleich mit der Hersteller-Doku `full` setzen. Dafür
+  `php artisan intranet:plugin-from-openapi` verwenden (nie in Produktion). API-Ansichten nur über
+  `components/api-reference.tsx` (Scalar ohne Telemetrie, fremde Schriften und Proxy).
 - Wird ein Schlüssel einer Auswahlliste umbenannt, Umstellung unter `renames` eintragen
   (`php artisan intranet:upgrade` stellt bestehende Daten beim Start um).
 

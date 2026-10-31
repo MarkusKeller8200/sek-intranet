@@ -1,5 +1,6 @@
-import { Head, router } from '@inertiajs/react';
+import { Head, Link, router } from '@inertiajs/react';
 import {
+    BookOpen,
     ChevronRight,
     Copy,
     ExternalLink,
@@ -630,6 +631,12 @@ export default function ApiDocs({
                     title={`${spec.info.title} ${spec.info.version}`}
                     description="REST-API mit OpenAPI-Beschreibung. Endpunkte direkt hier ausprobieren."
                     actions={
+                        <>
+                        <Button asChild>
+                            <Link href="/api-doku/referenz">
+                                <BookOpen /> Referenz (Scalar)
+                            </Link>
+                        </Button>
                         <Button variant="outline" asChild>
                             <a
                                 href="/api/openapi.json"
@@ -639,6 +646,7 @@ export default function ApiDocs({
                                 <ExternalLink /> openapi.json
                             </a>
                         </Button>
+                        </>
                     }
                 />
 

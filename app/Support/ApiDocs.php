@@ -166,9 +166,59 @@ final class ApiDocs
     }
 
     /**
+     * Aufzeichnung als OpenAPI 3.1 (Struktur wie im Browser, resources/js/lib/api-recorder/openapi.ts),
+     * Grundlage für den Generator intranet:plugin-from-openapi.
+     *
+     * @param  array<string, mixed>  $doc
+     * @return array<string, mixed>
+     */
+    public static function toOpenApi(array $doc): array
+    {
+        $paths = [];
+        foreach ((array) ($doc['operations'] ?? []) as $op) {
+            if (! is_array($op)) {
+                continue;
+            }
+            $path = (string) ($op['path'] ?? '/');
+            $params = [];
+            preg_match_all('/\{([^}]+)\}/', $path, $m);
+            foreach ($m[1] as $name) {
+                $params[] = ['name' => $name, 'in' => 'path', 'required' => true, 'schema' => ['type' => 'string']];
+            }
+            foreach (array_keys((array) ($op['query'] ?? [])) as $name) {
+                $params[] = ['name' => (string) $name, 'in' => 'query', 'required' => false, 'schema' => ['type' => 'string']];
+            }
+            $status = (string) ((int) ($op['status'] ?? 0) ?: 200);
+            $response = ['description' => 'OK'];
+            if (is_array($op['responseSchema'] ?? null) && is_string($op['responseType'] ?? null)) {
+                $response['content'] = [$op['responseType'] => ['schema' => $op['responseSchema']]];
+            }
+            $operation = array_filter([
+                'summary' => (string) ($op['summary'] ?? '') ?: null,
+                'tags' => ($op['tag'] ?? '') !== '' ? [(string) $op['tag']] : null,
+                'parameters' => $params ?: null,
+                'responses' => [$status => $response],
+            ], fn (mixed $v): bool => $v !== null);
+            if (is_array($op['requestSchema'] ?? null) && is_string($op['requestType'] ?? null)) {
+                $operation['requestBody'] = ['content' => [$op['requestType'] => ['schema' => $op['requestSchema']]]];
+            }
+            $paths[$path][strtolower((string) ($op['method'] ?? 'get'))] = $operation;
+        }
+
+        return [
+            'openapi' => '3.1.0',
+            'info' => array_filter(['title' => (string) ($doc['title'] ?? 'API'), 'version' => '1.0', 'description' => (string) ($doc['description'] ?? '') ?: null]),
+            'servers' => ($doc['base_url'] ?? '') !== '' ? [['url' => (string) $doc['base_url']]] : [],
+            'paths' => $paths,
+        ];
+    }
+
+    /**
+     * Endpunkt-ID aus dem Pfad (api/ und v1/ weggelassen, Platzhalter → «one»), eindeutig innerhalb $used.
+     *
      * @param  array<string, true>  $used
      */
-    private static function endpointId(string $method, string $path, array &$used): string
+    public static function endpointId(string $method, string $path, array &$used): string
     {
         $parts = array_values(array_filter(explode('/', (string) preg_replace('/\{[^}]*\}/', 'one', strtolower($path))), fn (string $p): bool => $p !== '' && preg_match('/^(api|v\d+)$/', $p) !== 1));
         $base = (string) preg_replace('/[^a-z0-9]+/', '-', implode('-', $parts));

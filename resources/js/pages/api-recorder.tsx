@@ -1,20 +1,22 @@
 import { Head, Link, router } from '@inertiajs/react';
 import {
+    ArrowLeft,
+    BookOpen,
     Bookmark,
     Check,
     ChevronDown,
     ChevronRight,
-    ArrowLeft,
-    FileJson,
-    Puzzle,
-    Copy,
     CircleDot,
+    Copy,
     Download,
     ExternalLink,
+    FileJson,
     FileUp,
     Plus,
+    Puzzle,
     Save,
     ShieldCheck,
+    Terminal,
     Trash2,
     X,
 } from 'lucide-react';
@@ -428,6 +430,13 @@ export default function ApiRecorder({
               (o) => !pluginEndpoints.has(normalizeEndpoint(o.method, o.path)),
           ).length
         : 0;
+
+    // Generator (docs/KONZEPT-API-ZU-PLUGIN.md): zugewiesenes Plugin ergänzen oder neues anlegen
+    const generatorCommand = `php artisan intranet:plugin-from-openapi ${doc.id ?? ''} ${
+        plugin
+            ? `--plugin=${plugin.id}`
+            : `--neu=${pluginFolder(doc.title)}`
+    } --dry-run`;
 
     const spec = useMemo(() => buildOpenApi(doc), [doc]);
     const visible = onlyApi ? captures.filter((c) => !isNoise(c)) : captures;
@@ -1173,6 +1182,13 @@ export default function ApiRecorder({
                             </Button>
                             {doc.id && doc.operations.length > 0 && (
                                 <Button variant="outline" asChild>
+                                    <Link href={`/api-recorder/${doc.id}/ansicht`} data-testid="api-view">
+                                        <BookOpen /> Ansicht (Scalar)
+                                    </Link>
+                                </Button>
+                            )}
+                            {doc.id && doc.operations.length > 0 && (
+                                <Button variant="outline" asChild>
                                     <a
                                         href={`/api-recorder/${doc.id}/plugin-entwurf`}
                                         title="Fehlende Endpunkte im Format von plugin.json (service.endpoints)"
@@ -1195,6 +1211,33 @@ export default function ApiRecorder({
                                 </Button>
                             )}
                         </div>
+                        {doc.id && doc.operations.length > 0 && (
+                            <div className="flex flex-wrap items-center gap-2 rounded-md border border-dashed p-3 text-xs text-muted-foreground">
+                                <Terminal className="size-4" />
+                                <span>
+                                    Plugin daraus erzeugen (in der Entwicklung, danach
+                                    Pull-Request):
+                                </span>
+                                <code
+                                    className="rounded bg-muted px-1.5 py-0.5 font-mono text-foreground"
+                                    translate="no"
+                                    data-testid="generator-command"
+                                >
+                                    {generatorCommand}
+                                </code>
+                                <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    onClick={() => {
+                                        void navigator.clipboard
+                                            .writeText(generatorCommand)
+                                            .then(() => toast.success(t('Befehl kopiert.')));
+                                    }}
+                                >
+                                    <Copy /> Kopieren
+                                </Button>
+                            </div>
+                        )}
                         {showSpec && (
                             <pre
                                 className="max-h-[28rem] overflow-auto rounded-md border bg-muted/30 p-3 text-[11px]"
@@ -1358,6 +1401,16 @@ function QuestionDialog({
             </DialogContent>
         </Dialog>
     );
+}
+
+/** Ordnername für ein neues Plugin aus dem API-Namen (z. B. «Escola Web» → EscolaWeb). */
+function pluginFolder(title: string): string {
+    const name = (title.match(/[A-Za-z0-9]+/g) ?? [])
+        .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+        .join('')
+        .slice(0, 40);
+
+    return /^[A-Z][A-Za-z0-9]+$/.test(name) ? name : `Api${name}`;
 }
 
 ApiRecorder.layout = (props: { current: ApiDoc | null }) => ({

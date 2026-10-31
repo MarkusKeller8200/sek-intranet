@@ -1,6 +1,6 @@
 # Konzept: Aufgezeichnete API → Plugin
 
-Stand: Version 0.18.0. Ergänzt [KONZEPT-API-RECORDER.md](KONZEPT-API-RECORDER.md).
+Stand: Version 0.19.0 (Generator und API-Ansicht umgesetzt). Ergänzt [KONZEPT-API-RECORDER.md](KONZEPT-API-RECORDER.md).
 
 ## Ziel
 
@@ -36,7 +36,7 @@ Aufzeichnen ──► Dokumentieren ──► Plugin zuweisen ──► Entwurf 
 | ------------------------------------------------- | -------------------------------------------------------------------------- | ------------------------------------------------------ |
 | Titel, `info.description`                         | `name`, `description`                                                      |                                                        |
 | Basis-URL (`servers[0].url`)                      | Einstellung `base_url` (`settings[]`)                                      | nie fest im Code; je Schule verschieden                |
-| Kopfzeile `Authorization: Bearer …`, Login-Aufruf | `service.auth` (`bearer`, `basic`, `oauth2_client_credentials`, `api_key`) | Geheimnisse als `secrets`, verschlüsselt               |
+| `components.securitySchemes` (erstes Schema)      | `service.auth` (`bearer`, `basic`, `header`, `oauth2_client_credentials`)  | Geheimnisse als `password`-Einstellung, verschlüsselt  |
 | Operation (Methode + Pfad)                        | `service.endpoints[]` mit `id`, `method`, `path`, `label`                  | ID aus dem Pfad (`api/v1` weggelassen, `{id}` → `one`) |
 | Pfad-Platzhalter, Abfrageparameter                | `params[]` (`required` für Pfad)                                           |                                                        |
 | `tags` (Gruppe)                                   | Gruppierung im API-Tester                                                  |                                                        |
@@ -46,23 +46,45 @@ Aufzeichnen ──► Dokumentieren ──► Plugin zuweisen ──► Entwurf 
 | Listen von Personen/Klassen                       | `PeopleImport` mit `_external_id`                                          | Datenherkunft über `PersonLinks`                       |
 | Schreiben in Zielsystem                           | Sync-Ziel in `PersonLinks` (`direction: target`)                           | Status «geändert seit Sync»                            |
 
-## Geplanter Generator
+## Generator (umgesetzt)
 
 ```
-php artisan intranet:plugin-from-openapi <datei|api-doc-id> [--plugin=<id>] [--neu=<Ordner>] [--dry-run]
+php artisan intranet:plugin-from-openapi <datei.json|aufzeichnungs-id> [--plugin=<id>] [--neu=<Ordner>] [--dry-run]
 ```
 
-- `--plugin`: bestehendes Manifest um fehlende Endpunkte ergänzen (gleiche Logik wie «Plugin-Entwurf»,
-  `App\Support\ApiDocs::endpointDraft`). Vorhandene Einträge werden nie überschrieben.
-- `--neu`: neuen Ordner `plugins/<Name>/` anlegen mit `plugin.json` (Endpunkte, Einstellung `base_url`, Auth aus
-  dem Schema), `Plugin.php` (Klasse mit `test()` über den ersten GET-Endpunkt, leere `action()`), `README.md`.
-- `--dry-run`: nur Unterschiede anzeigen.
-- Ausgabe immer als Änderung im Repository (Pull-Request), nie direkt auf dem Server.
+- Quelle: OpenAPI-Datei (JSON, z. B. «OpenAPI-Datei (JSON)» aus dem Recorder oder eine Hersteller-Datei) oder
+  die ID einer Aufzeichnung. Bei einer Aufzeichnung mit zugewiesenem Plugin ist `--plugin` nicht nötig.
+- `--plugin`: bestehendes `plugin.json` um fehlende Endpunkte ergänzen (Vergleich wie im Recorder:
+  `ApiDocs::normalize`). Vorhandene Einträge werden nie überschrieben; belegte IDs erhalten `-2`, `-3` …
+- `--neu`: Ordner `plugins/<Ordner>/` mit `plugin.json` (Endpunkte, Einstellung `base_url`, Anmeldung aus
+  `securitySchemes` mit `password`-Einstellungen), `Plugin.php` (leere Klasse; «Testen» nutzt den ersten
+  GET-Endpunkt) und `README.md` (Prüfliste, Endpunkttabelle).
+- `--dry-run`: nur anzeigen.
+- Alle neuen Endpunkte: `status: partial`, `use: API-Tester`, `note` mit Herkunft; nicht-GET mit `danger: true`.
+- Jedes Ergebnis wird vor dem Schreiben mit `PluginManifest::fromArray` geprüft.
+- Läuft nicht mit `APP_ENV=production` (ausser `--dry-run`): Plugins entstehen im Repository (Pull-Request).
+- Im Recorder steht der passende Befehl unter den Knöpfen («Plugin daraus erzeugen», kopierbar).
+- Umsetzung: `App\Plugins\PluginGenerator`, `App\Console\Commands\PluginFromOpenApiCommand`, Tests
+  `tests/Feature/PluginGeneratorTest.php`.
+
+## API-Ansicht (Scalar)
+
+Scalar API Reference (Open Source, MIT, npm `@scalar/api-reference`) zeigt OpenAPI-Beschreibungen interaktiv an:
+
+- Prototyp → API → «Referenz (Scalar)» (`/api-doku/referenz`): eigene REST-API, ausprobieren mit API-Token.
+- Plugin-Seite → «API-Ansicht» (`/plugins/<id>/api-ansicht`): Endpunkte aus `plugin.json` (`App\Plugins\ManifestOpenApi`),
+  gruppiert nach Status, ohne Einstellungswerte und Zugangsdaten.
+- API-Recorder → «Ansicht (Scalar)» (`/api-recorder/<id>/ansicht`): aufgezeichnete API.
+
+Datenschutz: Scalar wird mit dem Intranet ausgeliefert und erst beim Öffnen geladen; Telemetrie aus, keine
+Schriften von fremden Servern, kein Scalar-Proxy, Agent und MCP von Scalar aus (`components/api-reference.tsx`).
+«Test Request» an fremde Systeme scheitert meist an CORS – bewusst kein Umweg über den Server, damit keine
+Zugangsdaten über den Server laufen.
 
 ## Prüfungen
 
 - Status `partial` → `full` nur nach Abgleich mit der Hersteller-Dokumentation.
-- CI: Manifest-Validierung (Pflichtfelder, eindeutige Endpunkt-IDs, gültige Methoden), PHPStan, Tests für jede
+- CI: Manifest-Validierung (`PluginManifest`: Pflichtfelder, eindeutige Endpunkt-IDs, gültige Methoden und Status), PHPStan, Tests für jede
   neue Aktion mit erfundenen Daten (HTTP-Fakes).
 - Datenschutz-Hinweis (`data_notice`) ergänzen, wenn Personendaten betroffen sind; Hosting in der Schweiz
   (ADR-005) und IDG Kanton Zürich beachten.

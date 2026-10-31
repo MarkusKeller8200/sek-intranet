@@ -20,6 +20,11 @@ final class PluginManifest
 
     public const ACTION_KINDS = ['read', 'import', 'write'];
 
+    public const METHODS = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'];
+
+    /** full = mit Hersteller-Doku bestätigt, partial = teilweise/aus Aufzeichnung, planned = vorgemerkt */
+    public const ENDPOINT_STATUS = ['full', 'partial', 'planned'];
+
     public const EVENTS = [
         'person.created', 'person.updated', 'person.deleted',
         'announcement.created', 'event.created', 'document.created',
@@ -43,7 +48,19 @@ final class PluginManifest
         }
 
         /** @var array<string, mixed> $data */
-        $manifest = new self(basename(dirname($file)), $data);
+        return self::fromArray($data, basename(dirname($file)));
+    }
+
+    /**
+     * Prüft ein Manifest (z. B. aus dem Generator, bevor es geschrieben wird).
+     *
+     * @param  array<string, mixed>  $data
+     *
+     * @throws InvalidArgumentException
+     */
+    public static function fromArray(array $data, string $directory): self
+    {
+        $manifest = new self($directory, $data);
         $manifest->validate();
 
         return $manifest;
@@ -243,10 +260,21 @@ final class PluginManifest
             }
         }
 
+        $endpointIds = [];
         foreach ($this->endpoints() as $endpoint) {
             if (! is_string($endpoint['id'] ?? null) || ! is_string($endpoint['path'] ?? null)) {
                 $fail('Endpunkt ohne «id» oder «path».');
             }
+            if (! in_array(strtoupper((string) ($endpoint['method'] ?? 'GET')), self::METHODS, true)) {
+                $fail("Endpunkt «{$endpoint['id']}»: unbekannte Methode.");
+            }
+            if (! in_array($endpoint['status'] ?? 'full', self::ENDPOINT_STATUS, true)) {
+                $fail("Endpunkt «{$endpoint['id']}»: status muss full, partial oder planned sein.");
+            }
+            if (isset($endpointIds[$endpoint['id']])) {
+                $fail("Endpunkt-ID «{$endpoint['id']}» doppelt.");
+            }
+            $endpointIds[$endpoint['id']] = true;
         }
 
         foreach ($this->events() as $event) {

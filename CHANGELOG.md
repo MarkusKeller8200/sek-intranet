@@ -7,6 +7,21 @@ laufend unter **Unveröffentlicht** und werden beim Erhöhen der Version zur neu
 
 ## [Unveröffentlicht]
 
+## [0.19.0] – 2026-10-31
+
+### Neu
+
+- API-Ansicht mit Scalar (Open Source, MIT): eigene REST-API (Prototyp → API → «Referenz»), Endpunkte jedes
+  Plugins («API-Ansicht») und aufgezeichnete APIs («Ansicht (Scalar)»); ohne Telemetrie, fremde Schriften und Proxy
+- Generator `php artisan intranet:plugin-from-openapi`: ergänzt ein Plugin um fehlende Endpunkte aus einer
+  OpenAPI-Datei oder Aufzeichnung (`--plugin`) oder legt ein neues Plugin an (`--neu`), mit `--dry-run`;
+  neue Endpunkte immer `partial`, Anmeldung aus `securitySchemes`, nicht in Produktion
+- API-Recorder zeigt den passenden Generator-Befehl zum Kopieren
+
+### Geändert
+
+- Prüfung der Plugin-Manifeste: eindeutige Endpunkt-IDs, gültige Methoden und Status (full, partial, planned)
+
 ## [0.18.0] – 2026-10-31
 
 ### Neu
