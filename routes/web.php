@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AnnouncementController;
 use App\Http\Controllers\ApiDocsController;
+use App\Http\Controllers\ApiRecorderController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DataStructureController;
@@ -96,6 +97,9 @@ Route::middleware('auth')->group(function () {
 
         // REST-API: Beschreibung mit Tester und Tokens
         Route::get('api-doku', [ApiDocsController::class, 'show'])->name('api-docs');
+        Route::get('api-recorder', [ApiRecorderController::class, 'show'])->name('api-recorder');
+        Route::post('api-recorder', [ApiRecorderController::class, 'store'])->middleware('throttle:60,1')->name('api-recorder.store');
+        Route::delete('api-recorder/{id}', [ApiRecorderController::class, 'destroy'])->name('api-recorder.destroy');
         Route::post('api-doku/tokens', [ApiDocsController::class, 'store'])->middleware('throttle:20,1')->name('api-docs.tokens.store');
         Route::delete('api-doku/tokens/{id}', [ApiDocsController::class, 'destroy'])->name('api-docs.tokens.destroy');
 

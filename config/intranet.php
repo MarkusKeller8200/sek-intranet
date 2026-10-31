@@ -479,6 +479,7 @@ return [
                 'datenstrukturen' => ['title' => 'Datenstrukturen', 'icon' => 'Database', 'href' => '/datenstrukturen'],
                 'farbkonzept' => ['title' => 'Farbkonzept', 'icon' => 'Palette', 'href' => '/farbkonzept'],
                 'api' => ['title' => 'API', 'icon' => 'Braces', 'href' => '/api-doku'],
+                'api-recorder' => ['title' => 'API-Recorder', 'icon' => 'Radio', 'href' => '/api-recorder'],
                 'mcp' => ['title' => 'MCP-Schnittstelle', 'icon' => 'Bot', 'href' => '/mcp-konzept'],
                 'sprachkonzept' => ['title' => 'Sprachkonzept', 'icon' => 'Languages', 'href' => '/sprachkonzept'],
                 'rollenkonzept' => ['title' => 'Rollenkonzept', 'icon' => 'ShieldCheck', 'href' => '/rollenkonzept'],
@@ -717,6 +718,18 @@ return [
                 'user_id' => ['type' => 'ref', 'references' => 'users', 'required' => false, 'label' => 'Ausgelöst von'],
                 'user_name' => ['type' => 'string', 'required' => false, 'label' => 'Name (Momentaufnahme)'],
                 'ms' => ['type' => 'int', 'required' => true, 'label' => 'Dauer (ms)'],
+            ],
+        ],
+
+        'api_docs' => [
+            'label' => 'System: API-Dokumentationen (API-Recorder)',
+            'description' => 'Mit dem API-Recorder erfasste Endpunkte fremder Websites: Methode, Pfad, abgeleitete Schemas, optional maskierte Beispiele. Keine Rohdaten.',
+            'fields' => [
+                'title' => ['type' => 'string', 'required' => true, 'label' => 'Titel'],
+                'base_url' => ['type' => 'string', 'required' => false, 'label' => 'Basis-URL'],
+                'description' => ['type' => 'text', 'required' => false, 'label' => 'Beschreibung'],
+                'operations' => ['type' => 'json', 'required' => true, 'label' => 'Endpunkte (Methode, Pfad, Schemas)'],
+                'owner_id' => ['type' => 'ref', 'references' => 'users', 'required' => false, 'label' => 'Erstellt von'],
             ],
         ],
 

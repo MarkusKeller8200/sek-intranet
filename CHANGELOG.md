@@ -7,6 +7,14 @@ laufend unter **Unveröffentlicht** und werden beim Erhöhen der Version zur neu
 
 ## [Unveröffentlicht]
 
+## [0.17.0] – 2026-10-31
+
+### Neu
+
+- Prototyp → API-Recorder: Website im eigenen Fenster bedienen, Anfragen und Antworten mitschneiden (Lesezeichen
+  «SBI-Recorder» oder HAR-Import), neue Endpunkte auf Rückfrage dokumentieren, Schemas automatisch ableiten,
+  Dokumentation speichern und als OpenAPI-Datei (Swagger, JSON/YAML) herunterladen
+
 ## [0.16.0] – 2026-10-31
 
 ### Neu
