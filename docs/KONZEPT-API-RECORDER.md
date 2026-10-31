@@ -1,6 +1,6 @@
 # API-Recorder
 
-Stand: Version 0.17.0. Prototyp → API-Recorder (nur Administration).
+Stand: Version 0.17.1. Prototyp → API-Recorder (nur Administration).
 
 ## Zweck
 
@@ -10,9 +10,12 @@ OpenAPI-3.1-Datei (Swagger, JSON oder YAML) erzeugen.
 
 ## Ablauf
 
-1. Adresse eingeben → «Fenster öffnen» (eigenes Browserfenster).
-2. Im Fenster einmal das Lesezeichen **«SBI-Recorder»** anklicken (vorher einmalig aus dem Intranet in die
-   Lesezeichenleiste ziehen). Unten rechts erscheint ein roter Zähler.
+1. Adresse eingeben → «In neuem Tab öffnen». Bewusst ein normaler Tab und kein Pop-up: Pop-ups zeigen keine
+   Lesezeichenleiste. Die Verbindung zum Recorder (`window.opener`) bleibt auch im Tab bestehen.
+2. Im Tab einmal das Lesezeichen **«SBI-Recorder»** anklicken (vorher einmalig aus dem Intranet in die
+   Lesezeichenleiste ziehen; Leiste mit Ctrl+Shift+B einblenden). Unten rechts erscheint ein roter Zähler.
+   Ohne Lesezeichen: «Code kopieren», im Tab F12 → Konsole, einfügen, Enter (Chrome verlangt beim ersten Mal
+   «allow pasting»).
 3. Funktionen der Website bedienen. Jede `fetch`-/XHR-Anfrage erscheint mit Methode, Adresse, Status, Typ, Dauer;
    aufgeklappt mit Anfrage (Kopfzeilen, Inhalt) und Antwort.
 4. Bei jedem **neuen Endpunkt** fragt der Recorder nach: Pfad (IDs als `{id}`), Beschreibung, Gruppe →

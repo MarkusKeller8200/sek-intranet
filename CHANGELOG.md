@@ -7,6 +7,13 @@ laufend unter **Unveröffentlicht** und werden beim Erhöhen der Version zur neu
 
 ## [Unveröffentlicht]
 
+## [0.17.1] – 2026-10-31
+
+### Behoben
+
+- API-Recorder: Website öffnet als normaler Tab statt als Pop-up, damit die Lesezeichenleiste sichtbar ist;
+  zusätzlich «Code kopieren» zum Einfügen in die Browser-Konsole (ohne Lesezeichen)
+
 ## [0.17.0] – 2026-10-31
 
 ### Neu

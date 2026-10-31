@@ -4,6 +4,7 @@ import {
     Check,
     ChevronDown,
     ChevronRight,
+    Copy,
     CircleDot,
     Download,
     ExternalLink,
@@ -226,15 +227,13 @@ export default function ApiRecorder({
 
             return;
         }
-        popup.current = window.open(
-            target.href,
-            'sbi-api-recorder',
-            'popup,width=1280,height=860',
-        );
+        // Als normaler Tab (nicht als Pop-up): nur so zeigt der Browser die Lesezeichenleiste.
+        // Die Verbindung (window.opener) bleibt auch im Tab bestehen.
+        popup.current = window.open(target.href, 'sbi-api-recorder');
         if (!popup.current) {
             toast.error(
                 t(
-                    'Das Fenster wurde blockiert. Bitte Pop-ups für das Intranet erlauben.',
+                    'Der Tab wurde blockiert. Bitte Pop-ups für das Intranet erlauben.',
                 ),
             );
 
@@ -400,9 +399,10 @@ export default function ApiRecorder({
                         <CardDescription>
                             Browser erlauben aus Sicherheitsgründen nicht, den
                             Verkehr einer fremden Website direkt mitzulesen.
-                            Deshalb: Fenster öffnen, dort einmal das Lesezeichen
-                            «SBI-Recorder» anklicken, dann die Funktionen der
-                            Website bedienen.
+                            Deshalb: Website in neuem Tab öffnen, dort einmal das
+                            Lesezeichen «SBI-Recorder» anklicken (oder den
+                            Recorder-Code in die Konsole einfügen), dann die
+                            Funktionen der Website bedienen.
                         </CardDescription>
                     </CardHeader>
                     <CardContent className="grid gap-4">
@@ -419,7 +419,7 @@ export default function ApiRecorder({
                                 data-testid="recorder-url"
                             />
                             <Button onClick={openWindow}>
-                                <ExternalLink /> Fenster öffnen
+                                <ExternalLink /> In neuem Tab öffnen
                             </Button>
                         </div>
 
@@ -434,7 +434,7 @@ export default function ApiRecorder({
                                         e.preventDefault();
                                         toast.info(
                                             t(
-                                                'Das Lesezeichen in die Lesezeichenleiste ziehen und im Fenster der Website anklicken.',
+                                                'Das Lesezeichen in die Lesezeichenleiste ziehen und im Tab der Website anklicken.',
                                             ),
                                         );
                                     }}
@@ -443,12 +443,47 @@ export default function ApiRecorder({
                                     <Bookmark className="size-4" /> SBI-Recorder
                                 </a>
                             </li>
-                            <li>Adresse eingeben und «Fenster öffnen».</li>
                             <li>
-                                Im neuen Fenster auf das Lesezeichen klicken –
-                                unten rechts erscheint ein roter Punkt
-                                «SBI-Recorder». Nach einem Neuladen der Seite
-                                erneut klicken.
+                                Lesezeichenleiste nicht sichtbar? Mit
+                                Ctrl+Shift+B (Mac: Cmd+Shift+B) einblenden.
+                            </li>
+                            <li>Adresse eingeben und «In neuem Tab öffnen».</li>
+                            <li>
+                                Im neuen Tab auf das Lesezeichen klicken – unten
+                                rechts erscheint ein roter Punkt «SBI-Recorder».
+                                Nach einem Neuladen der Seite erneut klicken.
+                            </li>
+                            <li>
+                                Ohne Lesezeichen: im neuen Tab F12 → «Konsole»,
+                                den Code einfügen und Enter drücken.{' '}
+                                <Button
+                                    variant="outline"
+                                    size="sm"
+                                    className="h-7"
+                                    onClick={() =>
+                                        void navigator.clipboard
+                                            .writeText(
+                                                bookmarkletSource(
+                                                    origin ||
+                                                        window.location.origin,
+                                                ).replace(/^javascript:/, ''),
+                                            )
+                                            .then(() =>
+                                                toast.success(
+                                                    t(
+                                                        'Code kopiert. In der Konsole des Website-Tabs einfügen.',
+                                                    ),
+                                                ),
+                                            )
+                                    }
+                                    data-testid="copy-code"
+                                >
+                                    <Copy /> Code kopieren
+                                </Button>{' '}
+                                <span className="text-xs text-muted-foreground">
+                                    Chrome verlangt beim ersten Mal die Eingabe
+                                    «allow pasting» bzw. «Einfügen zulassen».
+                                </span>
                             </li>
                             <li>
                                 Funktionen der Website bedienen. Jede Anfrage
@@ -478,7 +513,7 @@ export default function ApiRecorder({
                                     </>
                                 ) : (
                                     <span className="text-muted-foreground">
-                                        Noch kein Fenster verbunden
+                                        Noch kein Tab verbunden
                                     </span>
                                 )}
                             </span>
