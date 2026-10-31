@@ -153,7 +153,7 @@ export default function PluginShow({
                                 disabled={!ready || testing}
                                 onClick={() => void runTest()}
                             >
-                                <FlaskConical /> Testen
+                                <FlaskConical /> Verbindung testen
                             </Button>
                             {plugin.service.endpoints.length > 0 && (
                                 <Button variant="outline" asChild>

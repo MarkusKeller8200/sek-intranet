@@ -43,6 +43,24 @@ Menüpunkt in `config/intranet.php` → `modules` mit Schlüssel `embed`:
   stattdessen den Knopf für den neuen Tab.
 - Ohne Adresse zeigt die Seite Repository, Stack und die Schritte zur Einbindung.
 
+## Fachanwendungen (ab 0.22.0)
+
+Kommunikation → **Fachanwendungen** ist ein Untermenü (`items` innerhalb des Menüpunkts) mit
+`collapse_sidebar: true`: Beim Öffnen einer Fachanwendung klappt das Seitenmenü ein, damit die Anwendung die
+ganze Breite hat.
+
+| Fachanwendung        | Adresse                                         | Einbindung                                              |
+| -------------------- | ----------------------------------------------- | ------------------------------------------------------- |
+| CMI                  | `.env` `INTRANET_APP_CMI_URL`                   | Rahmen, falls erlaubt, sonst neuer Tab                  |
+| Escola               | `https://www.sekbuelach.ch/escola/login` (`.env` `INTRANET_APP_ESCOLA_URL` übersteuert) | Rahmen, falls erlaubt, sonst neuer Tab |
+| Apple School Manager | `https://school.apple.com`                      | immer neuer Tab (Apple verbietet das Einbetten)        |
+| Jamf Pro             | `.env` `INTRANET_APP_JAMF_URL`                  | Rahmen, falls erlaubt, sonst neuer Tab (Daten: Plugin) |
+
+Escola liegt auf derselben Domain wie das Intranet (`sekbuelach.ch`). Deshalb funktioniert die Anmeldung im
+Rahmen – sofern Escola das Einbetten erlaubt (`X-Frame-Options`/`frame-ancestors`; prüft der Server automatisch).
+Verbietet Escola es, öffnet der Knopf einen neuen Tab. Bessere Lösung als ein Rahmen wäre eine Anmeldung per SSO
+(Edulog/Microsoft) mit Escola als eigener Tab; Daten aus Escola kommen ohnehin über das Plugin «Escola».
+
 ## Erwartung bei den fremden Seiten
 
 SharePoint Online und Atlassian Cloud (Jira Service Management, Confluence) erlauben das Einbetten in fremde

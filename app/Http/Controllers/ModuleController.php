@@ -21,6 +21,7 @@ class ModuleController extends Controller
         if ($module === null) {
             // Inzwischen umgesetzt: alte Links (/module/<schlüssel>) auf die neue Seite umleiten
             $href = collect($modules->groups($request->user()))->flatMap(fn (array $g): array => $g['items'])
+                ->flatMap(fn (array $i): array => [$i, ...($i['children'] ?? [])])
                 ->firstWhere('key', $key)['href'] ?? null;
             abort_if(! is_string($href) || str_starts_with($href, '/module/'), 404);
 

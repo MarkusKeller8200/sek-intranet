@@ -8,8 +8,8 @@ use Illuminate\Support\Facades\Gate;
 /**
  * Module aus config/intranet.php → modules: Navigation (Seitenleiste) und Platzhalter.
  *
- * @phpstan-type Module array{key: string, title: string, icon: string, href: string, planned: bool, external: string|null, open: string|null}
- * @phpstan-type Embedded array{key: string, title: string, icon: string, group: string, color: string, description: string, url: string|null, open: string, repo: string|null, stack: string|null}
+ * @phpstan-type Module array{key: string, title: string, icon: string, href: string, planned: bool, external: string|null, open: string|null, collapse?: bool, children?: list<array<string, mixed>>}
+ * @phpstan-type Embedded array{key: string, title: string, icon: string, group: string, color: string, description: string, collapse: bool, url: string|null, open: string, repo: string|null, stack: string|null}
  * @phpstan-type Group array{key: string, title: string, color: string, icon: string, items: list<Module>}
  */
 class ModuleNavigation
@@ -34,21 +34,31 @@ class ModuleNavigation
                     continue;
                 }
 
-                $href = $module['href'] ?? null;
-                $embed = $this->embed($module);
-                if ($embed !== null) {
-                    // Eingebunden: eigene Seite mit Rahmen, «tab» führt direkt auf die Adresse
-                    $href = '/einbindung/'.$key;
+                // Untermenü (z. B. Kommunikation → Fachanwendungen): Einträge unter «items»
+                if (is_array($module['items'] ?? null)) {
+                    $children = [];
+                    foreach ($module['items'] as $childKey => $child) {
+                        if (is_array($child) && $this->allowed($child, $user)) {
+                            $children[] = $this->item((string) $childKey, $child) + ['collapse' => ($module['collapse_sidebar'] ?? false) === true];
+                        }
+                    }
+                    if ($children !== []) {
+                        $items[] = [
+                            'key' => (string) $key,
+                            'title' => (string) ($module['title'] ?? $key),
+                            'icon' => (string) ($module['icon'] ?? 'Folder'),
+                            'href' => $children[0]['href'],
+                            'planned' => false,
+                            'external' => null,
+                            'open' => null,
+                            'children' => $children,
+                        ];
+                    }
+
+                    continue;
                 }
-                $items[] = [
-                    'key' => (string) $key,
-                    'title' => (string) ($module['title'] ?? $key),
-                    'icon' => (string) ($module['icon'] ?? 'Circle'),
-                    'href' => is_string($href) ? $href : '/module/'.$key,
-                    'planned' => ! is_string($href),
-                    'external' => $embed['url'] ?? null,
-                    'open' => $embed['open'] ?? null,
-                ];
+
+                $items[] = $this->item((string) $key, $module);
             }
 
             if ($items !== []) {
@@ -66,17 +76,67 @@ class ModuleNavigation
     }
 
     /**
+     * @param  array<mixed>  $module
+     * @return Module
+     */
+    private function item(string $key, array $module): array
+    {
+        $href = $module['href'] ?? null;
+        $embed = $this->embed($module);
+        if ($embed !== null) {
+            // Eingebunden: eigene Seite mit Rahmen, «tab» führt direkt auf die Adresse
+            $href = '/einbindung/'.$key;
+        }
+
+        return [
+            'key' => $key,
+            'title' => (string) ($module['title'] ?? $key),
+            'icon' => (string) ($module['icon'] ?? 'Circle'),
+            'href' => is_string($href) ? $href : '/module/'.$key,
+            'planned' => ! is_string($href),
+            'external' => $embed['url'] ?? null,
+            'open' => $embed['open'] ?? null,
+        ];
+    }
+
+    /**
+     * Alle Module flach (Untermenüs aufgelöst), mit Gruppe und – falls vorhanden – Obermenü.
+     *
+     * @return list<array{key: string, module: array<mixed>, group: array<string, mixed>, parent: array<mixed>|null}>
+     */
+    private function flat(): array
+    {
+        $all = [];
+        foreach ($this->config() as $group) {
+            foreach ((array) ($group['items'] ?? []) as $key => $module) {
+                if (! is_array($module)) {
+                    continue;
+                }
+                if (is_array($module['items'] ?? null)) {
+                    foreach ($module['items'] as $childKey => $child) {
+                        if (is_array($child)) {
+                            $all[] = ['key' => (string) $childKey, 'module' => $child, 'group' => $group, 'parent' => $module];
+                        }
+                    }
+
+                    continue;
+                }
+                $all[] = ['key' => (string) $key, 'module' => $module, 'group' => $group, 'parent' => null];
+            }
+        }
+
+        return $all;
+    }
+
+    /**
      * Geplantes Modul für die Platzhalterseite, null wenn unbekannt, umgesetzt oder nicht erlaubt.
      *
      * @return array{key: string, title: string, icon: string, group: string, description: string, features: list<string>, plugin: string|null}|null
      */
     public function planned(string $key, ?Authenticatable $user): ?array
     {
-        foreach ($this->config() as $group) {
-            $items = (array) ($group['items'] ?? []);
-            $module = $items[$key] ?? null;
-
-            if (! is_array($module) || isset($module['href']) || isset($module['embed']) || ! $this->allowed($group, $user) || ! $this->allowed($module, $user)) {
+        foreach ($this->flat() as ['key' => $k, 'module' => $module, 'group' => $group, 'parent' => $parent]) {
+            if ($k !== $key || isset($module['href']) || isset($module['embed']) || ! $this->allowed($group, $user) || ($parent !== null && ! $this->allowed($parent, $user)) || ! $this->allowed($module, $user)) {
                 continue;
             }
 
@@ -101,9 +161,8 @@ class ModuleNavigation
      */
     public function embedded(string $key, ?Authenticatable $user): ?array
     {
-        foreach ($this->config() as $group) {
-            $module = ((array) ($group['items'] ?? []))[$key] ?? null;
-            if (! is_array($module) || ! $this->allowed($group, $user) || ! $this->allowed($module, $user)) {
+        foreach ($this->flat() as ['key' => $k, 'module' => $module, 'group' => $group, 'parent' => $parent]) {
+            if ($k !== $key || ! $this->allowed($group, $user) || ($parent !== null && ! $this->allowed($parent, $user)) || ! $this->allowed($module, $user)) {
                 continue;
             }
             $embed = $this->embed($module);
@@ -118,6 +177,8 @@ class ModuleNavigation
                 'group' => (string) ($group['title'] ?? ''),
                 'color' => (string) ($group['color'] ?? 'slate'),
                 'description' => (string) ($module['description'] ?? ''),
+                // Fachanwendungen: Seitenmenü beim Öffnen einklappen (mehr Platz für die Anwendung)
+                'collapse' => ($parent['collapse_sidebar'] ?? false) === true,
             ] + $embed;
         }
 

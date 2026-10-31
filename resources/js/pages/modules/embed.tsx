@@ -6,9 +6,10 @@ import {
     RefreshCw,
     ShieldAlert,
 } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { useSidebar } from '@/components/ui/sidebar';
 import {
     Card,
     CardContent,
@@ -27,6 +28,8 @@ type Embedded = {
     group: string;
     color: string;
     description: string;
+    /** Fachanwendung: Seitenmenü beim Öffnen einklappen */
+    collapse: boolean;
     url: string | null;
     open: 'embed' | 'tab' | 'both';
     repo: string | null;
@@ -55,6 +58,14 @@ export default function Embed({
         ? palette[module.color]
         : palette.slate;
     const [reloads, setReloads] = useState(0);
+    const { setOpen, isMobile } = useSidebar();
+
+    // Fachanwendungen: Seitenmenü einklappen, auch beim direkten Aufruf der Adresse
+    useEffect(() => {
+        if (module.collapse && !isMobile) {
+            setOpen(false);
+        }
+    }, [module.key, module.collapse, isMobile, setOpen]);
 
     const canEmbed =
         module.url !== null &&

@@ -1,5 +1,14 @@
 import { Head, Link, router } from '@inertiajs/react';
-import { AlertTriangle, ChevronRight, Plug } from 'lucide-react';
+import {
+    AlertTriangle,
+    CheckCircle2,
+    ChevronRight,
+    Loader2,
+    Plug,
+    PlugZap,
+    XCircle,
+} from 'lucide-react';
+import { useState } from 'react';
 import EmptyState from '@/components/empty-state';
 import PageHeader from '@/components/page-header';
 import DataNotice from '@/components/plugins/data-notice';
@@ -12,7 +21,33 @@ import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import { formatDateTime } from '@/lib/format';
-import type { PluginInfo } from '@/types';
+import { postJson } from '@/lib/http';
+import type { PluginInfo, PluginResult } from '@/types';
+
+/** Ergebnis von «Verbindung testen» je Plugin (ok null = übersprungen). */
+type Check = { ok: boolean | null; message: string; ms?: number | null };
+
+function CheckResult({ check }: { check: Check }) {
+    return (
+        <div
+            className="flex items-start gap-2 rounded-md border bg-muted/30 p-2 text-xs"
+            data-testid="connection-result"
+            role="status"
+        >
+            {check.ok === true ? (
+                <CheckCircle2 className="mt-0.5 size-4 shrink-0 text-success" />
+            ) : check.ok === false ? (
+                <XCircle className="mt-0.5 size-4 shrink-0 text-destructive" />
+            ) : (
+                <AlertTriangle className="mt-0.5 size-4 shrink-0 text-muted-foreground" />
+            )}
+            <span className="flex-1">{check.message}</span>
+            {check.ms != null && (
+                <span className="text-muted-foreground">{check.ms} ms</span>
+            )}
+        </div>
+    );
+}
 
 export default function PluginsIndex({
     plugins,
@@ -23,6 +58,38 @@ export default function PluginsIndex({
     errors: string[];
     serverInSwitzerland: boolean;
 }) {
+    const [checks, setChecks] = useState<Record<string, Check>>({});
+    const [busy, setBusy] = useState<string | null>(null);
+
+    const testOne = async (plugin: PluginInfo) => {
+        setBusy(plugin.id);
+        const start = performance.now();
+        const result = await postJson<PluginResult>(`/plugins/${plugin.id}/test`);
+        setChecks((c) => ({
+            ...c,
+            [plugin.id]: {
+                ok: result.ok ?? result.status === 'success',
+                message: result.message,
+                ms: Math.round(performance.now() - start),
+            },
+        }));
+        setBusy(null);
+    };
+
+    const testAll = async () => {
+        setBusy('*');
+        const result = await postJson<
+            PluginResult & { results?: ({ id: string } & Check)[] }
+        >('/plugins/verbindungen-testen');
+        setChecks(
+            Object.fromEntries(
+                (result.results ?? []).map((r) => [r.id, r]),
+            ),
+        );
+        setBusy(null);
+        router.reload({ only: ['plugins'] });
+    };
+
     return (
         <>
             <Head title="Plugins" />
@@ -30,6 +97,21 @@ export default function PluginsIndex({
                 <PageHeader
                     title="Plugins"
                     description="Anbindung anderer Systeme per API. Plugins kommen aus dem Repository und werden hier ein- und ausgeschaltet."
+                    actions={
+                        <Button
+                            variant="outline"
+                            disabled={busy !== null}
+                            onClick={() => void testAll()}
+                            data-testid="test-all"
+                        >
+                            {busy === '*' ? (
+                                <Loader2 className="animate-spin" />
+                            ) : (
+                                <PlugZap />
+                            )}
+                            Alle Verbindungen testen
+                        </Button>
+                    }
                 />
 
                 {!serverInSwitzerland && <DataNotice />}
@@ -115,6 +197,10 @@ export default function PluginsIndex({
                                 )}
                             </div>
 
+                            {checks[plugin.id] && (
+                                <CheckResult check={checks[plugin.id]} />
+                            )}
+
                             <div className="flex flex-wrap items-center justify-between gap-3">
                                 <div className="flex items-center gap-2">
                                     <Checkbox
@@ -134,11 +220,37 @@ export default function PluginsIndex({
                                         Eingeschaltet
                                     </Label>
                                 </div>
-                                <Button variant="outline" size="sm" asChild>
-                                    <Link href={`/plugins/${plugin.id}`}>
-                                        Einrichten und testen <ChevronRight />
-                                    </Link>
-                                </Button>
+                                <div className="flex flex-wrap gap-2">
+                                    <Button
+                                        variant="outline"
+                                        size="sm"
+                                        disabled={
+                                            busy !== null ||
+                                            !plugin.enabled ||
+                                            !plugin.configured
+                                        }
+                                        title={
+                                            !plugin.enabled
+                                                ? 'Zuerst einschalten'
+                                                : !plugin.configured
+                                                  ? 'Zuerst einrichten'
+                                                  : undefined
+                                        }
+                                        onClick={() => void testOne(plugin)}
+                                    >
+                                        {busy === plugin.id ? (
+                                            <Loader2 className="animate-spin" />
+                                        ) : (
+                                            <PlugZap />
+                                        )}
+                                        Verbindung testen
+                                    </Button>
+                                    <Button variant="outline" size="sm" asChild>
+                                        <Link href={`/plugins/${plugin.id}`}>
+                                            Einrichten <ChevronRight />
+                                        </Link>
+                                    </Button>
+                                </div>
                             </div>
                         </div>
                     ))}

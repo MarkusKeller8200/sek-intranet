@@ -12,13 +12,16 @@ import {
     SidebarMenuBadge,
     SidebarMenuButton,
     SidebarMenuItem,
+    SidebarMenuSub,
+    SidebarMenuSubButton,
+    SidebarMenuSubItem,
     useSidebar,
 } from '@/components/ui/sidebar';
 import { useCurrentUrl } from '@/hooks/use-current-url';
 import { moduleIcon } from '@/lib/module-icons';
 import { isColorName, palette } from '@/lib/colors';
 import { cn } from '@/lib/utils';
-import type { ModuleNavGroup } from '@/types';
+import type { ModuleNavGroup, ModuleNavItem } from '@/types';
 
 const STORAGE_KEY = 'intranet.nav.groups';
 
@@ -46,7 +49,7 @@ function writeStored(value: Record<string, boolean>) {
 
 export function NavModules({ groups }: { groups: ModuleNavGroup[] }) {
     const { isCurrentOrParentUrl } = useCurrentUrl();
-    const { state, isMobile, openMobile, setOpenMobile } = useSidebar();
+    const { state, isMobile, openMobile, setOpenMobile, setOpen } = useSidebar();
     const [stored, setStored] = useState<Record<string, boolean>>(readStored);
     // Mobil: bei jedem Öffnen des Menüs alle Hauptmenüs eingeklappt, nicht gemerkt
     const [mobileGroups, setMobileGroups] = useState<Record<string, boolean>>(
@@ -59,10 +62,13 @@ export function NavModules({ groups }: { groups: ModuleNavGroup[] }) {
         }
     }, [openMobile]);
 
-    // Mobil: nach Wahl eines Menüpunkts das eingeblendete Menü schliessen
-    const closeOnMobile = () => {
+    // Nach Wahl eines Menüpunkts: mobil das Menü schliessen; Fachanwendungen klappen das Seitenmenü
+    // auch am Bildschirm ein (mehr Platz für die Anwendung)
+    const afterSelect = (item: ModuleNavItem) => {
         if (isMobile) {
             setOpenMobile(false);
+        } else if (item.collapse) {
+            setOpen(false);
         }
     };
 
@@ -83,8 +89,10 @@ export function NavModules({ groups }: { groups: ModuleNavGroup[] }) {
     return (
         <>
             {groups.map((group) => {
-                const containsCurrent = group.items.some((item) =>
-                    isCurrentOrParentUrl(item.href),
+                const containsCurrent = group.items.some(
+                    (item) =>
+                        isCurrentOrParentUrl(item.href) ||
+                        (item.children ?? []).some((c) => isCurrentOrParentUrl(c.href)),
                 );
                 // Standard: offen, wenn die Gruppe Umgesetztes enthält
                 const defaultOpen = group.items.some((item) => !item.planned);
@@ -146,80 +154,45 @@ export function NavModules({ groups }: { groups: ModuleNavGroup[] }) {
                                 <CollapsibleContent>
                                     <SidebarMenu className="py-1">
                                         {group.items.map((item) => {
-                                            const Icon = moduleIcon(item.icon);
-                                            const current =
-                                                isCurrentOrParentUrl(item.href);
+                                            // Untermenü: in der Symbolleiste flach, sonst aufklappbar
+                                            if (item.children) {
+                                                return iconOnly ? (
+                                                    item.children.map((child) => (
+                                                        <MenuEntry
+                                                            key={child.key}
+                                                            item={child}
+                                                            color={color}
+                                                            current={isCurrentOrParentUrl(child.href)}
+                                                            onSelect={() => afterSelect(child)}
+                                                        />
+                                                    ))
+                                                ) : (
+                                                    <SubMenu
+                                                        key={item.key}
+                                                        item={item}
+                                                        color={color}
+                                                        open={
+                                                            isMobile
+                                                                ? (mobileGroups[`sub:${item.key}`] ??
+                                                                  item.children.some((c) => isCurrentOrParentUrl(c.href)))
+                                                                : (stored[`sub:${item.key}`] ??
+                                                                  item.children.some((c) => isCurrentOrParentUrl(c.href)))
+                                                        }
+                                                        onOpenChange={(value) => toggle(`sub:${item.key}`, value)}
+                                                        isCurrent={isCurrentOrParentUrl}
+                                                        onSelect={afterSelect}
+                                                    />
+                                                );
+                                            }
 
                                             return (
-                                                <SidebarMenuItem key={item.key}>
-                                                    <SidebarMenuButton
-                                                        asChild
-                                                        isActive={current}
-                                                        tooltip={{
-                                                            children:
-                                                                item.planned
-                                                                    ? `${item.title} (geplant)`
-                                                                    : item.title,
-                                                        }}
-                                                        className={cn(
-                                                            'border-l-2 border-transparent',
-                                                            current &&
-                                                                color.bar,
-                                                            item.planned &&
-                                                                'text-sidebar-foreground/60',
-                                                        )}
-                                                    >
-                                                        {item.open === 'tab' &&
-                                                        item.external ? (
-                                                            // Nur neuer Tab: direkt zur Adresse
-                                                            <a
-                                                                href={
-                                                                    item.external
-                                                                }
-                                                                target="_blank"
-                                                                rel="noopener noreferrer"
-                                                                onClick={
-                                                                    closeOnMobile
-                                                                }
-                                                            >
-                                                                <Icon
-                                                                    className={
-                                                                        color.icon
-                                                                    }
-                                                                />
-                                                                <span>
-                                                                    {item.title}
-                                                                </span>
-                                                                <ExternalLink className="ml-auto size-3 opacity-50" />
-                                                            </a>
-                                                        ) : (
-                                                            <Link
-                                                                href={item.href}
-                                                                prefetch={
-                                                                    !item.planned
-                                                                }
-                                                                onClick={
-                                                                    closeOnMobile
-                                                                }
-                                                            >
-                                                                <Icon
-                                                                    className={cn(
-                                                                        !item.planned &&
-                                                                            color.icon,
-                                                                    )}
-                                                                />
-                                                                <span>
-                                                                    {item.title}
-                                                                </span>
-                                                            </Link>
-                                                        )}
-                                                    </SidebarMenuButton>
-                                                    {item.planned && (
-                                                        <SidebarMenuBadge className="text-[10px] font-normal text-sidebar-foreground/50">
-                                                            geplant
-                                                        </SidebarMenuBadge>
-                                                    )}
-                                                </SidebarMenuItem>
+                                                <MenuEntry
+                                                    key={item.key}
+                                                    item={item}
+                                                    color={color}
+                                                    current={isCurrentOrParentUrl(item.href)}
+                                                    onSelect={() => afterSelect(item)}
+                                                />
                                             );
                                         })}
                                     </SidebarMenu>
@@ -230,5 +203,144 @@ export function NavModules({ groups }: { groups: ModuleNavGroup[] }) {
                 );
             })}
         </>
+    );
+}
+
+type GroupColor = (typeof palette)[keyof typeof palette];
+
+/** Von SidebarMenuButton (asChild) übergebene Eigenschaften: Klassen und data-Attribute. */
+type SlotProps = { className?: string } & {
+    [key: `data-${string}`]: string | boolean | undefined;
+};
+
+/**
+ * Link eines Menüpunkts: eingebunden nur als neuer Tab direkt zur Adresse, sonst Intranet-Seite.
+ * Weitere Eigenschaften (Klassen, data-*) kommen von SidebarMenuButton (asChild) und werden weitergegeben.
+ */
+function EntryLink({
+    item,
+    color,
+    onSelect,
+    ...rest
+}: { item: ModuleNavItem; color: GroupColor; onSelect: () => void } & SlotProps) {
+    const Icon = moduleIcon(item.icon);
+
+    return item.open === 'tab' && item.external ? (
+        <a {...rest} href={item.external} target="_blank" rel="noopener noreferrer" onClick={onSelect}>
+            <Icon className={color.icon} />
+            <span>{item.title}</span>
+            <ExternalLink className="ml-auto size-3 opacity-50" />
+        </a>
+    ) : (
+        <Link {...rest} href={item.href} prefetch={!item.planned} onClick={onSelect}>
+            <Icon className={cn(!item.planned && color.icon)} />
+            <span>{item.title}</span>
+        </Link>
+    );
+}
+
+function MenuEntry({
+    item,
+    color,
+    current,
+    onSelect,
+}: {
+    item: ModuleNavItem;
+    color: GroupColor;
+    current: boolean;
+    onSelect: () => void;
+}) {
+    return (
+        <SidebarMenuItem>
+            <SidebarMenuButton
+                asChild
+                isActive={current}
+                tooltip={{ children: item.planned ? `${item.title} (geplant)` : item.title }}
+                className={cn(
+                    'border-l-2 border-transparent',
+                    current && color.bar,
+                    item.planned && 'text-sidebar-foreground/60',
+                )}
+            >
+                <EntryLink item={item} color={color} onSelect={onSelect} />
+            </SidebarMenuButton>
+            {item.planned && (
+                <SidebarMenuBadge className="text-[10px] font-normal text-sidebar-foreground/50">
+                    geplant
+                </SidebarMenuBadge>
+            )}
+        </SidebarMenuItem>
+    );
+}
+
+/** Aufklappbares Untermenü innerhalb einer Gruppe (z. B. Fachanwendungen). */
+function SubMenu({
+    item,
+    color,
+    open,
+    onOpenChange,
+    isCurrent,
+    onSelect,
+}: {
+    item: ModuleNavItem;
+    color: GroupColor;
+    open: boolean;
+    onOpenChange: (open: boolean) => void;
+    isCurrent: (href: string) => boolean;
+    onSelect: (item: ModuleNavItem) => void;
+}) {
+    const Icon = moduleIcon(item.icon);
+    const children = item.children ?? [];
+    const containsCurrent = children.some((c) => isCurrent(c.href));
+
+    return (
+        <Collapsible open={open} onOpenChange={onOpenChange} asChild>
+            <SidebarMenuItem data-testid={`submenu-${item.key}`}>
+                <CollapsibleTrigger asChild>
+                    <SidebarMenuButton
+                        className={cn('border-l-2 border-transparent', containsCurrent && !open && color.bar)}
+                        aria-expanded={open}
+                    >
+                        <Icon className={color.icon} />
+                        <span>{item.title}</span>
+                        <ChevronDown
+                            className={cn('ml-auto size-4 opacity-70 transition-transform duration-200', open && 'rotate-180')}
+                        />
+                    </SidebarMenuButton>
+                </CollapsibleTrigger>
+                <CollapsibleContent>
+                    <SidebarMenuSub>
+                        {children.map((child) => {
+                            const ChildIcon = moduleIcon(child.icon);
+                            const current = isCurrent(child.href);
+
+                            return (
+                                <SidebarMenuSubItem key={child.key}>
+                                    <SidebarMenuSubButton asChild isActive={current}>
+                                        {child.open === 'tab' && child.external ? (
+                                            <a
+                                                href={child.external}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                onClick={() => onSelect(child)}
+                                            >
+                                                <ChildIcon className={color.icon} />
+                                                <span>{child.title}</span>
+                                                <ExternalLink className="ml-auto size-3 opacity-50" />
+                                            </a>
+                                        ) : (
+                                            <Link href={child.href} onClick={() => onSelect(child)}>
+                                                <ChildIcon className={color.icon} />
+                                                <span>{child.title}</span>
+                                            </Link>
+                                        )}
+                                    </SidebarMenuSubButton>
+                                </SidebarMenuSubItem>
+                            );
+                        })}
+                    </SidebarMenuSub>
+                </CollapsibleContent>
+            </SidebarMenuItem>
+        </Collapsible>
     );
 }

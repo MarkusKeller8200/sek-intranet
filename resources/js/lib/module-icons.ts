@@ -1,5 +1,6 @@
 import type { LucideIcon } from 'lucide-react';
 import {
+    Apple,
     AppWindow,
     BadgeCheck,
     BookMarked,
@@ -65,6 +66,7 @@ import {
  * Neue Module: Symbol hier eintragen, sonst erscheint ein Kreis.
  */
 const icons: Record<string, LucideIcon> = {
+    Apple,
     AppWindow,
     BadgeCheck,
     BookMarked,

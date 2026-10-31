@@ -25,6 +25,10 @@ export type ModuleNavItem = {
     external?: string | null;
     /** embed = im Rahmen, tab = neuer Tab, both = Rahmen mit Knopf für neuen Tab */
     open?: 'embed' | 'tab' | 'both' | null;
+    /** Seitenmenü beim Öffnen einklappen (Fachanwendungen) */
+    collapse?: boolean;
+    /** Untermenü (z. B. Kommunikation → Fachanwendungen) */
+    children?: ModuleNavItem[];
 };
 
 export type ModuleNavGroup = {

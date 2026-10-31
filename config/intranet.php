@@ -197,6 +197,38 @@ return [
                     'description' => 'Kurze Abfragen im Kollegium, zum Beispiel Terminfindung oder Anmeldung für Weiterbildungen.',
                     'features' => ['Einfach- und Mehrfachauswahl', 'Anonym oder namentlich', 'Auswertung als Liste'],
                 ],
+                // Untermenü: Fachanwendungen im Rahmen oder in neuem Tab; beim Öffnen wird das Seitenmenü eingeklappt
+                'fachanwendungen' => [
+                    'title' => 'Fachanwendungen',
+                    'icon' => 'AppWindow',
+                    'collapse_sidebar' => true,
+                    'items' => [
+                        'cmi' => [
+                            'title' => 'CMI',
+                            'icon' => 'Building2',
+                            'description' => 'CMI (Geschäfts- und Schulverwaltung). Adresse der eigenen Instanz in der Server-.env (INTRANET_APP_CMI_URL).',
+                            'embed' => ['url' => env('INTRANET_APP_CMI_URL'), 'open' => 'both'],
+                        ],
+                        'escola' => [
+                            'title' => 'Escola',
+                            'icon' => 'School',
+                            'description' => 'Schulverwaltung Escola. Gleiche Domain wie das Intranet (sekbuelach.ch): Anmeldung im Rahmen möglich, sofern Escola das Einbetten erlaubt – sonst neuer Tab.',
+                            'embed' => ['url' => env('INTRANET_APP_ESCOLA_URL', 'https://www.sekbuelach.ch/escola/login'), 'open' => 'both'],
+                        ],
+                        'apple-school-manager' => [
+                            'title' => 'Apple School Manager',
+                            'icon' => 'Apple',
+                            'description' => 'Apple School Manager (Geräte, verwaltete Apple-Accounts, Apps und Bücher). Apple erlaubt kein Einbetten – öffnet in neuem Tab.',
+                            'embed' => ['url' => 'https://school.apple.com', 'open' => 'tab'],
+                        ],
+                        'jamf-pro' => [
+                            'title' => 'Jamf Pro',
+                            'icon' => 'Tablet',
+                            'description' => 'Jamf Pro (Geräteverwaltung iPads und Macs). Adresse der eigenen Instanz in der Server-.env (INTRANET_APP_JAMF_URL); Daten im Intranet über das Plugin «Jamf Pro».',
+                            'embed' => ['url' => env('INTRANET_APP_JAMF_URL'), 'open' => 'both'],
+                        ],
+                    ],
+                ],
             ],
         ],
         'wissen' => [

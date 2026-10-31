@@ -7,6 +7,18 @@ laufend unter **Unveröffentlicht** und werden beim Erhöhen der Version zur neu
 
 ## [Unveröffentlicht]
 
+## [0.22.0] – 2026-10-31
+
+### Neu
+
+- Kommunikation → Fachanwendungen (Untermenü): CMI, Escola (https://www.sekbuelach.ch/escola/login), Apple School
+  Manager, Jamf Pro. Escola im Rahmen, sofern Escola das Einbetten erlaubt (gleiche Domain, Anmeldung bleibt
+  erhalten), sonst neuer Tab; Apple School Manager immer neuer Tab; CMI und Jamf Pro mit Adresse aus der `.env`
+- Beim Öffnen einer Fachanwendung klappt das Seitenmenü immer ein (auch beim direkten Aufruf der Adresse)
+- Menüs können Untermenüs haben (`items` innerhalb eines Menüpunkts, `collapse_sidebar`)
+- Plugins: «Verbindung testen» auf jeder Plugin-Karte und «Alle Verbindungen testen» (eingeschaltete und
+  eingerichtete Plugins nacheinander, übrige mit Grund übersprungen); auf der Plugin-Seite heisst der Knopf ebenso
+
 ## [0.21.0] – 2026-10-31
 
 ### Neu

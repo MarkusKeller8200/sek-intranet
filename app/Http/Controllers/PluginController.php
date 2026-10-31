@@ -109,6 +109,50 @@ class PluginController extends Controller
         return $this->json(fn (): array => $this->plugins->test($id, $this->user($request)));
     }
 
+    /**
+     * «Alle Verbindungen testen»: jedes eingeschaltete und eingerichtete Plugin nacheinander prüfen.
+     * Ausgeschaltete oder unvollständig eingerichtete Plugins werden übersprungen (mit Grund).
+     */
+    public function testAll(Request $request): JsonResponse
+    {
+        $results = [];
+        foreach ($this->plugins->all() as $id => ['manifest' => $manifest]) {
+            $state = $this->plugins->state($id);
+            $skip = match (true) {
+                ! $state['enabled'] => 'ausgeschaltet',
+                ! $this->plugins->isConfigured($id) => 'nicht fertig eingerichtet',
+                default => null,
+            };
+            if ($skip !== null) {
+                $results[] = ['id' => $id, 'name' => $manifest->name(), 'ok' => null, 'message' => "Übersprungen: {$skip}.", 'ms' => null];
+
+                continue;
+            }
+            $start = microtime(true);
+            try {
+                $result = $this->plugins->test($id, $this->user($request));
+            } catch (\Throwable $e) {
+                $result = ['ok' => false, 'message' => $e->getMessage()];
+            }
+            $results[] = [
+                'id' => $id,
+                'name' => $manifest->name(),
+                'ok' => ($result['ok'] ?? false) === true,
+                'message' => (string) ($result['message'] ?? ''),
+                'ms' => (int) round((microtime(true) - $start) * 1000),
+            ];
+        }
+
+        $tested = array_filter($results, fn (array $r): bool => $r['ok'] !== null);
+        $failed = array_filter($tested, fn (array $r): bool => $r['ok'] === false);
+
+        return response()->json([
+            'status' => $failed === [] ? 'success' : 'warning',
+            'message' => count($tested).' Verbindungen geprüft, '.count($failed).' mit Fehler.',
+            'results' => $results,
+        ]);
+    }
+
     public function action(Request $request, string $id, string $action): JsonResponse
     {
         // Mit Datei: multipart, übrige Angaben als JSON in «payload», Dateien als «file_<schlüssel>».

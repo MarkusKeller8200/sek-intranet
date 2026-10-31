@@ -27,6 +27,9 @@ Warnung. Auf der Schweizer Umgebung `INTRANET_SERVER_IN_SWITZERLAND=true` setzen
 
 ## Einrichten (Administration)
 
+«Verbindung testen» steht auf jeder Plugin-Karte und auf der Plugin-Seite; «Alle Verbindungen testen» prüft alle
+eingeschalteten und eingerichteten Plugins nacheinander (Ergebnis je Karte, Protokoll unter «Läufe»).
+
 1. **Prototyp → Plugins** → Plugin wählen → **Einstellungen** ausfüllen. Zugangsdaten werden mit dem
    `APP_KEY` verschlüsselt gespeichert und nie angezeigt (leer lassen = unverändert).
 2. **Einschalten**, dann **Testen**.

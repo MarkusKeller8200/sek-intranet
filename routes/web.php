@@ -111,6 +111,7 @@ Route::middleware('auth')->group(function () {
 
         // Plugins (Anbindung anderer Systeme per API)
         Route::get('plugins', [PluginController::class, 'index'])->name('plugins.index');
+        Route::post('plugins/verbindungen-testen', [PluginController::class, 'testAll'])->middleware('throttle:10,1')->name('plugins.test-all');
         Route::get('plugins/{id}', [PluginController::class, 'show'])->name('plugins.show');
         Route::get('plugins/{id}/api-ansicht', [ApiViewController::class, 'plugin'])->name('plugins.api-view');
         Route::post('plugins/{id}/schalter', [PluginController::class, 'toggle'])->name('plugins.toggle');
