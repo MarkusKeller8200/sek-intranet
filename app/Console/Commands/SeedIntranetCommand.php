@@ -3,7 +3,9 @@
 namespace App\Console\Commands;
 
 use App\Data\Store\JsonStore;
+use App\Support\DemoStudents;
 use App\Support\PersonFields;
+use App\Support\PersonLinks;
 use Carbon\CarbonImmutable;
 use Illuminate\Console\Command;
 
@@ -49,15 +51,20 @@ class SeedIntranetCommand extends Command
         ];
 
         $store->replace('users', array_map(PersonFields::withNames(...), [
-            ['id' => $ids['admin'], 'name' => 'Andrea Muster', 'email' => 'andrea.muster@sekbuelach.example', 'role' => 'admin', 'function' => 'ICT-Verantwortliche', 'school' => 'verwaltung', 'phone' => '044 000 00 01', 'active' => true, 'short' => 'AM', 'department' => 'Schulverwaltung', 'entry_date' => '2019-08-01', 'office_street' => 'Musterstrasse 1', 'office_zip' => '8180', 'office_city' => 'Bülach', 'escola_id' => 'T-001', 'username' => 'andrea.muster'],
-            ['id' => $ids['schulleitung'], 'name' => 'Beat Beispiel', 'email' => 'beat.beispiel@sekbuelach.example', 'role' => 'schulleitung', 'function' => 'Schulleiter', 'school' => 'hinterbirch', 'phone' => '044 000 00 02', 'active' => true],
-            ['id' => $ids['redaktion'], 'name' => 'Claudia Demo', 'email' => 'claudia.demo@sekbuelach.example', 'role' => 'redaktion', 'function' => 'Schulverwaltung', 'school' => 'verwaltung', 'phone' => '044 000 00 03', 'active' => true],
-            ['id' => $ids['lp1'], 'name' => 'Daniel Probe', 'email' => 'daniel.probe@sekbuelach.example', 'role' => 'lehrperson', 'function' => 'Lehrperson Sek A, Klassenlehrer 2a', 'school' => 'hinterbirch', 'phone' => null, 'active' => true, 'short' => 'DP', 'mobile' => '079 000 00 04', 'entry_date' => '2022-08-15', 'escola_roles' => 'Lehrperson Hinterbirch', 'private_city' => 'Testdorf', 'emergency_name' => 'Erfunden Person', 'emergency_phone' => '079 000 99 99'],
-            ['id' => $ids['lp2'], 'name' => 'Eva Fiktiv', 'email' => 'eva.fiktiv@sekbuelach.example', 'role' => 'lehrperson', 'function' => 'Lehrperson Mathematik', 'school' => 'mettmenriet', 'phone' => null, 'active' => true],
-            ['id' => $ids['lp3'], 'name' => 'Fabian Platzhalter', 'email' => 'fabian.platzhalter@sekbuelach.example', 'role' => 'ict', 'function' => 'ICT-Support', 'school' => 'mettmenriet', 'phone' => null, 'active' => true],
-            ['id' => $ids['sekretariat'], 'name' => 'Gabriela Vorlage', 'email' => 'gabriela.vorlage@sekbuelach.example', 'role' => 'verwaltung', 'function' => 'Sekretariat', 'school' => 'verwaltung', 'phone' => '044 000 00 10', 'active' => true],
-            ['id' => $ids['hauswart'], 'name' => 'Hans Exempel', 'email' => 'hans.exempel@sekbuelach.example', 'role' => 'mitarbeitende', 'function' => 'Hauswart', 'school' => 'hinterbirch', 'phone' => '044 000 00 20', 'active' => false],
+            ['id' => $ids['admin'], 'name' => 'Andrea Muster', 'person_type' => 'mitarbeitende', 'email' => 'andrea.muster@sekbuelach.example', 'role' => 'admin', 'function' => 'ICT-Verantwortliche', 'school' => 'verwaltung', 'phone' => '044 000 00 01', 'active' => true, 'short' => 'AM', 'department' => 'Schulverwaltung', 'entry_date' => '2019-08-01', 'office_street' => 'Musterstrasse 1', 'office_zip' => '8180', 'office_city' => 'Bülach', 'escola_id' => 'T-001', 'username' => 'andrea.muster'],
+            ['id' => $ids['schulleitung'], 'name' => 'Beat Beispiel', 'person_type' => 'schulleitung', 'email' => 'beat.beispiel@sekbuelach.example', 'role' => 'schulleitung', 'function' => 'Schulleiter', 'school' => 'hinterbirch', 'phone' => '044 000 00 02', 'active' => true],
+            ['id' => $ids['redaktion'], 'name' => 'Claudia Demo', 'person_type' => 'mitarbeitende', 'email' => 'claudia.demo@sekbuelach.example', 'role' => 'redaktion', 'function' => 'Schulverwaltung', 'school' => 'verwaltung', 'phone' => '044 000 00 03', 'active' => true],
+            ['id' => $ids['lp1'], 'name' => 'Daniel Probe', 'person_type' => 'lehrperson', 'email' => 'daniel.probe@sekbuelach.example', 'role' => 'lehrperson', 'function' => 'Lehrperson Sek A, Klassenlehrer 2a', 'class_name' => 'H_A2a', 'school' => 'hinterbirch', 'phone' => null, 'active' => true, 'short' => 'DP', 'mobile' => '079 000 00 04', 'entry_date' => '2022-08-15', 'escola_roles' => 'Lehrperson Hinterbirch', 'private_city' => 'Testdorf', 'emergency_name' => 'Erfunden Person', 'emergency_phone' => '079 000 99 99'],
+            ['id' => $ids['lp2'], 'name' => 'Eva Fiktiv', 'person_type' => 'lehrperson', 'email' => 'eva.fiktiv@sekbuelach.example', 'role' => 'lehrperson', 'function' => 'Lehrperson Mathematik, Klassenlehrerin M_A1a', 'class_name' => 'M_A1a', 'school' => 'mettmenriet', 'phone' => null, 'active' => true],
+            ['id' => $ids['lp3'], 'name' => 'Fabian Platzhalter', 'person_type' => 'mitarbeitende', 'email' => 'fabian.platzhalter@sekbuelach.example', 'role' => 'ict', 'function' => 'ICT-Support', 'school' => 'mettmenriet', 'phone' => null, 'active' => true],
+            ['id' => $ids['sekretariat'], 'name' => 'Gabriela Vorlage', 'person_type' => 'mitarbeitende', 'email' => 'gabriela.vorlage@sekbuelach.example', 'role' => 'verwaltung', 'function' => 'Sekretariat', 'school' => 'verwaltung', 'phone' => '044 000 00 10', 'active' => true],
+            ['id' => $ids['hauswart'], 'name' => 'Hans Exempel', 'person_type' => 'mitarbeitende', 'email' => 'hans.exempel@sekbuelach.example', 'role' => 'mitarbeitende', 'function' => 'Hauswart', 'school' => 'hinterbirch', 'phone' => '044 000 00 20', 'active' => false],
         ]));
+
+        // Erfundene Schüler:innen, Eltern und Beispiel-Datenherkunft
+        $store->replace(PersonLinks::COLLECTION, []);
+        DemoStudents::addIfMissing($store);
+        DemoStudents::addDemoLinks($store);
 
         $store->replace('announcements', [
             [

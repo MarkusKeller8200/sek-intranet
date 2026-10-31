@@ -3,7 +3,10 @@
 namespace App\Console\Commands;
 
 use App\Data\Store\JsonStore;
+use App\Support\DemoStudents;
 use App\Support\PersonFields;
+use App\Support\PersonLinks;
+use App\Support\PersonTypes;
 use Illuminate\Console\Command;
 
 /**
@@ -56,6 +59,28 @@ class UpgradeIntranetDataCommand extends Command
                 $total++;
             }
         }
+
+        // Personenart nachtragen (Datensätze von vor der Einführung)
+        foreach ($store->all('users') as $record) {
+            if (($record['person_type'] ?? null) === null) {
+                $store->update('users', (string) $record['id'], ['person_type' => PersonTypes::fromRole(is_string($record['role'] ?? null) ? $record['role'] : null)]);
+                $total++;
+            }
+        }
+
+        // Escola-ID als Datenherkunft übernehmen (einmalig je Person)
+        $links = app(PersonLinks::class);
+        foreach ($store->all('users') as $record) {
+            $escolaId = $record['escola_id'] ?? null;
+            if (is_string($escolaId) && $escolaId !== '' && $links->findPerson('escola', $escolaId) === null) {
+                $links->save(['person_id' => (string) $record['id'], 'direction' => 'source', 'system' => 'escola', 'external_id' => $escolaId, 'id_label' => 'Escola-ID']);
+                $total++;
+            }
+        }
+
+        // Prototyp: erfundene Schüler:innen und Eltern, Beispiel-Datenherkunft
+        $total += DemoStudents::addIfMissing($store);
+        $total += DemoStudents::addDemoLinks($store);
 
         $total === 0
             ? $this->components->info('Daten aktuell, keine Umstellung nötig.')

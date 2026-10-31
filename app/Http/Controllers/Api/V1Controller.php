@@ -9,6 +9,7 @@ use App\Data\Contracts\UserRepository;
 use App\Http\Controllers\Controller;
 use App\Support\AuditLog;
 use App\Support\PersonFields;
+use App\Support\PersonTypes;
 use App\Support\PersonValidator;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -46,7 +47,12 @@ class V1Controller extends Controller
     public function people(Request $request): JsonResponse
     {
         $admin = Gate::allows('manage-users');
-        $people = $admin ? $this->users->all() : $this->users->active();
+        $people = PersonTypes::visibleFor($admin ? $this->users->all() : $this->users->active(), $request->user());
+
+        $type = (string) $request->query('person_type', '');
+        if ($type !== '') {
+            $people = array_values(array_filter($people, fn (array $p): bool => PersonTypes::of($p) === $type));
+        }
 
         $search = mb_strtolower(trim((string) $request->query('search', '')));
         $school = (string) $request->query('school', '');
@@ -72,11 +78,11 @@ class V1Controller extends Controller
         return $this->paginate($request, array_map(fn (array $p): array => PersonFields::visible($p, $admin), $people));
     }
 
-    public function person(string $id): JsonResponse
+    public function person(Request $request, string $id): JsonResponse
     {
         $admin = Gate::allows('manage-users');
         $person = $this->users->find($id);
-        if ($person === null || (! $admin && ($person['active'] ?? false) !== true)) {
+        if ($person === null || (! $admin && ($person['active'] ?? false) !== true) || PersonTypes::visibleFor([$person], $request->user()) === []) {
             return response()->json(['message' => 'Person nicht gefunden.'], 404);
         }
 

@@ -1,4 +1,4 @@
-import { FileUp, ShieldCheck, Users } from 'lucide-react';
+import { Database, FileUp, ShieldCheck, Users } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import type { ChangeEvent } from 'react';
 import { Button } from '@/components/ui/button';
@@ -35,6 +35,24 @@ export type ImportedRow = {
 
 const ALL = '*';
 
+/** Klasse mit Schüler:innen im Intranet (vom Server). */
+export type SystemClass = {
+    name: string;
+    school: string;
+    year: number | null;
+    count: number;
+    teacher: string;
+};
+
+const SYSTEM_HEADERS = [
+    'Nachname',
+    'Vorname',
+    'Benutzername',
+    'Inventarnummer',
+    'Lehrperson',
+    'Klasse',
+];
+
 const cell = (row: string[], index: number) =>
     index >= 0 ? (row[index] ?? '').trim() : '';
 
@@ -47,11 +65,14 @@ export default function ClassImportDialog({
     onOpenChange,
     mailDomain,
     onImport,
+    systemClasses = [],
 }: {
     open: boolean;
     onOpenChange: (open: boolean) => void;
     mailDomain: string;
     onImport: (rows: ImportedRow[], replace: boolean) => void;
+    /** Klassen im Intranet; leer = Laden aus dem Intranet nicht möglich */
+    systemClasses?: SystemClass[];
 }) {
     const [fileName, setFileName] = useState<string | null>(null);
     const [table, setTable] = useState<Table | null>(null);
@@ -62,6 +83,68 @@ export default function ClassImportDialog({
     const [teacher, setTeacher] = useState('');
     const [buildNames, setBuildNames] = useState(true);
     const [replace, setReplace] = useState(true);
+    // Quelle «Intranet»: Jahrgang und gewählte Klassen
+    const [showSystem, setShowSystem] = useState(false);
+    const [systemYear, setSystemYear] = useState('1');
+    const [systemPicked, setSystemPicked] = useState<string[]>([]);
+    const [loading, setLoading] = useState(false);
+
+    const systemYearClasses = systemClasses.filter(
+        (c) => systemYear === ALL || String(c.year) === systemYear,
+    );
+
+    const loadFromSystem = async () => {
+        if (systemPicked.length === 0) {
+            return;
+        }
+        setLoading(true);
+        setError(null);
+        try {
+            const query = systemPicked
+                .map((k) => `klassen[]=${encodeURIComponent(k)}`)
+                .join('&');
+            const response = await fetch(`/geraeteausgabe/schueler?${query}`, {
+                credentials: 'same-origin',
+                headers: { Accept: 'application/json' },
+            });
+            if (!response.ok) {
+                throw new Error(`Laden fehlgeschlagen (HTTP ${response.status}).`);
+            }
+            const json = (await response.json()) as { data: ImportedRow[] };
+            setTable({
+                headers: SYSTEM_HEADERS,
+                rows: json.data.map((r) => [
+                    r.nachname,
+                    r.vorname,
+                    r.benutzer,
+                    r.inventar,
+                    r.lehrperson,
+                    r.klasse,
+                ]),
+            });
+            setMapping({
+                nachname: 0,
+                vorname: 1,
+                benutzer: 2,
+                inventar: 3,
+                lehrperson: 4,
+                klasse: 5,
+            });
+            setFileName(
+                systemPicked.length === 1
+                    ? `Intranet · ${systemPicked[0]}`
+                    : `Intranet · ${systemPicked.length} Klassen`,
+            );
+            // Bereits auf die gewählten Klassen beschränkt
+            setYear(ALL);
+            setKlasse(ALL);
+            setShowSystem(false);
+        } catch (e) {
+            setError(e instanceof Error ? e.message : 'Laden fehlgeschlagen.');
+        } finally {
+            setLoading(false);
+        }
+    };
 
     const load = async (event: ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];
@@ -164,18 +247,28 @@ export default function ClassImportDialog({
                         Schüler:innen importieren
                     </DialogTitle>
                     <DialogDescription>
-                        Klassenliste aus Escola oder Excel (.xlsx oder CSV)
-                        wählen, dann Jahrgang und Klasse auswählen.
+                        Schüler:innen aus dem Intranet laden (gewählte Klassen)
+                        oder eine Klassenliste aus Escola bzw. Excel (.xlsx oder
+                        CSV) wählen.
                     </DialogDescription>
                 </DialogHeader>
 
                 <div className="flex items-start gap-2 rounded-md border border-emerald-300 bg-emerald-50 p-2.5 text-xs text-emerald-900 dark:border-emerald-900 dark:bg-emerald-950 dark:text-emerald-200">
                     <ShieldCheck className="mt-0.5 size-4 shrink-0" />
-                    Die Datei wird nur in diesem Browser gelesen und nicht
-                    hochgeladen.
+                    Eine gewählte Datei wird nur in diesem Browser gelesen und nicht
+                    hochgeladen. Passwörter und PINs entstehen nur im Browser.
                 </div>
 
                 <div className="flex flex-wrap items-center gap-3">
+                    {systemClasses.length > 0 && (
+                        <Button
+                            variant={showSystem ? 'default' : 'outline'}
+                            onClick={() => setShowSystem((v) => !v)}
+                            data-testid="system-source"
+                        >
+                            <Database /> Aus dem Intranet laden
+                        </Button>
+                    )}
                     <Button variant="outline" asChild>
                         <label className="cursor-pointer">
                             <FileUp /> Klassenliste wählen
@@ -196,6 +289,103 @@ export default function ClassImportDialog({
                         </span>
                     )}
                 </div>
+                {showSystem && (
+                    <div className="grid gap-3 rounded-md border p-3">
+                        <div className="flex flex-wrap items-end gap-3">
+                            <label className="grid gap-1 text-sm">
+                                Jahrgang
+                                <select
+                                    className={selectClass}
+                                    value={systemYear}
+                                    onChange={(e) => {
+                                        setSystemYear(e.target.value);
+                                        setSystemPicked([]);
+                                    }}
+                                    data-testid="system-year"
+                                >
+                                    <option value="1">1. Sek</option>
+                                    <option value="2">2. Sek</option>
+                                    <option value="3">3. Sek</option>
+                                    <option value={ALL}>Alle Jahrgänge</option>
+                                </select>
+                            </label>
+                            <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() =>
+                                    setSystemPicked(
+                                        systemPicked.length ===
+                                            systemYearClasses.length
+                                            ? []
+                                            : systemYearClasses.map((c) => c.name),
+                                    )
+                                }
+                                disabled={systemYearClasses.length === 0}
+                            >
+                                {systemPicked.length === systemYearClasses.length &&
+                                systemYearClasses.length > 0
+                                    ? 'Keine'
+                                    : 'Alle'}
+                            </Button>
+                        </div>
+                        {systemYearClasses.length === 0 ? (
+                            <p className="text-sm text-muted-foreground">
+                                Keine Klassen in diesem Jahrgang.
+                            </p>
+                        ) : (
+                            <div className="grid gap-1.5 sm:grid-cols-2">
+                                {systemYearClasses.map((c) => (
+                                    <label
+                                        key={c.name}
+                                        className="flex items-center gap-2 text-sm"
+                                    >
+                                        <Checkbox
+                                            checked={systemPicked.includes(c.name)}
+                                            onCheckedChange={(
+                                                v: boolean | 'indeterminate',
+                                            ) =>
+                                                setSystemPicked((current) =>
+                                                    v === true
+                                                        ? [...current, c.name]
+                                                        : current.filter(
+                                                              (k) => k !== c.name,
+                                                          ),
+                                                )
+                                            }
+                                        />
+                                        <span className="font-medium" translate="no">
+                                            {c.name}
+                                        </span>
+                                        <span className="text-xs text-muted-foreground">
+                                            {`${c.count} Schüler:innen`}
+                                        </span>
+                                        {c.teacher && (
+                                            <span
+                                                className="truncate text-xs text-muted-foreground"
+                                                translate="no"
+                                            >
+                                                {c.teacher}
+                                            </span>
+                                        )}
+                                    </label>
+                                ))}
+                            </div>
+                        )}
+                        <div>
+                            <Button
+                                onClick={() => void loadFromSystem()}
+                                disabled={systemPicked.length === 0 || loading}
+                                data-testid="system-load"
+                            >
+                                <Users />
+                                {systemPicked.length === 1
+                                    ? '1 Klasse laden'
+                                    : `${systemPicked.length} Klassen laden`}
+                            </Button>
+                        </div>
+                    </div>
+                )}
+
                 {error && <p className="text-sm text-destructive">{error}</p>}
 
                 {table && mapping && (

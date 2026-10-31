@@ -18,5 +18,6 @@
     "(column: GridColumn",
     "( column: GridColumn",
     "( urlToCheck: NonNullable",
-    "part.startsWith('**') ? ("
+    "part.startsWith('**') ? (",
+    "p.sync_pending ? ("
 ]

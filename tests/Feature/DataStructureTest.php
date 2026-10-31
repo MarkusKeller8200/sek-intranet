@@ -20,9 +20,9 @@ class DataStructureTest extends TestCase
             ->assertInertia(fn (Assert $page) => $page
                 ->component('data-structures')
                 ->where('store', 'json')
-                ->has('collections', 9)
+                ->has('collections', 10)
                 ->where('collections.0.name', 'users')
-                ->where('collections.0.count', 8)
+                ->where('collections.0.count', 22)
                 ->where('collections.2.name', 'events')
                 ->where('collections.2.unknown_fields.raum_nr', 1)
                 ->where('collections.0.fields', fn ($fields): bool => collect($fields)->firstWhere('name', 'email')['unique'] === true));

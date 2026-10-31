@@ -71,7 +71,35 @@ return [
         'redaktion' => 'Redaktion',
         'lehrperson' => 'Lehrperson',
         'mitarbeitende' => 'Mitarbeitende',
+        'kein-zugang' => 'Kein Zugang',
     ],
+
+    // Systeme für Datenherkunft und Synchronisation (Personen → Datenherkunft). Liste erweiterbar.
+    'sync_systems' => [
+        'escola' => 'Escola',
+        'entra' => 'Microsoft 365 / Entra ID',
+        'jamf' => 'Jamf Pro',
+        'ida' => 'IDA',
+        'inventory360' => 'Inventory360',
+        'edulog' => 'Edulog',
+        'datei' => 'Datei-Import (Excel/CSV)',
+        'intranet' => 'Intranet (manuell erfasst)',
+    ],
+
+    // Art der Person (Kontakt), unabhängig von den Rechten im Intranet. Liste erweiterbar.
+    'person_types' => [
+        'schueler' => 'Schüler:in',
+        'eltern' => 'Eltern / Erziehungsberechtigte',
+        'lehrperson' => 'Lehrperson',
+        'schulleitung' => 'Schulleitung',
+        'mitarbeitende' => 'Mitarbeiter:in',
+        'behoerde' => 'Schulbehörde',
+        'extern' => 'Externe Fachperson',
+    ],
+    // Diese Arten können sich anmelden (Personal); alle anderen haben keinen Zugang zum Intranet
+    'login_person_types' => ['lehrperson', 'schulleitung', 'mitarbeitende', 'behoerde'],
+    // Diese Arten sehen nur Personen mit dem Recht «view-students»
+    'protected_person_types' => ['schueler', 'eltern'],
 
     // Beschreibung je Rolle (Seite Prototyp → Rollenkonzept)
     'role_descriptions' => [
@@ -82,6 +110,7 @@ return [
         'redaktion' => 'Pflegt Mitteilungen, Termine und Dokumente für alle.',
         'lehrperson' => 'Unterrichtet: Unterricht, Bestellungen für Klasse und Zimmer, Inhalte lesen.',
         'mitarbeitende' => 'Weitere Mitarbeitende (Hausdienst, Betreuung, Assistenz): Inhalte lesen.',
+        'kein-zugang' => 'Ohne Anmeldung im Intranet, z. B. Schüler:innen und Eltern (nur als Kontakt erfasst).',
     ],
 
     // Rechte (Gates) → Rollen, die es haben. Menüs und Routen fragen nur Rechte ab, nie Rollen.
@@ -92,6 +121,7 @@ return [
         'use-verwaltung' => ['label' => 'Verwaltung (Workflows)', 'roles' => ['admin', 'schulleitung', 'verwaltung']],
         'use-unterricht' => ['label' => 'Unterricht (Klassen, Stundenpläne, Absenzen)', 'roles' => ['admin', 'schulleitung', 'lehrperson', 'ict']],
         'order' => ['label' => 'Bestellen (Ausrüstung, Lehrmittel, Anträge)', 'roles' => ['admin', 'schulleitung', 'verwaltung', 'ict', 'lehrperson']],
+        'view-students' => ['label' => 'Schüler:innen und Eltern sehen', 'roles' => ['admin', 'schulleitung', 'verwaltung', 'ict', 'lehrperson']],
     ],
 
     'schools' => [
@@ -201,6 +231,7 @@ return [
             'icon' => 'Building2',
             'items' => [
                 'personen' => ['title' => 'Personen', 'icon' => 'Users', 'href' => '/personen'],
+                'schueler' => ['title' => 'Schüler:innen', 'icon' => 'GraduationCap', 'href' => '/schueler', 'can' => 'view-students'],
                 'klassen' => [
                     'title' => 'Klassen & Gruppen',
                     'icon' => 'UsersRound',
@@ -479,6 +510,16 @@ return [
             'redaktion' => 'indigo',
             'lehrperson' => 'amber',
             'mitarbeitende' => 'slate',
+            'kein-zugang' => 'teal',
+        ],
+        'person_types' => [
+            'schueler' => 'sky',
+            'eltern' => 'orange',
+            'lehrperson' => 'amber',
+            'schulleitung' => 'violet',
+            'mitarbeitende' => 'slate',
+            'behoerde' => 'indigo',
+            'extern' => 'teal',
         ],
         'audiences' => [
             'alle' => 'brand',
@@ -549,20 +590,21 @@ return [
 
         'users' => [
             'label' => 'Personen',
-            'description' => 'Mitarbeitende, zugleich Benutzerkonten des Intranets.',
+            'description' => 'Personen und Kontakte (Personal, Schüler:innen, Eltern …); Personal zugleich Benutzerkonten.',
             // Gruppen der Detailansicht und des Formulars (Reihenfolge = Anzeige).
             // «admin»: nur für die Administration sichtbar, wird anderen nie gesendet.
             'groups' => [
                 'person' => ['label' => 'Person', 'description' => 'Name und Status'],
-                'organisation' => ['label' => 'Organisation', 'description' => 'Schulhaus, Funktion und Anstellung'],
+                'organisation' => ['label' => 'Organisation', 'description' => 'Schulhaus, Funktion, Klasse und Gerät'],
                 'contact' => ['label' => 'Kontakt Schule', 'description' => 'Geschäftliche Erreichbarkeit'],
                 'private' => ['label' => 'Privat & Notfall', 'description' => 'Nur für die Administration sichtbar', 'admin' => true],
                 'system' => ['label' => 'Intranet & Systeme', 'description' => 'Berechtigung und Verknüpfung mit Escola', 'admin' => true],
             ],
-            // Bewusst nicht vorgesehen (besonders schützenswert oder nicht nötig für das Personal-
-            // verzeichnis): AHV-Nummer, Religion/Konfession, Nationalität, Heimatort, Aufenthalts-
-            // bewilligung, Zivilstand, Gesundheit, Ernährung, IBAN/BIC, Angaben zu Schülerinnen,
-            // Schülern und Erziehungsberechtigten (Klasse, Vertreter).
+            // Bewusst nicht vorgesehen (besonders schützenswert oder nicht nötig): AHV-Nummer,
+            // Religion/Konfession, Nationalität, Heimatort, Aufenthaltsbewilligung, Zivilstand,
+            // Gesundheit, Ernährung, IBAN/BIC, Noten, Förderangaben.
+            // Schüler:innen und Eltern: nur Kontakt, Klasse und Gerät; echte Daten nur auf dem
+            // Schweizer Server (ADR-005), im Prototyp nur erfundene.
             'fields' => [
                 'title' => ['type' => 'string', 'required' => false, 'label' => 'Titel', 'group' => 'person'],
                 'first_name' => ['type' => 'string', 'required' => false, 'label' => 'Vorname', 'group' => 'person'],
@@ -570,15 +612,18 @@ return [
                 'name' => ['type' => 'string', 'required' => true, 'label' => 'Name (Anzeige)', 'group' => 'person', 'computed' => true],
                 'short' => ['type' => 'string', 'required' => false, 'label' => 'Kürzel', 'group' => 'person', 'max' => 20],
                 'active' => ['type' => 'bool', 'required' => true, 'label' => 'Aktiv', 'group' => 'person'],
+                'person_type' => ['type' => 'enum', 'values' => 'person_types', 'required' => true, 'label' => 'Personenart', 'group' => 'person'],
 
                 'school' => ['type' => 'enum', 'values' => 'schools', 'required' => true, 'label' => 'Schulhaus', 'group' => 'organisation'],
                 'function' => ['type' => 'string', 'required' => false, 'label' => 'Funktion', 'group' => 'organisation'],
                 'department' => ['type' => 'string', 'required' => false, 'label' => 'Abteilung / Stufe', 'group' => 'organisation'],
+                'class_name' => ['type' => 'string', 'required' => false, 'label' => 'Klasse', 'group' => 'organisation', 'max' => 30],
+                'device_inventory' => ['type' => 'string', 'required' => false, 'label' => 'iPad-/Geräte-Nr.', 'group' => 'organisation', 'max' => 50],
                 'escola_roles' => ['type' => 'string', 'required' => false, 'label' => 'Rollen (Escola)', 'group' => 'organisation'],
                 'entry_date' => ['type' => 'date', 'required' => false, 'label' => 'Eintritt', 'group' => 'organisation'],
                 'exit_date' => ['type' => 'date', 'required' => false, 'label' => 'Austritt', 'group' => 'organisation'],
 
-                'email' => ['type' => 'email', 'required' => true, 'unique' => true, 'label' => 'E-Mail', 'group' => 'contact'],
+                'email' => ['type' => 'email', 'required' => false, 'unique' => true, 'label' => 'E-Mail', 'group' => 'contact'],
                 'phone' => ['type' => 'string', 'required' => false, 'label' => 'Telefon', 'group' => 'contact', 'input' => 'tel', 'max' => 50],
                 'phone2' => ['type' => 'string', 'required' => false, 'label' => 'Telefon 2', 'group' => 'contact', 'input' => 'tel', 'max' => 50],
                 'mobile' => ['type' => 'string', 'required' => false, 'label' => 'Mobiltelefon', 'group' => 'contact', 'input' => 'tel', 'max' => 50],
@@ -672,6 +717,20 @@ return [
                 'user_id' => ['type' => 'ref', 'references' => 'users', 'required' => false, 'label' => 'Ausgelöst von'],
                 'user_name' => ['type' => 'string', 'required' => false, 'label' => 'Name (Momentaufnahme)'],
                 'ms' => ['type' => 'int', 'required' => true, 'label' => 'Dauer (ms)'],
+            ],
+        ],
+
+        'person_links' => [
+            'label' => 'Personen: Datenherkunft & Synchronisation',
+            'description' => 'Quelle (aus welchem System, mit dessen ID/PK – verhindert Duplikate beim Import) und Ziele (in welche Systeme exportiert, ID/PK, letzter Abgleich). Geändert nach dem letzten Abgleich = Abgleich fällig.',
+            'fields' => [
+                'person_id' => ['type' => 'ref', 'references' => 'users', 'required' => true, 'label' => 'Person'],
+                'direction' => ['type' => 'enum', 'values' => ['source' => 'Quelle', 'target' => 'Ziel'], 'required' => true, 'label' => 'Richtung'],
+                'system' => ['type' => 'enum', 'values' => 'sync_systems', 'required' => true, 'label' => 'System'],
+                'external_id' => ['type' => 'string', 'required' => false, 'label' => 'ID / PK im System'],
+                'id_label' => ['type' => 'string', 'required' => false, 'label' => 'Art der ID (z. B. Escola-ID, objectId, UPN)'],
+                'last_sync_at' => ['type' => 'datetime', 'required' => false, 'label' => 'Letzter Abgleich'],
+                'note' => ['type' => 'string', 'required' => false, 'label' => 'Bemerkung'],
             ],
         ],
 

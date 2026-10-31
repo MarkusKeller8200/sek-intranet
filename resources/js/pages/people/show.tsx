@@ -1,3 +1,5 @@
+import PersonLinksCard from '@/components/person-links-card';
+import type { PersonLink } from '@/components/person-links-card';
 import { Head, Link, router, usePage } from '@inertiajs/react';
 import {
     ArrowLeft,
@@ -192,10 +194,16 @@ export default function PersonShow({
     person,
     groups,
     history,
+    links = [],
+    systems = {},
+    canManageLinks = false,
 }: {
     person: Person;
     groups: PersonGroup[];
     history: HistoryEntry[];
+    links?: PersonLink[];
+    systems?: Record<string, string>;
+    canManageLinks?: boolean;
 }) {
     const { auth } = usePage().props;
     const canManage = auth.can.manageUsers;
@@ -334,6 +342,15 @@ export default function PersonShow({
                     ))}
                 </div>
 
+                {(links.length > 0 || canManageLinks) && (
+                    <PersonLinksCard
+                        personId={person.id}
+                        links={links}
+                        systems={systems}
+                        canManage={canManageLinks}
+                    />
+                )}
+
                 {canManage && (
                     <History
                         person={person}
@@ -348,7 +365,9 @@ export default function PersonShow({
 
 PersonShow.layout = (props: { person: Person }) => ({
     breadcrumbs: [
-        { title: 'Personen', href: '/personen' },
+        props.person.person_type === 'schueler'
+            ? { title: 'Schüler:innen', href: '/schueler' }
+            : { title: 'Personen', href: '/personen' },
         { title: props.person.name, href: `/personen/${props.person.id}` },
     ],
 });

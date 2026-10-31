@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Auth\IntranetUser;
 use App\Data\Contracts\UserRepository;
+use App\Support\PersonTypes;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -30,7 +31,7 @@ class AuthController extends Controller
                 'name' => $user['name'] ?? '',
                 'function' => $user['function'] ?? null,
                 'role' => $user['role'] ?? 'mitarbeitende',
-            ], $this->users->active()) : [],
+            ], array_values(array_filter($this->users->active(), PersonTypes::canLogin(...)))) : [],
         ]);
     }
 
@@ -41,7 +42,7 @@ class AuthController extends Controller
         $data = $request->validate(['user_id' => ['required', 'string']]);
         $record = $this->users->find($data['user_id']);
 
-        if ($record === null || ($record['active'] ?? true) !== true) {
+        if ($record === null || ($record['active'] ?? true) !== true || ! PersonTypes::canLogin($record)) {
             throw ValidationException::withMessages(['user_id' => 'Diese Person kann sich nicht anmelden.']);
         }
 

@@ -6,6 +6,8 @@ use App\Data\Contracts\UserRepository;
 use App\Support\AuditLog;
 use App\Support\GridViews;
 use App\Support\PersonFields;
+use App\Support\PersonLinks;
+use App\Support\PersonTypes;
 use App\Support\PersonValidator;
 use App\Support\SpreadsheetWriter;
 use Illuminate\Http\JsonResponse;
@@ -28,45 +30,85 @@ class PersonController extends Controller
 
     public const GRID = 'people';
 
+    public const GRID_STUDENTS = 'students';
+
     public function __construct(
         private readonly UserRepository $users,
         private readonly AuditLog $audit,
+        private readonly PersonLinks $links,
     ) {}
 
     public function index(Request $request, GridViews $views): Response
     {
+        return $this->list($request, $views, null);
+    }
+
+    /** Schüler:innen: gleiche Tabelle, nur Personenart «Schüler:in». */
+    public function students(Request $request, GridViews $views): Response
+    {
+        return $this->list($request, $views, PersonTypes::STUDENT);
+    }
+
+    private function list(Request $request, GridViews $views, ?string $type): Response
+    {
         $admin = Gate::allows('manage-users');
-        $people = $admin ? $this->users->all() : $this->users->active();
+        $people = PersonTypes::visibleFor($admin ? $this->users->all() : $this->users->active(), $request->user());
+        if ($type !== null) {
+            $people = array_values(array_filter($people, fn (array $p): bool => PersonTypes::of($p) === $type));
+        }
 
         usort($people, fn (array $a, array $b): int => strnatcasecmp(
             ($a['last_name'] ?? '').' '.($a['first_name'] ?? ''),
             ($b['last_name'] ?? '').' '.($b['first_name'] ?? ''),
         ));
 
+        $pending = $this->links->pendingCounts();
+
         return Inertia::render('people/index', [
-            'people' => array_map(fn (array $p): array => PersonFields::visible($p, $admin), $people),
+            'people' => array_map(fn (array $p): array => PersonFields::visible($p, $admin) + [
+                'sync_pending' => $pending[(string) $p['id']] ?? 0,
+            ], $people),
             'groups' => PersonFields::groups($admin),
-            'views' => $views->for(self::GRID, $request->user()),
+            'views' => $views->for($type === null ? self::GRID : self::GRID_STUDENTS, $request->user()),
+            'scope' => $type === null ? null : [
+                'type' => $type,
+                'title' => 'Schüler:innen',
+                'description' => 'Schüler:innen nach Klasse – gleiche Tabelle wie «Personen», nur Personenart Schüler:in.',
+                'href' => '/schueler',
+            ],
         ]);
     }
 
-    public function show(string $id): Response
+    public function show(Request $request, string $id): Response
     {
         $admin = Gate::allows('manage-users');
         $person = $this->users->findOrFail($id);
         abort_if(! $admin && ($person['active'] ?? false) !== true, 404);
+        abort_if(PersonTypes::visibleFor([$person], $request->user()) === [], 404);
 
         return Inertia::render('people/show', [
             'person' => PersonFields::visible($person, $admin),
             'groups' => PersonFields::groups($admin),
             // Verlauf enthält auch Admin-Felder: nur für die Administration
             'history' => $admin ? $this->audit->for('users', $id) : [],
+            'links' => $this->links->forPerson($id, $person),
+            'systems' => PersonLinks::systems(),
+            'canManageLinks' => $admin,
         ]);
     }
 
-    public function create(): Response
+    public function create(Request $request): Response
     {
-        return Inertia::render('people/form', ['person' => null, 'groups' => PersonFields::groups(true)]);
+        $type = $request->query('art');
+
+        return Inertia::render('people/form', [
+            'person' => null,
+            'groups' => PersonFields::groups(true),
+            // Vorbelegung, z. B. aus «Schüler:innen» → Neue Person
+            'defaults' => is_string($type) && isset(PersonTypes::all()[$type])
+                ? ['person_type' => $type] + ($type === PersonTypes::STUDENT || $type === 'eltern' ? ['role' => 'kein-zugang'] : [])
+                : [],
+        ]);
     }
 
     public function store(Request $request): RedirectResponse
@@ -268,6 +310,7 @@ class PersonController extends Controller
 
         $person = $this->users->findOrFail($id);
         $this->users->delete($id);
+        $this->links->deleteForPerson($id);
         $this->audit->record('users', $person, null, 'Formular', $request->user());
         $this->pluginEvent('person.deleted', $person);
         $this->toast('Person gelöscht.');
@@ -293,6 +336,7 @@ class PersonController extends Controller
             }
 
             $this->users->delete($id);
+            $this->links->deleteForPerson($id);
             $this->audit->record('users', $person, null, 'Sammellöschung', $request->user());
             $this->pluginEvent('person.deleted', $person);
             $deleted++;
@@ -315,7 +359,7 @@ class PersonController extends Controller
 
         $ids = array_flip(array_map('strval', (array) $request->input('ids', [])));
         $people = array_values(array_filter(
-            $admin ? $this->users->all() : $this->users->active(),
+            PersonTypes::visibleFor($admin ? $this->users->all() : $this->users->active(), $request->user()),
             fn (array $p): bool => $ids === [] || isset($ids[(string) $p['id']]),
         ));
 

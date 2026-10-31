@@ -11,6 +11,9 @@ class JsonUserRepository extends JsonRepository implements UserRepository
     public function findByEmail(string $email): ?array
     {
         $needle = mb_strtolower(trim($email));
+        if ($needle === '') {
+            return null; // Personen ohne E-Mail (z. B. Eltern) nie über eine leere Adresse finden
+        }
 
         foreach ($this->all() as $user) {
             if (mb_strtolower(self::stringValue($user['email'] ?? '')) === $needle) {

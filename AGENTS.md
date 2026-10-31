@@ -35,7 +35,11 @@ Projekt: SekBülach Intranet, Prototyp. Stack und Konventionen wie IDA.
   Menüpunkt mit `embed` einbinden (`docs/KONZEPT-ANWENDUNGEN.md`); Adressen eigener Anwendungen nur über `.env`.
 - Rollen und Rechte (`docs/KONZEPT-ROLLEN.md`): Menüs und Routen fragen nur Rechte ab (`can:<recht>`), nie Rollen.
   Neue Rechte unter `config/intranet.php` → `abilities`.
-- Schülerdaten nie im Intranet speichern; Listen (z. B. Geräteausgabe) nur im Browser verarbeiten.
+- Schüler:innen und Eltern sind Personen mit Personenart (`docs/KONZEPT-DATENHERKUNFT.md`): im Prototyp nur
+  erfundene; sichtbar nur mit Recht `view-students` (`PersonTypes::visibleFor`); ohne Anmeldung. Passwörter und PINs
+  der Geräteausgabe nie speichern.
+- Importe: Personen zuerst über die Datenherkunft (`PersonLinks`, System + ID) suchen, dann über die E-Mail;
+  `PeopleImport` mit Systemschlüssel und `_external_id` verwenden.
 - Wird ein Schlüssel einer Auswahlliste umbenannt, Umstellung unter `renames` eintragen
   (`php artisan intranet:upgrade` stellt bestehende Daten beim Start um).
 

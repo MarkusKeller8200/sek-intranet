@@ -3,6 +3,7 @@
 namespace App\Auth;
 
 use App\Data\Contracts\UserRepository;
+use App\Support\PersonTypes;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\UserProvider;
 
@@ -76,6 +77,7 @@ final class RepositoryUserProvider implements UserProvider
 
         $user = new IntranetUser($record);
 
-        return $user->isActive() ? $user : null;
+        // Schüler:innen, Eltern und «Kein Zugang» haben kein Konto im Intranet
+        return $user->isActive() && PersonTypes::canLogin($record) ? $user : null;
     }
 }

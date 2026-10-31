@@ -14,7 +14,10 @@ import { useMemo, useState } from 'react';
 import type { ChangeEvent } from 'react';
 import { toast } from 'sonner';
 import ClassImportDialog from '@/components/class-import-dialog';
-import type { ImportedRow } from '@/components/class-import-dialog';
+import type {
+    ImportedRow,
+    SystemClass,
+} from '@/components/class-import-dialog';
 import PageHeader from '@/components/page-header';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -70,9 +73,11 @@ const selectClass =
 export default function DeviceHandout({
     planned,
     mailDomain,
+    classes = [],
 }: {
     planned: Planned;
     mailDomain: string;
+    classes?: SystemClass[];
 }) {
     const [input, setInput] = useState('');
     const [length, setLength] = useState(10);
@@ -216,6 +221,7 @@ export default function DeviceHandout({
                             open={importOpen}
                             onOpenChange={setImportOpen}
                             mailDomain={mailDomain}
+                            systemClasses={classes}
                             onImport={importRows}
                         />
                         <Textarea

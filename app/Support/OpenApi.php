@@ -66,6 +66,7 @@ final class OpenApi
                             ['name' => 'search', 'in' => 'query', 'description' => 'Suche in Name, E-Mail, Funktion, Kürzel', 'schema' => ['type' => 'string']],
                             ['name' => 'school', 'in' => 'query', 'description' => 'Schulhaus', 'schema' => ['type' => 'string', 'enum' => array_keys((array) config('intranet.schools'))]],
                             ['name' => 'active', 'in' => 'query', 'description' => 'Nur aktive (true) oder inaktive (false)', 'schema' => ['type' => 'boolean']],
+                            ['name' => 'person_type', 'in' => 'query', 'description' => 'Personenart (Schüler:innen und Eltern nur mit Recht «view-students»)', 'schema' => ['type' => 'string', 'enum' => array_keys((array) config('intranet.person_types'))]],
                             ...$paging,
                         ],
                         'responses' => ['200' => ['description' => 'OK', 'content' => ['application/json' => ['schema' => $list('#/components/schemas/Person')]]]] + $errors,

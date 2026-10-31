@@ -91,6 +91,7 @@ export type ColorClasses = (typeof palette)[ColorName];
 export type ColoredList =
     | 'schools'
     | 'roles'
+    | 'personTypes'
     | 'audiences'
     | 'announcementCategories'
     | 'eventCategories'
@@ -100,6 +101,7 @@ export type ColoredList =
 export const colorConfigKey: Record<ColoredList, string> = {
     schools: 'schools',
     roles: 'roles',
+    personTypes: 'person_types',
     audiences: 'audiences',
     announcementCategories: 'announcement_categories',
     eventCategories: 'event_categories',

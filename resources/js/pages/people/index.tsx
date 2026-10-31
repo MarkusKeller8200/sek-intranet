@@ -45,7 +45,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { useOptions } from '@/hooks/use-options';
 import { postJson } from '@/lib/http';
-import { DEFAULT_VISIBLE, gridType } from '@/lib/person-fields';
+import { DEFAULT_VISIBLE, gridType, STUDENT_VISIBLE } from '@/lib/person-fields';
 import type { Person, PersonGroup } from '@/types';
 
 type BulkChange = {
@@ -57,6 +57,14 @@ type BulkChange = {
 };
 
 type CellsResponse = { people?: Person[]; status?: string; message?: string };
+
+/** Gefilterte Ansicht derselben Tabelle (z. B. «Schüler:innen»). */
+type Scope = {
+    type: string;
+    title: string;
+    description: string;
+    href: string;
+} | null;
 
 async function saveCells(
     changes: CellChange<Person>[],
@@ -118,10 +126,12 @@ export default function PeopleIndex({
     people,
     groups,
     views,
+    scope = null,
 }: {
     people: Person[];
     groups: PersonGroup[];
     views: SavedView[];
+    scope?: Scope;
 }) {
     const { auth } = usePage().props;
     const options = useOptions();
@@ -130,8 +140,11 @@ export default function PeopleIndex({
     const [busy, setBusy] = useState(false);
     const [mobileSearch, setMobileSearch] = useState('');
 
+    const visible = scope ? STUDENT_VISIBLE : DEFAULT_VISIBLE;
+    const gridKey = scope ? 'students' : 'people';
+
     // Alle Felder aus dem Schema als Spalten; nicht standardmässige ausgeblendet
-    const columns: GridColumn<Person>[] = groups
+    const schemaColumns: GridColumn<Person>[] = groups
         .flatMap((group) => group.fields)
         .map((field): GridColumn<Person> => {
             const column: GridColumn<Person> = {
@@ -141,7 +154,7 @@ export default function PeopleIndex({
                 options: field.options ?? undefined,
                 editable: !field.computed,
                 required: field.required,
-                hidden: !DEFAULT_VISIBLE.includes(field.key),
+                hidden: !visible.includes(field.key),
             };
 
             switch (field.key) {
@@ -173,6 +186,16 @@ export default function PeopleIndex({
                             <OptionBadge list="roles" value={p.role} />
                         ),
                     };
+                case 'person_type':
+                    return {
+                        ...column,
+                        render: (p) => (
+                            <OptionBadge
+                                list="personTypes"
+                                value={p.person_type}
+                            />
+                        ),
+                    };
                 case 'email':
                     return canManage
                         ? column
@@ -191,6 +214,27 @@ export default function PeopleIndex({
                     return column;
             }
         });
+
+    // Abgleich mit Zielsystemen (Datenherkunft) – nur für die Administration
+    const columns: GridColumn<Person>[] = canManage
+        ? [
+              ...schemaColumns,
+              {
+                  id: 'sync_pending',
+                  title: 'Abgleich offen',
+                  type: 'text',
+                  editable: false,
+                  required: false,
+                  hidden: true,
+                  render: (p) =>
+                      p.sync_pending ? (
+                          <Badge variant="outline">
+                              {`${p.sync_pending} offen`}
+                          </Badge>
+                      ) : null,
+              },
+          ]
+        : schemaColumns;
 
     const applyBulk = async () => {
         if (!bulk) {
@@ -362,16 +406,26 @@ export default function PeopleIndex({
 
     return (
         <>
-            <Head title="Personen" />
+            <Head title={scope?.title ?? 'Personen'} />
             <div className="flex flex-1 flex-col gap-6 p-4 md:p-6">
                 <PageHeader
-                    title="Personen"
-                    description="Verzeichnis der Mitarbeitenden"
+                    title={scope?.title ?? 'Personen'}
+                    description={
+                        scope?.description ??
+                        'Verzeichnis der Mitarbeitenden, Schüler:innen und Kontakte'
+                    }
                     actions={
                         canManage && (
                             <Button asChild>
-                                <Link href="/personen/neu">
-                                    <Plus /> Neue Person
+                                <Link
+                                    href={
+                                        scope
+                                            ? `/personen/neu?art=${scope.type}`
+                                            : '/personen/neu'
+                                    }
+                                >
+                                    <Plus />{' '}
+                                    {scope ? 'Neue:r Schüler:in' : 'Neue Person'}
                                 </Link>
                             </Button>
                         )
@@ -391,10 +445,10 @@ export default function PeopleIndex({
                         <DataGrid
                             data={people}
                             columns={columns}
-                            storageKey={`intranet.grid.people.${canManage ? 'admin' : 'all'}`}
+                            storageKey={`intranet.grid.${gridKey}.${canManage ? 'admin' : 'all'}`}
                             canEdit={canManage}
                             onSaveCells={saveCells}
-                            gridId="people"
+                            gridId={gridKey}
                             views={views}
                             canShareViews={canManage}
                             onExport={(format, ids, cols) =>
@@ -561,6 +615,11 @@ export default function PeopleIndex({
     );
 }
 
-PeopleIndex.layout = {
-    breadcrumbs: [{ title: 'Personen', href: '/personen' }],
-};
+PeopleIndex.layout = (props: { scope?: Scope }) => ({
+    breadcrumbs: props.scope
+        ? [
+              { title: 'Personen', href: '/personen' },
+              { title: props.scope.title, href: props.scope.href },
+          ]
+        : [{ title: 'Personen', href: '/personen' }],
+});

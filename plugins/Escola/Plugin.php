@@ -113,6 +113,7 @@ class Plugin extends BasePlugin
                 'entry_date' => $value('Eintritt'),
                 'exit_date' => $value('Austritt'),
                 'escola_id' => $value('Escola-ID'),
+                '_external_id' => $value('Escola-ID'),
                 'external_id' => $value('Fremd-ID'),
                 'username' => $value('Benutzername'),
                 'school' => self::school($roles),
@@ -141,7 +142,7 @@ class Plugin extends BasePlugin
             count($table['rows']), $ignored, $withoutEmail, $authorities,
         ));
 
-        $import = new PeopleImport($ctx->users(), 'Import '.$ctx->manifest->name());
+        $import = new PeopleImport($ctx->users(), 'Import '.$ctx->manifest->name(), 'escola');
         $rows = $import->plan($people, 'Escola');
 
         if (($options['_apply'] ?? false) === true) {

@@ -41,6 +41,7 @@ class HandleInertiaRequests extends Middleware
             ],
             'options' => fn (): array => [
                 'roles' => config('intranet.roles'),
+                'personTypes' => config('intranet.person_types'),
                 'schools' => config('intranet.schools'),
                 'audiences' => config('intranet.audiences'),
                 'announcementCategories' => config('intranet.announcement_categories'),

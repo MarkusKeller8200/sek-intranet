@@ -37,10 +37,22 @@ export function displayValue(field: PersonField, value: unknown): string {
 export const DEFAULT_VISIBLE = [
     'last_name',
     'first_name',
+    'person_type',
     'function',
     'school',
     'email',
     'phone',
     'role',
+    'active',
+];
+
+/** Anfangs sichtbare Spalten der Seite «Schüler:innen». */
+export const STUDENT_VISIBLE = [
+    'last_name',
+    'first_name',
+    'class_name',
+    'school',
+    'email',
+    'device_inventory',
     'active',
 ];

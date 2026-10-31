@@ -13,6 +13,7 @@ use App\Http\Controllers\GridViewController;
 use App\Http\Controllers\McpConceptController;
 use App\Http\Controllers\ModuleController;
 use App\Http\Controllers\PersonController;
+use App\Http\Controllers\PersonLinkController;
 use App\Http\Controllers\PluginController;
 use App\Http\Controllers\RoleConceptController;
 use App\Http\Controllers\VersionController;
@@ -68,6 +69,7 @@ Route::middleware('auth')->group(function () {
     // Fachstelle ICT (Recht use-ict)
     Route::middleware('can:use-ict')->group(function () {
         Route::get('geraeteausgabe', DeviceHandoutController::class)->name('device-handout');
+        Route::get('geraeteausgabe/schueler', [DeviceHandoutController::class, 'students'])->middleware('throttle:60,1')->name('device-handout.students');
     });
 
     Route::middleware('can:manage-users')->group(function () {
@@ -81,6 +83,10 @@ Route::middleware('auth')->group(function () {
         Route::post('personen/zellen', [PersonController::class, 'cells'])->middleware('throttle:240,1')->name('people.cells');
         Route::post('personen/{id}/verlauf/{entry}/wiederherstellen', [PersonController::class, 'restore'])->name('people.restore');
         Route::delete('personen/{id}', [PersonController::class, 'destroy'])->name('people.destroy');
+        Route::post('personen/{id}/herkunft', [PersonLinkController::class, 'store'])->name('people.links.store');
+        Route::put('personen/{id}/herkunft/{link}', [PersonLinkController::class, 'update'])->name('people.links.update');
+        Route::post('personen/{id}/herkunft/{link}/abgeglichen', [PersonLinkController::class, 'synced'])->name('people.links.synced');
+        Route::delete('personen/{id}/herkunft/{link}', [PersonLinkController::class, 'destroy'])->name('people.links.destroy');
 
         Route::get('datenstrukturen', DataStructureController::class)->name('data-structures');
         Route::inertia('farbkonzept', 'color-concept')->name('color-concept');
@@ -108,6 +114,7 @@ Route::middleware('auth')->group(function () {
     Route::get('versionen', VersionController::class)->name('versions');
     Route::get('version.json', [VersionController::class, 'current'])->name('versions.current');
     Route::get('personen', [PersonController::class, 'index'])->name('people.index');
+    Route::get('schueler', [PersonController::class, 'students'])->middleware('can:view-students')->name('people.students');
     Route::post('personen/export', [PersonController::class, 'export'])->middleware('throttle:30,1')->name('people.export');
     Route::post('ansichten', [GridViewController::class, 'store'])->middleware('throttle:60,1')->name('grid-views.store');
     Route::delete('ansichten/{id}', [GridViewController::class, 'destroy'])->name('grid-views.destroy');

@@ -22,11 +22,16 @@ type FormValues = Record<string, string | boolean>;
 
 const DEFAULTS: FormValues = {
     role: 'mitarbeitende',
+    person_type: 'mitarbeitende',
     school: 'gesamt',
     active: true,
 };
 
-function initial(groups: PersonGroup[], person: Person | null): FormValues {
+function initial(
+    groups: PersonGroup[],
+    person: Person | null,
+    defaults: Record<string, string>,
+): FormValues {
     const values: FormValues = {};
     for (const field of groups.flatMap((g) => g.fields)) {
         if (field.computed) {
@@ -40,7 +45,7 @@ function initial(groups: PersonGroup[], person: Person | null): FormValues {
                     : (DEFAULTS[field.key] ?? false)
                 : typeof current === 'string'
                   ? current
-                  : (DEFAULTS[field.key] ?? '');
+                  : (defaults[field.key] ?? DEFAULTS[field.key] ?? '');
     }
 
     return values;
@@ -49,11 +54,13 @@ function initial(groups: PersonGroup[], person: Person | null): FormValues {
 export default function PersonForm({
     person,
     groups,
+    defaults = {},
 }: {
     person: Person | null;
     groups: PersonGroup[];
+    defaults?: Record<string, string>;
 }) {
-    const form = useForm<FormValues>(initial(groups, person));
+    const form = useForm<FormValues>(initial(groups, person, defaults));
 
     const submit = (e: FormEvent) => {
         e.preventDefault();

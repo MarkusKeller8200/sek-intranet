@@ -7,6 +7,7 @@ export type StoredRecord = {
 
 export type Options = {
     roles: Record<string, string>;
+    personTypes: Record<string, string>;
     schools: Record<string, string>;
     audiences: Record<string, string>;
     announcementCategories: Record<string, string>;
@@ -60,6 +61,11 @@ export type Person = StoredRecord & {
     school: string;
     phone: string | null;
     active: boolean;
+    person_type?: string | null;
+    class_name?: string | null;
+    device_inventory?: string | null;
+    /** Anzahl fälliger Abgleiche mit Zielsystemen (nur Tabelle) */
+    sync_pending?: number;
     // Weitere Felder aus config/intranet.php → schema.users (Admin-Felder nur für die Administration)
     title?: string | null;
     first_name?: string | null;

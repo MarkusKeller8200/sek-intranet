@@ -14,7 +14,7 @@ class ColorConceptTest extends TestCase
 
     public function test_every_option_has_a_unique_valid_color(): void
     {
-        foreach (['schools', 'roles', 'audiences', 'announcement_categories', 'event_categories', 'document_categories'] as $list) {
+        foreach (['schools', 'roles', 'person_types', 'audiences', 'announcement_categories', 'event_categories', 'document_categories'] as $list) {
             $keys = array_keys((array) config("intranet.{$list}"));
             $colors = (array) config("intranet.colors.{$list}");
 

@@ -7,6 +7,24 @@ laufend unter **Unveröffentlicht** und werden beim Erhöhen der Version zur neu
 
 ## [Unveröffentlicht]
 
+## [0.16.0] – 2026-10-31
+
+### Neu
+
+- Personenart je Person (Schüler:in, Eltern, Lehrperson, Schulleitung, Mitarbeiter:in, Schulbehörde, Externe;
+  erweiterbar), Felder Klasse und iPad-/Geräte-Nr.
+- Personen & Organisation → Schüler:innen: dieselbe Tabelle, gefiltert auf Schüler:innen
+- Datenherkunft & Synchronisation je Person: Quelle und Zielsysteme mit ID/PK, letztem Abgleich und Hinweis
+  «Geändert – Abgleich nötig»; Importe finden Personen über die ID des Quellsystems (keine Duplikate)
+- Geräteausgabe: Schüler:innen direkt aus dem Intranet laden, nur die gewählten Klassen
+- Erfundene Demo-Schüler:innen und Eltern
+
+### Geändert
+
+- Schüler:innen und Eltern sehen nur Rollen mit Recht «Schüler:innen und Eltern sehen»; sie können sich nicht
+  anmelden (Rolle «Kein Zugang»)
+- E-Mail ist kein Pflichtfeld mehr (bleibt eindeutig)
+
 ## [0.15.0] – 2026-10-30
 
 ### Neu

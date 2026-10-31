@@ -89,6 +89,7 @@ class Plugin extends BasePlugin
         $school = (string) $ctx->setting('default_school', 'gesamt');
         $people = array_map(fn (array $u): array => [
             'name' => $u['displayName'] ?? null,
+            '_external_id' => $u['id'] ?? null,
             'email' => $u['mail'] ?? $u['userPrincipalName'] ?? null,
             'function' => $u['jobTitle'] ?? null,
             'phone' => ($u['businessPhones'][0] ?? null) ?: ($u['mobilePhone'] ?? null),
@@ -96,7 +97,7 @@ class Plugin extends BasePlugin
             'school' => $school,
         ], $records);
 
-        $import = new PeopleImport($ctx->users(), 'Import '.$ctx->manifest->name());
+        $import = new PeopleImport($ctx->users(), 'Import '.$ctx->manifest->name(), 'entra');
         $rows = $import->plan($people, 'Entra');
         $ctx->log(count($records).' Konten aus Entra gelesen'.($groupId !== '' ? " (Gruppe {$groupId})" : '').'.');
 

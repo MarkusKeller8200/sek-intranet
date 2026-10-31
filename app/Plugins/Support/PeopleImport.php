@@ -5,6 +5,7 @@ namespace App\Plugins\Support;
 use App\Data\Contracts\UserRepository;
 use App\Support\AuditLog;
 use App\Support\PersonFields;
+use App\Support\PersonLinks;
 
 /**
  * Vergleicht Personen aus einem Fremdsystem mit den Intranet-Personen (Schlüssel: E-Mail)
@@ -25,7 +26,38 @@ final class PeopleImport
         'school', 'active',
     ];
 
-    public function __construct(private readonly UserRepository $users, private readonly string $source = 'Import') {}
+    /**
+     * @param  string|null  $system  Schlüssel in config/intranet.php → sync_systems; mit «_external_id»
+     *                               je Datensatz wird zuerst über die Datenherkunft gesucht (keine Duplikate)
+     */
+    public function __construct(
+        private readonly UserRepository $users,
+        private readonly string $source = 'Import',
+        private readonly ?string $system = null,
+    ) {}
+
+    private function links(): PersonLinks
+    {
+        return app(PersonLinks::class);
+    }
+
+    /**
+     * Bestehende Person: zuerst über die ID im Quellsystem, sonst über die E-Mail.
+     *
+     * @return array<string, mixed>|null
+     */
+    private function existing(string $email, ?string $externalId): ?array
+    {
+        if ($this->system !== null && $externalId !== null) {
+            $personId = $this->links()->findPerson($this->system, $externalId);
+            $person = $personId !== null ? $this->users->find($personId) : null;
+            if ($person !== null) {
+                return $person;
+            }
+        }
+
+        return $this->users->findByEmail($email);
+    }
 
     /**
      * @param  list<array<string, mixed>>  $external  je Person mindestens «email» und «name»
@@ -43,11 +75,13 @@ final class PeopleImport
             }
             $seen[$email] = true;
 
-            $existing = $this->users->findByEmail($email);
+            $externalId = is_scalar($person['_external_id'] ?? null) && trim((string) $person['_external_id']) !== '' ? trim((string) $person['_external_id']) : null;
+            $existing = $this->existing($email, $externalId);
             $incoming = $this->normalize(PersonFields::withNames($person)) + ['email' => $email];
+            $link = ['_external_id' => $externalId, '_person_id' => $existing['id'] ?? null];
 
             if ($existing === null) {
-                $rows[] = $this->row($email, 'neu', $incoming, [], $source);
+                $rows[] = $this->row($email, 'neu', $incoming, [], $source) + $link;
 
                 continue;
             }
@@ -60,12 +94,13 @@ final class PeopleImport
                 $changes[$field] = ['old' => $existing[$field] ?? null, 'new' => $value];
             }
 
-            $rows[] = $this->row($email, $changes === [] ? 'gleich' : 'ändern', $incoming + $existing, $changes, $source);
+            $rows[] = $this->row($email, $changes === [] ? 'gleich' : 'ändern', $incoming + $existing, $changes, $source) + $link;
         }
 
+        $matched = array_flip(array_filter(array_map(fn (array $r): string => (string) ($r['_person_id'] ?? ''), $rows)));
         foreach ($this->users->all() as $user) {
             $email = mb_strtolower((string) ($user['email'] ?? ''));
-            if ($email !== '' && ! isset($seen[$email])) {
+            if ($email !== '' && ! isset($seen[$email]) && ! isset($matched[(string) $user['id']])) {
                 $rows[] = $this->row($email, 'fehlt dort', $user, [], $source) + ['_selectable' => false];
             }
         }
@@ -86,6 +121,10 @@ final class PeopleImport
         $updated = 0;
 
         foreach ($rows as $row) {
+            // Unveränderte Personen: nur Datenherkunft festhalten (ID und Zeitpunkt)
+            if ($row['_change'] === 'gleich' && is_string($row['_person_id'] ?? null)) {
+                $this->remember($row['_person_id'], $row['_external_id'] ?? null);
+            }
             if (! in_array($row['_key'], $selected, true)) {
                 continue;
             }
@@ -99,18 +138,27 @@ final class PeopleImport
                 }
                 $person = $this->users->create(PersonFields::withNames($record));
                 app(AuditLog::class)->record('users', null, $person, $this->source, auth()->user());
+                $this->remember((string) $person['id'], $row['_external_id'] ?? null);
                 $created++;
             } elseif ($row['_change'] === 'ändern') {
-                $existing = $this->users->findByEmail((string) $row['email']);
+                $existing = is_string($row['_person_id'] ?? null) ? $this->users->find($row['_person_id']) : $this->users->findByEmail((string) $row['email']);
                 if ($existing !== null) {
                     $after = $this->users->update((string) $existing['id'], array_map(fn (array $c): mixed => $c['new'], $row['changes']));
                     app(AuditLog::class)->record('users', $existing, $after, $this->source, auth()->user());
+                    $this->remember((string) $existing['id'], $row['_external_id'] ?? null);
                     $updated++;
                 }
             }
         }
 
         return ['created' => $created, 'updated' => $updated];
+    }
+
+    private function remember(string $personId, mixed $externalId): void
+    {
+        if ($this->system !== null) {
+            $this->links()->recordSync($personId, $this->system, 'source', is_scalar($externalId) ? (string) $externalId : null);
+        }
     }
 
     /**
