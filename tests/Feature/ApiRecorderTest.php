@@ -82,15 +82,17 @@ class ApiRecorderTest extends TestCase
 
     public function test_recorder_scripts_keep_secrets_out(): void
     {
-        $openapi = (string) file_get_contents(resource_path('js/lib/api-recorder/openapi.ts'));
-        $capture = (string) file_get_contents(resource_path('js/lib/api-recorder/capture.ts'));
+        // Leerraum vereinheitlichen (Formatierung bricht Zeilen um)
+        $read = fn (string $path): string => (string) preg_replace('/\s+/', ' ', (string) file_get_contents(resource_path($path)));
+        $openapi = $read('js/lib/api-recorder/openapi.ts');
+        $capture = $read('js/lib/api-recorder/capture.ts');
 
         // Kopfzeilen mit Geheimnissen werden maskiert, Beispielwerte nur maskiert übernommen
         $this->assertStringContainsString('authorization|cookie|token', $openapi);
         $this->assertStringContainsString('pass(?:word|wort)?|secret|token', $openapi);
         // Meldungen gehen nur an das Intranet (Ziel-Origin) und werden nur vom selbst geöffneten Fenster angenommen
-        $this->assertStringContainsString('postMessage({ type: TYPE, entry }, ORIGIN)', $capture);
-        $page = (string) file_get_contents(resource_path('js/pages/api-recorder.tsx'));
+        $this->assertMatchesRegularExpression('/postMessage\(\s*\{ type: TYPE, entry \},\s*ORIGIN,?\s*\)/', $capture);
+        $page = $read('js/pages/api-recorder.tsx');
         $this->assertStringContainsString('event.source !== popup.current', $page);
     }
 }
