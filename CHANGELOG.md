@@ -7,6 +7,17 @@ laufend unter **Unveröffentlicht** und werden beim Erhöhen der Version zur neu
 
 ## [Unveröffentlicht]
 
+## [0.22.2] – 2026-10-31
+
+### Geändert
+
+- Fachanwendungen sind ein eigenes Hauptmenü an zweiter Stelle (nach Kommunikation)
+
+### Behoben
+
+- Nach dem Öffnen einer Fachanwendung liess sich das eingeklappte Seitenmenü mit dem Symbol nicht mehr öffnen
+  (es klappte sofort wieder zu); es wird jetzt nur einmal je Anwendung eingeklappt
+
 ## [0.22.1] – 2026-10-31
 
 ### Geändert

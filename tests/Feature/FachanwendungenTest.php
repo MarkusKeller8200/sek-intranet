@@ -12,17 +12,18 @@ use Tests\TestCase;
  */
 class FachanwendungenTest extends TestCase
 {
-    public function test_kommunikation_has_fachanwendungen_submenu(): void
+    public function test_fachanwendungen_is_second_main_menu(): void
     {
         $this->signInAs('lehrperson');
 
         $this->get('/start')->assertInertia(fn (Assert $page) => $page
             ->where('navigation', function ($groups): bool {
-                $group = collect($groups)->firstWhere('key', 'kommunikation');
-                $menu = collect($group['items'] ?? [])->firstWhere('key', 'fachanwendungen');
-                $children = collect($menu['children'] ?? []);
+                $groups = collect($groups);
+                $children = collect($groups[1]['items'] ?? []);
 
-                return $children->pluck('key')->all() === ['cmi', 'escola', 'apple-school-manager', 'jamf-pro']
+                return $groups->pluck('key')->take(2)->all() === ['kommunikation', 'fachanwendungen']
+                    && ! collect($groups[0]['items'])->contains('key', 'fachanwendungen')
+                    && $children->pluck('key')->all() === ['cmi', 'escola', 'apple-school-manager', 'jamf-pro']
                     && $children->every(fn ($c) => $c['collapse'] === true && str_starts_with($c['href'], '/einbindung/'))
                     && $children->firstWhere('key', 'escola')['external'] === 'https://www.sekbuelach.ch/escola/login'
                     && $children->firstWhere('key', 'apple-school-manager')['open'] === 'tab';
@@ -38,7 +39,7 @@ class FachanwendungenTest extends TestCase
         $this->get('/einbindung/escola')->assertOk()->assertInertia(fn (Assert $page) => $page
             ->component('modules/embed')
             ->where('module.collapse', true)
-            ->where('module.group', 'Kommunikation')
+            ->where('module.group', 'Fachanwendungen')
             ->where('frame.embeddable', true));
         Http::assertNotSent(fn ($r): bool => str_contains($r->url(), 'sekbuelach.ch/escola'));
 

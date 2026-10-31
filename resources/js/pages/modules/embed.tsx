@@ -6,7 +6,7 @@ import {
     RefreshCw,
     ShieldAlert,
 } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { useSidebar } from '@/components/ui/sidebar';
@@ -60,9 +60,12 @@ export default function Embed({
     const [reloads, setReloads] = useState(0);
     const { setOpen, isMobile } = useSidebar();
 
-    // Fachanwendungen: Seitenmenü einklappen, auch beim direkten Aufruf der Adresse
+    // Fachanwendungen: Seitenmenü einmal je Anwendung einklappen, auch beim direkten Aufruf der Adresse.
+    // Nur einmal: setOpen ändert sich mit jedem Öffnen – sonst würde das Menü sofort wieder zugeklappt.
+    const collapsedFor = useRef<string | null>(null);
     useEffect(() => {
-        if (module.collapse && !isMobile) {
+        if (module.collapse && !isMobile && collapsedFor.current !== module.key) {
+            collapsedFor.current = module.key;
             setOpen(false);
         }
     }, [module.key, module.collapse, isMobile, setOpen]);

@@ -45,9 +45,10 @@ Menüpunkt in `config/intranet.php` → `modules` mit Schlüssel `embed`:
 
 ## Fachanwendungen (ab 0.22.0)
 
-Kommunikation → **Fachanwendungen** ist ein Untermenü (`items` innerhalb des Menüpunkts) mit
-`collapse_sidebar: true`: Beim Öffnen einer Fachanwendung klappt das Seitenmenü ein, damit die Anwendung die
-ganze Breite hat.
+**Fachanwendungen** ist ein eigenes Hauptmenü an zweiter Stelle (seit 0.22.2) mit `collapse_sidebar: true`:
+Beim Öffnen einer Fachanwendung klappt das Seitenmenü einmal ein, damit die Anwendung die ganze Breite hat; mit
+dem Symbol lässt es sich jederzeit wieder öffnen. `collapse_sidebar` geht auch für Untermenüs (`items` innerhalb
+eines Menüpunkts).
 
 | Fachanwendung        | Adresse                                                                                 | Einbindung                                             |
 | -------------------- | --------------------------------------------------------------------------------------- | ------------------------------------------------------ |

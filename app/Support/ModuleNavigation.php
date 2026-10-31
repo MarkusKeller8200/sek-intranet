@@ -58,7 +58,8 @@ class ModuleNavigation
                     continue;
                 }
 
-                $items[] = $this->item((string) $key, $module);
+                // Hauptmenü mit collapse_sidebar (Fachanwendungen): Seitenmenü beim Öffnen einklappen
+                $items[] = $this->item((string) $key, $module) + (($group['collapse_sidebar'] ?? false) === true ? ['collapse' => true] : []);
             }
 
             if ($items !== []) {
@@ -178,7 +179,7 @@ class ModuleNavigation
                 'color' => (string) ($group['color'] ?? 'slate'),
                 'description' => (string) ($module['description'] ?? ''),
                 // Fachanwendungen: Seitenmenü beim Öffnen einklappen (mehr Platz für die Anwendung)
-                'collapse' => ($parent['collapse_sidebar'] ?? false) === true,
+                'collapse' => ($parent['collapse_sidebar'] ?? $group['collapse_sidebar'] ?? false) === true,
             ] + $embed;
         }
 
