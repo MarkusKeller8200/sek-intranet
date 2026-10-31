@@ -81,7 +81,13 @@ export function bookmarkletSource(origin: string): string {
         ) {
             const started = performance.now();
             const req = input instanceof Request ? input : null;
-            const raw = req ? req.url : typeof input === 'string' ? input : input instanceof URL ? input.href : '';
+            const raw = req
+                ? req.url
+                : typeof input === 'string'
+                  ? input
+                  : input instanceof URL
+                    ? input.href
+                    : '';
             const url = new URL(raw, location.href).href;
             const method = (init?.method ?? req?.method ?? 'GET').toUpperCase();
             const bodyIn = init?.body ?? null;
@@ -115,10 +121,8 @@ export function bookmarkletSource(origin: string): string {
         // XMLHttpRequest
         // Originalmethoden über den Deskriptor holen (werden mit .call/.apply aufgerufen)
         const original = (name: 'open' | 'send' | 'setRequestHeader') =>
-            Object.getOwnPropertyDescriptor(XMLHttpRequest.prototype, name)?.value as (
-                this: XMLHttpRequest,
-                ...args: unknown[]
-            ) => void;
+            Object.getOwnPropertyDescriptor(XMLHttpRequest.prototype, name)
+                ?.value as (this: XMLHttpRequest, ...args: unknown[]) => void;
         const open = original('open');
         const sendXhr = original('send');
         const setHeader = original('setRequestHeader');
@@ -142,11 +146,7 @@ export function bookmarkletSource(origin: string): string {
                 t: 0,
             });
 
-            return open.apply(this, [
-                method,
-                url,
-                ...rest,
-            ]);
+            return open.apply(this, [method, url, ...rest]);
         } as typeof XMLHttpRequest.prototype.open;
         XMLHttpRequest.prototype.setRequestHeader = function (
             this: XMLHttpRequest,
@@ -346,7 +346,10 @@ export function captureFromMessage(data: unknown): Capture | null {
             : {};
 
     return {
-        id: typeof e.id === 'string' || typeof e.id === 'number' ? String(e.id) : String(Math.random()),
+        id:
+            typeof e.id === 'string' || typeof e.id === 'number'
+                ? String(e.id)
+                : String(Math.random()),
         at: typeof e.at === 'number' ? e.at : Date.now(),
         method: e.method.toUpperCase(),
         url: e.url,
