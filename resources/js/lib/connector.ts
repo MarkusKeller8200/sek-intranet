@@ -18,11 +18,17 @@ export function connectorVersion(): string | null {
     return document.documentElement.dataset.sbiConnector ?? null;
 }
 
-export function sendToConnector(action: string, payload: Record<string, unknown> = {}): boolean {
+export function sendToConnector(
+    action: string,
+    payload: Record<string, unknown> = {},
+): boolean {
     if (connectorVersion() === null) {
         return false;
     }
-    window.postMessage({ source: PAGE_SOURCE, action, ...payload }, window.location.origin);
+    window.postMessage(
+        { source: PAGE_SOURCE, action, ...payload },
+        window.location.origin,
+    );
 
     return true;
 }
@@ -33,7 +39,9 @@ export function openWithConnector(url: string, title: string): boolean {
 }
 
 /** Nachricht der Erweiterung (nur aus diesem Fenster). */
-export function isConnectorMessage(event: MessageEvent): event is MessageEvent<Record<string, unknown>> {
+export function isConnectorMessage(
+    event: MessageEvent,
+): event is MessageEvent<Record<string, unknown>> {
     const data = event.data as { source?: unknown } | null;
 
     return (

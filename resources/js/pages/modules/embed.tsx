@@ -89,7 +89,12 @@ export default function Embed({
     const [opened, setOpened] = useState(false);
     const openedFor = useRef<string | null>(null);
     useEffect(() => {
-        if (viaExtension && extension && module.url && openedFor.current !== module.key) {
+        if (
+            viaExtension &&
+            extension &&
+            module.url &&
+            openedFor.current !== module.key
+        ) {
             openedFor.current = module.key;
             setOpened(openWithConnector(module.url, module.title));
         }
@@ -193,13 +198,24 @@ export default function Embed({
                         </CardHeader>
                         <CardContent className="flex flex-wrap gap-2">
                             {extension ? (
-                                <Button onClick={() => setOpened(openWithConnector(module.url ?? '', module.title))}>
-                                    <Puzzle /> {opened ? 'Erneut öffnen' : 'Öffnen'}
+                                <Button
+                                    onClick={() =>
+                                        setOpened(
+                                            openWithConnector(
+                                                module.url ?? '',
+                                                module.title,
+                                            ),
+                                        )
+                                    }
+                                >
+                                    <Puzzle />{' '}
+                                    {opened ? 'Erneut öffnen' : 'Öffnen'}
                                 </Button>
                             ) : (
                                 <Button variant="outline" asChild>
                                     <Link href="/einstellungen/browser-erweiterung">
-                                        <Puzzle /> Browser-Erweiterung einrichten
+                                        <Puzzle /> Browser-Erweiterung
+                                        einrichten
                                     </Link>
                                 </Button>
                             )}

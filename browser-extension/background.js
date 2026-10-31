@@ -20,7 +20,9 @@ async function save(state) {
 }
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-    handle(message, sender).then(sendResponse, (error) => sendResponse({ ok: false, error: String(error) }));
+    handle(message, sender).then(sendResponse, (error) =>
+        sendResponse({ ok: false, error: String(error) }),
+    );
 
     return true;
 });
@@ -32,11 +34,21 @@ async function handle(message, sender) {
             if (!sender.tab || !/^https:\/\//.test(message.url)) {
                 return { ok: false };
             }
-            const tab = await chrome.tabs.create({ url: message.url, openerTabId: sender.tab.id, index: sender.tab.index + 1 });
+            const tab = await chrome.tabs.create({
+                url: message.url,
+                openerTabId: sender.tab.id,
+                index: sender.tab.index + 1,
+            });
             try {
-                const groupId = sender.tab.groupId > -1 ? sender.tab.groupId : await chrome.tabs.group({ tabIds: [sender.tab.id] });
+                const groupId =
+                    sender.tab.groupId > -1
+                        ? sender.tab.groupId
+                        : await chrome.tabs.group({ tabIds: [sender.tab.id] });
                 await chrome.tabs.group({ groupId, tabIds: [tab.id] });
-                await chrome.tabGroups.update(groupId, { title: 'Intranet', color: 'blue' });
+                await chrome.tabGroups.update(groupId, {
+                    title: 'Intranet',
+                    color: 'blue',
+                });
             } catch {
                 // Gruppen nicht verfügbar (z. B. anderer Browser): Tab bleibt ungruppiert
             }
@@ -57,7 +69,11 @@ async function handle(message, sender) {
             return { ok: true };
         }
         case 'status':
-            return { ok: true, recorders: state.recorders.length, recording: Boolean(state.recording[message.tabId]) };
+            return {
+                ok: true,
+                recorders: state.recorders.length,
+                recording: Boolean(state.recording[message.tabId]),
+            };
         case 'start': {
             state.recording[message.tabId] = message.origin;
             await save(state);
@@ -115,8 +131,17 @@ chrome.tabs.onRemoved.addListener(async (tabId) => {
 });
 
 async function inject(tabId) {
-    await chrome.scripting.executeScript({ target: { tabId }, world: 'ISOLATED', func: relay });
-    await chrome.scripting.executeScript({ target: { tabId }, world: 'MAIN', func: capture, args: [MAX_BODY] });
+    await chrome.scripting.executeScript({
+        target: { tabId },
+        world: 'ISOLATED',
+        func: relay,
+    });
+    await chrome.scripting.executeScript({
+        target: { tabId },
+        world: 'MAIN',
+        func: capture,
+        args: [MAX_BODY],
+    });
     const tab = await chrome.tabs.get(tabId);
     const state = await load();
     if (tab.url) {
@@ -149,11 +174,22 @@ function capture(MAX) {
     }
     window.__sbiConnectorCapture = true;
     let n = 0;
-    const cut = (s) => (typeof s === 'string' ? (s.length > MAX ? s.slice(0, MAX) : s) : s == null ? null : '[binär]');
+    const cut = (s) =>
+        typeof s === 'string'
+            ? s.length > MAX
+                ? s.slice(0, MAX)
+                : s
+            : s == null
+              ? null
+              : '[binär]';
     const badge = document.createElement('div');
     badge.textContent = '● SBI-Connector · 0';
-    badge.title = 'Aufnahme läuft – Anfragen gehen an den API-Recorder im Intranet';
-    badge.setAttribute('style', 'position:fixed;z-index:2147483647;right:12px;bottom:12px;padding:8px 12px;border-radius:999px;background:#c81e1e;color:#fff;font:600 13px system-ui,sans-serif;box-shadow:0 2px 10px rgba(0,0,0,.25);pointer-events:none');
+    badge.title =
+        'Aufnahme läuft – Anfragen gehen an den API-Recorder im Intranet';
+    badge.setAttribute(
+        'style',
+        'position:fixed;z-index:2147483647;right:12px;bottom:12px;padding:8px 12px;border-radius:999px;background:#c81e1e;color:#fff;font:600 13px system-ui,sans-serif;box-shadow:0 2px 10px rgba(0,0,0,.25);pointer-events:none',
+    );
     (document.body || document.documentElement).appendChild(badge);
     const send = (entry) => {
         n++;
@@ -170,15 +206,32 @@ function capture(MAX) {
 
         return out;
     };
-    const reqHeaders = (h) => (!h ? {} : h instanceof Headers ? headersOf(h) : Array.isArray(h) ? Object.fromEntries(h) : { ...h });
+    const reqHeaders = (h) =>
+        !h
+            ? {}
+            : h instanceof Headers
+              ? headersOf(h)
+              : Array.isArray(h)
+                ? Object.fromEntries(h)
+                : { ...h };
 
     const origFetch = window.fetch;
     window.fetch = async function (input, init) {
         const started = performance.now();
         const req = input instanceof Request ? input : null;
-        const raw = req ? req.url : typeof input === 'string' ? input : input instanceof URL ? input.href : '';
+        const raw = req
+            ? req.url
+            : typeof input === 'string'
+              ? input
+              : input instanceof URL
+                ? input.href
+                : '';
         const url = new URL(raw, location.href).href;
-        const method = ((init && init.method) || (req && req.method) || 'GET').toUpperCase();
+        const method = (
+            (init && init.method) ||
+            (req && req.method) ||
+            'GET'
+        ).toUpperCase();
         const bodyIn = (init && init.body) || null;
         const response = await origFetch.apply(this, [input, init]);
         response
@@ -190,7 +243,10 @@ function capture(MAX) {
                     url,
                     status: response.status,
                     duration: Math.round(performance.now() - started),
-                    requestHeaders: { ...(req ? headersOf(req.headers) : {}), ...reqHeaders(init && init.headers) },
+                    requestHeaders: {
+                        ...(req ? headersOf(req.headers) : {}),
+                        ...reqHeaders(init && init.headers),
+                    },
                     requestBody: cut(bodyIn),
                     responseHeaders: headersOf(response.headers),
                     responseBody: cut(text),
@@ -208,7 +264,12 @@ function capture(MAX) {
     const setHeader = proto.setRequestHeader;
     const meta = new WeakMap();
     proto.open = function (method, url, ...rest) {
-        meta.set(this, { m: String(method).toUpperCase(), u: new URL(String(url), location.href).href, h: {}, t: 0 });
+        meta.set(this, {
+            m: String(method).toUpperCase(),
+            u: new URL(String(url), location.href).href,
+            h: {},
+            t: 0,
+        });
 
         return open.apply(this, [method, url, ...rest]);
     };
@@ -232,12 +293,18 @@ function capture(MAX) {
                     .forEach((line) => {
                         const i = line.indexOf(':');
                         if (i > 0) {
-                            headers[line.slice(0, i).trim().toLowerCase()] = line.slice(i + 1).trim();
+                            headers[line.slice(0, i).trim().toLowerCase()] =
+                                line.slice(i + 1).trim();
                         }
                     });
                 let text = null;
                 try {
-                    text = this.responseType === '' || this.responseType === 'text' ? this.responseText : this.responseType === 'json' ? JSON.stringify(this.response) : null;
+                    text =
+                        this.responseType === '' || this.responseType === 'text'
+                            ? this.responseText
+                            : this.responseType === 'json'
+                              ? JSON.stringify(this.response)
+                              : null;
                 } catch {
                     text = null;
                 }

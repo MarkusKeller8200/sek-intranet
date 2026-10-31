@@ -67,7 +67,11 @@ import type {
     PluginCatalogEntry,
 } from '@/lib/api-recorder/types';
 import { postJson } from '@/lib/http';
-import { connectorVersion, isConnectorMessage, sendToConnector } from '@/lib/connector';
+import {
+    connectorVersion,
+    isConnectorMessage,
+    sendToConnector,
+} from '@/lib/connector';
 import { t } from '@/lib/i18n';
 import { cn } from '@/lib/utils';
 
@@ -228,7 +232,10 @@ export default function ApiRecorder({
     useEffect(() => {
         const onMessage = (event: MessageEvent) => {
             const fromConnector = isConnectorMessage(event);
-            if (!fromConnector && (!popup.current || event.source !== popup.current)) {
+            if (
+                !fromConnector &&
+                (!popup.current || event.source !== popup.current)
+            ) {
                 return;
             }
             const data = event.data as { type?: string; hello?: string } | null;
@@ -612,8 +619,10 @@ export default function ApiRecorder({
                                 className="rounded-md border border-success/40 bg-success-soft p-3 text-sm"
                                 data-testid="connector-hint"
                             >
-                                SBI-Connector aktiv: Website öffnen, im Tab der Website auf das Symbol der Erweiterung →
-                                «Aufnahme starten». Lesezeichen und Konsole sind nicht nötig.
+                                SBI-Connector aktiv: Website öffnen, im Tab der
+                                Website auf das Symbol der Erweiterung →
+                                «Aufnahme starten». Lesezeichen und Konsole sind
+                                nicht nötig.
                             </p>
                         )}
 

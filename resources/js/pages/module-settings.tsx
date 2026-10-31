@@ -51,11 +51,19 @@ function ItemCard({ item }: { item: Item }) {
 
     const submit = (e: FormEvent) => {
         e.preventDefault();
-        form.put(`/einstellungen/menuepunkt/${item.key}`, { preserveScroll: true });
+        form.put(`/einstellungen/menuepunkt/${item.key}`, {
+            preserveScroll: true,
+        });
     };
 
     const reset = () => {
-        if (!window.confirm(t('Vorgabe wiederherstellen? Die gespeicherte Einstellung wird entfernt.'))) {
+        if (
+            !window.confirm(
+                t(
+                    'Vorgabe wiederherstellen? Die gespeicherte Einstellung wird entfernt.',
+                ),
+            )
+        ) {
             return;
         }
         router.delete(`/einstellungen/menuepunkt/${item.key}`, {
@@ -76,10 +84,15 @@ function ItemCard({ item }: { item: Item }) {
                         <Badge variant="secondary">Vorgabe</Badge>
                     )}
                 </CardTitle>
-                {item.description && <CardDescription>{item.description}</CardDescription>}
+                {item.description && (
+                    <CardDescription>{item.description}</CardDescription>
+                )}
             </CardHeader>
             <CardContent>
-                <form onSubmit={submit} className="grid gap-4 md:grid-cols-[2fr_1fr_auto] md:items-end">
+                <form
+                    onSubmit={submit}
+                    className="grid gap-4 md:grid-cols-[2fr_1fr_auto] md:items-end"
+                >
                     <div className="grid gap-1.5">
                         <Label htmlFor={`url-${item.key}`}>Adresse (URL)</Label>
                         <Input
@@ -88,7 +101,9 @@ function ItemCard({ item }: { item: Item }) {
                             inputMode="url"
                             value={form.data.url}
                             placeholder={item.default_url ?? 'https://'}
-                            onChange={(e) => form.setData('url', e.target.value)}
+                            onChange={(e) =>
+                                form.setData('url', e.target.value)
+                            }
                             aria-invalid={!!form.errors.url}
                             translate="no"
                         />
@@ -124,15 +139,25 @@ function ItemCard({ item }: { item: Item }) {
                             <Save /> Speichern
                         </Button>
                         {item.custom && (
-                            <Button type="button" variant="ghost" onClick={reset} title="Vorgabe wiederherstellen">
+                            <Button
+                                type="button"
+                                variant="ghost"
+                                onClick={reset}
+                                title="Vorgabe wiederherstellen"
+                            >
                                 <RotateCcw />
-                                <span className="sr-only">Vorgabe wiederherstellen</span>
+                                <span className="sr-only">
+                                    Vorgabe wiederherstellen
+                                </span>
                             </Button>
                         )}
                     </div>
                 </form>
                 <div className="mt-3 flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
-                    <Link href={`/einbindung/${item.key}`} className="text-primary hover:underline">
+                    <Link
+                        href={`/einbindung/${item.key}`}
+                        className="text-primary hover:underline"
+                    >
                         Öffnen
                     </Link>
                     {item.url && (
@@ -145,7 +170,12 @@ function ItemCard({ item }: { item: Item }) {
                             In neuem Tab <ExternalLink className="size-3" />
                         </a>
                     )}
-                    {item.allowed && <span>Einbetten vom Anbieter bestätigt (keine automatische Prüfung).</span>}
+                    {item.allowed && (
+                        <span>
+                            Einbetten vom Anbieter bestätigt (keine automatische
+                            Prüfung).
+                        </span>
+                    )}
                 </div>
             </CardContent>
         </Card>
@@ -153,7 +183,14 @@ function ItemCard({ item }: { item: Item }) {
 }
 
 /** Einstellungen → Fachanwendungen / Weitere Einbindungen. */
-export default function ModuleSettingsPage({ title, items }: { section: string; title: string; items: Item[] }) {
+export default function ModuleSettingsPage({
+    title,
+    items,
+}: {
+    section: string;
+    title: string;
+    items: Item[];
+}) {
     const groups = items.reduce<Record<string, Item[]>>((acc, item) => {
         (acc[item.group_title] ??= []).push(item);
 
@@ -171,16 +208,22 @@ export default function ModuleSettingsPage({ title, items }: { section: string; 
                 <p className="flex items-start gap-2 text-sm text-muted-foreground">
                     <Puzzle className="mt-0.5 size-4 shrink-0" />
                     <span>
-                        «Über die Browser-Erweiterung» öffnet die Anwendung in einem eigenen Tab, gruppiert mit dem
-                        Intranet; ohne installierte Erweiterung erscheint ein Hinweis.{' '}
-                        <Link href="/einstellungen/browser-erweiterung" className="text-primary hover:underline">
+                        «Über die Browser-Erweiterung» öffnet die Anwendung in
+                        einem eigenen Tab, gruppiert mit dem Intranet; ohne
+                        installierte Erweiterung erscheint ein Hinweis.{' '}
+                        <Link
+                            href="/einstellungen/browser-erweiterung"
+                            className="text-primary hover:underline"
+                        >
                             Browser-Erweiterung
                         </Link>
                     </span>
                 </p>
                 {Object.entries(groups).map(([group, list]) => (
                     <section key={group} className="grid gap-3">
-                        <h2 className="text-sm font-semibold text-muted-foreground">{group}</h2>
+                        <h2 className="text-sm font-semibold text-muted-foreground">
+                            {group}
+                        </h2>
                         {list.map((item) => (
                             <ItemCard key={item.key} item={item} />
                         ))}

@@ -6,11 +6,11 @@ Stand: Version 0.23.0. Grundlage: «Integrationsarchitektur für fremde Webanwen
 
 ## Drei Wege – was das Intranet heute kann
 
-| Weg (Konzept V1.1)           | Im Intranet                                             | Stand        |
-| ---------------------------- | ------------------------------------------------------- | ------------ |
-| A – Offizielle API           | Plugins (`plugins/<Ordner>/`), Zugangsdaten verschlüsselt auf dem Server | umgesetzt |
-| B – Oberfläche einbetten     | Einbindungen/Fachanwendungen (`embed`), Prüfung `X-Frame-Options`/`frame-ancestors` | umgesetzt |
-| C – Browser-Connector        | Stufe 1: Browser-Erweiterung «SBI-Connector» (dieser Prototyp); Stufe 2: Browser-Dienst auf dem Server | Stufe 1 Prototyp |
+| Weg (Konzept V1.1)       | Im Intranet                                                                                            | Stand            |
+| ------------------------ | ------------------------------------------------------------------------------------------------------ | ---------------- |
+| A – Offizielle API       | Plugins (`plugins/<Ordner>/`), Zugangsdaten verschlüsselt auf dem Server                               | umgesetzt        |
+| B – Oberfläche einbetten | Einbindungen/Fachanwendungen (`embed`), Prüfung `X-Frame-Options`/`frame-ancestors`                    | umgesetzt        |
+| C – Browser-Connector    | Stufe 1: Browser-Erweiterung «SBI-Connector» (dieser Prototyp); Stufe 2: Browser-Dienst auf dem Server | Stufe 1 Prototyp |
 
 Priorität bleibt: zuerst offizielle API, Einbetten nur zur Darstellung, Browser-Connector nur für zugelassene
 Abläufe ohne geeignete API. Eine Aufzeichnung macht eine interne Schnittstelle nicht zu einer freigegebenen API.
@@ -19,12 +19,12 @@ Abläufe ohne geeignete API. Eine Aufzeichnung macht eine interne Schnittstelle 
 
 Menü **Einstellungen → Fachanwendungen** bzw. **Weitere Einbindungen** (Sammlung `module_settings`):
 
-| Öffnen                                   | Wert        | Verhalten                                                        |
-| ---------------------------------------- | ----------- | ---------------------------------------------------------------- |
-| Im Intranet (iFrame)                     | `embed`     | nur Rahmen                                                        |
-| Im Intranet (iFrame) mit Knopf «Neuer Tab» | `both`    | Rahmen und Ausweg in neuen Tab (Standard)                         |
-| Eigenes Fenster (neuer Tab)              | `tab`       | Menü führt direkt auf die Adresse                                  |
-| Über die Browser-Erweiterung             | `extension` | Erweiterung öffnet einen eigenen Tab, gruppiert mit dem Intranet; ohne Erweiterung Hinweis und Tab |
+| Öffnen                                     | Wert        | Verhalten                                                                                          |
+| ------------------------------------------ | ----------- | -------------------------------------------------------------------------------------------------- |
+| Im Intranet (iFrame)                       | `embed`     | nur Rahmen                                                                                         |
+| Im Intranet (iFrame) mit Knopf «Neuer Tab» | `both`      | Rahmen und Ausweg in neuen Tab (Standard)                                                          |
+| Eigenes Fenster (neuer Tab)                | `tab`       | Menü führt direkt auf die Adresse                                                                  |
+| Über die Browser-Erweiterung               | `extension` | Erweiterung öffnet einen eigenen Tab, gruppiert mit dem Intranet; ohne Erweiterung Hinweis und Tab |
 
 Dazu die Adresse (nur `https://`). Gespeicherte Werte übersteuern `config/intranet.php` und `.env`; «Vorgabe
 wiederherstellen» entfernt den Eintrag. Änderungen stehen im Änderungsverlauf (`audit_log`).
