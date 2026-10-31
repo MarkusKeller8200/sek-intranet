@@ -209,9 +209,10 @@ export default function PluginShow({
                     >
                         <TriangleAlert className="mt-0.5 size-4 shrink-0 text-warning" />
                         <p>
-                            Inoffizielle Anbindung: Der Hersteller bietet keine Schnittstelle an.
-                            Das Plugin kann bei Änderungen der Website ohne Vorwarnung ausfallen.
-                            Endpunkte mit dem API-Recorder aufzeichnen und mit
+                            Inoffizielle Anbindung: Der Hersteller bietet keine
+                            Schnittstelle an. Das Plugin kann bei Änderungen der
+                            Website ohne Vorwarnung ausfallen. Endpunkte mit dem
+                            API-Recorder aufzeichnen und mit
                             «intranet:plugin-from-openapi» ergänzen.
                         </p>
                     </div>

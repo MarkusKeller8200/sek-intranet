@@ -34,8 +34,16 @@
                 "use": "Artikel nachschlagen",
                 "note": "HTML-Seite; Angaben aus Meta-Daten und Seitentext gelesen (Aufbau nicht zugesichert). Beispiel: Reihe «New-Inspiration», Artikel «New-Inspiration-3-Workbook-7334».",
                 "params": [
-                    { "name": "reihe", "required": true, "example": "New-Inspiration" },
-                    { "name": "artikel", "required": true, "example": "New-Inspiration-3-Workbook-7334" }
+                    {
+                        "name": "reihe",
+                        "required": true,
+                        "example": "New-Inspiration"
+                    },
+                    {
+                        "name": "artikel",
+                        "required": true,
+                        "example": "New-Inspiration-3-Workbook-7334"
+                    }
                 ]
             },
             {
