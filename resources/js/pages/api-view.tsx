@@ -18,7 +18,14 @@ type Props = {
 };
 
 /** API-Ansicht mit Scalar: eigene REST-API, Plugin-Endpunkte, aufgezeichnete APIs. */
-export default function ApiView({ title, description, back, spec, url, doc }: Props) {
+export default function ApiView({
+    title,
+    description,
+    back,
+    spec,
+    url,
+    doc,
+}: Props) {
     const source = useMemo<object | string>(
         () => (doc ? buildOpenApi(doc) : (spec ?? url ?? {})),
         [doc, spec, url],
@@ -36,17 +43,21 @@ export default function ApiView({ title, description, back, spec, url, doc }: Pr
                 <PageHeader title={title} description={description} />
                 <ApiReference spec={source} />
                 <p className="text-xs text-muted-foreground">
-                    Ansicht mit Scalar (Open Source, MIT), im Intranet ausgeliefert: ohne
-                    Telemetrie, ohne fremde Schriften und ohne Scalar-Proxy. «Test Request»
-                    funktioniert nur, wenn der Zielserver Anfragen aus dem Intranet zulässt
-                    (CORS); für die eigene REST-API ein Token unter «API» erstellen.
+                    Ansicht mit Scalar (Open Source, MIT), im Intranet
+                    ausgeliefert: ohne Telemetrie, ohne fremde Schriften und
+                    ohne Scalar-Proxy. «Test Request» funktioniert nur, wenn der
+                    Zielserver Anfragen aus dem Intranet zulässt (CORS); für die
+                    eigene REST-API ein Token unter «API» erstellen.
                 </p>
             </div>
         </>
     );
 }
 
-ApiView.layout = (props: { title: string; back: { href: string; label: string } }) => ({
+ApiView.layout = (props: {
+    title: string;
+    back: { href: string; label: string };
+}) => ({
     breadcrumbs: [
         { title: props.back.label, href: props.back.href },
         { title: props.title, href: '#' },

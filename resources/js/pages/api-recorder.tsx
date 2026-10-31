@@ -433,9 +433,7 @@ export default function ApiRecorder({
 
     // Generator (docs/KONZEPT-API-ZU-PLUGIN.md): zugewiesenes Plugin ergänzen oder neues anlegen
     const generatorCommand = `php artisan intranet:plugin-from-openapi ${doc.id ?? ''} ${
-        plugin
-            ? `--plugin=${plugin.id}`
-            : `--neu=${pluginFolder(doc.title)}`
+        plugin ? `--plugin=${plugin.id}` : `--neu=${pluginFolder(doc.title)}`
     } --dry-run`;
 
     const spec = useMemo(() => buildOpenApi(doc), [doc]);
@@ -1182,7 +1180,10 @@ export default function ApiRecorder({
                             </Button>
                             {doc.id && doc.operations.length > 0 && (
                                 <Button variant="outline" asChild>
-                                    <Link href={`/api-recorder/${doc.id}/ansicht`} data-testid="api-view">
+                                    <Link
+                                        href={`/api-recorder/${doc.id}/ansicht`}
+                                        data-testid="api-view"
+                                    >
                                         <BookOpen /> Ansicht (Scalar)
                                     </Link>
                                 </Button>
@@ -1215,8 +1216,8 @@ export default function ApiRecorder({
                             <div className="flex flex-wrap items-center gap-2 rounded-md border border-dashed p-3 text-xs text-muted-foreground">
                                 <Terminal className="size-4" />
                                 <span>
-                                    Plugin daraus erzeugen (in der Entwicklung, danach
-                                    Pull-Request):
+                                    Plugin daraus erzeugen (in der Entwicklung,
+                                    danach Pull-Request):
                                 </span>
                                 <code
                                     className="rounded bg-muted px-1.5 py-0.5 font-mono text-foreground"
@@ -1231,7 +1232,11 @@ export default function ApiRecorder({
                                     onClick={() => {
                                         void navigator.clipboard
                                             .writeText(generatorCommand)
-                                            .then(() => toast.success(t('Befehl kopiert.')));
+                                            .then(() =>
+                                                toast.success(
+                                                    t('Befehl kopiert.'),
+                                                ),
+                                            );
                                     }}
                                 >
                                     <Copy /> Kopieren

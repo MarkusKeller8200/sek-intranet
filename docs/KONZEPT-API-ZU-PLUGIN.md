@@ -32,19 +32,19 @@ Aufzeichnen ──► Dokumentieren ──► Plugin zuweisen ──► Entwurf 
 
 ## Abbildung OpenAPI/Recorder → Plugin
 
-| Recorder / OpenAPI                                | Plugin                                                                     | Bemerkung                                              |
-| ------------------------------------------------- | -------------------------------------------------------------------------- | ------------------------------------------------------ |
-| Titel, `info.description`                         | `name`, `description`                                                      |                                                        |
-| Basis-URL (`servers[0].url`)                      | Einstellung `base_url` (`settings[]`)                                      | nie fest im Code; je Schule verschieden                |
-| `components.securitySchemes` (erstes Schema)      | `service.auth` (`bearer`, `basic`, `header`, `oauth2_client_credentials`)  | Geheimnisse als `password`-Einstellung, verschlüsselt  |
-| Operation (Methode + Pfad)                        | `service.endpoints[]` mit `id`, `method`, `path`, `label`                  | ID aus dem Pfad (`api/v1` weggelassen, `{id}` → `one`) |
-| Pfad-Platzhalter, Abfrageparameter                | `params[]` (`required` für Pfad)                                           |                                                        |
-| `tags` (Gruppe)                                   | Gruppierung im API-Tester                                                  |                                                        |
-| Antwortschema                                     | Grundlage für Feldzuordnung (Mapping) in `Plugin.php`                      | nur Struktur, keine Werte                              |
-| GET-Endpunkte                                     | Widgets, Personen-/Geräte-Abfragen (`action`)                              | lesend, sofort nutzbar                                 |
-| POST/PUT/PATCH/DELETE                             | Aktionen mit `write: true`                                                 | nur mit `allow_write` und Bestätigung                  |
-| Listen von Personen/Klassen                       | `PeopleImport` mit `_external_id`                                          | Datenherkunft über `PersonLinks`                       |
-| Schreiben in Zielsystem                           | Sync-Ziel in `PersonLinks` (`direction: target`)                           | Status «geändert seit Sync»                            |
+| Recorder / OpenAPI                           | Plugin                                                                    | Bemerkung                                              |
+| -------------------------------------------- | ------------------------------------------------------------------------- | ------------------------------------------------------ |
+| Titel, `info.description`                    | `name`, `description`                                                     |                                                        |
+| Basis-URL (`servers[0].url`)                 | Einstellung `base_url` (`settings[]`)                                     | nie fest im Code; je Schule verschieden                |
+| `components.securitySchemes` (erstes Schema) | `service.auth` (`bearer`, `basic`, `header`, `oauth2_client_credentials`) | Geheimnisse als `password`-Einstellung, verschlüsselt  |
+| Operation (Methode + Pfad)                   | `service.endpoints[]` mit `id`, `method`, `path`, `label`                 | ID aus dem Pfad (`api/v1` weggelassen, `{id}` → `one`) |
+| Pfad-Platzhalter, Abfrageparameter           | `params[]` (`required` für Pfad)                                          |                                                        |
+| `tags` (Gruppe)                              | Gruppierung im API-Tester                                                 |                                                        |
+| Antwortschema                                | Grundlage für Feldzuordnung (Mapping) in `Plugin.php`                     | nur Struktur, keine Werte                              |
+| GET-Endpunkte                                | Widgets, Personen-/Geräte-Abfragen (`action`)                             | lesend, sofort nutzbar                                 |
+| POST/PUT/PATCH/DELETE                        | Aktionen mit `write: true`                                                | nur mit `allow_write` und Bestätigung                  |
+| Listen von Personen/Klassen                  | `PeopleImport` mit `_external_id`                                         | Datenherkunft über `PersonLinks`                       |
+| Schreiben in Zielsystem                      | Sync-Ziel in `PersonLinks` (`direction: target`)                          | Status «geändert seit Sync»                            |
 
 ## Generator (umgesetzt)
 

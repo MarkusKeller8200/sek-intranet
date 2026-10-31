@@ -157,7 +157,9 @@ export default function PluginShow({
                             </Button>
                             {plugin.service.endpoints.length > 0 && (
                                 <Button variant="outline" asChild>
-                                    <Link href={`/plugins/${plugin.id}/api-ansicht`}>
+                                    <Link
+                                        href={`/plugins/${plugin.id}/api-ansicht`}
+                                    >
                                         <BookOpen /> API-Ansicht
                                     </Link>
                                 </Button>

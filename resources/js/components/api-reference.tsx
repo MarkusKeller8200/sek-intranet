@@ -4,14 +4,20 @@ import { useEffect, useRef, useState } from 'react';
 /** Minimaler Ausschnitt der Scalar-Schnittstelle (Paket @scalar/api-reference). */
 type ScalarApp = { destroy: () => void };
 type ScalarModule = {
-    createApiReference: (el: HTMLElement, config: Record<string, unknown>) => ScalarApp;
+    createApiReference: (
+        el: HTMLElement,
+        config: Record<string, unknown>,
+    ) => ScalarApp;
 };
 
 /**
  * Datenschutzfreundliche Grundeinstellung: keine Telemetrie, keine Schriften von fremden Servern,
  * kein Scalar-Proxy (Anfragen gehen nur direkt aus dem Browser), kein Agent/MCP von Scalar.
  */
-export function scalarConfig(spec: object | string, dark: boolean): Record<string, unknown> {
+export function scalarConfig(
+    spec: object | string,
+    dark: boolean,
+): Record<string, unknown> {
     return {
         ...(typeof spec === 'string' ? { url: spec } : { content: spec }),
         telemetry: false,
@@ -53,10 +59,16 @@ export default function ApiReference({ spec }: { spec: object | string }) {
                 if (typeof scalar.createApiReference !== 'function') {
                     throw new Error('Scalar nicht verfügbar');
                 }
-                const dark = document.documentElement.classList.contains('dark');
-                app = scalar.createApiReference(host.current, scalarConfig(spec, dark));
+                const dark =
+                    document.documentElement.classList.contains('dark');
+                app = scalar.createApiReference(
+                    host.current,
+                    scalarConfig(spec, dark),
+                );
             })
-            .catch(() => setError('Die API-Ansicht konnte nicht geladen werden.'));
+            .catch(() =>
+                setError('Die API-Ansicht konnte nicht geladen werden.'),
+            );
 
         return () => {
             cancelled = true;
@@ -65,8 +77,16 @@ export default function ApiReference({ spec }: { spec: object | string }) {
     }, [spec]);
 
     return (
-        <div className="scalar-host min-h-[70vh] overflow-hidden rounded-xl border bg-background" translate="no" data-testid="api-reference">
-            {error ? <p className="p-6 text-sm text-destructive">{error}</p> : <div ref={host} />}
+        <div
+            className="scalar-host min-h-[70vh] overflow-hidden rounded-xl border bg-background"
+            translate="no"
+            data-testid="api-reference"
+        >
+            {error ? (
+                <p className="p-6 text-sm text-destructive">{error}</p>
+            ) : (
+                <div ref={host} />
+            )}
         </div>
     );
 }

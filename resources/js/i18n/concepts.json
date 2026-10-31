@@ -3,62 +3,29 @@
         "Language / Sprache / Sprooch",
         "Sprooch / Language / Sprache"
     ],
-    "aktiv": [
-        "active",
-        "aktiv"
-    ],
-    "Version": [
-        "Version",
-        "Version"
-    ],
-    "Sprache wählen": [
-        "Choose language",
-        "Sprooch wääle"
-    ],
+    "aktiv": ["active", "aktiv"],
+    "Version": ["Version", "Version"],
+    "Sprache wählen": ["Choose language", "Sprooch wääle"],
     "Wirkt sofort auf die ganze Oberfläche, ohne Neuladen.": [
         "Applies to the whole interface at once, without reloading.",
         "Wirkt sofort uf di ganz Oberflächi, ooni neu z laade."
     ],
-    "Grundsätze": [
-        "Principles",
-        "Grundsätz"
-    ],
-    "Sprachen und Codes": [
-        "Languages and codes",
-        "Spraache und Codes"
-    ],
+    "Grundsätze": ["Principles", "Grundsätz"],
+    "Sprachen und Codes": ["Languages and codes", "Spraache und Codes"],
     "Codes nach BCP {n}. Zürichdeutsch: Sprache gsw (Schweizerdeutsch) mit Unterteilung Kanton Zürich.": [
         "Codes according to BCP {n}. Zurich German: language gsw (Swiss German) with the subdivision Canton of Zurich.",
         "Codes nach BCP {n}. Züritüütsch: Sprooch gsw (Schwiizertüütsch) mit de Unterteilig Kanton Züri."
     ],
-    "Code": [
-        "Code",
-        "Code"
-    ],
-    "HTML lang": [
-        "HTML lang",
-        "HTML lang"
-    ],
-    "Übersetzt": [
-        "Translated",
-        "Übersetzt"
-    ],
-    "Hinweise": [
-        "Notes",
-        "Hiiwiis"
-    ],
+    "Code": ["Code", "Code"],
+    "HTML lang": ["HTML lang", "HTML lang"],
+    "Übersetzt": ["Translated", "Übersetzt"],
+    "Hinweise": ["Notes", "Hiiwiis"],
     "Beispiele aus den Katalogen": [
         "Examples from the catalogues",
         "Biispiil us de Kataloog"
     ],
-    "English": [
-        "English",
-        "English"
-    ],
-    "Züritüütsch": [
-        "Zurich German",
-        "Züritüütsch"
-    ],
+    "English": ["English", "English"],
+    "Züritüütsch": ["Zurich German", "Züritüütsch"],
     "Fehlende Texte in diesem Browser": [
         "Missing texts in this browser",
         "Fäälendi Täxt i däm Browser"
@@ -67,14 +34,8 @@
         "Texts shown without a translation since the page was loaded. Only recorded in English or Zurich German.",
         "Täxt, wo sit em Laade ooni Übersetzig aazeigt worde sind. Nur uf Änglisch oder Züritüütsch erfasst."
     ],
-    "Aktualisieren": [
-        "Refresh",
-        "Aktualisiere"
-    ],
-    "Keine fehlenden Texte.": [
-        "No missing texts.",
-        "Kei fäälendi Täxt."
-    ],
+    "Aktualisieren": ["Refresh", "Aktualisiere"],
+    "Keine fehlenden Texte.": ["No missing texts.", "Kei fäälendi Täxt."],
     "Mehrsprachige Oberfläche nach dem Vorbild TagStudio: Deutsch als Standard, Englisch und Zürichdeutsch als Alternativen.": [
         "Multilingual interface modelled on TagStudio: German by default, English and Zurich German as alternatives.",
         "Mehrspraachigi Oberflächi nach em Vorbild TagStudio: Tüütsch als Standard, Änglisch und Züritüütsch als Alternativä."
@@ -111,106 +72,46 @@
         "The language applies per browser (Settings → Appearance or at the bottom of the sidebar). The page is hidden briefly before the first paint so no German flashes up.",
         "D Sprooch gilt pro Browser (Iistellige → Darstellig oder une i de Siiteleiste). Vor em erschte Bild wird d Siite churz versteckt, damit kei Tüütsch ufblitzt."
     ],
-    "Konzept": [
-        "Concept",
-        "Konzept"
-    ],
-    "Geplanter Endpunkt": [
-        "Planned endpoint",
-        "Plante Ändpunkt"
-    ],
-    "noch nicht aktiv": [
-        "not active yet",
-        "no nöd aktiv"
-    ],
-    "Aufbau": [
-        "Architecture",
-        "Ufbau"
-    ],
+    "Konzept": ["Concept", "Konzept"],
+    "Geplanter Endpunkt": ["Planned endpoint", "Plante Ändpunkt"],
+    "noch nicht aktiv": ["not active yet", "no nöd aktiv"],
+    "Aufbau": ["Architecture", "Ufbau"],
     "Das Model Context Protocol (MCP) ist ein offener Standard, über den KI-Assistenten Werkzeuge und Daten anderer Systeme nutzen.": [
         "The Model Context Protocol (MCP) is an open standard that lets AI assistants use tools and data from other systems.",
         "S Model Context Protocol (MCP) isch en offne Standard, über dä KI-Assistänte Wärchzüüg und Date vo andere Systeem bruuched."
     ],
-    "Clients": [
-        "Clients",
-        "Clients"
-    ],
+    "Clients": ["Clients", "Clients"],
     "Alle drei verlangen einen öffentlich erreichbaren Server mit HTTPS. Mit OAuth {n}, PKCE und dynamischer Client-Registrierung sind alle drei abgedeckt.": [
         "All three require a publicly reachable server with HTTPS. OAuth {n} with PKCE and dynamic client registration covers all three.",
         "Alli drüü verlanged en öffentlich erreichbare Server mit HTTPS. Mit OAuth {n}, PKCE und dynamischer Client-Registrierig sind alli drüü abdeckt."
     ],
-    "Client": [
-        "Client",
-        "Client"
-    ],
-    "Einbindung": [
-        "Integration",
-        "Iibindig"
-    ],
-    "Anmeldung": [
-        "Sign-in",
-        "Aamäldig"
-    ],
-    "Werkzeuge": [
-        "Tools",
-        "Wärchzüüg"
-    ],
+    "Client": ["Client", "Client"],
+    "Einbindung": ["Integration", "Iibindig"],
+    "Anmeldung": ["Sign-in", "Aamäldig"],
+    "Werkzeuge": ["Tools", "Wärchzüüg"],
     "Abgeleitet aus der OpenAPI-Beschreibung der API – eine neue API-Operation erscheint hier automatisch.": [
         "Derived from the API's OpenAPI description – a new API operation appears here automatically.",
         "Abgleitet us de OpenAPI-Beschriibig vo de API – e neui API-Operation chunnt da automatisch dezue."
     ],
-    "Werkzeug": [
-        "Tool",
-        "Wärchzüüg"
-    ],
-    "Phase": [
-        "Phase",
-        "Phase"
-    ],
-    "Phase {n}": [
-        "Phase {n}",
-        "Phase {n}"
-    ],
-    "lesen": [
-        "read",
-        "läse"
-    ],
-    "schreiben": [
-        "write",
-        "schriibe"
-    ],
+    "Werkzeug": ["Tool", "Wärchzüüg"],
+    "Phase": ["Phase", "Phase"],
+    "Phase {n}": ["Phase {n}", "Phase {n}"],
+    "lesen": ["read", "läse"],
+    "schreiben": ["write", "schriibe"],
     "Datenschutz und Sicherheit": [
         "Data protection and security",
         "Dateschutz und Sicherheit"
     ],
-    "Phasen": [
-        "Phases",
-        "Phase"
-    ],
-    "Offene Fragen": [
-        "Open questions",
-        "Offni Frage"
-    ],
-    "KI-Client": [
-        "AI client",
-        "KI-Client"
-    ],
-    "MCP-Endpunkt /mcp": [
-        "MCP endpoint /mcp",
-        "MCP-Ändpunkt /mcp"
-    ],
+    "Phasen": ["Phases", "Phase"],
+    "Offene Fragen": ["Open questions", "Offni Frage"],
+    "KI-Client": ["AI client", "KI-Client"],
+    "MCP-Endpunkt /mcp": ["MCP endpoint /mcp", "MCP-Ändpunkt /mcp"],
     "Gleiche Regeln wie die API": [
         "Same rules as the API",
         "Gliichi Regle wie d API"
     ],
-    "Daten und Protokoll": [
-        "Data and log",
-        "Date und Protokoll"
-    ],
-    "Lesen: Inhalte": [
-        "Read: content",
-        "Läse: Inhält"
-    ],
+    "Daten und Protokoll": ["Data and log", "Date und Protokoll"],
+    "Lesen: Inhalte": ["Read: content", "Läse: Inhält"],
     "Lesen: Personalverzeichnis": [
         "Read: staff directory",
         "Läse: Personalverzeichnis"
@@ -323,42 +224,24 @@
         "Signed-in person and token",
         "Aagmäldeti Person und Token"
     ],
-    "Personen auflisten": [
-        "List people",
-        "Persoone uflischte"
-    ],
-    "Person anlegen": [
-        "Create person",
-        "Person aalege"
-    ],
-    "Eine Person": [
-        "One person",
-        "Ei Person"
-    ],
+    "Personen auflisten": ["List people", "Persoone uflischte"],
+    "Person anlegen": ["Create person", "Person aalege"],
+    "Eine Person": ["One person", "Ei Person"],
     "Person ändern (nur gesendete Felder)": [
         "Change person (sent fields only)",
         "Person ändere (nur gschickti Fälder)"
     ],
-    "Person löschen": [
-        "Delete person",
-        "Person lösche"
-    ],
+    "Person löschen": ["Delete person", "Person lösche"],
     "Veröffentlichte Mitteilungen": [
         "Published announcements",
         "Veröffentlichti Mitteilige"
     ],
-    "Dokumente und Links": [
-        "Documents and links",
-        "Dokumänt und Links"
-    ],
+    "Dokumente und Links": ["Documents and links", "Dokumänt und Links"],
     "Auswahllisten (Schulhäuser, Rollen, Kategorien)": [
         "Selection lists (school buildings, roles, categories)",
         "Uswaallischte (Schuelhüüser, Rolle, Kategorie)"
     ],
-    "Felder der Person": [
-        "Fields of the person",
-        "Fälder vo de Person"
-    ],
+    "Felder der Person": ["Fields of the person", "Fälder vo de Person"],
     "Zahlen werden beim Nachschlagen ersetzt: «{n} Einträge» und «{n} Einträge» teilen sich einen Katalogeintrag.": [
         "Numbers are replaced when looking up: «{n} Einträge» and «{n} Einträge» share one catalogue entry.",
         "Zaale werded bim Naaluege ersetzt: «{n} Einträge» und «{n} Einträge» teiled sich en Kataloogiitrag."
@@ -367,26 +250,14 @@
         "New version available",
         "Neui Version verfüegbar"
     ],
-    "Später": [
-        "Later",
-        "Spöter"
-    ],
-    "Jetzt neu laden": [
-        "Reload now",
-        "Jetzt neu laade"
-    ],
+    "Später": ["Later", "Spöter"],
+    "Jetzt neu laden": ["Reload now", "Jetzt neu laade"],
     "Das ist neu im Intranet:": [
         "What's new in the intranet:",
         "Das isch neu im Intranet:"
     ],
-    "Alle Versionen": [
-        "All versions",
-        "Alli Versione"
-    ],
-    "Verstanden": [
-        "Got it",
-        "Verstande"
-    ],
+    "Alle Versionen": ["All versions", "Alli Versione"],
+    "Verstanden": ["Got it", "Verstande"],
     "Das Intranet wurde aktualisiert.": [
         "The intranet has been updated.",
         "S Intranet isch aktualisiert worde."
@@ -399,26 +270,14 @@
         "Updated to version {n}",
         "Aktualisiert uf Version {n}"
     ],
-    "Neu laden": [
-        "Reload",
-        "Neu laade"
-    ],
-    "In neuem Tab öffnen": [
-        "Open in new tab",
-        "Im neue Tab öffne"
-    ],
-    "Noch nicht verbunden": [
-        "Not connected yet",
-        "No nöd verbunde"
-    ],
+    "Neu laden": ["Reload", "Neu laade"],
+    "In neuem Tab öffnen": ["Open in new tab", "Im neue Tab öffne"],
+    "Noch nicht verbunden": ["Not connected yet", "No nöd verbunde"],
     "Die Anwendung läuft noch nicht als Dienst. So wird sie eingebunden:": [
         "The application is not running as a service yet. This is how it will be integrated:",
         "D Aawändig lauft no nöd als Dienst. So wird sie iibunde:"
     ],
-    "Öffnet in neuem Tab": [
-        "Opens in a new tab",
-        "Gaht im neue Tab uf"
-    ],
+    "Öffnet in neuem Tab": ["Opens in a new tab", "Gaht im neue Tab uf"],
     "Projekt als eigener Dienst betreiben (Container auf dem Schweizer Server, eigene Subdomain, z. B. snapshot.intranet.sekbuelach.ch).": [
         "Run the project as its own service (container on the Swiss server, own subdomain, e.g. snapshot.intranet.sekbuelach.ch).",
         "Projekt als eigete Dienst betriibe (Container uf em Schwiizer Server, eigeti Subdomain, z. B. snapshot.intranet.sekbuelach.ch)."
@@ -439,10 +298,7 @@
         "This page only opens in a new tab.",
         "Die Siite gaht nur im neue Tab uf."
     ],
-    "Seite nicht erreichbar": [
-        "Page not reachable",
-        "Siite nöd erreichbar"
-    ],
+    "Seite nicht erreichbar": ["Page not reachable", "Siite nöd erreichbar"],
     "Erlaubt (frame-ancestors)": [
         "Allowed (frame-ancestors)",
         "Erlaubt (frame-ancestors)"
@@ -459,42 +315,27 @@
         "Provider forbids embedding (X-Frame-Options SAMEORIGIN)",
         "De Aabieter verbüütet s Iibette (X-Frame-Options SAMEORIGIN)"
     ],
-    "Workflows": [
-        "Workflows",
-        "Workflows"
-    ],
+    "Workflows": ["Workflows", "Workflows"],
     "SharePoint-Seite «Leitung und Verwaltung» mit Abläufen und Formularen.": [
         "SharePoint site «Leitung und Verwaltung» with processes and forms.",
         "SharePoint-Siite «Leitung und Verwaltung» mit Abläuf und Formular."
     ],
-    "Tickets": [
-        "Tickets",
-        "Tickets"
-    ],
+    "Tickets": ["Tickets", "Tickets"],
     "Anliegen an Verwaltung und ICT über das Kundenportal melden.": [
         "Report requests to administration and ICT via the customer portal.",
         "Aaliege a d Verwaltig und ICT über s Kundeportal mälde."
     ],
-    "Elternportal": [
-        "Parent portal",
-        "Elterportal"
-    ],
+    "Elternportal": ["Parent portal", "Elterportal"],
     "Portal für Anliegen von Eltern und Erziehungsberechtigten.": [
         "Portal for requests from parents and guardians.",
         "Portal für Aaliege vo Eltere und Erziehigsberächtigte."
     ],
-    "Webseiten-Snapshot": [
-        "Website snapshot",
-        "Websiite-Snapshot"
-    ],
+    "Webseiten-Snapshot": ["Website snapshot", "Websiite-Snapshot"],
     "Webseiten erfassen, Versionen vergleichen und Änderungsberichte erstellen.": [
         "Capture websites, compare versions and create change reports.",
         "Websiite erfasse, Versione vergliiche und Änderigsbricht mache."
     ],
-    "Rechnung": [
-        "Invoices",
-        "Rächnig"
-    ],
+    "Rechnung": ["Invoices", "Rächnig"],
     "Rechnungsablauf (Projekt abaflow).": [
         "Invoice process (abaflow project).",
         "Rächnigsablauf (Projekt abaflow)."
@@ -507,26 +348,17 @@
         "Announcement texts for the {n}CX phone system (text-to-speech).",
         "Aasagetäxt für d {n}CX-Telefonaalaag (Text-to-Speech)."
     ],
-    "LMVZ Shop (Prototyp)": [
-        "LMVZ shop (prototype)",
-        "LMVZ Shop (Prototyp)"
-    ],
+    "LMVZ Shop (Prototyp)": ["LMVZ shop (prototype)", "LMVZ Shop (Prototyp)"],
     "Lizenzen für Lehrmittel bestellen (Projekt edu-license-portal).": [
         "Order licences for teaching materials (edu-license-portal project).",
         "Lizänze für Lehrmittel bstelle (Projekt edu-license-portal)."
     ],
-    "Jira Service Desk": [
-        "Jira Service Desk",
-        "Jira Service Desk"
-    ],
+    "Jira Service Desk": ["Jira Service Desk", "Jira Service Desk"],
     "Warteschlange der ICT-Tickets in Jira Service Management.": [
         "Queue of ICT tickets in Jira Service Management.",
         "Warteschlange vo de ICT-Tickets im Jira Service Management."
     ],
-    "Confluence": [
-        "Confluence",
-        "Confluence"
-    ],
+    "Confluence": ["Confluence", "Confluence"],
     "Wissensbereich ICT in Confluence.": [
         "ICT knowledge space in Confluence.",
         "Wüsseberiich ICT im Confluence."
@@ -539,14 +371,8 @@
         "If the area stays empty, choose «Open in new tab».",
         "Bliibt de Bereich leer, «Im neue Tab öffne» wääle."
     ],
-    "Seite nicht erreichbar.": [
-        "Page not reachable.",
-        "Siite nöd erreichbar."
-    ],
-    "Lehrplan {n}": [
-        "Lehrplan {n}",
-        "Lehrplan {n}"
-    ],
+    "Seite nicht erreichbar.": ["Page not reachable.", "Siite nöd erreichbar."],
+    "Lehrplan {n}": ["Lehrplan {n}", "Lehrplan {n}"],
     "Lehrplan {n} des Kantons Zürich: Fachbereiche, Kompetenzen und Lehrmittel.": [
         "Lehrplan {n} (curriculum) of the Canton of Zurich: subjects, competences and teaching materials.",
         "Lehrplan {n} vom Kanton Züri: Fachbereich, Kompetänze und Lehrmittel."
@@ -559,18 +385,9 @@
         "One pupil per line. Comma, semicolon or tab separators are detected automatically – order last name / first name / username (email) / iPad inventory number / teacher / class. All columns from username onwards are optional – if one is missing, just leave it empty.",
         "En Schüeler pro Ziile. Trennzeiche Komma, Semikolon oder Tabulator werded automatisch erkännt – Riiefolg Nachname / Vorname / Benutzername (E-Mail) / iPad-Inventarnummer / Lehrperson / Klass. Alli Spalte ab Benutzername sind freiwillig – fäält eini, eifach leer laa."
     ],
-    "Passwortlänge": [
-        "Password length",
-        "Passwortlängi"
-    ],
-    "{n} Zeichen": [
-        "{n} characters",
-        "{n} Zeiche"
-    ],
-    "Passwort-Stil": [
-        "Password style",
-        "Passwort-Stil"
-    ],
+    "Passwortlänge": ["Password length", "Passwortlängi"],
+    "{n} Zeichen": ["{n} characters", "{n} Zeiche"],
+    "Passwort-Stil": ["Password style", "Passwort-Stil"],
     "Farbe + Tier + Zeichen + Zahl": [
         "Colour + animal + symbol + number (German words)",
         "Farb + Tier + Zeiche + Zaal"
@@ -599,38 +416,23 @@
         "Generate passwords & PINs",
         "Passwörter & PINs mache"
     ],
-    "Beispiel einfügen": [
-        "Insert example",
-        "Biispiil iifüege"
-    ],
+    "Beispiel einfügen": ["Insert example", "Biispiil iifüege"],
     "Neu generiert? Oder eine frühere zugangsdaten.csv wieder einlesen, um z. B. das PDF erneut zu erzeugen, ohne Passwörter/PINs neu zu würfeln.": [
         "Newly generated? Or read in an earlier zugangsdaten.csv again, e.g. to create the PDF again without re-rolling passwords/PINs.",
         "Neu gmacht? Oder e früecheri zugangsdaten.csv wider iiläse, zum Biispiil zum s PDF nomal mache, ooni Passwörter/PINs neu z würfle."
     ],
-    "CSV importieren": [
-        "Import CSV",
-        "CSV importiere"
-    ],
+    "CSV importieren": ["Import CSV", "CSV importiere"],
     "Noch keine Daten generiert. Liste oben einfügen und auf «Generieren» klicken.": [
         "No data generated yet. Paste the list above and click «Generate».",
         "No kei Date gmacht. Lischte obe iifüege und uf «Generiere» drucke."
     ],
-    "CSV exportieren": [
-        "Export CSV",
-        "CSV exportiere"
-    ],
+    "CSV exportieren": ["Export CSV", "CSV exportiere"],
     "Zugangskärtchen als Datei herunterladen": [
         "Download access cards as a file",
         "Zuegangschärtli als Datei abelade"
     ],
-    "Alle neu generieren": [
-        "Regenerate all",
-        "Alli neu mache"
-    ],
-    "{n} · PDF pro Schüler": [
-        "{n} · PDF per pupil",
-        "{n} · PDF pro Schüeler"
-    ],
+    "Alle neu generieren": ["Regenerate all", "Alli neu mache"],
+    "{n} · PDF pro Schüler": ["{n} · PDF per pupil", "{n} · PDF pro Schüeler"],
     "Erstellt ein PDF mit einer eigenen Seite pro Schüler – inkl. Klasse, Lehrperson, iPad-Nummer, Mail-Adresse, persönlichem Passwort und Entsperrcode. Je Klasse zuerst eine Übersicht.": [
         "Creates a PDF with a separate page per pupil – incl. class, teacher, iPad number, email address, personal password and unlock code. An overview first for each class.",
         "Macht es PDF mit ere eigete Siite pro Schüeler – mit Klass, Lehrperson, iPad-Nummere, Mail-Adrässe, persönlichem Passwort und Entsperrcode. Pro Klass zerscht e Übersicht."
@@ -667,26 +469,17 @@
         "Access data generator: passwords and PINs for pupil logins (iPad and Microsoft {n}), access cards and a PDF per pupil.",
         "Zuegangsdate-Generator: Passwörter und PIN für Schüeler-Logins (iPad und Microsoft {n}), Zuegangschärtli und PDF pro Schüeler."
     ],
-    "Passwort und PIN neu": [
-        "New password and PIN",
-        "Passwort und PIN neu"
-    ],
+    "Passwort und PIN neu": ["New password and PIN", "Passwort und PIN neu"],
     "Datei konnte nicht gelesen werden.": [
         "File could not be read.",
         "D Datei het nöd chöne gläse werde."
     ],
-    "neu": [
-        "new",
-        "neu"
-    ],
+    "neu": ["new", "neu"],
     "Lokal im Browser – keine Daten werden versendet oder im Intranet gespeichert. Nach dem Schliessen der Seite sind Liste und Passwörter weg; vorher CSV exportieren.": [
         "Local in the browser – no data is sent or stored in the intranet. After closing the page, list and passwords are gone; export the CSV first.",
         "Lokal im Browser – es werded kei Date verschickt oder im Intranet gspeicheret. Nach em Zuemache vo de Siite sind Lischte und Passwörter weg; vorher CSV exportiere."
     ],
-    "{n} Einträge eingelesen.": [
-        "{n} entries read.",
-        "{n} Iiträg iiglese."
-    ],
+    "{n} Einträge eingelesen.": ["{n} entries read.", "{n} Iiträg iiglese."],
     "{n} E-Mail-Adresse sieht ungültig aus oder fehlt – rot markiert unten.": [
         "{n} email address looks invalid or is missing – marked red below.",
         "{n} E-Mail-Adrässe gseet ungültig us oder fäält – unde rot markiert."
@@ -695,18 +488,9 @@
         "{n} email addresses look invalid or are missing – marked red below.",
         "{n} E-Mail-Adrässe gseend ungültig us oder fääled – unde rot markiert."
     ],
-    "{n} Schüler/in": [
-        "{n} pupil",
-        "{n} Schüeler/in"
-    ],
-    "{n} Schüler/innen": [
-        "{n} pupils",
-        "{n} Schüeler/inne"
-    ],
-    "Schüler:innen importieren": [
-        "Import pupils",
-        "Schüeler:inne importiere"
-    ],
+    "{n} Schüler/in": ["{n} pupil", "{n} Schüeler/in"],
+    "{n} Schüler/innen": ["{n} pupils", "{n} Schüeler/inne"],
+    "Schüler:innen importieren": ["Import pupils", "Schüeler:inne importiere"],
     "Klassenliste aus Escola oder Excel (.xlsx oder CSV) wählen, dann Jahrgang und Klasse auswählen.": [
         "Choose a class list from Escola or Excel (.xlsx or CSV), then select year and class.",
         "Klasselischte us Escola oder Excel (.xlsx oder CSV) wääle, dänn Jahrgang und Klass uswääle."
@@ -715,38 +499,17 @@
         "The file is only read in this browser and not uploaded.",
         "D Datei wird nur i däm Browser gläse und nöd ufeglade."
     ],
-    "Klassenliste wählen": [
-        "Choose class list",
-        "Klasselischte wääle"
-    ],
-    "Jahrgang": [
-        "Year",
-        "Jahrgang"
-    ],
-    "{n}. Sek": [
-        "Sek year {n}",
-        "{n}. Sek"
-    ],
-    "Alle Jahrgänge": [
-        "All years",
-        "Alli Jahrgäng"
-    ],
-    "Klasse": [
-        "Class",
-        "Klass"
-    ],
+    "Klassenliste wählen": ["Choose class list", "Klasselischte wääle"],
+    "Jahrgang": ["Year", "Jahrgang"],
+    "{n}. Sek": ["Sek year {n}", "{n}. Sek"],
+    "Alle Jahrgänge": ["All years", "Alli Jahrgäng"],
+    "Klasse": ["Class", "Klass"],
     "Keine Spalte «Klasse» erkannt – es werden alle Zeilen übernommen. Spalte unten zuordnen, um nach Klasse zu wählen.": [
         "No «Klasse» column detected – all rows will be imported. Assign the column below to select by class.",
         "Kei Spalte «Klasse» erkännt – es werded alli Ziile übernoo. Spalte unde zueordne, zum nach Klass wääle."
     ],
-    "Spalten zuordnen": [
-        "Assign columns",
-        "Spalte zueordne"
-    ],
-    "– keine –": [
-        "– none –",
-        "– keini –"
-    ],
+    "Spalten zuordnen": ["Assign columns", "Spalte zueordne"],
+    "– keine –": ["– none –", "– keini –"],
     "Lehrperson (für alle übernommenen)": [
         "Teacher (for all imported)",
         "Lehrperson (für alli übernoone)"
@@ -759,26 +522,14 @@
         "Replace existing list (otherwise append)",
         "Bisherigi Lischte ersetze (susch aahänke)"
     ],
-    "z. B. Klassenlehrperson": [
-        "e.g. class teacher",
-        "z. B. Klasselehrperson"
-    ],
+    "z. B. Klassenlehrperson": ["e.g. class teacher", "z. B. Klasselehrperson"],
     "Die Datei enthält keine Datenzeilen.": [
         "The file contains no data rows.",
         "D Datei het kei Dateziile."
     ],
-    "Benutzername (E-Mail)": [
-        "Username (email)",
-        "Benutzername (E-Mail)"
-    ],
-    "iPad-Inventarnummer": [
-        "iPad inventory number",
-        "iPad-Inventarnummere"
-    ],
-    "Lehrperson": [
-        "Teacher",
-        "Lehrperson"
-    ],
+    "Benutzername (E-Mail)": ["Username (email)", "Benutzername (E-Mail)"],
+    "iPad-Inventarnummer": ["iPad inventory number", "iPad-Inventarnummere"],
+    "Lehrperson": ["Teacher", "Lehrperson"],
     "Keine gültige Excel-Datei (.xlsx).": [
         "Not a valid Excel file (.xlsx).",
         "Kei gültigi Excel-Datei (.xlsx)."
@@ -803,22 +554,10 @@
         "Preview: {n} pupils",
         "Vorschau: {n} Schüeler:inne"
     ],
-    "{n} übernehmen": [
-        "Import {n}",
-        "{n} übernää"
-    ],
-    "Alle Klassen ({n})": [
-        "All classes ({n})",
-        "Alli Klasse ({n})"
-    ],
-    "{n} Zeilen": [
-        "{n} rows",
-        "{n} Ziile"
-    ],
-    "Spalte {n}": [
-        "Column {n}",
-        "Spalte {n}"
-    ],
+    "{n} übernehmen": ["Import {n}", "{n} übernää"],
+    "Alle Klassen ({n})": ["All classes ({n})", "Alli Klasse ({n})"],
+    "{n} Zeilen": ["{n} rows", "{n} Ziile"],
+    "Spalte {n}": ["Column {n}", "Spalte {n}"],
     "{n} Schüler:innen übernommen.": [
         "{n} pupils imported.",
         "{n} Schüeler:inne übernoo."
@@ -827,14 +566,8 @@
         "With the number of active people per role.",
         "Mit de Aazaal aktivi Persoone pro Rolle."
     ],
-    "Rechte je Rolle": [
-        "Permissions per role",
-        "Rächt pro Rolle"
-    ],
-    "Recht": [
-        "Permission",
-        "Rächt"
-    ],
+    "Rechte je Rolle": ["Permissions per role", "Rächt pro Rolle"],
+    "Recht": ["Permission", "Rächt"],
     "Sichtbare Menüs je Rolle": [
         "Visible menus per role",
         "Sichtbari Menüs pro Rolle"
@@ -843,14 +576,8 @@
         "Calculated from the navigation – this is how a person with this role sees the sidebar.",
         "Usgrächnet us de Navigation – so gseet e Person mit dere Rolle d Siiteleiste."
     ],
-    "Menü": [
-        "Menu",
-        "Menü"
-    ],
-    "Rollenkonzept": [
-        "Role concept",
-        "Rollekonzept"
-    ],
+    "Menü": ["Menu", "Menü"],
+    "Rollenkonzept": ["Role concept", "Rollekonzept"],
     "Welche Rolle welche Rechte hat und welche Menüs sie sieht. Quelle: config/intranet.php → roles und abilities.": [
         "Which role has which permissions and which menus it sees. Source: config/intranet.php → roles and abilities.",
         "Weli Rolle weli Rächt hät und weli Menüs sie gseet. Quälle: config/intranet.php → roles und abilities."
@@ -875,10 +602,7 @@
         "Personal data remains protected by field group: only the administration sees private details and system fields – regardless of the role.",
         "Persoonedate bliibed nach Fäldgruppe gschützt: privati Aagabe und Systemfälder gseet nur d Administration – egal weli Rolle."
     ],
-    "{n} Personen": [
-        "{n} people",
-        "{n} Persoone"
-    ],
+    "{n} Personen": ["{n} people", "{n} Persoone"],
     "Personen und Intranet verwalten": [
         "Manage people and intranet",
         "Persoone und Intranet verwalte"
@@ -939,14 +663,8 @@
         "How it works on iPhone and iPad (Safari):",
         "So gaht s uf em iPhone und iPad (Safari):"
     ],
-    "Unten bzw. oben auf": [
-        "Tap",
-        "Une bzw. obe uf"
-    ],
-    "«Teilen» tippen.": [
-        "«Share» (at the bottom or top).",
-        "«Teile» tippe."
-    ],
+    "Unten bzw. oben auf": ["Tap", "Une bzw. obe uf"],
+    "«Teilen» tippen.": ["«Share» (at the bottom or top).", "«Teile» tippe."],
     "«Zum Home-Bildschirm» wählen.": [
         "Choose «Add to Home Screen».",
         "«Zum Home-Bildschirm» wääle."
@@ -963,10 +681,7 @@
         "This browser does not offer installation. It is possible in Chrome, Edge or Safari (iPhone/iPad); in the browser menu «Install app» or «Add to Home Screen».",
         "Dä Browser bietet kei Installation aa. Im Chrome, Edge oder Safari (iPhone/iPad) gaht s; im Browsermenü «App installieren» bzw. «Zum Home-Bildschirm»."
     ],
-    "App installieren": [
-        "Install app",
-        "App installiere"
-    ],
+    "App installieren": ["Install app", "App installiere"],
     "Intranet als App auf diesem Gerät installieren": [
         "Install the intranet as an app on this device",
         "S Intranet als App uf däm Grät installiere"
@@ -975,10 +690,7 @@
         "The intranet is being installed.",
         "S Intranet wird installiert."
     ],
-    "App": [
-        "App",
-        "App"
-    ],
+    "App": ["App", "App"],
     "Das Intranet lässt sich auf Computer, Tablet und Handy wie eine App installieren (eigenes Fenster, Symbol auf dem Startbildschirm).": [
         "The intranet can be installed like an app on computer, tablet and phone (own window, icon on the home screen).",
         "S Intranet laat sich uf Computer, Tablet und Handy wie e App installiere (eigets Fänschter, Symbol uf em Startbildschirm)."
@@ -991,54 +703,24 @@
         "A chosen file is only read in this browser and not uploaded. Passwords and PINs are only created in the browser.",
         "E gwäälti Datei wird nur i däm Browser gläse und nöd ufeglade. Passwörter und PINs entstönd nur im Browser."
     ],
-    "Aus dem Intranet laden": [
-        "Load from the intranet",
-        "Usem Intranet laade"
-    ],
+    "Aus dem Intranet laden": ["Load from the intranet", "Usem Intranet laade"],
     "Keine Klassen in diesem Jahrgang.": [
         "No classes in this year.",
         "Kei Klasse i däm Jahrgang."
     ],
-    "Laden fehlgeschlagen.": [
-        "Loading failed.",
-        "Laade fäälgschlage."
-    ],
+    "Laden fehlgeschlagen.": ["Loading failed.", "Laade fäälgschlage."],
     "Laden fehlgeschlagen (HTTP {n}).": [
         "Loading failed (HTTP {n}).",
         "Laade fäälgschlage (HTTP {n})."
     ],
-    "{n} Klassen laden": [
-        "Load {n} classes",
-        "{n} Klasse laade"
-    ],
-    "{n} Klasse laden": [
-        "Load {n} class",
-        "{n} Klass laade"
-    ],
-    "{n} Schüler:innen": [
-        "{n} pupils",
-        "{n} Schüeler:inne"
-    ],
-    "Keine": [
-        "None",
-        "Keini"
-    ],
-    "Aktuell": [
-        "Up to date",
-        "Aktuell"
-    ],
-    "Übernommen": [
-        "Imported",
-        "Übernoo"
-    ],
-    "Ohne Abgleichdatum": [
-        "No sync date",
-        "Ooni Abgliichdatum"
-    ],
-    "Richtung": [
-        "Direction",
-        "Richtig"
-    ],
+    "{n} Klassen laden": ["Load {n} classes", "{n} Klasse laade"],
+    "{n} Klasse laden": ["Load {n} class", "{n} Klass laade"],
+    "{n} Schüler:innen": ["{n} pupils", "{n} Schüeler:inne"],
+    "Keine": ["None", "Keini"],
+    "Aktuell": ["Up to date", "Aktuell"],
+    "Übernommen": ["Imported", "Übernoo"],
+    "Ohne Abgleichdatum": ["No sync date", "Ooni Abgliichdatum"],
+    "Richtung": ["Direction", "Richtig"],
     "Quelle (Daten kommen von dort)": [
         "Source (data comes from there)",
         "Quälle (Date chömed vo det)"
@@ -1047,26 +729,11 @@
         "Target (data is exported there)",
         "Ziil (Date werded det häre exportiert)"
     ],
-    "ID / PK im System": [
-        "ID / PK in the system",
-        "ID / PK im System"
-    ],
-    "Art der ID": [
-        "Type of ID",
-        "Art vo de ID"
-    ],
-    "Letzter Abgleich": [
-        "Last sync",
-        "Letschte Abgliich"
-    ],
-    "Jetzt": [
-        "Now",
-        "Jetzt"
-    ],
-    "Bemerkung": [
-        "Note",
-        "Bemerkig"
-    ],
+    "ID / PK im System": ["ID / PK in the system", "ID / PK im System"],
+    "Art der ID": ["Type of ID", "Art vo de ID"],
+    "Letzter Abgleich": ["Last sync", "Letschte Abgliich"],
+    "Jetzt": ["Now", "Jetzt"],
+    "Bemerkung": ["Note", "Bemerkig"],
     "Aus welchem System die Person stammt und in welche Systeme sie exportiert wird – jeweils mit der ID des Systems. Beim Import wird zuerst über diese ID gesucht, damit keine Duplikate entstehen.": [
         "Which system the person comes from and which systems they are exported to – each with the system's ID. Imports search by this ID first so that no duplicates arise.",
         "Us welem System d Person chunnt und i weli Systeem sie exportiert wird – jewils mit de ID vom System. Bim Import wird zerscht über die ID gsuecht, damit kei Duplikat entstönd."
@@ -1075,38 +742,17 @@
         "No data provenance details yet.",
         "No kei Aagabe zur Dateherkunft."
     ],
-    "ID / PK": [
-        "ID / PK",
-        "ID / PK"
-    ],
-    "Status": [
-        "Status",
-        "Status"
-    ],
-    "Quelle": [
-        "Source",
-        "Quälle"
-    ],
-    "Ziel": [
-        "Target",
-        "Ziil"
-    ],
-    "Abgeglichen": [
-        "Synced",
-        "Abgliiche"
-    ],
-    "System hinzufügen": [
-        "Add system",
-        "System dezuefüege"
-    ],
+    "ID / PK": ["ID / PK", "ID / PK"],
+    "Status": ["Status", "Status"],
+    "Quelle": ["Source", "Quälle"],
+    "Ziel": ["Target", "Ziil"],
+    "Abgeglichen": ["Synced", "Abgliiche"],
+    "System hinzufügen": ["Add system", "System dezuefüege"],
     "z. B. Escola-ID, objectId, UPN": [
         "e.g. Escola ID, objectId, UPN",
         "z. B. Escola-ID, objectId, UPN"
     ],
-    "z. B. T-{n}": [
-        "e.g. T-{n}",
-        "z. B. T-{n}"
-    ],
+    "z. B. T-{n}": ["e.g. T-{n}", "z. B. T-{n}"],
     "Nach dem Export als abgeglichen markieren": [
         "Mark as synced after the export",
         "Nach em Export als abgliiche markiere"
@@ -1115,10 +761,7 @@
         "Changed – sync needed",
         "Gänderet – Abgliich nötig"
     ],
-    "Noch nie abgeglichen": [
-        "Never synced",
-        "No nie abgliiche"
-    ],
+    "Noch nie abgeglichen": ["Never synced", "No nie abgliiche"],
     "Eintrag zur Datenherkunft löschen?": [
         "Delete data provenance entry?",
         "Iitrag zur Dateherkunft lösche?"
@@ -1127,30 +770,15 @@
         "Data provenance & synchronisation",
         "Dateherkunft & Synchronisation"
     ],
-    "{n} Abgleich offen": [
-        "{n} sync pending",
-        "{n} Abgliich offe"
-    ],
-    "{n} offen": [
-        "{n} pending",
-        "{n} offe"
-    ],
-    "Abgleich offen": [
-        "Sync pending",
-        "Abgliich offe"
-    ],
+    "{n} Abgleich offen": ["{n} sync pending", "{n} Abgliich offe"],
+    "{n} offen": ["{n} pending", "{n} offe"],
+    "Abgleich offen": ["Sync pending", "Abgliich offe"],
     "Verzeichnis der Mitarbeitenden, Schüler:innen und Kontakte": [
         "Directory of staff, pupils and contacts",
         "Verzeichnis vo de Mitarbeitende, Schüeler:inne und Kontakt"
     ],
-    "Neue:r Schüler:in": [
-        "New pupil",
-        "Neui:e Schüeler:in"
-    ],
-    "Schüler:innen": [
-        "Pupils",
-        "Schüeler:inne"
-    ],
+    "Neue:r Schüler:in": ["New pupil", "Neui:e Schüeler:in"],
+    "Schüler:innen": ["Pupils", "Schüeler:inne"],
     "Schüler:innen nach Klasse – gleiche Tabelle wie «Personen», nur Personenart Schüler:in.": [
         "Pupils by class – same table as «Personen», only person type pupil.",
         "Schüeler:inne nach Klass – gliichi Tabälle wie «Personen», nur Personeart Schüeler:in."
@@ -1163,14 +791,8 @@
         "School building, function, class and device",
         "Schuelhuus, Funktion, Klass und Grät"
     ],
-    "Personenart": [
-        "Person type",
-        "Personeart"
-    ],
-    "iPad-/Geräte-Nr.": [
-        "iPad/device no.",
-        "iPad-/Grät-Nr."
-    ],
+    "Personenart": ["Person type", "Personeart"],
+    "iPad-/Geräte-Nr.": ["iPad/device no.", "iPad-/Grät-Nr."],
     "Personen: Datenherkunft & Synchronisation": [
         "People: data provenance & synchronisation",
         "Persoone: Dateherkunft & Synchronisation"
@@ -1183,34 +805,19 @@
         "Type of ID (e.g. Escola ID, objectId, UPN)",
         "Art vo de ID (z. B. Escola-ID, objectId, UPN)"
     ],
-    "Kein Zugang": [
-        "No access",
-        "Kei Zuegang"
-    ],
+    "Kein Zugang": ["No access", "Kei Zuegang"],
     "Ohne Anmeldung im Intranet, z. B. Schüler:innen und Eltern (nur als Kontakt erfasst).": [
         "No intranet sign-in, e.g. pupils and parents (recorded as contacts only).",
         "Ooni Aamäldig im Intranet, z. B. Schüeler:inne und Eltere (nur als Kontakt erfasst)."
     ],
-    "Schüler:in": [
-        "Pupil",
-        "Schüeler:in"
-    ],
+    "Schüler:in": ["Pupil", "Schüeler:in"],
     "Eltern / Erziehungsberechtigte": [
         "Parents / guardians",
         "Eltere / Erziehigsberächtigti"
     ],
-    "Mitarbeiter:in": [
-        "Staff member",
-        "Mitarbeiter:in"
-    ],
-    "Schulbehörde": [
-        "School authority",
-        "Schuelbehörde"
-    ],
-    "Externe Fachperson": [
-        "External specialist",
-        "Externi Fachperson"
-    ],
+    "Mitarbeiter:in": ["Staff member", "Mitarbeiter:in"],
+    "Schulbehörde": ["School authority", "Schuelbehörde"],
+    "Externe Fachperson": ["External specialist", "Externi Fachperson"],
     "Microsoft {n} / Entra ID": [
         "Microsoft {n} / Entra ID",
         "Microsoft {n} / Entra ID"
@@ -1231,10 +838,7 @@
         "Marked as synced.",
         "Als abgliiche markiert."
     ],
-    "Eintrag gelöscht.": [
-        "Entry deleted.",
-        "Iitrag glöscht."
-    ],
+    "Eintrag gelöscht.": ["Entry deleted.", "Iitrag glöscht."],
     "Die Aufzeichnung bleibt in diesem Browser. Gespeichert werden nur Endpunkte und abgeleitete Schemas – Beispielwerte nur auf Wunsch und maskiert. Passwörter, Tokens und Cookies werden nie übernommen.": [
         "The recording stays in this browser. Only endpoints and derived schemas are saved – example values only on request and masked. Passwords, tokens and cookies are never stored.",
         "D Ufzeichnig bliibt i däm Browser. Gspeicheret werded nur Ändpünkt und abgleiteti Schemas – Biispiilwärt nur uf Wunsch und maskiert. Passwörter, Tokens und Cookies werded nie übernoo."
@@ -1243,10 +847,7 @@
         "{n} · Record website",
         "{n} · Websiite ufzeichne"
     ],
-    "SBI-Recorder": [
-        "SBI-Recorder",
-        "SBI-Recorder"
-    ],
+    "SBI-Recorder": ["SBI-Recorder", "SBI-Recorder"],
     "Lesezeichen einmalig in die Lesezeichenleiste ziehen:": [
         "Drag the bookmark into the bookmarks bar once:",
         "S Läsezeiche eimal i d Läsezeicheleiste zie:"
@@ -1255,14 +856,8 @@
         "Use the website's functions. Each request appears below.",
         "D Funktione vo de Websiite bediene. Jedi Aafrag erschiint une."
     ],
-    "Verbunden mit": [
-        "Connected to",
-        "Verbunde mit"
-    ],
-    "HAR-Datei importieren": [
-        "Import HAR file",
-        "HAR-Datei importiere"
-    ],
+    "Verbunden mit": ["Connected to", "Verbunde mit"],
+    "HAR-Datei importieren": ["Import HAR file", "HAR-Datei importiere"],
     "Alternative ohne Lesezeichen (auch für ganze Seitenaufrufe und Formulare): in den Entwicklertools des Browsers Netzwerk → «Alle als HAR speichern», dann hier importieren. Manche Websites blockieren Lesezeichen-Skripte; dann diesen Weg wählen.": [
         "Alternative without a bookmark (also for full page loads and forms): in the browser's developer tools Network → «Save all as HAR», then import here. Some websites block bookmark scripts; use this route then.",
         "Alternativ ooni Läsezeiche (au für ganzi Siiteufrüef und Formular): i de Entwicklertools vom Browser Netzwerk → «Alle als HAR speichern», dänn da importiere. Es paar Websiite blockiered Läsezeiche-Skript; dänn dä Wäg wääle."
@@ -1283,50 +878,23 @@
         "{n} · Recorded requests",
         "{n} · Ufgzeichneti Aafrage"
     ],
-    "Liste leeren": [
-        "Clear list",
-        "Lischte leere"
-    ],
+    "Liste leeren": ["Clear list", "Lischte leere"],
     "Noch keine Anfragen aufgezeichnet.": [
         "No requests recorded yet.",
         "No kei Aafrage ufgzeichnet."
     ],
-    "Methode": [
-        "Method",
-        "Methode"
-    ],
-    "Adresse": [
-        "Address",
-        "Adrässe"
-    ],
-    "Zeit": [
-        "Time",
-        "Ziit"
-    ],
-    "In Doku": [
-        "Add to docs",
-        "I d Doku"
-    ],
-    "dokumentiert": [
-        "documented",
-        "dokumentiert"
-    ],
-    "Anfrage": [
-        "Request",
-        "Aafrag"
-    ],
-    "Antwort": [
-        "Response",
-        "Antwort"
-    ],
+    "Methode": ["Method", "Methode"],
+    "Adresse": ["Address", "Adrässe"],
+    "Zeit": ["Time", "Ziit"],
+    "In Doku": ["Add to docs", "I d Doku"],
+    "dokumentiert": ["documented", "dokumentiert"],
+    "Anfrage": ["Request", "Aafrag"],
+    "Antwort": ["Response", "Antwort"],
     "{n} · API-Dokumentation": [
         "{n} · API documentation",
         "{n} · API-Dokumentation"
     ],
-    "Neue Dokumentation": [
-        "New documentation",
-        "Neui Dokumentation"
-    ],
+    "Neue Dokumentation": ["New documentation", "Neui Dokumentation"],
     "Endpunkte werden aus den Aufzeichnungen zusammengefasst: IDs im Pfad werden zu Parametern ({id}), Schemas aus allen Beispielen abgeleitet.": [
         "Endpoints are combined from the recordings: IDs in the path become parameters ({id}), schemas are derived from all examples.",
         "Ändpünkt werded us de Ufzeichnige zämegfasst: IDs im Pfad werded zu Parameter ({id}), Schemas us allne Biispiil abgleitet."
@@ -1335,30 +903,15 @@
         "No endpoints yet. Record requests and choose «Add to docs».",
         "No kei Ändpünkt. Aafrage ufzeichne und «In Doku» wääle."
     ],
-    "Beispiele": [
-        "Samples",
-        "Biispiil"
-    ],
+    "Beispiele": ["Samples", "Biispiil"],
     "Dokumentation speichern": [
         "Save documentation",
         "Dokumentation speichere"
     ],
-    "OpenAPI-Datei (JSON)": [
-        "OpenAPI file (JSON)",
-        "OpenAPI-Datei (JSON)"
-    ],
-    "OpenAPI-Datei (YAML)": [
-        "OpenAPI file (YAML)",
-        "OpenAPI-Datei (YAML)"
-    ],
-    "Vorschau": [
-        "Preview",
-        "Vorschau"
-    ],
-    "Vorschau schliessen": [
-        "Close preview",
-        "Vorschau zuemache"
-    ],
+    "OpenAPI-Datei (JSON)": ["OpenAPI file (JSON)", "OpenAPI-Datei (JSON)"],
+    "OpenAPI-Datei (YAML)": ["OpenAPI file (YAML)", "OpenAPI-Datei (YAML)"],
+    "Vorschau": ["Preview", "Vorschau"],
+    "Vorschau schliessen": ["Close preview", "Vorschau zuemache"],
     "Die Datei lässt sich im Swagger Editor (editor.swagger.io), in Postman oder Insomnia öffnen.": [
         "The file can be opened in Swagger Editor (editor.swagger.io), Postman or Insomnia.",
         "D Datei laat sich im Swagger Editor (editor.swagger.io), im Postman oder Insomnia ufmache."
@@ -1367,10 +920,7 @@
         "New endpoint – add to the documentation?",
         "Neue Ändpunkt – i d Dokumentation ufnää?"
     ],
-    "Noch {n} weitere warten.": [
-        "{n} more waiting.",
-        "No {n} wiiteri warted."
-    ],
+    "Noch {n} weitere warten.": ["{n} more waiting.", "No {n} wiiteri warted."],
     "Beschreibung ergänzen und aufnehmen.": [
         "Add a description and include it.",
         "Beschriibig ergänze und ufnää."
@@ -1379,34 +929,16 @@
         "Path (IDs as parameters in curly braces)",
         "Pfad (IDs als Parameter i gschweifte Chlammere)"
     ],
-    "Antwort (Ausschnitt)": [
-        "Response (excerpt)",
-        "Antwort (Usschnitt)"
-    ],
-    "Nicht mehr fragen": [
-        "Stop asking",
-        "Nüme fröge"
-    ],
-    "Ignorieren": [
-        "Ignore",
-        "Ignoriere"
-    ],
-    "Aufnehmen": [
-        "Include",
-        "Ufnää"
-    ],
-    "API-Recorder": [
-        "API recorder",
-        "API-Recorder"
-    ],
+    "Antwort (Ausschnitt)": ["Response (excerpt)", "Antwort (Usschnitt)"],
+    "Nicht mehr fragen": ["Stop asking", "Nüme fröge"],
+    "Ignorieren": ["Ignore", "Ignoriere"],
+    "Aufnehmen": ["Include", "Ufnää"],
+    "API-Recorder": ["API recorder", "API-Recorder"],
     "Eine Website im eigenen Fenster bedienen, die gesendeten Anfragen und Antworten mitschneiden, ausgewählte Endpunkte dokumentieren und als OpenAPI-Datei (Swagger) speichern.": [
         "Use a website in its own window, record the requests sent and the responses, document selected endpoints and save them as an OpenAPI file (Swagger).",
         "E Websiite im eigete Fänschter bediene, d gschickte Aafrage und Antworte mitschniide, uusgwäälti Ändpünkt dokumentiere und als OpenAPI-Datei (Swagger) speichere."
     ],
-    "Dokumentation wählen": [
-        "Choose documentation",
-        "Dokumentation wääle"
-    ],
+    "Dokumentation wählen": ["Choose documentation", "Dokumentation wääle"],
     "Was macht der Endpunkt?": [
         "What does the endpoint do?",
         "Was macht dä Ändpunkt?"
@@ -1443,10 +975,7 @@
         "{n} requests imported.",
         "{n} Aafrage iiglese."
     ],
-    "{n} ms": [
-        "{n} ms",
-        "{n} ms"
-    ],
+    "{n} ms": ["{n} ms", "{n} ms"],
     "System: API-Dokumentationen (API-Recorder)": [
         "System: API documentation (API recorder)",
         "System: API-Dokumentatione (API-Recorder)"
@@ -1479,10 +1008,7 @@
         "Without a bookmark: in the new tab press F12 → «Console», paste the code and press Enter.",
         "Ooni Läsezeiche: im neue Tab F12 → «Konsole», de Code iifüege und Enter drucke."
     ],
-    "Code kopieren": [
-        "Copy code",
-        "Code kopiere"
-    ],
+    "Code kopieren": ["Copy code", "Code kopiere"],
     "Chrome verlangt beim ersten Mal die Eingabe «allow pasting» bzw. «Einfügen zulassen».": [
         "The first time, Chrome asks you to type «allow pasting».",
         "Chrome verlangt bim erschte Mal d Iigaab «allow pasting» bzw. «Einfügen zulassen»."
@@ -1495,46 +1021,25 @@
         "Drag the bookmark into the bookmarks bar and click it in the website's tab.",
         "S Läsezeiche i d Läsezeicheleiste zie und im Tab vo de Websiite aaklicke."
     ],
-    "Noch kein Tab verbunden": [
-        "No tab connected yet",
-        "No kei Tab verbunde"
-    ],
+    "Noch kein Tab verbunden": ["No tab connected yet", "No kei Tab verbunde"],
     "Der Tab wurde blockiert. Bitte Pop-ups für das Intranet erlauben.": [
         "The tab was blocked. Please allow pop-ups for the intranet.",
         "De Tab isch blockiert worde. Bitte Pop-ups fürs Intranet erlaube."
     ],
-    "Neue API aufzeichnen": [
-        "Record new API",
-        "Neui API ufzeichne"
-    ],
+    "Neue API aufzeichnen": ["Record new API", "Neui API ufzeichne"],
     "Mit «Neue API aufzeichnen» eine Website öffnen und ihre Anfragen mitschneiden.": [
         "Use “Record new API” to open a website and capture its requests.",
         "Mit «Neui API ufzeichne» e Websiite ufmache und iri Aafroge mitschniide."
     ],
-    "Aufgezeichnete APIs": [
-        "Recorded APIs",
-        "Ufzeichneti APIs"
-    ],
+    "Aufgezeichnete APIs": ["Recorded APIs", "Ufzeichneti APIs"],
     "Öffnen lädt die gespeicherten Endpunkte. Weitere Aufzeichnungen ergänzen sie.": [
         "Opening loads the saved endpoints. Further recordings add to them.",
         "Ufmache ladet di gspeicherete Endpünkt. Wiiteri Ufzeichnige ergänzed si."
     ],
-    "URL": [
-        "URL",
-        "URL"
-    ],
-    "Endpunkte": [
-        "Endpoints",
-        "Endpünkt"
-    ],
-    "Zuletzt aufgezeichnet": [
-        "Last recorded",
-        "Zletscht ufzeichnet"
-    ],
-    "vollständig": [
-        "complete",
-        "vollständig"
-    ],
+    "URL": ["URL", "URL"],
+    "Endpunkte": ["Endpoints", "Endpünkt"],
+    "Zuletzt aufgezeichnet": ["Last recorded", "Zletscht ufzeichnet"],
+    "vollständig": ["complete", "vollständig"],
     "Öffnen & weiter aufzeichnen": [
         "Open & continue recording",
         "Ufmache & wiiter ufzeichne"
@@ -1559,14 +1064,8 @@
         "Delete this API and its documentation?",
         "Die API und iri Dokumentation lösche?"
     ],
-    "API gelöscht.": [
-        "API deleted.",
-        "API glöscht."
-    ],
-    "Alle aufgezeichneten APIs": [
-        "All recorded APIs",
-        "Alli ufzeichnete APIs"
-    ],
+    "API gelöscht.": ["API deleted.", "API glöscht."],
+    "Alle aufgezeichneten APIs": ["All recorded APIs", "Alli ufzeichnete APIs"],
     "Plugin (Schnittstelle erweitern)": [
         "Plugin (extend interface)",
         "Plugin (Schnittstell erwiitere)"
@@ -1575,10 +1074,7 @@
         "– not assigned to a plugin –",
         "– keim Plugin zuegwise –"
     ],
-    "Basis-URL der API": [
-        "API base URL",
-        "Basis-URL vo de API"
-    ],
+    "Basis-URL der API": ["API base URL", "Basis-URL vo de API"],
     "z. B. Escola Web, Jamf Pro": [
         "e.g. Escola Web, Jamf Pro",
         "z. B. Escola Web, Jamf Pro"
@@ -1587,10 +1083,7 @@
         "Missing endpoints in plugin.json format (service.endpoints)",
         "Fehlendi Endpünkt im Format vo plugin.json (service.endpoints)"
     ],
-    "Neue API": [
-        "New API",
-        "Neui API"
-    ],
+    "Neue API": ["New API", "Neui API"],
     "Bitte einen Namen für die API eingeben.": [
         "Please enter a name for the API.",
         "Bitte en Name für d API iigä."
@@ -1619,14 +1112,8 @@
         "Start URL (recording)",
         "Start-URL (Ufzeichnig)"
     ],
-    "Zugewiesenes Plugin": [
-        "Assigned plugin",
-        "Zuegwisnigs Plugin"
-    ],
-    "Zuletzt neue Endpunkte": [
-        "Last new endpoints",
-        "Zletscht neui Endpünkt"
-    ],
+    "Zugewiesenes Plugin": ["Assigned plugin", "Zuegwisnigs Plugin"],
+    "Zuletzt neue Endpunkte": ["Last new endpoints", "Zletscht neui Endpünkt"],
     "{n} Endpunkte gespeichert. Neue Aufzeichnungen ergänzen die Dokumentation – fehlende Befehle einfach weiter aufzeichnen.": [
         "{n} endpoints saved. New recordings add to the documentation – simply keep recording missing commands.",
         "{n} Endpünkt gspeicheret. Neui Ufzeichnige ergänzed d Dokumentation – fehlendi Befähl eifach wiiter ufzeichne."
@@ -1635,46 +1122,22 @@
         "all endpoints present",
         "alli Endpünkt vorhande"
     ],
-    "{n} fehlen": [
-        "{n} missing",
-        "{n} fehled"
-    ],
-    "fehlt": [
-        "missing",
-        "fehlt"
-    ],
+    "{n} fehlen": ["{n} missing", "{n} fehled"],
+    "fehlt": ["missing", "fehlt"],
     "Plugin-Entwurf ({n} fehlende Endpunkte)": [
         "Plugin draft ({n} missing endpoints)",
         "Plugin-Entwurf ({n} fehlendi Endpünkt)"
     ],
-    "{n} von {n} im Plugin": [
-        "{n} of {n} in plugin",
-        "{n} vo {n} im Plugin"
-    ],
-    "Gespeichert.": [
-        "Saved.",
-        "Gspeicheret."
-    ],
+    "{n} von {n} im Plugin": ["{n} of {n} in plugin", "{n} vo {n} im Plugin"],
+    "Gespeichert.": ["Saved.", "Gspeicheret."],
     "Mit dem API-Recorder erfasste Endpunkte. «fehlt» = noch nicht im Plugin; der Entwurf lässt sich in plugin.json übernehmen.": [
         "Endpoints captured with the API recorder. “missing” = not yet in the plugin; the draft can be copied into plugin.json.",
         "Mit em API-Recorder erfassti Endpünkt. «fehlt» = no nöd im Plugin; de Entwurf chamer i plugin.json übernäh."
     ],
-    "Referenz (Scalar)": [
-        "Reference (Scalar)",
-        "Referänz (Scalar)"
-    ],
-    "Ansicht (Scalar)": [
-        "View (Scalar)",
-        "Aasicht (Scalar)"
-    ],
-    "Befehl kopiert.": [
-        "Command copied.",
-        "Befähl kopiert."
-    ],
-    "API-Ansicht": [
-        "API view",
-        "API-Aasicht"
-    ],
+    "Referenz (Scalar)": ["Reference (Scalar)", "Referänz (Scalar)"],
+    "Ansicht (Scalar)": ["View (Scalar)", "Aasicht (Scalar)"],
+    "Befehl kopiert.": ["Command copied.", "Befähl kopiert."],
+    "API-Ansicht": ["API view", "API-Aasicht"],
     "Plugin daraus erzeugen (in der Entwicklung, danach Pull-Request):": [
         "Generate a plugin from it (in development, then pull request):",
         "Plugin drus mache (i de Entwicklig, dänn Pull-Request):"
@@ -1683,10 +1146,7 @@
         "View with Scalar (open source, MIT), served by the intranet: no telemetry, no external fonts and no Scalar proxy. “Test Request” only works if the target server accepts requests from the intranet (CORS); for the intranet’s own REST API create a token under “API”.",
         "Aasicht mit Scalar (Open Source, MIT), vom Intranet usgliferet: ohni Telemetrie, ohni frömdi Schrifte und ohni Scalar-Proxy. «Test Request» gaht nur, wänn de Zielserver Aafroge us em Intranet zuelaht (CORS); für di eigeti REST-API es Token under «API» erstelle."
     ],
-    "REST-API – Referenz": [
-        "REST API – reference",
-        "REST-API – Referänz"
-    ],
+    "REST-API – Referenz": ["REST API – reference", "REST-API – Referänz"],
     "Die REST-API des Intranets (/api/v1) als interaktive Referenz. Ausprobieren mit einem API-Token.": [
         "The intranet REST API (/api/v1) as an interactive reference. Try it with an API token.",
         "D REST-API vom Intranet (/api/v1) als interaktivi Referänz. Uusprobiere mit emne API-Token."

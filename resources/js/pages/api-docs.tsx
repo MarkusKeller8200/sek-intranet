@@ -632,20 +632,20 @@ export default function ApiDocs({
                     description="REST-API mit OpenAPI-Beschreibung. Endpunkte direkt hier ausprobieren."
                     actions={
                         <>
-                        <Button asChild>
-                            <Link href="/api-doku/referenz">
-                                <BookOpen /> Referenz (Scalar)
-                            </Link>
-                        </Button>
-                        <Button variant="outline" asChild>
-                            <a
-                                href="/api/openapi.json"
-                                target="_blank"
-                                rel="noreferrer"
-                            >
-                                <ExternalLink /> openapi.json
-                            </a>
-                        </Button>
+                            <Button asChild>
+                                <Link href="/api-doku/referenz">
+                                    <BookOpen /> Referenz (Scalar)
+                                </Link>
+                            </Button>
+                            <Button variant="outline" asChild>
+                                <a
+                                    href="/api/openapi.json"
+                                    target="_blank"
+                                    rel="noreferrer"
+                                >
+                                    <ExternalLink /> openapi.json
+                                </a>
+                            </Button>
                         </>
                     }
                 />

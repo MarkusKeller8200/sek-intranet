@@ -1,5 +1,13 @@
 import { Head, Link, router } from '@inertiajs/react';
-import { BookOpen, Download, FileJson, Plus, Puzzle, Radio, Trash2 } from 'lucide-react';
+import {
+    BookOpen,
+    Download,
+    FileJson,
+    Plus,
+    Puzzle,
+    Radio,
+    Trash2,
+} from 'lucide-react';
 import { toast } from 'sonner';
 import EmptyState from '@/components/empty-state';
 import PageHeader from '@/components/page-header';
@@ -215,11 +223,20 @@ export default function ApiRecorderIndex({ docs }: { docs: ListedDoc[] }) {
                                                     className="size-8"
                                                     title="Ansicht (Scalar)"
                                                     aria-label="Ansicht (Scalar)"
-                                                    disabled={doc.operations.length === 0}
-                                                    asChild={doc.operations.length > 0}
+                                                    disabled={
+                                                        doc.operations
+                                                            .length === 0
+                                                    }
+                                                    asChild={
+                                                        doc.operations.length >
+                                                        0
+                                                    }
                                                 >
-                                                    {doc.operations.length > 0 ? (
-                                                        <Link href={`/api-recorder/${doc.id}/ansicht`}>
+                                                    {doc.operations.length >
+                                                    0 ? (
+                                                        <Link
+                                                            href={`/api-recorder/${doc.id}/ansicht`}
+                                                        >
                                                             <BookOpen />
                                                         </Link>
                                                     ) : (
