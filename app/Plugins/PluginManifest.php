@@ -203,6 +203,7 @@ final class PluginManifest
             'description' => (string) ($this->data['description'] ?? ''),
             'author' => $this->data['author'] ?? null,
             'data_notice' => $this->data['data_notice'] ?? null,
+            'unofficial' => ($this->data['unofficial'] ?? false) === true,
             'service' => [
                 'name' => $this->service()['name'] ?? $this->name(),
                 'home' => $this->service()['home'] ?? null,
@@ -238,6 +239,9 @@ final class PluginManifest
         }
         if (($this->data['api'] ?? null) !== self::API_VERSION) {
             $fail('«api» muss '.self::API_VERSION.' sein.');
+        }
+        if (isset($this->data['unofficial']) && ! is_bool($this->data['unofficial'])) {
+            $fail('«unofficial» muss true oder false sein.');
         }
         if (! in_array($this->auth()['type'] ?? 'none', self::AUTH_TYPES, true)) {
             $fail('Unbekannter Anmeldetyp in service.auth.type.');

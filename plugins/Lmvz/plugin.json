@@ -1,0 +1,76 @@
+{
+    "id": "lmvz",
+    "name": "LMVZ – Lehrmittelverlag Zürich (inoffiziell)",
+    "version": "0.1",
+    "api": 1,
+    "category": "school",
+    "author": "SekBülach Intranet",
+    "unofficial": true,
+    "description": "Inoffizielle Anbindung an den LMVZ-Webshop: liest öffentliche Artikelseiten (Titel, Artikelnummer, ISBN, Preis). Der LMVZ bietet keine offizielle Schnittstelle; Bestellungen und Lizenzen (LMVZ Digital) folgen erst, wenn die Abläufe mit dem API-Recorder aufgezeichnet und geprüft sind.",
+    "data_notice": "Keine offizielle Schnittstelle: Das Plugin liest öffentliche Shop-Seiten (shop.lmvz.ch) und kann bei Änderungen der Website ohne Vorwarnung ausfallen. Keine Anmeldung, keine Personendaten. Nutzungsbedingungen des LMVZ beachten; Bestellungen weiterhin über den Shop.",
+    "service": {
+        "name": "LMVZ Webshop (öffentliche Seiten, keine API)",
+        "home": "https://shop.lmvz.ch",
+        "docs": "https://support.lmvz.ch",
+        "base": "https://shop.lmvz.ch",
+        "auth": { "type": "none" },
+        "auth_note": "Ohne Anmeldung – nur öffentliche Seiten. Schulkonto-Funktionen (Warenkorb, Bestellungen, Freigabeprozess) erst nach Aufzeichnung mit dem API-Recorder.",
+        "endpoints": [
+            {
+                "id": "home",
+                "method": "GET",
+                "path": "/de/",
+                "label": "Shop erreichbar",
+                "status": "partial",
+                "use": "Testen",
+                "note": "HTML-Seite, keine API."
+            },
+            {
+                "id": "product",
+                "method": "GET",
+                "path": "/de/Katalog/{reihe}/{artikel}.html",
+                "label": "Artikelseite",
+                "status": "partial",
+                "use": "Artikel nachschlagen",
+                "note": "HTML-Seite; Angaben aus Meta-Daten und Seitentext gelesen (Aufbau nicht zugesichert). Beispiel: Reihe «New-Inspiration», Artikel «New-Inspiration-3-Workbook-7334».",
+                "params": [
+                    { "name": "reihe", "required": true, "example": "New-Inspiration" },
+                    { "name": "artikel", "required": true, "example": "New-Inspiration-3-Workbook-7334" }
+                ]
+            },
+            {
+                "id": "basket",
+                "method": "GET",
+                "path": "/de/basket.htm",
+                "label": "Warenkorb (Schulkonto)",
+                "status": "planned",
+                "use": "später: Bestellung vorbereiten",
+                "note": "Braucht eine Anmeldung im Shop; Ablauf zuerst mit dem API-Recorder aufzeichnen."
+            }
+        ]
+    },
+    "settings": [
+        {
+            "key": "max_items",
+            "type": "number",
+            "label": "Höchstens Artikel je Abfrage",
+            "default": 20
+        }
+    ],
+    "actions": [
+        {
+            "id": "lookup",
+            "label": "Artikel nachschlagen",
+            "kind": "read",
+            "options": [
+                {
+                    "key": "urls",
+                    "type": "textarea",
+                    "label": "Links zu Artikelseiten (eine pro Zeile)",
+                    "required": true,
+                    "placeholder": "https://shop.lmvz.ch/de/Katalog/New-Inspiration/New-Inspiration-3-Workbook-7334.html"
+                }
+            ]
+        }
+    ]
+}

@@ -70,6 +70,8 @@ export type PluginInfo = {
     description: string;
     author: string | null;
     data_notice: string | null;
+    /** Keine offizielle Schnittstelle des Herstellers (z. B. LMVZ) */
+    unofficial: boolean;
     service: {
         name: string;
         home: string | null;

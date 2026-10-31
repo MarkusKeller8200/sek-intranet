@@ -173,6 +173,15 @@ export default function PluginShow({
                     <Badge variant="secondary">
                         {categoryLabels[plugin.category] ?? plugin.category}
                     </Badge>
+                    {plugin.unofficial && (
+                        <Badge
+                            variant="outline"
+                            className="border-warning text-warning"
+                            title="Keine offizielle Schnittstelle des Herstellers"
+                        >
+                            inoffiziell
+                        </Badge>
+                    )}
                     <span className="text-muted-foreground">
                         v{plugin.version}
                     </span>
@@ -192,6 +201,21 @@ export default function PluginShow({
                         </span>
                     )}
                 </div>
+
+                {plugin.unofficial && (
+                    <div
+                        className="flex gap-2 rounded-lg border border-warning/40 bg-warning-soft p-3 text-sm"
+                        data-testid="unofficial-notice"
+                    >
+                        <TriangleAlert className="mt-0.5 size-4 shrink-0 text-warning" />
+                        <p>
+                            Inoffizielle Anbindung: Der Hersteller bietet keine Schnittstelle an.
+                            Das Plugin kann bei Änderungen der Website ohne Vorwarnung ausfallen.
+                            Endpunkte mit dem API-Recorder aufzeichnen und mit
+                            «intranet:plugin-from-openapi» ergänzen.
+                        </p>
+                    </div>
+                )}
 
                 {!serverInSwitzerland && (
                     <DataNotice notice={plugin.data_notice} />

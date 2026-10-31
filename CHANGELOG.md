@@ -7,6 +7,16 @@ laufend unter **Unveröffentlicht** und werden beim Erhöhen der Version zur neu
 
 ## [Unveröffentlicht]
 
+## [0.20.0] – 2026-10-31
+
+### Neu
+
+- Plugin «LMVZ – Lehrmittelverlag Zürich (inoffiziell)»: Artikel im LMVZ-Webshop nachschlagen (Titel,
+  Artikelnummer, ISBN, Listenpreis) aus öffentlichen Artikelseiten; nur Adressen auf shop.lmvz.ch, ohne Anmeldung;
+  Warenkorb/Bestellung und LMVZ Digital als «geplant» (zuerst mit dem API-Recorder aufzeichnen)
+- Manifest-Feld `unofficial`: Plugins ohne offizielle Schnittstelle zeigen das Kennzeichen «inoffiziell» und
+  einen Warnhinweis
+
 ## [0.19.0] – 2026-10-31
 
 ### Neu

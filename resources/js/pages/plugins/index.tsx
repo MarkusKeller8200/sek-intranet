@@ -70,6 +70,15 @@ export default function PluginsIndex({
                                             {categoryLabels[plugin.category] ??
                                                 plugin.category}
                                         </Badge>
+                                        {plugin.unofficial && (
+                                            <Badge
+                                                variant="outline"
+                                                className="border-warning text-warning"
+                                                title="Keine offizielle Schnittstelle des Herstellers"
+                                            >
+                                                inoffiziell
+                                            </Badge>
+                                        )}
                                         <span className="text-xs text-muted-foreground">
                                             v{plugin.version}
                                         </span>

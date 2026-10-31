@@ -17,6 +17,7 @@ automatisch aus der Beschreibung.
 | Inventory360             | `plugins/Inventory360` | Hardware-Inventar durchsuchen, API-Tester                                                                                                       | vorläufig – API-2.0-Referenz fehlt noch                  |
 | Escola (Datei-Import)    | `plugins/Escola`       | Mitarbeitende aus der Escola-Adressliste (.xlsx/.csv) übernehmen, nur freigegebene Spalten                                                      | fertig – ohne API, per Datei                             |
 | IDA                      | `plugins/Ida`          | Verbindung prüfen, Personen-Ereignisse vormerken                                                                                                | wartet auf die IDA-API                                   |
+| LMVZ (inoffiziell)       | `plugins/Lmvz`         | Artikel im LMVZ-Webshop nachschlagen (Titel, Artikelnummer, ISBN, Listenpreis) aus öffentlichen Artikelseiten                                   | inoffiziell – keine LMVZ-Schnittstelle, liest HTML       |
 
 ## Datenschutz
 
@@ -232,6 +233,8 @@ Für Antworten mit unbekannten Feldern baut `Support\Tabular::from($datensätze,
 - Übernahmen legen an und ändern – **nie löschen**. Personen nur im Intranet erscheinen als «fehlt dort».
 - Schreiben im Fremdsystem nur als Aktion `write` bzw. Endpunkt mit `danger` – mit Rückfrage.
 - Fehler eines Plugins brechen nie die Aktion im Intranet ab (Ereignisse laufen danach, Fehler ins Protokoll).
+- Ohne offizielle Schnittstelle (`"unofficial": true` im Manifest): nur öffentliche Seiten, keine Anmeldung ohne
+  geklärte Nutzungsbedingungen, nur Adressen des Herstellers abfragen (keine frei eingegebenen URLs).
 - Endpunkte nur aus der Hersteller-Doku übernehmen; Unbestätigtes als `partial` mit `note`, Fehlendes als `planned`.
 - Für jedes Plugin Tests mit `Http::fake()` schreiben (Vorlage: `tests/Feature/PluginIntegrationsTest.php`).
 - Endpunkte aus einer OpenAPI-Datei oder einer Aufzeichnung des API-Recorders nicht abtippen, sondern mit
@@ -243,4 +246,8 @@ Für Antworten mit unbekannten Feldern baut `Support\Tabular::from($datensätze,
   Personen, Standorte, Zuordnung Gerät ↔ Person, Antwortfelder. Danach Personen-Abgleich und Kachel.
 - **Jamf:** Token-Pfad (`/api/v1/oauth/token` oder `/api/oauth/token`) an der eigenen Instanz prüfen
   (Einstellung), `computers-inventory` v4, genaue Rechte für MDM-Befehle.
+- **LMVZ (inoffiziell):** Keine offizielle Schnittstelle. Artikelsuche, Warenkorb/Bestellung (Schulkonto,
+  Freigabeprozess) und LMVZ Digital (Lizenzen, digital.lmvz.ch) mit dem API-Recorder aufzeichnen, dem Plugin
+  `lmvz` zuweisen und mit `intranet:plugin-from-openapi` ergänzen. Nutzungsbedingungen klären, bevor mit
+  Anmeldung gearbeitet wird; Plugins mit `"unofficial": true` zeigen einen Warnhinweis.
 - **IDA:** Sobald die IDA-API steht, Endpunkte von `planned` auf `full` setzen und Personen/Lizenzen anbinden.
