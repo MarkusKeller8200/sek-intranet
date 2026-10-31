@@ -55,12 +55,17 @@ function Status({ link }: { link: PersonLink }) {
             return (
                 <Badge className="border-amber-300 bg-amber-100 text-amber-900 dark:border-amber-800 dark:bg-amber-950 dark:text-amber-200">
                     <RefreshCw />
-                    {link.last_sync_at ? 'Geändert – Abgleich nötig' : 'Noch nie abgeglichen'}
+                    {link.last_sync_at
+                        ? 'Geändert – Abgleich nötig'
+                        : 'Noch nie abgeglichen'}
                 </Badge>
             );
         case 'current':
             return (
-                <Badge variant="outline" className="text-emerald-700 dark:text-emerald-400">
+                <Badge
+                    variant="outline"
+                    className="text-emerald-700 dark:text-emerald-400"
+                >
                     <CircleCheck /> Aktuell
                 </Badge>
             );
@@ -116,17 +121,26 @@ function LinkEditor({
         );
 
     return (
-        <form onSubmit={submit} className="grid gap-3 rounded-lg border bg-muted/30 p-3">
+        <form
+            onSubmit={submit}
+            className="grid gap-3 rounded-lg border bg-muted/30 p-3"
+        >
             <div className="grid gap-3 sm:grid-cols-3">
                 <label className="grid gap-1 text-sm">
                     Richtung
                     <select
                         className={selectClass}
                         value={form.data.direction}
-                        onChange={(e) => form.setData('direction', e.target.value)}
+                        onChange={(e) =>
+                            form.setData('direction', e.target.value)
+                        }
                     >
-                        <option value="source">Quelle (Daten kommen von dort)</option>
-                        <option value="target">Ziel (Daten werden dorthin exportiert)</option>
+                        <option value="source">
+                            Quelle (Daten kommen von dort)
+                        </option>
+                        <option value="target">
+                            Ziel (Daten werden dorthin exportiert)
+                        </option>
                     </select>
                     {error('direction')}
                 </label>
@@ -149,7 +163,9 @@ function LinkEditor({
                     ID / PK im System
                     <Input
                         value={form.data.external_id}
-                        onChange={(e) => form.setData('external_id', e.target.value)}
+                        onChange={(e) =>
+                            form.setData('external_id', e.target.value)
+                        }
                         placeholder="z. B. T-001"
                         translate="no"
                     />
@@ -159,7 +175,9 @@ function LinkEditor({
                     Art der ID
                     <Input
                         value={form.data.id_label}
-                        onChange={(e) => form.setData('id_label', e.target.value)}
+                        onChange={(e) =>
+                            form.setData('id_label', e.target.value)
+                        }
                         placeholder="z. B. Escola-ID, objectId, UPN"
                     />
                 </label>
@@ -169,14 +187,18 @@ function LinkEditor({
                         <Input
                             type="datetime-local"
                             value={form.data.last_sync_at}
-                            onChange={(e) => form.setData('last_sync_at', e.target.value)}
+                            onChange={(e) =>
+                                form.setData('last_sync_at', e.target.value)
+                            }
                         />
                         <Button
                             type="button"
                             variant="outline"
                             size="sm"
                             className="h-9"
-                            onClick={() => form.setData('last_sync_at', nowInputValue())}
+                            onClick={() =>
+                                form.setData('last_sync_at', nowInputValue())
+                            }
                         >
                             Jetzt
                         </Button>
@@ -195,7 +217,12 @@ function LinkEditor({
                 <Button type="submit" size="sm" disabled={form.processing}>
                     Speichern
                 </Button>
-                <Button type="button" size="sm" variant="outline" onClick={onDone}>
+                <Button
+                    type="button"
+                    size="sm"
+                    variant="outline"
+                    onClick={onDone}
+                >
                     Abbrechen
                 </Button>
             </div>
@@ -234,9 +261,10 @@ export default function PersonLinksCard({
                     )}
                 </CardTitle>
                 <CardDescription>
-                    Aus welchem System die Person stammt und in welche Systeme sie
-                    exportiert wird – jeweils mit der ID des Systems. Beim Import wird
-                    zuerst über diese ID gesucht, damit keine Duplikate entstehen.
+                    Aus welchem System die Person stammt und in welche Systeme
+                    sie exportiert wird – jeweils mit der ID des Systems. Beim
+                    Import wird zuerst über diese ID gesucht, damit keine
+                    Duplikate entstehen.
                 </CardDescription>
             </CardHeader>
             <CardContent className="grid gap-4">
@@ -249,11 +277,21 @@ export default function PersonLinksCard({
                         <table className="w-full text-sm">
                             <thead className="bg-muted/50 text-left text-xs text-muted-foreground">
                                 <tr>
-                                    <th className="px-3 py-2 font-medium">Richtung</th>
-                                    <th className="px-3 py-2 font-medium">System</th>
-                                    <th className="px-3 py-2 font-medium">ID / PK</th>
-                                    <th className="px-3 py-2 font-medium">Letzter Abgleich</th>
-                                    <th className="px-3 py-2 font-medium">Status</th>
+                                    <th className="px-3 py-2 font-medium">
+                                        Richtung
+                                    </th>
+                                    <th className="px-3 py-2 font-medium">
+                                        System
+                                    </th>
+                                    <th className="px-3 py-2 font-medium">
+                                        ID / PK
+                                    </th>
+                                    <th className="px-3 py-2 font-medium">
+                                        Letzter Abgleich
+                                    </th>
+                                    <th className="px-3 py-2 font-medium">
+                                        Status
+                                    </th>
                                     {canManage && <th className="px-3 py-2" />}
                                 </tr>
                             </thead>
@@ -266,7 +304,9 @@ export default function PersonLinksCard({
                                                     personId={personId}
                                                     link={link}
                                                     systems={systems}
-                                                    onDone={() => setEditing(null)}
+                                                    onDone={() =>
+                                                        setEditing(null)
+                                                    }
                                                 />
                                             </td>
                                         </tr>
@@ -293,7 +333,8 @@ export default function PersonLinksCard({
                                                 )}
                                             </td>
                                             <td className="px-3 py-2">
-                                                {systems[link.system] ?? link.system}
+                                                {systems[link.system] ??
+                                                    link.system}
                                                 {link.note && (
                                                     <div
                                                         className="text-xs text-muted-foreground"
@@ -304,7 +345,10 @@ export default function PersonLinksCard({
                                                 )}
                                             </td>
                                             <td className="px-3 py-2">
-                                                <code className="font-mono text-xs" translate="no">
+                                                <code
+                                                    className="font-mono text-xs"
+                                                    translate="no"
+                                                >
                                                     {link.external_id ?? '–'}
                                                 </code>
                                                 {link.id_label && (
@@ -315,7 +359,9 @@ export default function PersonLinksCard({
                                             </td>
                                             <td className="px-3 py-2 whitespace-nowrap">
                                                 {link.last_sync_at
-                                                    ? formatDateTime(link.last_sync_at)
+                                                    ? formatDateTime(
+                                                          link.last_sync_at,
+                                                      )
                                                     : '–'}
                                             </td>
                                             <td className="px-3 py-2">
@@ -323,8 +369,10 @@ export default function PersonLinksCard({
                                             </td>
                                             {canManage && (
                                                 <td className="px-2 py-1 text-right whitespace-nowrap">
-                                                    {link.direction === 'target' &&
-                                                        link.status === 'pending' && (
+                                                    {link.direction ===
+                                                        'target' &&
+                                                        link.status ===
+                                                            'pending' && (
                                                             <Button
                                                                 variant="ghost"
                                                                 size="sm"
@@ -333,11 +381,14 @@ export default function PersonLinksCard({
                                                                     router.post(
                                                                         `/personen/${personId}/herkunft/${link.id}/abgeglichen`,
                                                                         {},
-                                                                        { preserveScroll: true },
+                                                                        {
+                                                                            preserveScroll: true,
+                                                                        },
                                                                     )
                                                                 }
                                                             >
-                                                                <CircleCheck /> Abgeglichen
+                                                                <CircleCheck />{' '}
+                                                                Abgeglichen
                                                             </Button>
                                                         )}
                                                     <Button
@@ -346,7 +397,9 @@ export default function PersonLinksCard({
                                                         className="size-8"
                                                         title="Bearbeiten"
                                                         aria-label="Bearbeiten"
-                                                        onClick={() => setEditing(link.id)}
+                                                        onClick={() =>
+                                                            setEditing(link.id)
+                                                        }
                                                     >
                                                         <Pencil />
                                                     </Button>
@@ -357,10 +410,18 @@ export default function PersonLinksCard({
                                                         title="Löschen"
                                                         aria-label="Löschen"
                                                         onClick={() => {
-                                                            if (window.confirm(t('Eintrag zur Datenherkunft löschen?'))) {
+                                                            if (
+                                                                window.confirm(
+                                                                    t(
+                                                                        'Eintrag zur Datenherkunft löschen?',
+                                                                    ),
+                                                                )
+                                                            ) {
                                                                 router.delete(
                                                                     `/personen/${personId}/herkunft/${link.id}`,
-                                                                    { preserveScroll: true },
+                                                                    {
+                                                                        preserveScroll: true,
+                                                                    },
                                                                 );
                                                             }
                                                         }}
@@ -387,7 +448,11 @@ export default function PersonLinksCard({
                         />
                     ) : (
                         <div>
-                            <Button variant="outline" size="sm" onClick={() => setEditing('new')}>
+                            <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => setEditing('new')}
+                            >
                                 <Plus /> System hinzufügen
                             </Button>
                         </div>

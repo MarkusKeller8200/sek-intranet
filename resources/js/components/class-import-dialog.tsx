@@ -108,7 +108,9 @@ export default function ClassImportDialog({
                 headers: { Accept: 'application/json' },
             });
             if (!response.ok) {
-                throw new Error(`Laden fehlgeschlagen (HTTP ${response.status}).`);
+                throw new Error(
+                    `Laden fehlgeschlagen (HTTP ${response.status}).`,
+                );
             }
             const json = (await response.json()) as { data: ImportedRow[] };
             setTable({
@@ -255,8 +257,9 @@ export default function ClassImportDialog({
 
                 <div className="flex items-start gap-2 rounded-md border border-emerald-300 bg-emerald-50 p-2.5 text-xs text-emerald-900 dark:border-emerald-900 dark:bg-emerald-950 dark:text-emerald-200">
                     <ShieldCheck className="mt-0.5 size-4 shrink-0" />
-                    Eine gewählte Datei wird nur in diesem Browser gelesen und nicht
-                    hochgeladen. Passwörter und PINs entstehen nur im Browser.
+                    Eine gewählte Datei wird nur in diesem Browser gelesen und
+                    nicht hochgeladen. Passwörter und PINs entstehen nur im
+                    Browser.
                 </div>
 
                 <div className="flex flex-wrap items-center gap-3">
@@ -317,12 +320,15 @@ export default function ClassImportDialog({
                                         systemPicked.length ===
                                             systemYearClasses.length
                                             ? []
-                                            : systemYearClasses.map((c) => c.name),
+                                            : systemYearClasses.map(
+                                                  (c) => c.name,
+                                              ),
                                     )
                                 }
                                 disabled={systemYearClasses.length === 0}
                             >
-                                {systemPicked.length === systemYearClasses.length &&
+                                {systemPicked.length ===
+                                    systemYearClasses.length &&
                                 systemYearClasses.length > 0
                                     ? 'Keine'
                                     : 'Alle'}
@@ -340,7 +346,9 @@ export default function ClassImportDialog({
                                         className="flex items-center gap-2 text-sm"
                                     >
                                         <Checkbox
-                                            checked={systemPicked.includes(c.name)}
+                                            checked={systemPicked.includes(
+                                                c.name,
+                                            )}
                                             onCheckedChange={(
                                                 v: boolean | 'indeterminate',
                                             ) =>
@@ -348,12 +356,16 @@ export default function ClassImportDialog({
                                                     v === true
                                                         ? [...current, c.name]
                                                         : current.filter(
-                                                              (k) => k !== c.name,
+                                                              (k) =>
+                                                                  k !== c.name,
                                                           ),
                                                 )
                                             }
                                         />
-                                        <span className="font-medium" translate="no">
+                                        <span
+                                            className="font-medium"
+                                            translate="no"
+                                        >
                                             {c.name}
                                         </span>
                                         <span className="text-xs text-muted-foreground">

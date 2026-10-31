@@ -8,7 +8,7 @@ Jede Person hat eine **Personenart** (`person_type`, Liste in `config/intranet.p
 Schüler:in, Eltern / Erziehungsberechtigte, Lehrperson, Schulleitung, Mitarbeiter:in, Schulbehörde,
 Externe Fachperson.
 
-- Die Personenart beschreibt, *wer* jemand ist. Die **Rolle** bestimmt weiterhin, *was* jemand im Intranet darf.
+- Die Personenart beschreibt, _wer_ jemand ist. Die **Rolle** bestimmt weiterhin, _was_ jemand im Intranet darf.
 - Anmelden können sich nur Personalarten (`login_person_types`) und nur ohne Rolle «Kein Zugang».
   Schüler:innen und Eltern sind Kontakte ohne Konto.
 - Schüler:innen und Eltern (`protected_person_types`) sehen nur Personen mit dem Recht `view-students`

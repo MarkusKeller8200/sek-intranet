@@ -45,7 +45,11 @@ import {
 import { Input } from '@/components/ui/input';
 import { useOptions } from '@/hooks/use-options';
 import { postJson } from '@/lib/http';
-import { DEFAULT_VISIBLE, gridType, STUDENT_VISIBLE } from '@/lib/person-fields';
+import {
+    DEFAULT_VISIBLE,
+    gridType,
+    STUDENT_VISIBLE,
+} from '@/lib/person-fields';
 import type { Person, PersonGroup } from '@/types';
 
 type BulkChange = {
@@ -425,7 +429,9 @@ export default function PeopleIndex({
                                     }
                                 >
                                     <Plus />{' '}
-                                    {scope ? 'Neue:r Schüler:in' : 'Neue Person'}
+                                    {scope
+                                        ? 'Neue:r Schüler:in'
+                                        : 'Neue Person'}
                                 </Link>
                             </Button>
                         )
