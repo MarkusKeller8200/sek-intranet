@@ -64,7 +64,11 @@ export default function Embed({
     // Nur einmal: setOpen ändert sich mit jedem Öffnen – sonst würde das Menü sofort wieder zugeklappt.
     const collapsedFor = useRef<string | null>(null);
     useEffect(() => {
-        if (module.collapse && !isMobile && collapsedFor.current !== module.key) {
+        if (
+            module.collapse &&
+            !isMobile &&
+            collapsedFor.current !== module.key
+        ) {
             collapsedFor.current = module.key;
             setOpen(false);
         }
