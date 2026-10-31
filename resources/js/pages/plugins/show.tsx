@@ -788,13 +788,26 @@ function EndpointsSection({
                                             )}
                                             {e.label}
                                         </TableCell>
-                                        <TableCell className="font-mono text-xs" translate="no">
+                                        <TableCell
+                                            className="font-mono text-xs"
+                                            translate="no"
+                                        >
                                             {e.method} {e.path}
-                                            {e.host && plugin.service.hosts[e.host] && (
-                                                <div className="text-muted-foreground">
-                                                    {new URL(plugin.service.hosts[e.host]).host}
-                                                </div>
-                                            )}
+                                            {e.host &&
+                                                plugin.service.hosts[
+                                                    e.host
+                                                ] && (
+                                                    <div className="text-muted-foreground">
+                                                        {
+                                                            new URL(
+                                                                plugin.service
+                                                                    .hosts[
+                                                                    e.host
+                                                                ],
+                                                            ).host
+                                                        }
+                                                    </div>
+                                                )}
                                         </TableCell>
                                         <TableCell>
                                             <Badge
