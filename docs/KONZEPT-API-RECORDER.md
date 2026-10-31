@@ -1,12 +1,22 @@
 # API-Recorder
 
-Stand: Version 0.17.1. Prototyp → API-Recorder (nur Administration).
+Stand: Version 0.18.0. Prototyp → API-Recorder (nur Administration).
 
 ## Zweck
 
 Eine Website (z. B. eine Fachanwendung) im eigenen Fenster bedienen, die dabei gesendeten Anfragen und Antworten
 mitschneiden, ausgewählte Endpunkte – auf Rückfrage – in eine API-Dokumentation aufnehmen und am Ende eine
 OpenAPI-3.1-Datei (Swagger, JSON oder YAML) erzeugen.
+
+## Verwaltung
+
+- Prototyp → API-Recorder zeigt alle aufgezeichneten APIs (Name, URL, Endpunkte, Plugin, zuletzt aufgezeichnet).
+- «Neue API aufzeichnen» (`/api-recorder/neu`): Name, URL, Plugin, Basis-URL, Beschreibung, dann aufzeichnen.
+  Sobald ein Name gesetzt ist, speichert der Recorder Änderungen automatisch.
+- «Öffnen & weiter aufzeichnen» (`/api-recorder/{id}`) lädt die gespeicherten Endpunkte. Neue Aufrufe bekannter
+  Endpunkte ergänzen nur das Schema; nur wirklich neue Endpunkte lösen eine Rückfrage aus. So lassen sich fehlende
+  Befehle jederzeit nachträglich aufzeichnen.
+- Zuweisung zu einem Plugin und Weg zum Plugin: siehe [KONZEPT-API-ZU-PLUGIN.md](KONZEPT-API-ZU-PLUGIN.md).
 
 ## Ablauf
 
@@ -47,4 +57,5 @@ gewählt: Anmeldedaten würden über den Server laufen.
 - `resources/js/lib/api-recorder/capture.ts`: Lesezeichen-Skript, HAR-Import, Prüfung der Meldungen.
 - `resources/js/lib/api-recorder/openapi.ts`: Pfad-Vorlagen (Zahlen, UUIDs, lange IDs → `{id}`), Schema-Ableitung
   und -Zusammenführung, Maskierung, OpenAPI-3.1-Aufbau, YAML-Ausgabe.
-- `App\Http\Controllers\ApiRecorderController`: Seite, Speichern/Löschen der Dokumentationen (Recht `manage-users`).
+- `App\Http\Controllers\ApiRecorderController`: Liste, Editor, Speichern/Löschen, Plugin-Entwurf (Recht `manage-users`).
+- `App\Support\ApiDocs`: Sammlung `api_docs`, Plugin-Katalog, Abgleich mit dem Manifest, Endpunkt-Entwurf.

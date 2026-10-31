@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Auth\IntranetUser;
 use App\Plugins\PluginManager;
+use App\Support\ApiDocs;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -47,7 +48,7 @@ class PluginController extends Controller
         ]);
     }
 
-    public function show(string $id): Response
+    public function show(string $id, ApiDocs $docs): Response
     {
         $manifest = $this->plugins->manifest($id);
         $state = $this->plugins->state($id);
@@ -68,6 +69,12 @@ class PluginController extends Controller
             'values' => $values,
             'secretsSet' => array_values(array_filter($secretKeys, fn (string $k): bool => ($state['secrets'][$k] ?? '') !== '')),
             'runs' => $this->plugins->runs($id, 30),
+            // Mit dem API-Recorder aufgezeichnete APIs, die diesem Plugin zugewiesen sind
+            'recordings' => array_map(fn (array $doc): array => [
+                'id' => $doc['id'],
+                'title' => $doc['title'] ?? '',
+                'operations' => $docs->compare($doc),
+            ], $docs->forPlugin($id)),
             'serverInSwitzerland' => (bool) config('intranet.server_in_switzerland'),
         ]);
     }

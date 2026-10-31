@@ -45,8 +45,27 @@ export type JsonSchema = {
 export type ApiDoc = {
     id?: string;
     title: string;
+    /** Adresse, die zum Aufzeichnen geöffnet wird */
+    start_url?: string;
     base_url: string;
+    /** Zugewiesenes Plugin (plugins/<Ordner>, Schlüssel «id») */
+    plugin_id?: string | null;
+    recorded_at?: string;
     description: string;
     operations: DocOperation[];
     updated_at?: string;
 };
+
+/** Installiertes Plugin mit seinen Endpunkten (für Zuweisung und Abgleich). */
+export type PluginCatalogEntry = {
+    id: string;
+    name: string;
+    endpoints: { id: string; method: string; path: string; label: string }[];
+};
+
+/** Gleicher Vergleich wie App\\Support\\ApiDocs::normalize(). */
+export function normalizeEndpoint(method: string, path: string): string {
+    const p = path.toLowerCase().replace(/\/+$/, '').replace(/\{[^}]*\}/g, '{}');
+
+    return `${method.toUpperCase()} ${p === '' ? '/' : p}`;
+}

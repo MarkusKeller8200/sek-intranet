@@ -1,9 +1,12 @@
-import { Head } from '@inertiajs/react';
+import { Head, Link, router } from '@inertiajs/react';
 import {
     Bookmark,
     Check,
     ChevronDown,
     ChevronRight,
+    ArrowLeft,
+    FileJson,
+    Puzzle,
     Copy,
     CircleDot,
     Download,
@@ -38,7 +41,6 @@ import {
     DialogTitle,
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
 import {
     bookmarkletSource,
     captureFromMessage,
@@ -55,7 +57,13 @@ import {
     safeHeaders,
     toYaml,
 } from '@/lib/api-recorder/openapi';
-import type { ApiDoc, Capture, DocOperation } from '@/lib/api-recorder/types';
+import { normalizeEndpoint } from '@/lib/api-recorder/types';
+import type {
+    ApiDoc,
+    Capture,
+    DocOperation,
+    PluginCatalogEntry,
+} from '@/lib/api-recorder/types';
 import { postJson } from '@/lib/http';
 import { t } from '@/lib/i18n';
 import { cn } from '@/lib/utils';
@@ -95,8 +103,10 @@ function preview(text: string | null, max = 3000): string {
 
 const emptyDoc = (): ApiDoc => ({
     title: '',
+    start_url: 'https://',
     base_url: '',
     description: '',
+    plugin_id: null,
     operations: [],
 });
 
@@ -120,13 +130,14 @@ const slug = (s: string) =>
         .replace(/^-|-$/g, '') || 'api';
 
 export default function ApiRecorder({
-    docs: initialDocs,
+    current: initial,
+    plugins,
     origin,
 }: {
-    docs: ApiDoc[];
+    current: ApiDoc | null;
+    plugins: PluginCatalogEntry[];
     origin: string;
 }) {
-    const [url, setUrl] = useState('https://');
     const [captures, setCaptures] = useState<Capture[]>([]);
     const [connected, setConnected] = useState<string | null>(null);
     const [onlyApi, setOnlyApi] = useState(true);
@@ -135,8 +146,11 @@ export default function ApiRecorder({
     const [expanded, setExpanded] = useState<string | null>(null);
     const [ignored, setIgnored] = useState<string[]>([]);
     const [queue, setQueue] = useState<Capture[]>([]);
-    const [docs, setDocs] = useState<ApiDoc[]>(initialDocs);
-    const [doc, setDoc] = useState<ApiDoc>(initialDocs[0] ?? emptyDoc());
+    const [doc, setDoc] = useState<ApiDoc>(initial ?? emptyDoc());
+    // Stand der letzten Speicherung (für automatisches Speichern)
+    const [savedJson, setSavedJson] = useState(() =>
+        initial ? JSON.stringify(initial) : '',
+    );
     const [showSpec, setShowSpec] = useState<'json' | 'yaml' | null>(null);
     const [saving, setSaving] = useState(false);
     const popup = useRef<Window | null>(null);
@@ -218,7 +232,7 @@ export default function ApiRecorder({
     const openWindow = () => {
         let target: URL;
         try {
-            target = new URL(url.trim());
+            target = new URL((doc.start_url ?? '').trim());
             if (!/^https?:$/.test(target.protocol)) {
                 throw new Error();
             }
@@ -307,9 +321,11 @@ export default function ApiRecorder({
         setQueue((q) => q.filter((c) => operationKey(c.method, c.url) !== key));
     };
 
-    const save = async () => {
+    const save = async (silent = false) => {
         if (!doc.title.trim()) {
-            toast.error(t('Bitte einen Titel für die Dokumentation eingeben.'));
+            if (!silent) {
+                toast.error(t('Bitte einen Namen für die API eingeben.'));
+            }
 
             return;
         }
@@ -323,12 +339,25 @@ export default function ApiRecorder({
                 throw new Error(res.message ?? t('Speichern fehlgeschlagen.'));
             }
             const saved = res.doc;
-            setDoc(saved);
-            setDocs((list) => [
-                saved,
-                ...list.filter((d) => d.id !== saved.id),
-            ]);
-            toast.success(t('Dokumentation gespeichert.'));
+            // Nur Kennung und Zeitstempel übernehmen: Eingaben seit dem Absenden nicht überschreiben
+            setDoc((d) => ({
+                ...d,
+                id: saved.id,
+                updated_at: saved.updated_at,
+                recorded_at: saved.recorded_at,
+            }));
+            setSavedJson(JSON.stringify({ ...doc, id: saved.id, updated_at: saved.updated_at, recorded_at: saved.recorded_at }));
+            if (!doc.id && saved.id) {
+                // Neue API: Adresse auf /api-recorder/<id> setzen (Neuladen öffnet sie wieder)
+                window.history.replaceState(
+                    window.history.state,
+                    '',
+                    `/api-recorder/${saved.id}`,
+                );
+            }
+            if (!silent) {
+                toast.success(t('Gespeichert.'));
+            }
         } catch (e) {
             toast.error(
                 e instanceof Error ? e.message : t('Speichern fehlgeschlagen.'),
@@ -338,8 +367,21 @@ export default function ApiRecorder({
         }
     };
 
+    // Automatisch speichern, sobald sich etwas geändert hat (kurz nach der letzten Änderung)
+    const dirty = JSON.stringify(doc) !== savedJson;
+    const saveRef = useRef(save);
+    saveRef.current = save;
+    useEffect(() => {
+        if (!dirty || !doc.title.trim() || saving) {
+            return;
+        }
+        const timer = window.setTimeout(() => void saveRef.current(true), 1200);
+
+        return () => window.clearTimeout(timer);
+    }, [doc, dirty, saving]);
+
     const remove = async () => {
-        if (!doc.id || !window.confirm(t('Diese Dokumentation löschen?'))) {
+        if (!doc.id || !window.confirm(t('Diese API und ihre Dokumentation löschen?'))) {
             return;
         }
         const token = decodeURIComponent(
@@ -357,11 +399,25 @@ export default function ApiRecorder({
                 Accept: 'application/json',
             },
         });
-        const rest = docs.filter((d) => d.id !== doc.id);
-        setDocs(rest);
-        setDoc(rest[0] ?? emptyDoc());
-        toast.success(t('Dokumentation gelöscht.'));
+        toast.success(t('API gelöscht.'));
+        router.visit('/api-recorder');
     };
+
+    // Abgleich mit dem zugewiesenen Plugin: welche Endpunkte kennt es schon?
+    const plugin = plugins.find((p) => p.id === doc.plugin_id) ?? null;
+    const pluginEndpoints = useMemo(() => {
+        const map = new Map<string, string>();
+        plugin?.endpoints.forEach((e) =>
+            map.set(normalizeEndpoint(e.method, e.path), e.id),
+        );
+
+        return map;
+    }, [plugin]);
+    const missing = plugin
+        ? doc.operations.filter(
+              (o) => !pluginEndpoints.has(normalizeEndpoint(o.method, o.path)),
+          ).length
+        : 0;
 
     const spec = useMemo(() => buildOpenApi(doc), [doc]);
     const visible = onlyApi ? captures.filter((c) => !isNoise(c)) : captures;
@@ -378,10 +434,81 @@ export default function ApiRecorder({
         <>
             <Head title="API-Recorder" />
             <div className="flex max-w-6xl flex-1 flex-col gap-6 p-4 md:p-6">
+                <div>
+                    <Button variant="ghost" size="sm" asChild className="-ml-2">
+                        <Link href="/api-recorder">
+                            <ArrowLeft /> Alle aufgezeichneten APIs
+                        </Link>
+                    </Button>
+                </div>
                 <PageHeader
-                    title="API-Recorder"
-                    description="Eine Website im eigenen Fenster bedienen, die gesendeten Anfragen und Antworten mitschneiden, ausgewählte Endpunkte dokumentieren und als OpenAPI-Datei (Swagger) speichern."
+                    title={doc.title.trim() || 'Neue API aufzeichnen'}
+                    description="Website im eigenen Tab bedienen, Anfragen und Antworten mitschneiden, Endpunkte dokumentieren und als OpenAPI-Datei (Swagger) speichern. Gespeicherte Endpunkte bleiben erhalten; neue Aufzeichnungen ergänzen sie."
+                    actions={
+                        <span className="text-xs text-muted-foreground" data-testid="save-state">
+                            {saving
+                                ? 'Speichert …'
+                                : dirty
+                                  ? doc.title.trim()
+                                      ? 'Änderungen werden gespeichert …'
+                                      : 'Namen eingeben, um zu speichern'
+                                  : doc.id
+                                    ? 'Gespeichert'
+                                    : ''}
+                        </span>
+                    }
                 />
+
+                <Card>
+                    <CardContent className="grid gap-3 md:grid-cols-2">
+                        <label className="grid gap-1 text-sm">
+                            Name
+                            <Input
+                                value={doc.title}
+                                onChange={(e) => setDoc({ ...doc, title: e.target.value })}
+                                placeholder="z. B. Escola Web, Jamf Pro"
+                                data-testid="api-name"
+                            />
+                        </label>
+                        <label className="grid gap-1 text-sm">
+                            Plugin (Schnittstelle erweitern)
+                            <select
+                                className="h-9 rounded-md border border-input bg-background px-2 text-sm"
+                                value={doc.plugin_id ?? ''}
+                                onChange={(e) => setDoc({ ...doc, plugin_id: e.target.value || null })}
+                                data-testid="api-plugin"
+                            >
+                                <option value="">– keinem Plugin zugewiesen –</option>
+                                {plugins.map((p) => (
+                                    <option key={p.id} value={p.id}>
+                                        {p.name}
+                                    </option>
+                                ))}
+                            </select>
+                        </label>
+                        <label className="grid gap-1 text-sm">
+                            Basis-URL der API
+                            <Input
+                                value={doc.base_url}
+                                onChange={(e) => setDoc({ ...doc, base_url: e.target.value })}
+                                placeholder="https://api.beispiel.ch"
+                                translate="no"
+                            />
+                        </label>
+                        <label className="grid gap-1 text-sm">
+                            Beschreibung
+                            <Input
+                                value={doc.description}
+                                onChange={(e) => setDoc({ ...doc, description: e.target.value })}
+                            />
+                        </label>
+                        {doc.operations.length > 0 && (
+                            <p className="text-sm text-muted-foreground md:col-span-2">
+                                {`${doc.operations.length} Endpunkte gespeichert. Neue Aufzeichnungen ergänzen die Dokumentation – fehlende Befehle einfach weiter aufzeichnen.`}
+                            </p>
+                        )}
+                    </CardContent>
+                </Card>
 
                 <div className="flex items-start gap-2 rounded-lg border border-emerald-300 bg-emerald-50 p-3 text-sm text-emerald-900 dark:border-emerald-900 dark:bg-emerald-950 dark:text-emerald-200">
                     <ShieldCheck className="mt-0.5 size-4 shrink-0" />
@@ -408,8 +535,10 @@ export default function ApiRecorder({
                     <CardContent className="grid gap-4">
                         <div className="flex flex-wrap gap-2">
                             <Input
-                                value={url}
-                                onChange={(e) => setUrl(e.target.value)}
+                                value={doc.start_url ?? ''}
+                                onChange={(e) =>
+                                    setDoc({ ...doc, start_url: e.target.value })
+                                }
                                 onKeyDown={(e) =>
                                     e.key === 'Enter' && openWindow()
                                 }
@@ -799,29 +928,17 @@ export default function ApiRecorder({
                     <CardHeader>
                         <CardTitle className="flex flex-wrap items-center gap-2">
                             3 · API-Dokumentation
-                            <select
-                                className="ml-auto h-8 rounded-md border border-input bg-background px-2 text-sm font-normal"
-                                value={doc.id ?? ''}
-                                onChange={(e) =>
-                                    setDoc(
-                                        docs.find(
-                                            (d) => d.id === e.target.value,
-                                        ) ?? emptyDoc(),
-                                    )
-                                }
-                                aria-label="Dokumentation wählen"
-                            >
-                                <option value="">Neue Dokumentation</option>
-                                {docs.map((d) => (
-                                    <option
-                                        key={d.id}
-                                        value={d.id}
-                                        translate="no"
-                                    >
-                                        {d.title}
-                                    </option>
-                                ))}
-                            </select>
+                            {plugin && (
+                                <Badge variant="outline" className="ml-auto">
+                                    <Puzzle />
+                                    <span translate="no">{plugin.name}:</span>
+                                    <span>
+                                        {missing === 0
+                                            ? 'alle Endpunkte vorhanden'
+                                            : `${missing} fehlen`}
+                                    </span>
+                                </Badge>
+                            )}
                         </CardTitle>
                         <CardDescription>
                             {
@@ -830,48 +947,6 @@ export default function ApiRecorder({
                         </CardDescription>
                     </CardHeader>
                     <CardContent className="grid gap-4">
-                        <div className="grid gap-3 md:grid-cols-2">
-                            <label className="grid gap-1 text-sm">
-                                Titel
-                                <Input
-                                    value={doc.title}
-                                    onChange={(e) =>
-                                        setDoc({
-                                            ...doc,
-                                            title: e.target.value,
-                                        })
-                                    }
-                                />
-                            </label>
-                            <label className="grid gap-1 text-sm">
-                                Basis-URL
-                                <Input
-                                    value={doc.base_url}
-                                    onChange={(e) =>
-                                        setDoc({
-                                            ...doc,
-                                            base_url: e.target.value,
-                                        })
-                                    }
-                                    placeholder="https://api.beispiel.ch"
-                                    translate="no"
-                                />
-                            </label>
-                            <label className="grid gap-1 text-sm md:col-span-2">
-                                Beschreibung
-                                <Textarea
-                                    value={doc.description}
-                                    onChange={(e) =>
-                                        setDoc({
-                                            ...doc,
-                                            description: e.target.value,
-                                        })
-                                    }
-                                    rows={2}
-                                />
-                            </label>
-                        </div>
-
                         {doc.operations.length === 0 ? (
                             <p className="text-sm text-muted-foreground">
                                 Noch keine Endpunkte. Anfragen aufzeichnen und
@@ -900,6 +975,11 @@ export default function ApiRecorder({
                                             <th className="px-2 py-2 font-medium">
                                                 Beispiele
                                             </th>
+                                            {plugin && (
+                                                <th className="px-2 py-2 font-medium">
+                                                    Plugin
+                                                </th>
+                                            )}
                                             <th className="px-2 py-2" />
                                         </tr>
                                     </thead>
@@ -959,6 +1039,22 @@ export default function ApiRecorder({
                                                 <td className="px-2 py-1.5 text-xs">
                                                     {op.samples}
                                                 </td>
+                                                {plugin && (
+                                                    <td className="px-2 py-1.5 text-xs whitespace-nowrap">
+                                                        {pluginEndpoints.get(normalizeEndpoint(op.method, op.path)) ? (
+                                                            <span className="flex items-center gap-1 text-emerald-700 dark:text-emerald-400">
+                                                                <Check className="size-3.5" />
+                                                                <code translate="no">
+                                                                    {pluginEndpoints.get(normalizeEndpoint(op.method, op.path))}
+                                                                </code>
+                                                            </span>
+                                                        ) : (
+                                                            <Badge variant="outline" className="border-amber-300 text-amber-800 dark:text-amber-300">
+                                                                fehlt
+                                                            </Badge>
+                                                        )}
+                                                    </td>
+                                                )}
                                                 <td className="px-2 py-1 text-right">
                                                     <Button
                                                         variant="ghost"
@@ -993,7 +1089,7 @@ export default function ApiRecorder({
                                 onClick={() => void save()}
                                 disabled={saving}
                             >
-                                <Save /> Dokumentation speichern
+                                <Save /> Speichern
                             </Button>
                             <Button
                                 variant="outline"
@@ -1030,6 +1126,20 @@ export default function ApiRecorder({
                             >
                                 {showSpec ? 'Vorschau schliessen' : 'Vorschau'}
                             </Button>
+                            {doc.id && doc.operations.length > 0 && (
+                                <Button variant="outline" asChild>
+                                    <a
+                                        href={`/api-recorder/${doc.id}/plugin-entwurf`}
+                                        title="Fehlende Endpunkte im Format von plugin.json (service.endpoints)"
+                                        data-testid="plugin-draft"
+                                    >
+                                        <FileJson />
+                                        {plugin
+                                            ? `Plugin-Entwurf (${missing} fehlende Endpunkte)`
+                                            : 'Plugin-Entwurf (alle Endpunkte)'}
+                                    </a>
+                                </Button>
+                            )}
                             {doc.id && (
                                 <Button
                                     variant="ghost"
@@ -1205,6 +1315,11 @@ function QuestionDialog({
     );
 }
 
-ApiRecorder.layout = {
-    breadcrumbs: [{ title: 'API-Recorder', href: '/api-recorder' }],
-};
+ApiRecorder.layout = (props: { current: ApiDoc | null }) => ({
+    breadcrumbs: [
+        { title: 'API-Recorder', href: '/api-recorder' },
+        props.current?.id
+            ? { title: props.current.title, href: `/api-recorder/${props.current.id}` }
+            : { title: 'Neue API', href: '/api-recorder/neu' },
+    ],
+});

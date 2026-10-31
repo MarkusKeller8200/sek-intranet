@@ -40,6 +40,8 @@ Projekt: SekBülach Intranet, Prototyp. Stack und Konventionen wie IDA.
   der Geräteausgabe nie speichern.
 - Importe: Personen zuerst über die Datenherkunft (`PersonLinks`, System + ID) suchen, dann über die E-Mail;
   `PeopleImport` mit Systemschlüssel und `_external_id` verwenden.
+- API-Recorder (`docs/KONZEPT-API-ZU-PLUGIN.md`): Aufzeichnungen einem Plugin zuweisen; Entwürfe daraus nur als
+  `partial` ins Manifest übernehmen und erst nach Abgleich mit der Hersteller-Doku `full` setzen.
 - Wird ein Schlüssel einer Auswahlliste umbenannt, Umstellung unter `renames` eintragen
   (`php artisan intranet:upgrade` stellt bestehende Daten beim Start um).
 

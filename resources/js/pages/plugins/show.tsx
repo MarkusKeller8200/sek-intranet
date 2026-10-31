@@ -89,12 +89,14 @@ export default function PluginShow({
     secretsSet,
     runs,
     serverInSwitzerland,
+    recordings = [],
 }: {
     plugin: PluginInfo;
     values: FieldValues;
     secretsSet: string[];
     runs: PluginRun[];
     serverInSwitzerland: boolean;
+    recordings?: Recording[];
 }) {
     const [section, setSection] = useState<Section>('settings');
     const [testResult, setTestResult] = useState<PluginResult | null>(null);
@@ -221,11 +223,101 @@ export default function PluginShow({
                     <ActionsSection plugin={plugin} ready={ready} />
                 )}
                 {section === 'endpoints' && (
-                    <EndpointsSection plugin={plugin} ready={ready} />
+                    <>
+                        <RecordingsCard recordings={recordings} />
+                        <EndpointsSection plugin={plugin} ready={ready} />
+                    </>
                 )}
                 {section === 'log' && <LogSection runs={runs} />}
             </div>
         </>
+    );
+}
+
+type Recording = {
+    id: string;
+    title: string;
+    operations: {
+        key: string;
+        method: string;
+        path: string;
+        summary: string;
+        endpoint: string | null;
+    }[];
+};
+
+/** Aufgezeichnete APIs (API-Recorder), die diesem Plugin zugewiesen sind: fehlende Endpunkte. */
+function RecordingsCard({ recordings }: { recordings: Recording[] }) {
+    if (recordings.length === 0) {
+        return null;
+    }
+
+    return (
+        <Card>
+            <CardHeader>
+                <CardTitle>Aufgezeichnete Endpunkte (API-Recorder)</CardTitle>
+                <CardDescription>
+                    Mit dem API-Recorder erfasste Endpunkte. «fehlt» = noch nicht im
+                    Plugin; der Entwurf lässt sich in plugin.json übernehmen.
+                </CardDescription>
+            </CardHeader>
+            <CardContent className="grid gap-4">
+                {recordings.map((rec) => {
+                    const missing = rec.operations.filter((o) => o.endpoint === null);
+
+                    return (
+                        <div key={rec.id} className="grid gap-2" data-testid="recording">
+                            <div className="flex flex-wrap items-center gap-2 text-sm">
+                                <Link
+                                    href={`/api-recorder/${rec.id}`}
+                                    className="font-medium text-primary hover:underline"
+                                    translate="no"
+                                >
+                                    {rec.title}
+                                </Link>
+                                <Badge variant="outline">
+                                    {`${rec.operations.length - missing.length} von ${rec.operations.length} im Plugin`}
+                                </Badge>
+                                {missing.length > 0 && (
+                                    <Button variant="outline" size="sm" className="ml-auto" asChild>
+                                        <a href={`/api-recorder/${rec.id}/plugin-entwurf`}>
+                                            Entwurf für plugin.json
+                                        </a>
+                                    </Button>
+                                )}
+                            </div>
+                            <ul className="grid gap-1 text-xs">
+                                {rec.operations.map((op) => (
+                                    <li key={op.key} className="flex items-center gap-2">
+                                        <code className="w-14 shrink-0 font-semibold" translate="no">
+                                            {op.method}
+                                        </code>
+                                        <code className="truncate" translate="no">
+                                            {op.path}
+                                        </code>
+                                        <span className="truncate text-muted-foreground">{op.summary}</span>
+                                        <span className="ml-auto shrink-0">
+                                            {op.endpoint ? (
+                                                <code className="text-emerald-700 dark:text-emerald-400" translate="no">
+                                                    {op.endpoint}
+                                                </code>
+                                            ) : (
+                                                <Badge
+                                                    variant="outline"
+                                                    className="border-amber-300 text-amber-800 dark:text-amber-300"
+                                                >
+                                                    fehlt
+                                                </Badge>
+                                            )}
+                                        </span>
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+                    );
+                })}
+            </CardContent>
+        </Card>
     );
 }
 

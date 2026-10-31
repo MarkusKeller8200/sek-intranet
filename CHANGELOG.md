@@ -7,6 +7,18 @@ laufend unter **Unveröffentlicht** und werden beim Erhöhen der Version zur neu
 
 ## [Unveröffentlicht]
 
+## [0.18.0] – 2026-10-31
+
+### Neu
+
+- API-Recorder mit Verwaltung: Liste aller aufgezeichneten APIs (Name, URL, Anzahl Endpunkte, Plugin, zuletzt
+  aufgezeichnet); «Neue API aufzeichnen» mit Name, URL und Aufzeichnung; gespeicherte API wieder öffnen – die
+  Endpunkte werden eingelesen und weitere Aufzeichnungen ergänzen sie (fehlende Befehle nachträglich aufzeichnen);
+  automatisches Speichern
+- Zuweisung einer API zu einem Plugin: Abgleich je Endpunkt (vorhanden/fehlt), Anzeige auf der Plugin-Seite,
+  «Plugin-Entwurf» mit den fehlenden Endpunkten im Format von plugin.json (Status partial)
+- Konzept «Aufgezeichnete API → Plugin» (docs/KONZEPT-API-ZU-PLUGIN.md) mit geplantem Generator
+
 ## [0.17.1] – 2026-10-31
 
 ### Behoben

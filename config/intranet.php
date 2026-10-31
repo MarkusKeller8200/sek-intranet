@@ -726,9 +726,12 @@ return [
             'description' => 'Mit dem API-Recorder erfasste Endpunkte fremder Websites: Methode, Pfad, abgeleitete Schemas, optional maskierte Beispiele. Keine Rohdaten.',
             'fields' => [
                 'title' => ['type' => 'string', 'required' => true, 'label' => 'Titel'],
+                'start_url' => ['type' => 'string', 'required' => false, 'label' => 'Start-URL (Aufzeichnung)'],
                 'base_url' => ['type' => 'string', 'required' => false, 'label' => 'Basis-URL'],
                 'description' => ['type' => 'text', 'required' => false, 'label' => 'Beschreibung'],
+                'plugin_id' => ['type' => 'string', 'required' => false, 'label' => 'Zugewiesenes Plugin'],
                 'operations' => ['type' => 'json', 'required' => true, 'label' => 'Endpunkte (Methode, Pfad, Schemas)'],
+                'recorded_at' => ['type' => 'datetime', 'required' => false, 'label' => 'Zuletzt neue Endpunkte'],
                 'owner_id' => ['type' => 'ref', 'references' => 'users', 'required' => false, 'label' => 'Erstellt von'],
             ],
         ],

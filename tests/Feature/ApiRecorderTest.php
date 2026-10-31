@@ -45,9 +45,73 @@ class ApiRecorderTest extends TestCase
 
         $this->signInAs('admin');
         $this->get('/api-recorder')->assertOk()->assertInertia(fn (Assert $page) => $page
+            ->component('api-recorder/index')
+            ->has('docs', 0));
+        $this->get('/api-recorder/neu')->assertOk()->assertInertia(fn (Assert $page) => $page
             ->component('api-recorder')
-            ->has('docs', 0)
+            ->where('current', null)
+            ->where('plugins', fn ($plugins): bool => collect($plugins)->contains('id', 'jamf'))
             ->where('origin', rtrim((string) config('app.url'), '/')));
+        $this->get('/api-recorder/gibt-es-nicht')->assertNotFound();
+    }
+
+    public function test_saved_api_is_listed_and_reopened_with_its_results(): void
+    {
+        $this->signInAs('admin');
+
+        $doc = $this->postJson('/api-recorder', $this->doc(['start_url' => 'https://example.org/app']))->assertOk()->json('doc');
+        $this->assertNotEmpty($doc['recorded_at']);
+
+        $this->get('/api-recorder')->assertInertia(fn (Assert $page) => $page
+            ->component('api-recorder/index')
+            ->where('docs.0.title', 'Test-API (erfunden)')
+            ->where('docs.0.start_url', 'https://example.org/app')
+            ->where('docs.0.plugin_name', null));
+
+        // Wieder öffnen: gespeicherte Endpunkte kommen mit
+        $this->get("/api-recorder/{$doc['id']}")->assertInertia(fn (Assert $page) => $page
+            ->component('api-recorder')
+            ->where('current.id', $doc['id'])
+            ->where('current.operations.0.path', '/api/kurse/{id}')
+            ->where('current.operations.0.samples', 2));
+
+        // Weiter aufzeichnen: ein Endpunkt mehr
+        $more = $this->doc(['id' => $doc['id']]);
+        $more['operations'][] = ['key' => 'POST https://example.org/api/kurse', 'method' => 'POST', 'path' => '/api/kurse', 'summary' => '', 'tag' => 'kurse', 'status' => 201];
+        $this->postJson('/api-recorder', $more)->assertOk()->assertJsonCount(2, 'doc.operations');
+    }
+
+    public function test_documentation_is_assigned_to_a_plugin_and_compared(): void
+    {
+        $this->signInAs('admin');
+
+        $doc = $this->doc(['plugin_id' => 'jamf', 'title' => 'Jamf (Aufzeichnung)']);
+        $doc['operations'][] = ['key' => 'GET https://jamf.example/api/v1/jamf-pro-version', 'method' => 'GET', 'path' => '/api/v1/jamf-pro-version/', 'summary' => 'Version', 'tag' => 'v1', 'status' => 200];
+        $doc['operations'][0]['query'] = ['page' => 'integer'];
+        $id = $this->postJson('/api-recorder', $doc)->assertOk()->json('doc.id');
+
+        $this->get('/api-recorder')->assertInertia(fn (Assert $page) => $page
+            ->where('docs.0.plugin_name', 'Jamf Pro')
+            ->where('docs.0.missing', 1));
+
+        // Plugin-Seite zeigt die Aufzeichnung mit Abgleich
+        $this->get('/plugins/jamf')->assertInertia(fn (Assert $page) => $page
+            ->where('recordings.0.id', $id)
+            ->where('recordings.0.operations.0.endpoint', null)
+            ->where('recordings.0.operations.1.endpoint', 'version'));
+
+        // Entwurf enthält nur den fehlenden Endpunkt, Status partial
+        $draft = $this->get("/api-recorder/{$id}/plugin-entwurf")->assertOk()
+            ->assertHeader('Content-Disposition', 'attachment; filename="jamf-aufzeichnung-plugin-endpunkte.json"')
+            ->json();
+        $this->assertSame('jamf', $draft['plugin']);
+        $this->assertCount(1, $draft['endpoints']);
+        $this->assertSame('kurse-one', $draft['endpoints'][0]['id']);
+        $this->assertSame('partial', $draft['endpoints'][0]['status']);
+        $this->assertSame([['name' => 'id', 'required' => true], ['name' => 'page']], $draft['endpoints'][0]['params']);
+
+        // Unbekanntes Plugin wird abgelehnt
+        $this->postJson('/api-recorder', $this->doc(['plugin_id' => 'gibt-es-nicht']))->assertStatus(422);
     }
 
     public function test_documentation_is_saved_updated_and_deleted(): void
@@ -75,6 +139,7 @@ class ApiRecorderTest extends TestCase
 
         $this->postJson('/api-recorder', $this->doc(['title' => '']))->assertStatus(422);
         $this->postJson('/api-recorder', $this->doc(['base_url' => 'javascript:alert(1)']))->assertStatus(422);
+        $this->postJson('/api-recorder', $this->doc(['start_url' => 'javascript:alert(1)']))->assertStatus(422);
         $bad = $this->doc();
         $bad['operations'][0]['method'] = 'HACK';
         $this->postJson('/api-recorder', $bad)->assertStatus(422);

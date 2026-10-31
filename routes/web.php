@@ -97,8 +97,11 @@ Route::middleware('auth')->group(function () {
 
         // REST-API: Beschreibung mit Tester und Tokens
         Route::get('api-doku', [ApiDocsController::class, 'show'])->name('api-docs');
-        Route::get('api-recorder', [ApiRecorderController::class, 'show'])->name('api-recorder');
-        Route::post('api-recorder', [ApiRecorderController::class, 'store'])->middleware('throttle:60,1')->name('api-recorder.store');
+        Route::get('api-recorder', [ApiRecorderController::class, 'index'])->name('api-recorder');
+        Route::get('api-recorder/neu', [ApiRecorderController::class, 'create'])->name('api-recorder.create');
+        Route::get('api-recorder/{id}', [ApiRecorderController::class, 'show'])->name('api-recorder.show');
+        Route::get('api-recorder/{id}/plugin-entwurf', [ApiRecorderController::class, 'pluginDraft'])->name('api-recorder.plugin-draft');
+        Route::post('api-recorder', [ApiRecorderController::class, 'store'])->middleware('throttle:120,1')->name('api-recorder.store');
         Route::delete('api-recorder/{id}', [ApiRecorderController::class, 'destroy'])->name('api-recorder.destroy');
         Route::post('api-doku/tokens', [ApiDocsController::class, 'store'])->middleware('throttle:20,1')->name('api-docs.tokens.store');
         Route::delete('api-doku/tokens/{id}', [ApiDocsController::class, 'destroy'])->name('api-docs.tokens.destroy');
