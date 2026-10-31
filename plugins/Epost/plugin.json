@@ -564,10 +564,7 @@
                     "https://api-test.klara-epost.tech",
                     "Test (api-test.klara-epost.tech)"
                 ],
-                [
-                    "https://api.epost.ch",
-                    "Produktion (api.epost.ch)"
-                ]
+                ["https://api.epost.ch", "Produktion (api.epost.ch)"]
             ],
             "help": "Im Prototyp nur die Testumgebung verwenden."
         },
