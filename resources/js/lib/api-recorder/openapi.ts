@@ -23,11 +23,16 @@ export function isNoise(capture: Capture): boolean {
         return true;
     }
     const type = header(capture.responseHeaders, 'content-type');
-    if (/^(?:image|font|video|audio)\//.test(type) || /javascript|text\/css/.test(type)) {
+    if (
+        /^(?:image|font|video|audio)\//.test(type) ||
+        /javascript|text\/css/.test(type)
+    ) {
         return true;
     }
 
-    return /google-analytics|googletagmanager|doubleclick|hotjar|sentry\.io|clarity\.ms|matomo/.test(url.hostname);
+    return /google-analytics|googletagmanager|doubleclick|hotjar|sentry\.io|clarity\.ms|matomo/.test(
+        url.hostname,
+    );
 }
 
 export function header(headers: Record<string, string>, name: string): string {
@@ -44,7 +49,10 @@ export function templatePath(pathname: string): string {
         pathname
             .split('/')
             .map((segment) => {
-                if (segment !== '' && ID_SEGMENT.test(decodeURIComponent(segment))) {
+                if (
+                    segment !== '' &&
+                    ID_SEGMENT.test(decodeURIComponent(segment))
+                ) {
                     n++;
 
                     return n === 1 ? '{id}' : `{id${n}}`;
@@ -94,10 +102,15 @@ export function inferSchema(value: unknown, depth = 0): JsonSchema {
         return { nullable: true };
     }
     if (Array.isArray(value)) {
-        const items = value.slice(0, 20).reduce<JsonSchema | null>(
-            (acc, v) => (acc ? mergeSchema(acc, inferSchema(v, depth + 1)) : inferSchema(v, depth + 1)),
-            null,
-        );
+        const items = value
+            .slice(0, 20)
+            .reduce<JsonSchema | null>(
+                (acc, v) =>
+                    acc
+                        ? mergeSchema(acc, inferSchema(v, depth + 1))
+                        : inferSchema(v, depth + 1),
+                null,
+            );
 
         return { type: 'array', items: items ?? {} };
     }
@@ -116,11 +129,17 @@ export function inferSchema(value: unknown, depth = 0): JsonSchema {
                 return { type: 'object' };
             }
             const properties: Record<string, JsonSchema> = {};
-            for (const [k, v] of Object.entries(value as Record<string, unknown>)) {
+            for (const [k, v] of Object.entries(
+                value as Record<string, unknown>,
+            )) {
                 properties[k] = inferSchema(v, depth + 1);
             }
 
-            return { type: 'object', properties, required: Object.keys(properties) };
+            return {
+                type: 'object',
+                properties,
+                required: Object.keys(properties),
+            };
         }
         default:
             return {};
@@ -148,18 +167,33 @@ export function mergeSchema(a: JsonSchema, b: JsonSchema): JsonSchema {
         for (const [k, v] of Object.entries(b.properties ?? {})) {
             properties[k] = properties[k] ? mergeSchema(properties[k], v) : v;
         }
-        const required = (a.required ?? []).filter((k) => (b.required ?? []).includes(k));
+        const required = (a.required ?? []).filter((k) =>
+            (b.required ?? []).includes(k),
+        );
 
-        return { type: 'object', properties, required, nullable: a.nullable || b.nullable || undefined };
+        return {
+            type: 'object',
+            properties,
+            required,
+            nullable: a.nullable || b.nullable || undefined,
+        };
     }
     if (a.type === 'array') {
-        return { type: 'array', items: mergeSchema(a.items ?? {}, b.items ?? {}) };
+        return {
+            type: 'array',
+            items: mergeSchema(a.items ?? {}, b.items ?? {}),
+        };
     }
 
-    return { ...a, format: a.format === b.format ? a.format : undefined, nullable: a.nullable || b.nullable || undefined };
+    return {
+        ...a,
+        format: a.format === b.format ? a.format : undefined,
+        nullable: a.nullable || b.nullable || undefined,
+    };
 }
 
-const SECRET_KEY = /pass(?:word|wort)?|secret|token|auth|session|cookie|key|pin|iban|ahv/i;
+const SECRET_KEY =
+    /pass(?:word|wort)?|secret|token|auth|session|cookie|key|pin|iban|ahv/i;
 
 /** Beispielwerte maskieren: Geheimnisse ganz, Texte bis auf Typhinweis. */
 export function mask(value: unknown, key = ''): unknown {
@@ -168,7 +202,10 @@ export function mask(value: unknown, key = ''): unknown {
     }
     if (value && typeof value === 'object') {
         return Object.fromEntries(
-            Object.entries(value as Record<string, unknown>).map(([k, v]) => [k, mask(v, k)]),
+            Object.entries(value as Record<string, unknown>).map(([k, v]) => [
+                k,
+                mask(v, k),
+            ]),
         );
     }
     if (typeof value === 'string') {
@@ -190,21 +227,36 @@ export function mask(value: unknown, key = ''): unknown {
 }
 
 /** Anfrage-Kopfzeilen ohne Geheimnisse (für Anzeige). */
-export function safeHeaders(headers: Record<string, string>): Record<string, string> {
+export function safeHeaders(
+    headers: Record<string, string>,
+): Record<string, string> {
     return Object.fromEntries(
-        Object.entries(headers).map(([k, v]) => [k, /authorization|cookie|token|api-key|x-csrf|x-xsrf/i.test(k) ? '***' : v]),
+        Object.entries(headers).map(([k, v]) => [
+            k,
+            /authorization|cookie|token|api-key|x-csrf|x-xsrf/i.test(k)
+                ? '***'
+                : v,
+        ]),
     );
 }
 
 /** Neue Operation aus einer Aufzeichnung. */
-export function operationFrom(capture: Capture, withExamples: boolean): DocOperation {
+export function operationFrom(
+    capture: Capture,
+    withExamples: boolean,
+): DocOperation {
     const url = new URL(capture.url);
-    const requestType = header(capture.requestHeaders, 'content-type').split(';')[0] || null;
-    const responseType = header(capture.responseHeaders, 'content-type').split(';')[0] || null;
+    const requestType =
+        header(capture.requestHeaders, 'content-type').split(';')[0] || null;
+    const responseType =
+        header(capture.responseHeaders, 'content-type').split(';')[0] || null;
     const request = parseBody(capture.requestBody, requestType ?? '');
     const response = parseBody(capture.responseBody, responseType ?? '');
     const segments = url.pathname.split('/').filter(Boolean);
-    const tag = segments.find((s) => !/^(?:api|v\d+)$/i.test(s) && !ID_SEGMENT.test(s)) ?? 'allgemein';
+    const tag =
+        segments.find(
+            (s) => !/^(?:api|v\d+)$/i.test(s) && !ID_SEGMENT.test(s),
+        ) ?? 'allgemein';
 
     return {
         key: operationKey(capture.method, capture.url),
@@ -214,20 +266,28 @@ export function operationFrom(capture: Capture, withExamples: boolean): DocOpera
         tag,
         status: capture.status,
         query: Object.fromEntries(
-            [...url.searchParams.keys()].map((k) => [k, withExamples ? String(mask(url.searchParams.get(k), k)) : '']),
+            [...url.searchParams.keys()].map((k) => [
+                k,
+                withExamples ? String(mask(url.searchParams.get(k), k)) : '',
+            ]),
         ),
         requestType: request === undefined ? null : requestType,
         requestSchema: request === undefined ? null : inferSchema(request),
         responseType,
         responseSchema: response === undefined ? null : inferSchema(response),
-        requestExample: withExamples && request !== undefined ? mask(request) : null,
-        responseExample: withExamples && response !== undefined ? mask(response) : null,
+        requestExample:
+            withExamples && request !== undefined ? mask(request) : null,
+        responseExample:
+            withExamples && response !== undefined ? mask(response) : null,
         samples: 1,
     };
 }
 
 /** Weitere Aufzeichnung in eine bestehende Operation einrechnen (Schemas zusammenführen). */
-export function mergeOperation(op: DocOperation, capture: Capture): DocOperation {
+export function mergeOperation(
+    op: DocOperation,
+    capture: Capture,
+): DocOperation {
     const next = operationFrom(capture, false);
 
     return {
@@ -261,7 +321,10 @@ function cleanSchema(schema: JsonSchema | null): Record<string, unknown> {
     }
     if (schema.properties) {
         out.properties = Object.fromEntries(
-            Object.entries(schema.properties).map(([k, v]) => [k, cleanSchema(v)]),
+            Object.entries(schema.properties).map(([k, v]) => [
+                k,
+                cleanSchema(v),
+            ]),
         );
     }
     if (schema.required && schema.required.length > 0) {
@@ -285,10 +348,21 @@ export function buildOpenApi(doc: ApiDoc): Record<string, unknown> {
         servers.set(origin, true);
         const params: Record<string, unknown>[] = [];
         for (const m of op.path.matchAll(/\{([^}]+)\}/g)) {
-            params.push({ name: m[1], in: 'path', required: true, schema: { type: 'string' } });
+            params.push({
+                name: m[1],
+                in: 'path',
+                required: true,
+                schema: { type: 'string' },
+            });
         }
         for (const [name, example] of Object.entries(op.query)) {
-            params.push({ name, in: 'query', required: false, schema: { type: 'string' }, ...(example ? { example } : {}) });
+            params.push({
+                name,
+                in: 'query',
+                required: false,
+                schema: { type: 'string' },
+                ...(example ? { example } : {}),
+            });
         }
         const operation: Record<string, unknown> = {
             tags: [op.tag],
@@ -303,7 +377,8 @@ export function buildOpenApi(doc: ApiDoc): Record<string, unknown> {
                               content: {
                                   [op.responseType]: {
                                       schema: cleanSchema(op.responseSchema),
-                                      ...(op.responseExample !== null && op.responseExample !== undefined
+                                      ...(op.responseExample !== null &&
+                                      op.responseExample !== undefined
                                           ? { example: op.responseExample }
                                           : {}),
                                   },
@@ -319,7 +394,10 @@ export function buildOpenApi(doc: ApiDoc): Record<string, unknown> {
                 content: {
                     [op.requestType]: {
                         schema: cleanSchema(op.requestSchema),
-                        ...(op.requestExample !== null && op.requestExample !== undefined ? { example: op.requestExample } : {}),
+                        ...(op.requestExample !== null &&
+                        op.requestExample !== undefined
+                            ? { example: op.requestExample }
+                            : {}),
                     },
                 },
             };
@@ -340,8 +418,12 @@ export function buildOpenApi(doc: ApiDoc): Record<string, unknown> {
                 'Erstellt mit dem API-Recorder des SekBülach-Intranets aus aufgezeichneten Anfragen. Schemas sind aus Beispielen abgeleitet und sollten geprüft werden.',
         },
         servers: (base ? [base] : [...servers.keys()]).map((url) => ({ url })),
-        tags: [...new Set(doc.operations.map((o) => o.tag))].map((name) => ({ name })),
-        paths: Object.fromEntries(Object.entries(paths).sort(([a], [b]) => a.localeCompare(b))),
+        tags: [...new Set(doc.operations.map((o) => o.tag))].map((name) => ({
+            name,
+        })),
+        paths: Object.fromEntries(
+            Object.entries(paths).sort(([a], [b]) => a.localeCompare(b)),
+        ),
     };
 }
 
@@ -353,7 +435,11 @@ export function toYaml(value: unknown, indent = 0): string {
             return 'null';
         }
         if (typeof v === 'string') {
-            return v === '' || /^[\s\d-]|[:#{}[\],&*?|>'"%@`]|\s$|^(?:true|false|null|yes|no)$/i.test(v) || v.includes('\n')
+            return v === '' ||
+                /^[\s\d-]|[:#{}[\],&*?|>'"%@`]|\s$|^(?:true|false|null|yes|no)$/i.test(
+                    v,
+                ) ||
+                v.includes('\n')
                 ? JSON.stringify(v)
                 : v;
         }
@@ -366,7 +452,11 @@ export function toYaml(value: unknown, indent = 0): string {
         }
 
         return value
-            .map((v) => (v && typeof v === 'object' ? `${pad}-\n${toYaml(v, indent + 1)}` : `${pad}- ${scalar(v)}`))
+            .map((v) =>
+                v && typeof v === 'object'
+                    ? `${pad}-\n${toYaml(v, indent + 1)}`
+                    : `${pad}- ${scalar(v)}`,
+            )
             .join('\n');
     }
     if (value && typeof value === 'object') {
@@ -377,8 +467,16 @@ export function toYaml(value: unknown, indent = 0): string {
 
         return entries
             .map(([k, v]) => {
-                const key = /^[A-Za-z_][A-Za-z0-9_.-]*$/.test(k) ? k : JSON.stringify(k);
-                if (v && typeof v === 'object' && (Array.isArray(v) ? v.length > 0 : Object.keys(v).length > 0)) {
+                const key = /^[A-Za-z_][A-Za-z0-9_.-]*$/.test(k)
+                    ? k
+                    : JSON.stringify(k);
+                if (
+                    v &&
+                    typeof v === 'object' &&
+                    (Array.isArray(v)
+                        ? v.length > 0
+                        : Object.keys(v).length > 0)
+                ) {
                     return `${pad}${key}:\n${toYaml(v, indent + 1)}`;
                 }
 

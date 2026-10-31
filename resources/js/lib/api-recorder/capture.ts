@@ -25,7 +25,13 @@ export function bookmarkletSource(origin: string): string {
         const list: unknown[] = [];
         let n = 0;
         const cut = (s: unknown): string | null =>
-            typeof s === 'string' ? (s.length > MAX ? s.slice(0, MAX) : s) : s == null ? null : '[binär]';
+            typeof s === 'string'
+                ? s.length > MAX
+                    ? s.slice(0, MAX)
+                    : s
+                : s == null
+                  ? null
+                  : '[binär]';
         const send = (entry: Record<string, unknown>) => {
             n++;
             entry.id = `${Date.now()}-${n}`;
@@ -34,7 +40,10 @@ export function bookmarkletSource(origin: string): string {
             badge.textContent = `● SBI-Recorder · ${n}`;
             try {
                 if (window.opener) {
-                    (window.opener as Window).postMessage({ type: TYPE, entry }, ORIGIN);
+                    (window.opener as Window).postMessage(
+                        { type: TYPE, entry },
+                        ORIGIN,
+                    );
                 }
             } catch {
                 /* Opener nicht erreichbar */
@@ -48,7 +57,9 @@ export function bookmarkletSource(origin: string): string {
 
             return out;
         };
-        const reqHeaders = (h: HeadersInit | undefined): Record<string, string> => {
+        const reqHeaders = (
+            h: HeadersInit | undefined,
+        ): Record<string, string> => {
             if (!h) {
                 return {};
             }
@@ -64,13 +75,20 @@ export function bookmarkletSource(origin: string): string {
 
         // fetch
         const origFetch = window.fetch;
-        window.fetch = async function (input: RequestInfo | URL, init?: RequestInit) {
+        window.fetch = async function (
+            input: RequestInfo | URL,
+            init?: RequestInit,
+        ) {
             const started = performance.now();
             const req = input instanceof Request ? input : null;
-            const url = new URL(req ? req.url : String(input), location.href).href;
+            const url = new URL(req ? req.url : String(input), location.href)
+                .href;
             const method = (init?.method ?? req?.method ?? 'GET').toUpperCase();
             const bodyIn = init?.body ?? null;
-            const response = await origFetch.apply(this, [input, init] as [RequestInfo | URL, RequestInit | undefined]);
+            const response = await origFetch.apply(this, [input, init] as [
+                RequestInfo | URL,
+                RequestInit | undefined,
+            ]);
             const copy = response.clone();
             copy.text()
                 .then((text) =>
@@ -79,7 +97,10 @@ export function bookmarkletSource(origin: string): string {
                         url,
                         status: response.status,
                         duration: Math.round(performance.now() - started),
-                        requestHeaders: { ...(req ? headersOf(req.headers) : {}), ...reqHeaders(init?.headers) },
+                        requestHeaders: {
+                            ...(req ? headersOf(req.headers) : {}),
+                            ...reqHeaders(init?.headers),
+                        },
                         requestBody: cut(bodyIn),
                         responseHeaders: headersOf(response.headers),
                         responseBody: cut(text),
@@ -95,14 +116,37 @@ export function bookmarkletSource(origin: string): string {
         const open = XMLHttpRequest.prototype.open;
         const sendXhr = XMLHttpRequest.prototype.send;
         const setHeader = XMLHttpRequest.prototype.setRequestHeader;
-        type Meta = { m: string; u: string; h: Record<string, string>; t: number };
+        type Meta = {
+            m: string;
+            u: string;
+            h: Record<string, string>;
+            t: number;
+        };
         const meta = new WeakMap<XMLHttpRequest, Meta>();
-        XMLHttpRequest.prototype.open = function (this: XMLHttpRequest, method: string, url: string | URL, ...rest: unknown[]) {
-            meta.set(this, { m: method.toUpperCase(), u: new URL(String(url), location.href).href, h: {}, t: 0 });
+        XMLHttpRequest.prototype.open = function (
+            this: XMLHttpRequest,
+            method: string,
+            url: string | URL,
+            ...rest: unknown[]
+        ) {
+            meta.set(this, {
+                m: method.toUpperCase(),
+                u: new URL(String(url), location.href).href,
+                h: {},
+                t: 0,
+            });
 
-            return (open as (...a: unknown[]) => void).apply(this, [method, url, ...rest]);
+            return (open as (...a: unknown[]) => void).apply(this, [
+                method,
+                url,
+                ...rest,
+            ]);
         } as typeof XMLHttpRequest.prototype.open;
-        XMLHttpRequest.prototype.setRequestHeader = function (this: XMLHttpRequest, k: string, v: string) {
+        XMLHttpRequest.prototype.setRequestHeader = function (
+            this: XMLHttpRequest,
+            k: string,
+            v: string,
+        ) {
             const m = meta.get(this);
             if (m) {
                 m.h[k] = v;
@@ -110,7 +154,10 @@ export function bookmarkletSource(origin: string): string {
 
             return setHeader.call(this, k, v);
         };
-        XMLHttpRequest.prototype.send = function (this: XMLHttpRequest, data?: Document | XMLHttpRequestBodyInit | null) {
+        XMLHttpRequest.prototype.send = function (
+            this: XMLHttpRequest,
+            data?: Document | XMLHttpRequestBodyInit | null,
+        ) {
             const m = meta.get(this);
             if (m) {
                 m.t = performance.now();
@@ -122,12 +169,19 @@ export function bookmarkletSource(origin: string): string {
                         .forEach((line) => {
                             const i = line.indexOf(':');
                             if (i > 0) {
-                                headers[line.slice(0, i).trim().toLowerCase()] = line.slice(i + 1).trim();
+                                headers[line.slice(0, i).trim().toLowerCase()] =
+                                    line.slice(i + 1).trim();
                             }
                         });
                     let text: string | null = null;
                     try {
-                        text = this.responseType === '' || this.responseType === 'text' ? this.responseText : this.responseType === 'json' ? JSON.stringify(this.response) : null;
+                        text =
+                            this.responseType === '' ||
+                            this.responseType === 'text'
+                                ? this.responseText
+                                : this.responseType === 'json'
+                                  ? JSON.stringify(this.response)
+                                  : null;
                     } catch {
                         text = null;
                     }
@@ -152,23 +206,33 @@ export function bookmarkletSource(origin: string): string {
         const badge = document.createElement('button');
         badge.type = 'button';
         badge.textContent = '● SBI-Recorder · 0';
-        badge.title = window.opener ? 'Aufnahme läuft – Anfragen gehen an den API-Recorder im Intranet' : 'Aufnahme läuft – klicken zum Kopieren (kein Recorder-Fenster verbunden)';
+        badge.title = window.opener
+            ? 'Aufnahme läuft – Anfragen gehen an den API-Recorder im Intranet'
+            : 'Aufnahme läuft – klicken zum Kopieren (kein Recorder-Fenster verbunden)';
         badge.setAttribute(
             'style',
             'position:fixed;z-index:2147483647;right:12px;bottom:12px;padding:8px 12px;border-radius:999px;border:0;background:#c81e1e;color:#fff;font:600 13px system-ui,sans-serif;box-shadow:0 2px 10px rgba(0,0,0,.25);cursor:pointer',
         );
         badge.onclick = () => {
             if (!window.opener) {
-                void navigator.clipboard.writeText(JSON.stringify(list)).then(() => {
-                    badge.textContent = `✓ ${list.length} kopiert`;
-                });
+                void navigator.clipboard
+                    .writeText(JSON.stringify(list))
+                    .then(() => {
+                        badge.textContent = `✓ ${list.length} kopiert`;
+                    });
             }
         };
         document.body.appendChild(badge);
-        w.__sbiRecorder = { show: () => document.body.appendChild(badge), list };
+        w.__sbiRecorder = {
+            show: () => document.body.appendChild(badge),
+            list,
+        };
         try {
             if (window.opener) {
-                (window.opener as Window).postMessage({ type: TYPE, hello: location.href }, ORIGIN);
+                (window.opener as Window).postMessage(
+                    { type: TYPE, hello: location.href },
+                    ORIGIN,
+                );
             }
         } catch {
             /* egal */
@@ -195,8 +259,12 @@ type HarEntry = {
     };
 };
 
-const toRecord = (list: { name: string; value: string }[] | undefined): Record<string, string> =>
-    Object.fromEntries((list ?? []).map((h) => [h.name.toLowerCase(), h.value]));
+const toRecord = (
+    list: { name: string; value: string }[] | undefined,
+): Record<string, string> =>
+    Object.fromEntries(
+        (list ?? []).map((h) => [h.name.toLowerCase(), h.value]),
+    );
 
 /** HAR-Datei (DevTools → Netzwerk → «Alle als HAR speichern») in Aufzeichnungen umwandeln. */
 export function parseHar(text: string): Capture[] {
@@ -223,7 +291,10 @@ export function parseHar(text: string): Capture[] {
                 responseHeaders['content-type'] = content.mimeType;
             }
             const requestHeaders = toRecord(e.request?.headers);
-            if (e.request?.postData?.mimeType && !requestHeaders['content-type']) {
+            if (
+                e.request?.postData?.mimeType &&
+                !requestHeaders['content-type']
+            ) {
                 requestHeaders['content-type'] = e.request.postData.mimeType;
             }
 
@@ -235,7 +306,8 @@ export function parseHar(text: string): Capture[] {
                 status: e.response?.status ?? 0,
                 duration: Math.round(e.time ?? 0),
                 requestHeaders,
-                requestBody: e.request?.postData?.text?.slice(0, MAX_BODY) ?? null,
+                requestBody:
+                    e.request?.postData?.text?.slice(0, MAX_BODY) ?? null,
                 responseHeaders,
                 responseBody: body ? body.slice(0, MAX_BODY) : null,
                 kind: e._resourceType ?? 'har',
@@ -245,7 +317,11 @@ export function parseHar(text: string): Capture[] {
 
 /** Meldung aus dem Lesezeichen-Skript prüfen und in eine Aufzeichnung umwandeln. */
 export function captureFromMessage(data: unknown): Capture | null {
-    if (!data || typeof data !== 'object' || (data as { type?: unknown }).type !== MESSAGE_TYPE) {
+    if (
+        !data ||
+        typeof data !== 'object' ||
+        (data as { type?: unknown }).type !== MESSAGE_TYPE
+    ) {
         return null;
     }
     const e = (data as { entry?: Record<string, unknown> }).entry;
@@ -255,7 +331,12 @@ export function captureFromMessage(data: unknown): Capture | null {
     const str = (v: unknown) => (typeof v === 'string' ? v : null);
     const rec = (v: unknown): Record<string, string> =>
         v && typeof v === 'object'
-            ? Object.fromEntries(Object.entries(v as Record<string, unknown>).map(([k, x]) => [k.toLowerCase(), String(x)]))
+            ? Object.fromEntries(
+                  Object.entries(v as Record<string, unknown>).map(([k, x]) => [
+                      k.toLowerCase(),
+                      String(x),
+                  ]),
+              )
             : {};
 
     return {

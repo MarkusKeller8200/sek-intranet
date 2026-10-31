@@ -92,7 +92,12 @@ function preview(text: string | null, max = 3000): string {
     }
 }
 
-const emptyDoc = (): ApiDoc => ({ title: '', base_url: '', description: '', operations: [] });
+const emptyDoc = (): ApiDoc => ({
+    title: '',
+    base_url: '',
+    description: '',
+    operations: [],
+});
 
 function download(content: string, type: string, filename: string) {
     const url = URL.createObjectURL(new Blob([content], { type }));
@@ -113,7 +118,13 @@ const slug = (s: string) =>
         .replace(/[^a-z0-9]+/g, '-')
         .replace(/^-|-$/g, '') || 'api';
 
-export default function ApiRecorder({ docs: initialDocs, origin }: { docs: ApiDoc[]; origin: string }) {
+export default function ApiRecorder({
+    docs: initialDocs,
+    origin,
+}: {
+    docs: ApiDoc[];
+    origin: string;
+}) {
     const [url, setUrl] = useState('https://');
     const [captures, setCaptures] = useState<Capture[]>([]);
     const [connected, setConnected] = useState<string | null>(null);
@@ -138,10 +149,16 @@ export default function ApiRecorder({ docs: initialDocs, origin }: { docs: ApiDo
 
     // React blockiert javascript:-Links im JSX – deshalb direkt setzen
     useEffect(() => {
-        bookmarklet.current?.setAttribute('href', bookmarkletSource(origin || window.location.origin));
+        bookmarklet.current?.setAttribute(
+            'href',
+            bookmarkletSource(origin || window.location.origin),
+        );
     }, [origin]);
 
-    const documented = useMemo(() => new Set(doc.operations.map((o) => o.key)), [doc.operations]);
+    const documented = useMemo(
+        () => new Set(doc.operations.map((o) => o.key)),
+        [doc.operations],
+    );
 
     const addCapture = (capture: Capture) => {
         setCaptures((list) => [capture, ...list].slice(0, 2000));
@@ -157,9 +174,18 @@ export default function ApiRecorder({ docs: initialDocs, origin }: { docs: ApiDo
         const current = docRef.current;
         if (current.operations.some((o) => o.key === key)) {
             // Bekannter Endpunkt: Schema mit der neuen Aufzeichnung ergänzen
-            setDoc((d) => ({ ...d, operations: d.operations.map((o) => (o.key === key ? mergeOperation(o, capture) : o)) }));
+            setDoc((d) => ({
+                ...d,
+                operations: d.operations.map((o) =>
+                    o.key === key ? mergeOperation(o, capture) : o,
+                ),
+            }));
         } else if (askRef.current && !ignoredRef.current.includes(key)) {
-            setQueue((q) => (q.some((c) => operationKey(c.method, c.url) === key) ? q : [...q, capture]));
+            setQueue((q) =>
+                q.some((c) => operationKey(c.method, c.url) === key)
+                    ? q
+                    : [...q, capture],
+            );
         }
     };
 
@@ -200,14 +226,30 @@ export default function ApiRecorder({ docs: initialDocs, origin }: { docs: ApiDo
 
             return;
         }
-        popup.current = window.open(target.href, 'sbi-api-recorder', 'popup,width=1280,height=860');
+        popup.current = window.open(
+            target.href,
+            'sbi-api-recorder',
+            'popup,width=1280,height=860',
+        );
         if (!popup.current) {
-            toast.error(t('Das Fenster wurde blockiert. Bitte Pop-ups für das Intranet erlauben.'));
+            toast.error(
+                t(
+                    'Das Fenster wurde blockiert. Bitte Pop-ups für das Intranet erlauben.',
+                ),
+            );
 
             return;
         }
         setConnected(null);
-        setDoc((d) => (d.base_url || d.operations.length > 0 ? d : { ...d, base_url: target.origin, title: d.title || target.hostname }));
+        setDoc((d) =>
+            d.base_url || d.operations.length > 0
+                ? d
+                : {
+                      ...d,
+                      base_url: target.origin,
+                      title: d.title || target.hostname,
+                  },
+        );
     };
 
     const importHar = (event: ChangeEvent<HTMLInputElement>) => {
@@ -222,16 +264,28 @@ export default function ApiRecorder({ docs: initialDocs, origin }: { docs: ApiDo
                 list.forEach(addCapture);
                 toast.success(`${list.length} Anfragen eingelesen.`);
             } catch (e) {
-                toast.error(e instanceof Error ? e.message : t('Datei konnte nicht gelesen werden.'));
+                toast.error(
+                    e instanceof Error
+                        ? e.message
+                        : t('Datei konnte nicht gelesen werden.'),
+                );
             }
         });
     };
 
-    const accept = (capture: Capture, overrides: Partial<DocOperation> = {}) => {
+    const accept = (
+        capture: Capture,
+        overrides: Partial<DocOperation> = {},
+    ) => {
         const first = { ...operationFrom(capture, withExamples), ...overrides };
         // Weitere Aufzeichnungen desselben Endpunkts gleich einrechnen
         const op = captures
-            .filter((c) => c.id !== capture.id && !isNoise(c) && operationKey(c.method, c.url) === first.key)
+            .filter(
+                (c) =>
+                    c.id !== capture.id &&
+                    !isNoise(c) &&
+                    operationKey(c.method, c.url) === first.key,
+            )
             .reduce((acc, c) => mergeOperation(acc, c), first);
         setDoc((d) =>
             d.operations.some((o) => o.key === op.key)
@@ -243,7 +297,9 @@ export default function ApiRecorder({ docs: initialDocs, origin }: { docs: ApiDo
                       operations: [...d.operations, op],
                   },
         );
-        setQueue((q) => q.filter((c) => operationKey(c.method, c.url) !== op.key));
+        setQueue((q) =>
+            q.filter((c) => operationKey(c.method, c.url) !== op.key),
+        );
     };
 
     const ignore = (capture: Capture) => {
@@ -260,16 +316,24 @@ export default function ApiRecorder({ docs: initialDocs, origin }: { docs: ApiDo
         }
         setSaving(true);
         try {
-            const res = await postJson<{ doc?: ApiDoc; message?: string }>('/api-recorder', doc);
+            const res = await postJson<{ doc?: ApiDoc; message?: string }>(
+                '/api-recorder',
+                doc,
+            );
             if (!res.doc) {
                 throw new Error(res.message ?? t('Speichern fehlgeschlagen.'));
             }
             const saved = res.doc;
             setDoc(saved);
-            setDocs((list) => [saved, ...list.filter((d) => d.id !== saved.id)]);
+            setDocs((list) => [
+                saved,
+                ...list.filter((d) => d.id !== saved.id),
+            ]);
             toast.success(t('Dokumentation gespeichert.'));
         } catch (e) {
-            toast.error(e instanceof Error ? e.message : t('Speichern fehlgeschlagen.'));
+            toast.error(
+                e instanceof Error ? e.message : t('Speichern fehlgeschlagen.'),
+            );
         } finally {
             setSaving(false);
         }
@@ -279,11 +343,20 @@ export default function ApiRecorder({ docs: initialDocs, origin }: { docs: ApiDo
         if (!doc.id || !window.confirm(t('Diese Dokumentation löschen?'))) {
             return;
         }
-        const token = decodeURIComponent(document.cookie.split('; ').find((c) => c.startsWith('XSRF-TOKEN='))?.slice(11) ?? '');
+        const token = decodeURIComponent(
+            document.cookie
+                .split('; ')
+                .find((c) => c.startsWith('XSRF-TOKEN='))
+                ?.slice(11) ?? '',
+        );
         await fetch(`/api-recorder/${doc.id}`, {
             method: 'DELETE',
             credentials: 'same-origin',
-            headers: { 'X-XSRF-TOKEN': token, 'X-Requested-With': 'XMLHttpRequest', Accept: 'application/json' },
+            headers: {
+                'X-XSRF-TOKEN': token,
+                'X-Requested-With': 'XMLHttpRequest',
+                Accept: 'application/json',
+            },
         });
         const rest = docs.filter((d) => d.id !== doc.id);
         setDocs(rest);
@@ -295,7 +368,12 @@ export default function ApiRecorder({ docs: initialDocs, origin }: { docs: ApiDo
     const visible = onlyApi ? captures.filter((c) => !isNoise(c)) : captures;
     const current = queue[0] ?? null;
     const updateOp = (key: string, patch: Partial<DocOperation>) =>
-        setDoc((d) => ({ ...d, operations: d.operations.map((o) => (o.key === key ? { ...o, ...patch } : o)) }));
+        setDoc((d) => ({
+            ...d,
+            operations: d.operations.map((o) =>
+                o.key === key ? { ...o, ...patch } : o,
+            ),
+        }));
 
     return (
         <>
@@ -309,8 +387,9 @@ export default function ApiRecorder({ docs: initialDocs, origin }: { docs: ApiDo
                 <div className="flex items-start gap-2 rounded-lg border border-emerald-300 bg-emerald-50 p-3 text-sm text-emerald-900 dark:border-emerald-900 dark:bg-emerald-950 dark:text-emerald-200">
                     <ShieldCheck className="mt-0.5 size-4 shrink-0" />
                     <span>
-                        Die Aufzeichnung bleibt in diesem Browser. Gespeichert werden nur Endpunkte und
-                        abgeleitete Schemas – Beispielwerte nur auf Wunsch und maskiert. Passwörter,
+                        Die Aufzeichnung bleibt in diesem Browser. Gespeichert
+                        werden nur Endpunkte und abgeleitete Schemas –
+                        Beispielwerte nur auf Wunsch und maskiert. Passwörter,
                         Tokens und Cookies werden nie übernommen.
                     </span>
                 </div>
@@ -319,9 +398,11 @@ export default function ApiRecorder({ docs: initialDocs, origin }: { docs: ApiDo
                     <CardHeader>
                         <CardTitle>1 · Website aufzeichnen</CardTitle>
                         <CardDescription>
-                            Browser erlauben aus Sicherheitsgründen nicht, den Verkehr einer fremden Website
-                            direkt mitzulesen. Deshalb: Fenster öffnen, dort einmal das Lesezeichen
-                            «SBI-Recorder» anklicken, dann die Funktionen der Website bedienen.
+                            Browser erlauben aus Sicherheitsgründen nicht, den
+                            Verkehr einer fremden Website direkt mitzulesen.
+                            Deshalb: Fenster öffnen, dort einmal das Lesezeichen
+                            «SBI-Recorder» anklicken, dann die Funktionen der
+                            Website bedienen.
                         </CardDescription>
                     </CardHeader>
                     <CardContent className="grid gap-4">
@@ -329,7 +410,9 @@ export default function ApiRecorder({ docs: initialDocs, origin }: { docs: ApiDo
                             <Input
                                 value={url}
                                 onChange={(e) => setUrl(e.target.value)}
-                                onKeyDown={(e) => e.key === 'Enter' && openWindow()}
+                                onKeyDown={(e) =>
+                                    e.key === 'Enter' && openWindow()
+                                }
                                 placeholder="https://www.beispiel.ch"
                                 className="max-w-xl flex-1"
                                 translate="no"
@@ -342,13 +425,18 @@ export default function ApiRecorder({ docs: initialDocs, origin }: { docs: ApiDo
 
                         <ol className="grid list-decimal gap-2 pl-5 text-sm">
                             <li>
-                                Lesezeichen einmalig in die Lesezeichenleiste ziehen:{' '}
+                                Lesezeichen einmalig in die Lesezeichenleiste
+                                ziehen:{' '}
                                 <a
                                     ref={bookmarklet}
                                     className="inline-flex items-center gap-1.5 rounded-md border bg-background px-2 py-1 font-medium text-primary shadow-xs"
                                     onClick={(e) => {
                                         e.preventDefault();
-                                        toast.info(t('Das Lesezeichen in die Lesezeichenleiste ziehen und im Fenster der Website anklicken.'));
+                                        toast.info(
+                                            t(
+                                                'Das Lesezeichen in die Lesezeichenleiste ziehen und im Fenster der Website anklicken.',
+                                            ),
+                                        );
                                     }}
                                     data-testid="bookmarklet"
                                 >
@@ -357,54 +445,89 @@ export default function ApiRecorder({ docs: initialDocs, origin }: { docs: ApiDo
                             </li>
                             <li>Adresse eingeben und «Fenster öffnen».</li>
                             <li>
-                                Im neuen Fenster auf das Lesezeichen klicken – unten rechts erscheint ein roter
-                                Punkt «SBI-Recorder». Nach einem Neuladen der Seite erneut klicken.
+                                Im neuen Fenster auf das Lesezeichen klicken –
+                                unten rechts erscheint ein roter Punkt
+                                «SBI-Recorder». Nach einem Neuladen der Seite
+                                erneut klicken.
                             </li>
-                            <li>Funktionen der Website bedienen. Jede Anfrage erscheint unten.</li>
+                            <li>
+                                Funktionen der Website bedienen. Jede Anfrage
+                                erscheint unten.
+                            </li>
                         </ol>
 
                         <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm">
                             <span className="flex items-center gap-1.5">
                                 <CircleDot
-                                    className={cn('size-4', connected ? 'text-emerald-600' : 'text-muted-foreground')}
+                                    className={cn(
+                                        'size-4',
+                                        connected
+                                            ? 'text-emerald-600'
+                                            : 'text-muted-foreground',
+                                    )}
                                 />
                                 {connected ? (
                                     <>
                                         <span>Verbunden mit</span>
-                                        <code className="text-xs" translate="no">
+                                        <code
+                                            className="text-xs"
+                                            translate="no"
+                                        >
                                             {new URL(connected).host}
                                         </code>
                                     </>
                                 ) : (
-                                    <span className="text-muted-foreground">Noch kein Fenster verbunden</span>
+                                    <span className="text-muted-foreground">
+                                        Noch kein Fenster verbunden
+                                    </span>
                                 )}
                             </span>
                             <Button variant="outline" size="sm" asChild>
                                 <label className="cursor-pointer">
                                     <FileUp /> HAR-Datei importieren
-                                    <input type="file" accept=".har,.json" className="hidden" onChange={importHar} />
+                                    <input
+                                        type="file"
+                                        accept=".har,.json"
+                                        className="hidden"
+                                        onChange={importHar}
+                                    />
                                 </label>
                             </Button>
                         </div>
                         <p className="text-xs text-muted-foreground">
-                            Alternative ohne Lesezeichen (auch für ganze Seitenaufrufe und Formulare): in den
-                            Entwicklertools des Browsers Netzwerk → «Alle als HAR speichern», dann hier
-                            importieren. Manche Websites blockieren Lesezeichen-Skripte; dann diesen Weg wählen.
+                            Alternative ohne Lesezeichen (auch für ganze
+                            Seitenaufrufe und Formulare): in den Entwicklertools
+                            des Browsers Netzwerk → «Alle als HAR speichern»,
+                            dann hier importieren. Manche Websites blockieren
+                            Lesezeichen-Skripte; dann diesen Weg wählen.
                         </p>
 
                         <div className="flex flex-wrap gap-x-6 gap-y-2 text-sm">
                             <label className="flex items-center gap-2">
-                                <Checkbox checked={onlyApi} onCheckedChange={(v: boolean | 'indeterminate') => setOnlyApi(v === true)} />
-                                Nur API-Anfragen zeigen (ohne Bilder, Skripte, Schriften)
+                                <Checkbox
+                                    checked={onlyApi}
+                                    onCheckedChange={(
+                                        v: boolean | 'indeterminate',
+                                    ) => setOnlyApi(v === true)}
+                                />
+                                Nur API-Anfragen zeigen (ohne Bilder, Skripte,
+                                Schriften)
                             </label>
                             <label className="flex items-center gap-2">
-                                <Checkbox checked={ask} onCheckedChange={(v: boolean | 'indeterminate') => setAsk(v === true)} />
+                                <Checkbox
+                                    checked={ask}
+                                    onCheckedChange={(
+                                        v: boolean | 'indeterminate',
+                                    ) => setAsk(v === true)}
+                                />
                                 Bei neuem Endpunkt nachfragen
                             </label>
                             <label className="flex items-center gap-2">
                                 <Checkbox
                                     checked={withExamples}
-                                    onCheckedChange={(v: boolean | 'indeterminate') => setWithExamples(v === true)}
+                                    onCheckedChange={(
+                                        v: boolean | 'indeterminate',
+                                    ) => setWithExamples(v === true)}
                                 />
                                 Beispielwerte übernehmen (maskiert)
                             </label>
@@ -434,18 +557,30 @@ export default function ApiRecorder({ docs: initialDocs, origin }: { docs: ApiDo
                     </CardHeader>
                     <CardContent>
                         {visible.length === 0 ? (
-                            <p className="text-sm text-muted-foreground">Noch keine Anfragen aufgezeichnet.</p>
+                            <p className="text-sm text-muted-foreground">
+                                Noch keine Anfragen aufgezeichnet.
+                            </p>
                         ) : (
                             <div className="max-h-[32rem] overflow-auto rounded-md border">
                                 <table className="w-full text-sm">
                                     <thead className="sticky top-0 bg-muted text-left text-xs text-muted-foreground">
                                         <tr>
                                             <th className="w-6 px-2 py-2" />
-                                            <th className="px-2 py-2 font-medium">Methode</th>
-                                            <th className="px-2 py-2 font-medium">Adresse</th>
-                                            <th className="px-2 py-2 font-medium">Status</th>
-                                            <th className="px-2 py-2 font-medium">Typ</th>
-                                            <th className="px-2 py-2 font-medium">Zeit</th>
+                                            <th className="px-2 py-2 font-medium">
+                                                Methode
+                                            </th>
+                                            <th className="px-2 py-2 font-medium">
+                                                Adresse
+                                            </th>
+                                            <th className="px-2 py-2 font-medium">
+                                                Status
+                                            </th>
+                                            <th className="px-2 py-2 font-medium">
+                                                Typ
+                                            </th>
+                                            <th className="px-2 py-2 font-medium">
+                                                Zeit
+                                            </th>
                                             <th className="px-2 py-2" />
                                         </tr>
                                     </thead>
@@ -454,50 +589,99 @@ export default function ApiRecorder({ docs: initialDocs, origin }: { docs: ApiDo
                                             let key = '';
                                             let path = c.url;
                                             try {
-                                                key = operationKey(c.method, c.url);
+                                                key = operationKey(
+                                                    c.method,
+                                                    c.url,
+                                                );
                                                 const u = new URL(c.url);
                                                 path = `${u.host}${u.pathname}${u.search}`;
                                             } catch {
                                                 /* ungültig */
                                             }
                                             const isDoc = documented.has(key);
-                                            const isIgnored = ignored.includes(key);
+                                            const isIgnored =
+                                                ignored.includes(key);
                                             const open = expanded === c.id;
 
                                             return [
                                                 <tr
                                                     key={c.id}
                                                     className="cursor-pointer border-t hover:bg-muted/40"
-                                                    onClick={() => setExpanded(open ? null : c.id)}
+                                                    onClick={() =>
+                                                        setExpanded(
+                                                            open ? null : c.id,
+                                                        )
+                                                    }
                                                 >
                                                     <td className="px-2 py-1.5">
-                                                        {open ? <ChevronDown className="size-4" /> : <ChevronRight className="size-4" />}
+                                                        {open ? (
+                                                            <ChevronDown className="size-4" />
+                                                        ) : (
+                                                            <ChevronRight className="size-4" />
+                                                        )}
                                                     </td>
                                                     <td className="px-2 py-1.5">
-                                                        <Method method={c.method} />
+                                                        <Method
+                                                            method={c.method}
+                                                        />
                                                     </td>
-                                                    <td className="max-w-md truncate px-2 py-1.5 font-mono text-xs" translate="no" title={c.url}>
+                                                    <td
+                                                        className="max-w-md truncate px-2 py-1.5 font-mono text-xs"
+                                                        translate="no"
+                                                        title={c.url}
+                                                    >
                                                         {path}
                                                     </td>
-                                                    <td className={cn('px-2 py-1.5 font-mono text-xs', c.status >= 400 && 'text-destructive')}>
+                                                    <td
+                                                        className={cn(
+                                                            'px-2 py-1.5 font-mono text-xs',
+                                                            c.status >= 400 &&
+                                                                'text-destructive',
+                                                        )}
+                                                    >
                                                         {c.status || '–'}
                                                     </td>
-                                                    <td className="px-2 py-1.5 text-xs text-muted-foreground" translate="no">
-                                                        {header(c.responseHeaders, 'content-type').split(';')[0] || c.kind}
+                                                    <td
+                                                        className="px-2 py-1.5 text-xs text-muted-foreground"
+                                                        translate="no"
+                                                    >
+                                                        {header(
+                                                            c.responseHeaders,
+                                                            'content-type',
+                                                        ).split(';')[0] ||
+                                                            c.kind}
                                                     </td>
                                                     <td className="px-2 py-1.5 text-xs whitespace-nowrap text-muted-foreground">
                                                         {`${c.duration} ms`}
                                                     </td>
-                                                    <td className="px-2 py-1 text-right whitespace-nowrap" onClick={(e) => e.stopPropagation()}>
+                                                    <td
+                                                        className="px-2 py-1 text-right whitespace-nowrap"
+                                                        onClick={(e) =>
+                                                            e.stopPropagation()
+                                                        }
+                                                    >
                                                         {isDoc ? (
-                                                            <Badge variant="outline" className="text-emerald-700 dark:text-emerald-400">
-                                                                <Check /> dokumentiert
+                                                            <Badge
+                                                                variant="outline"
+                                                                className="text-emerald-700 dark:text-emerald-400"
+                                                            >
+                                                                <Check />{' '}
+                                                                dokumentiert
                                                             </Badge>
                                                         ) : (
                                                             !isNoise(c) && (
                                                                 <>
-                                                                    <Button variant="ghost" size="sm" onClick={() => accept(c)}>
-                                                                        <Plus /> In Doku
+                                                                    <Button
+                                                                        variant="ghost"
+                                                                        size="sm"
+                                                                        onClick={() =>
+                                                                            accept(
+                                                                                c,
+                                                                            )
+                                                                        }
+                                                                    >
+                                                                        <Plus />{' '}
+                                                                        In Doku
                                                                     </Button>
                                                                     {!isIgnored && (
                                                                         <Button
@@ -506,7 +690,11 @@ export default function ApiRecorder({ docs: initialDocs, origin }: { docs: ApiDo
                                                                             className="size-8"
                                                                             title="Ignorieren"
                                                                             aria-label="Ignorieren"
-                                                                            onClick={() => ignore(c)}
+                                                                            onClick={() =>
+                                                                                ignore(
+                                                                                    c,
+                                                                                )
+                                                                            }
                                                                         >
                                                                             <X />
                                                                         </Button>
@@ -517,21 +705,47 @@ export default function ApiRecorder({ docs: initialDocs, origin }: { docs: ApiDo
                                                     </td>
                                                 </tr>,
                                                 open && (
-                                                    <tr key={`${c.id}-detail`} className="border-t bg-muted/20">
+                                                    <tr
+                                                        key={`${c.id}-detail`}
+                                                        className="border-t bg-muted/20"
+                                                    >
                                                         <td />
-                                                        <td colSpan={6} className="grid gap-3 p-3 md:grid-cols-2">
+                                                        <td
+                                                            colSpan={6}
+                                                            className="grid gap-3 p-3 md:grid-cols-2"
+                                                        >
                                                             <div className="min-w-0">
-                                                                <div className="mb-1 text-xs font-semibold">Anfrage</div>
-                                                                <pre className="max-h-64 overflow-auto rounded bg-background p-2 text-[11px]" translate="no">
-                                                                    {JSON.stringify(safeHeaders(c.requestHeaders), null, 2)}
+                                                                <div className="mb-1 text-xs font-semibold">
+                                                                    Anfrage
+                                                                </div>
+                                                                <pre
+                                                                    className="max-h-64 overflow-auto rounded bg-background p-2 text-[11px]"
+                                                                    translate="no"
+                                                                >
+                                                                    {JSON.stringify(
+                                                                        safeHeaders(
+                                                                            c.requestHeaders,
+                                                                        ),
+                                                                        null,
+                                                                        2,
+                                                                    )}
                                                                     {'\n\n'}
-                                                                    {preview(c.requestBody)}
+                                                                    {preview(
+                                                                        c.requestBody,
+                                                                    )}
                                                                 </pre>
                                                             </div>
                                                             <div className="min-w-0">
-                                                                <div className="mb-1 text-xs font-semibold">Antwort</div>
-                                                                <pre className="max-h-64 overflow-auto rounded bg-background p-2 text-[11px]" translate="no">
-                                                                    {preview(c.responseBody)}
+                                                                <div className="mb-1 text-xs font-semibold">
+                                                                    Antwort
+                                                                </div>
+                                                                <pre
+                                                                    className="max-h-64 overflow-auto rounded bg-background p-2 text-[11px]"
+                                                                    translate="no"
+                                                                >
+                                                                    {preview(
+                                                                        c.responseBody,
+                                                                    )}
                                                                 </pre>
                                                             </div>
                                                         </td>
@@ -553,12 +767,22 @@ export default function ApiRecorder({ docs: initialDocs, origin }: { docs: ApiDo
                             <select
                                 className="ml-auto h-8 rounded-md border border-input bg-background px-2 text-sm font-normal"
                                 value={doc.id ?? ''}
-                                onChange={(e) => setDoc(docs.find((d) => d.id === e.target.value) ?? emptyDoc())}
+                                onChange={(e) =>
+                                    setDoc(
+                                        docs.find(
+                                            (d) => d.id === e.target.value,
+                                        ) ?? emptyDoc(),
+                                    )
+                                }
                                 aria-label="Dokumentation wählen"
                             >
                                 <option value="">Neue Dokumentation</option>
                                 {docs.map((d) => (
-                                    <option key={d.id} value={d.id} translate="no">
+                                    <option
+                                        key={d.id}
+                                        value={d.id}
+                                        translate="no"
+                                    >
                                         {d.title}
                                     </option>
                                 ))}
@@ -574,13 +798,26 @@ export default function ApiRecorder({ docs: initialDocs, origin }: { docs: ApiDo
                         <div className="grid gap-3 md:grid-cols-2">
                             <label className="grid gap-1 text-sm">
                                 Titel
-                                <Input value={doc.title} onChange={(e) => setDoc({ ...doc, title: e.target.value })} />
+                                <Input
+                                    value={doc.title}
+                                    onChange={(e) =>
+                                        setDoc({
+                                            ...doc,
+                                            title: e.target.value,
+                                        })
+                                    }
+                                />
                             </label>
                             <label className="grid gap-1 text-sm">
                                 Basis-URL
                                 <Input
                                     value={doc.base_url}
-                                    onChange={(e) => setDoc({ ...doc, base_url: e.target.value })}
+                                    onChange={(e) =>
+                                        setDoc({
+                                            ...doc,
+                                            base_url: e.target.value,
+                                        })
+                                    }
                                     placeholder="https://api.beispiel.ch"
                                     translate="no"
                                 />
@@ -589,7 +826,12 @@ export default function ApiRecorder({ docs: initialDocs, origin }: { docs: ApiDo
                                 Beschreibung
                                 <Textarea
                                     value={doc.description}
-                                    onChange={(e) => setDoc({ ...doc, description: e.target.value })}
+                                    onChange={(e) =>
+                                        setDoc({
+                                            ...doc,
+                                            description: e.target.value,
+                                        })
+                                    }
                                     rows={2}
                                 />
                             </label>
@@ -597,32 +839,55 @@ export default function ApiRecorder({ docs: initialDocs, origin }: { docs: ApiDo
 
                         {doc.operations.length === 0 ? (
                             <p className="text-sm text-muted-foreground">
-                                Noch keine Endpunkte. Anfragen aufzeichnen und «In Doku» wählen.
+                                Noch keine Endpunkte. Anfragen aufzeichnen und
+                                «In Doku» wählen.
                             </p>
                         ) : (
                             <div className="overflow-x-auto rounded-md border">
                                 <table className="w-full text-sm">
                                     <thead className="bg-muted/50 text-left text-xs text-muted-foreground">
                                         <tr>
-                                            <th className="px-2 py-2 font-medium">Methode</th>
-                                            <th className="px-2 py-2 font-medium">Pfad</th>
-                                            <th className="px-2 py-2 font-medium">Beschreibung</th>
-                                            <th className="px-2 py-2 font-medium">Gruppe</th>
-                                            <th className="px-2 py-2 font-medium">Status</th>
-                                            <th className="px-2 py-2 font-medium">Beispiele</th>
+                                            <th className="px-2 py-2 font-medium">
+                                                Methode
+                                            </th>
+                                            <th className="px-2 py-2 font-medium">
+                                                Pfad
+                                            </th>
+                                            <th className="px-2 py-2 font-medium">
+                                                Beschreibung
+                                            </th>
+                                            <th className="px-2 py-2 font-medium">
+                                                Gruppe
+                                            </th>
+                                            <th className="px-2 py-2 font-medium">
+                                                Status
+                                            </th>
+                                            <th className="px-2 py-2 font-medium">
+                                                Beispiele
+                                            </th>
                                             <th className="px-2 py-2" />
                                         </tr>
                                     </thead>
                                     <tbody>
                                         {doc.operations.map((op) => (
-                                            <tr key={op.key} className="border-t">
+                                            <tr
+                                                key={op.key}
+                                                className="border-t"
+                                            >
                                                 <td className="px-2 py-1.5">
-                                                    <Method method={op.method} />
+                                                    <Method
+                                                        method={op.method}
+                                                    />
                                                 </td>
                                                 <td className="px-2 py-1">
                                                     <Input
                                                         value={op.path}
-                                                        onChange={(e) => updateOp(op.key, { path: e.target.value })}
+                                                        onChange={(e) =>
+                                                            updateOp(op.key, {
+                                                                path: e.target
+                                                                    .value,
+                                                            })
+                                                        }
                                                         className="h-8 min-w-56 font-mono text-xs"
                                                         translate="no"
                                                     />
@@ -630,7 +895,13 @@ export default function ApiRecorder({ docs: initialDocs, origin }: { docs: ApiDo
                                                 <td className="px-2 py-1">
                                                     <Input
                                                         value={op.summary}
-                                                        onChange={(e) => updateOp(op.key, { summary: e.target.value })}
+                                                        onChange={(e) =>
+                                                            updateOp(op.key, {
+                                                                summary:
+                                                                    e.target
+                                                                        .value,
+                                                            })
+                                                        }
                                                         placeholder="Was macht der Endpunkt?"
                                                         className="h-8 min-w-48"
                                                     />
@@ -638,12 +909,21 @@ export default function ApiRecorder({ docs: initialDocs, origin }: { docs: ApiDo
                                                 <td className="px-2 py-1">
                                                     <Input
                                                         value={op.tag}
-                                                        onChange={(e) => updateOp(op.key, { tag: e.target.value })}
+                                                        onChange={(e) =>
+                                                            updateOp(op.key, {
+                                                                tag: e.target
+                                                                    .value,
+                                                            })
+                                                        }
                                                         className="h-8 w-32"
                                                     />
                                                 </td>
-                                                <td className="px-2 py-1.5 font-mono text-xs">{op.status}</td>
-                                                <td className="px-2 py-1.5 text-xs">{op.samples}</td>
+                                                <td className="px-2 py-1.5 font-mono text-xs">
+                                                    {op.status}
+                                                </td>
+                                                <td className="px-2 py-1.5 text-xs">
+                                                    {op.samples}
+                                                </td>
                                                 <td className="px-2 py-1 text-right">
                                                     <Button
                                                         variant="ghost"
@@ -652,7 +932,15 @@ export default function ApiRecorder({ docs: initialDocs, origin }: { docs: ApiDo
                                                         title="Aus der Dokumentation entfernen"
                                                         aria-label="Aus der Dokumentation entfernen"
                                                         onClick={() =>
-                                                            setDoc({ ...doc, operations: doc.operations.filter((o) => o.key !== op.key) })
+                                                            setDoc({
+                                                                ...doc,
+                                                                operations:
+                                                                    doc.operations.filter(
+                                                                        (o) =>
+                                                                            o.key !==
+                                                                            op.key,
+                                                                    ),
+                                                            })
                                                         }
                                                     >
                                                         <Trash2 />
@@ -666,14 +954,21 @@ export default function ApiRecorder({ docs: initialDocs, origin }: { docs: ApiDo
                         )}
 
                         <div className="flex flex-wrap gap-2">
-                            <Button onClick={() => void save()} disabled={saving}>
+                            <Button
+                                onClick={() => void save()}
+                                disabled={saving}
+                            >
                                 <Save /> Dokumentation speichern
                             </Button>
                             <Button
                                 variant="outline"
                                 disabled={doc.operations.length === 0}
                                 onClick={() =>
-                                    download(JSON.stringify(spec, null, 2), 'application/json', `${slug(doc.title)}-openapi.json`)
+                                    download(
+                                        JSON.stringify(spec, null, 2),
+                                        'application/json',
+                                        `${slug(doc.title)}-openapi.json`,
+                                    )
                                 }
                             >
                                 <Download /> OpenAPI-Datei (JSON)
@@ -681,19 +976,31 @@ export default function ApiRecorder({ docs: initialDocs, origin }: { docs: ApiDo
                             <Button
                                 variant="outline"
                                 disabled={doc.operations.length === 0}
-                                onClick={() => download(`${toYaml(spec)}\n`, 'application/yaml', `${slug(doc.title)}-openapi.yaml`)}
+                                onClick={() =>
+                                    download(
+                                        `${toYaml(spec)}\n`,
+                                        'application/yaml',
+                                        `${slug(doc.title)}-openapi.yaml`,
+                                    )
+                                }
                             >
                                 <Download /> OpenAPI-Datei (YAML)
                             </Button>
                             <Button
                                 variant="ghost"
                                 disabled={doc.operations.length === 0}
-                                onClick={() => setShowSpec(showSpec ? null : 'yaml')}
+                                onClick={() =>
+                                    setShowSpec(showSpec ? null : 'yaml')
+                                }
                             >
                                 {showSpec ? 'Vorschau schliessen' : 'Vorschau'}
                             </Button>
                             {doc.id && (
-                                <Button variant="ghost" className="ml-auto text-destructive" onClick={() => void remove()}>
+                                <Button
+                                    variant="ghost"
+                                    className="ml-auto text-destructive"
+                                    onClick={() => void remove()}
+                                >
                                     <Trash2 /> Löschen
                                 </Button>
                             )}
@@ -708,7 +1015,8 @@ export default function ApiRecorder({ docs: initialDocs, origin }: { docs: ApiDo
                             </pre>
                         )}
                         <p className="text-xs text-muted-foreground">
-                            Die Datei lässt sich im Swagger Editor (editor.swagger.io), in Postman oder Insomnia
+                            Die Datei lässt sich im Swagger Editor
+                            (editor.swagger.io), in Postman oder Insomnia
                             öffnen.
                         </p>
                     </CardContent>
@@ -760,26 +1068,46 @@ function QuestionDialog({
     }, [capture]);
 
     return (
-        <Dialog open={capture !== null} onOpenChange={(open: boolean) => !open && onLater()}>
+        <Dialog
+            open={capture !== null}
+            onOpenChange={(open: boolean) => !open && onLater()}
+        >
             <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-2xl">
                 <DialogHeader>
-                    <DialogTitle>Neuer Endpunkt – in die Dokumentation aufnehmen?</DialogTitle>
+                    <DialogTitle>
+                        Neuer Endpunkt – in die Dokumentation aufnehmen?
+                    </DialogTitle>
                     <DialogDescription>
-                        {remaining > 1 ? `Noch ${remaining - 1} weitere warten.` : 'Beschreibung ergänzen und aufnehmen.'}
+                        {remaining > 1
+                            ? `Noch ${remaining - 1} weitere warten.`
+                            : 'Beschreibung ergänzen und aufnehmen.'}
                     </DialogDescription>
                 </DialogHeader>
                 {capture && (
                     <div className="grid gap-3 text-sm">
                         <div className="flex items-center gap-2">
                             <Method method={capture.method} />
-                            <code className="truncate text-xs" translate="no" title={capture.url}>
+                            <code
+                                className="truncate text-xs"
+                                translate="no"
+                                title={capture.url}
+                            >
                                 {capture.url}
                             </code>
-                            <span className="ml-auto font-mono text-xs">{capture.status}</span>
+                            <span className="ml-auto font-mono text-xs">
+                                {capture.status}
+                            </span>
                         </div>
                         <label className="grid gap-1">
-                            {'Pfad (IDs als Parameter in geschweiften Klammern)'}
-                            <Input value={path} onChange={(e) => setPath(e.target.value)} className="font-mono text-xs" translate="no" />
+                            {
+                                'Pfad (IDs als Parameter in geschweiften Klammern)'
+                            }
+                            <Input
+                                value={path}
+                                onChange={(e) => setPath(e.target.value)}
+                                className="font-mono text-xs"
+                                translate="no"
+                            />
                         </label>
                         <div className="grid gap-3 sm:grid-cols-2">
                             <label className="grid gap-1">
@@ -793,12 +1121,20 @@ function QuestionDialog({
                             </label>
                             <label className="grid gap-1">
                                 Gruppe
-                                <Input value={tag} onChange={(e) => setTag(e.target.value)} />
+                                <Input
+                                    value={tag}
+                                    onChange={(e) => setTag(e.target.value)}
+                                />
                             </label>
                         </div>
                         <div>
-                            <div className="mb-1 text-xs font-semibold">Antwort (Ausschnitt)</div>
-                            <pre className="max-h-48 overflow-auto rounded-md border bg-muted/30 p-2 text-[11px]" translate="no">
+                            <div className="mb-1 text-xs font-semibold">
+                                Antwort (Ausschnitt)
+                            </div>
+                            <pre
+                                className="max-h-48 overflow-auto rounded-md border bg-muted/30 p-2 text-[11px]"
+                                translate="no"
+                            >
                                 {preview(capture.responseBody, 1500)}
                             </pre>
                         </div>
@@ -812,10 +1148,19 @@ function QuestionDialog({
                         <Button variant="outline" onClick={onLater}>
                             Später
                         </Button>
-                        <Button variant="outline" onClick={() => capture && onIgnore(capture)}>
+                        <Button
+                            variant="outline"
+                            onClick={() => capture && onIgnore(capture)}
+                        >
                             Ignorieren
                         </Button>
-                        <Button onClick={() => capture && onAccept(capture, { summary, path, tag })} data-testid="accept-endpoint">
+                        <Button
+                            onClick={() =>
+                                capture &&
+                                onAccept(capture, { summary, path, tag })
+                            }
+                            data-testid="accept-endpoint"
+                        >
                             <Check /> Aufnehmen
                         </Button>
                     </div>
