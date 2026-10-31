@@ -1,5 +1,11 @@
 import { Head, Link, router, useForm } from '@inertiajs/react';
-import { ExternalLink, Puzzle, RotateCcw, Save, ScanSearch } from 'lucide-react';
+import {
+    ExternalLink,
+    Puzzle,
+    RotateCcw,
+    Save,
+    ScanSearch,
+} from 'lucide-react';
 import { useState } from 'react';
 import type { FormEvent } from 'react';
 import FrameDiagnosis from '@/components/frame-diagnosis';
@@ -57,10 +63,16 @@ function ItemCard({ item }: { item: Item }) {
     const runCheck = async () => {
         setChecking(true);
         try {
-            const res = await fetch(`/einstellungen/menuepunkt/${item.key}/pruefen`, {
-                headers: { Accept: 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
-                credentials: 'same-origin',
-            });
+            const res = await fetch(
+                `/einstellungen/menuepunkt/${item.key}/pruefen`,
+                {
+                    headers: {
+                        Accept: 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest',
+                    },
+                    credentials: 'same-origin',
+                },
+            );
             setCheck((await res.json()) as FrameResult);
         } catch {
             setCheck({ embeddable: null, reason: t('Prüfung nicht möglich.') });

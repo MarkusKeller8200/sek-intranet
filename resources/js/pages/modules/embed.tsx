@@ -238,7 +238,9 @@ export default function Embed({
                             </CardDescription>
                         </CardHeader>
                         <CardContent className="grid gap-4">
-                            {frame?.details && <FrameDiagnosis result={frame} />}
+                            {frame?.details && (
+                                <FrameDiagnosis result={frame} />
+                            )}
                             <Button asChild className="w-fit">
                                 <a
                                     href={module.url}

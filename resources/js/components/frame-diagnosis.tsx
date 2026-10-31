@@ -16,10 +16,17 @@ export type FrameResult = {
 export default function FrameDiagnosis({ result }: { result: FrameResult }) {
     const d = result.details;
     const Icon =
-        result.embeddable === true ? CheckCircle2 : result.embeddable === false ? ShieldAlert : ShieldQuestion;
+        result.embeddable === true
+            ? CheckCircle2
+            : result.embeddable === false
+              ? ShieldAlert
+              : ShieldQuestion;
 
     return (
-        <div className="grid gap-2 rounded-md border bg-muted/30 p-3 text-xs" data-testid="frame-diagnosis">
+        <div
+            className="grid gap-2 rounded-md border bg-muted/30 p-3 text-xs"
+            data-testid="frame-diagnosis"
+        >
             <p className="flex items-start gap-2 text-sm">
                 <Icon
                     className={
@@ -49,8 +56,9 @@ export default function FrameDiagnosis({ result }: { result: FrameResult }) {
                 </dl>
             )}
             <p className="text-muted-foreground">
-                Die Regel setzt die eingebettete Website selbst. Ändern kann sie nur ihr Betreiber, z. B. mit
-                «frame-ancestors 'self' https://intranet.sekbuelach.ch».
+                Die Regel setzt die eingebettete Website selbst. Ändern kann sie
+                nur ihr Betreiber, z. B. mit «frame-ancestors 'self'
+                https://intranet.sekbuelach.ch».
             </p>
         </div>
     );
