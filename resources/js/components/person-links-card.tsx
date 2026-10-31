@@ -245,7 +245,7 @@ export default function PersonLinksCard({
     systems: Record<string, string>;
     canManage: boolean;
 }) {
-    const [editing, setEditing] = useState<string | 'new' | null>(null);
+    const [editing, setEditing] = useState<string | null>(null); // Link-ID oder «new»
     const pending = links.filter((l) => l.status === 'pending').length;
 
     return (
