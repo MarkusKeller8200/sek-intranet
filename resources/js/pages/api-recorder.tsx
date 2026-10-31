@@ -399,8 +399,8 @@ export default function ApiRecorder({
                         <CardDescription>
                             Browser erlauben aus Sicherheitsgründen nicht, den
                             Verkehr einer fremden Website direkt mitzulesen.
-                            Deshalb: Website in neuem Tab öffnen, dort einmal das
-                            Lesezeichen «SBI-Recorder» anklicken (oder den
+                            Deshalb: Website in neuem Tab öffnen, dort einmal
+                            das Lesezeichen «SBI-Recorder» anklicken (oder den
                             Recorder-Code in die Konsole einfügen), dann die
                             Funktionen der Website bedienen.
                         </CardDescription>
