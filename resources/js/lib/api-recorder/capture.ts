@@ -81,8 +81,8 @@ export function bookmarkletSource(origin: string): string {
         ) {
             const started = performance.now();
             const req = input instanceof Request ? input : null;
-            const url = new URL(req ? req.url : String(input), location.href)
-                .href;
+            const raw = req ? req.url : typeof input === 'string' ? input : input instanceof URL ? input.href : '';
+            const url = new URL(raw, location.href).href;
             const method = (init?.method ?? req?.method ?? 'GET').toUpperCase();
             const bodyIn = init?.body ?? null;
             const response = await origFetch.apply(this, [input, init] as [
@@ -113,9 +113,15 @@ export function bookmarkletSource(origin: string): string {
         };
 
         // XMLHttpRequest
-        const open = XMLHttpRequest.prototype.open;
-        const sendXhr = XMLHttpRequest.prototype.send;
-        const setHeader = XMLHttpRequest.prototype.setRequestHeader;
+        // Originalmethoden über den Deskriptor holen (werden mit .call/.apply aufgerufen)
+        const original = (name: 'open' | 'send' | 'setRequestHeader') =>
+            Object.getOwnPropertyDescriptor(XMLHttpRequest.prototype, name)?.value as (
+                this: XMLHttpRequest,
+                ...args: unknown[]
+            ) => void;
+        const open = original('open');
+        const sendXhr = original('send');
+        const setHeader = original('setRequestHeader');
         type Meta = {
             m: string;
             u: string;
@@ -136,7 +142,7 @@ export function bookmarkletSource(origin: string): string {
                 t: 0,
             });
 
-            return (open as (...a: unknown[]) => void).apply(this, [
+            return open.apply(this, [
                 method,
                 url,
                 ...rest,
@@ -334,13 +340,13 @@ export function captureFromMessage(data: unknown): Capture | null {
             ? Object.fromEntries(
                   Object.entries(v as Record<string, unknown>).map(([k, x]) => [
                       k.toLowerCase(),
-                      String(x),
+                      typeof x === 'string' ? x : JSON.stringify(x),
                   ]),
               )
             : {};
 
     return {
-        id: String(e.id ?? Math.random()),
+        id: typeof e.id === 'string' || typeof e.id === 'number' ? String(e.id) : String(Math.random()),
         at: typeof e.at === 'number' ? e.at : Date.now(),
         method: e.method.toUpperCase(),
         url: e.url,

@@ -444,7 +444,7 @@ export function toYaml(value: unknown, indent = 0): string {
                 : v;
         }
 
-        return String(v);
+        return typeof v === 'number' || typeof v === 'boolean' ? String(v) : JSON.stringify(v);
     };
     if (Array.isArray(value)) {
         if (value.length === 0) {
