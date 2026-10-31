@@ -42,17 +42,22 @@
     render();
     connect.disabled = !origin || origin === intranet;
     connect.addEventListener('click', () => {
-        chrome.permissions.request({ origins: [origin + '/*'] }).then((granted) => {
-            if (!granted) {
-                recorder.textContent = 'Ohne Freigabe kann das Intranet diese Website nicht erreichen.';
+        chrome.permissions
+            .request({ origins: [origin + '/*'] })
+            .then((granted) => {
+                if (!granted) {
+                    recorder.textContent =
+                        'Ohne Freigabe kann das Intranet diese Website nicht erreichen.';
 
-                return;
-            }
-            chrome.runtime.sendMessage({ kind: 'connect', tabId: tab.id }).then(() => {
-                connect.textContent = '✓ Verbunden';
-                connect.disabled = true;
+                    return;
+                }
+                chrome.runtime
+                    .sendMessage({ kind: 'connect', tabId: tab.id })
+                    .then(() => {
+                        connect.textContent = '✓ Verbunden';
+                        connect.disabled = true;
+                    });
             });
-        });
     });
 
     toggle.addEventListener('click', () => {

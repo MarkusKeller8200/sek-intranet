@@ -30,7 +30,11 @@
             });
         }
         // Intranet und Fachanwendung nebeneinander (zwei Fenster, je halber Bildschirm)
-        if (data.action === 'split' && typeof data.url === 'string' && /^https:\/\//.test(data.url)) {
+        if (
+            data.action === 'split' &&
+            typeof data.url === 'string' &&
+            /^https:\/\//.test(data.url)
+        ) {
             chrome.runtime.sendMessage({
                 kind: 'split',
                 url: data.url,
@@ -55,11 +59,15 @@
                     kind: 'tab',
                     key: data.key,
                     command: data.command,
-                    args: data.args && typeof data.args === 'object' ? data.args : {},
+                    args:
+                        data.args && typeof data.args === 'object'
+                            ? data.args
+                            : {},
                 })
                 .then(
                     (result) => reply(data.id, result),
-                    (error) => reply(data.id, { ok: false, error: String(error) }),
+                    (error) =>
+                        reply(data.id, { ok: false, error: String(error) }),
                 );
         }
         if (data.action === 'recorder') {

@@ -15,9 +15,7 @@
         "base": "https://shop.lmvz.ch",
         "auth": {
             "type": "header",
-            "hosts": [
-                "digital"
-            ],
+            "hosts": ["digital"],
             "header_setting": "auth_header",
             "prefix_setting": "auth_prefix",
             "setting": "digital_token"

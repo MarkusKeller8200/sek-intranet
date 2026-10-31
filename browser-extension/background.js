@@ -13,7 +13,11 @@ const RECORDER_TYPE = 'sbi-api-recorder';
 const MAX_BODY = 60000;
 
 async function load() {
-    const s = await chrome.storage.session.get(['recorders', 'recording', 'apps']);
+    const s = await chrome.storage.session.get([
+        'recorders',
+        'recording',
+        'apps',
+    ]);
 
     return {
         recorders: s.recorders || [],
@@ -31,10 +35,15 @@ const INTRANET_ORIGIN = chrome.runtime
 async function registerHooks() {
     const { origins = [] } = await chrome.permissions.getAll();
     const matches = origins.filter(
-        (o) => o.startsWith('https://') && !o.startsWith(INTRANET_ORIGIN) && o !== 'https://*/*',
+        (o) =>
+            o.startsWith('https://') &&
+            !o.startsWith(INTRANET_ORIGIN) &&
+            o !== 'https://*/*',
     );
     try {
-        await chrome.scripting.unregisterContentScripts({ ids: ['sbi-page-hook', 'sbi-page-relay'] });
+        await chrome.scripting.unregisterContentScripts({
+            ids: ['sbi-page-hook', 'sbi-page-relay'],
+        });
     } catch {
         // noch nicht registriert
     }
@@ -42,8 +51,21 @@ async function registerHooks() {
         return;
     }
     await chrome.scripting.registerContentScripts([
-        { id: 'sbi-page-hook', matches, js: ['page-hook.js'], world: 'MAIN', runAt: 'document_start', persistAcrossSessions: true },
-        { id: 'sbi-page-relay', matches, js: ['page-relay.js'], runAt: 'document_start', persistAcrossSessions: true },
+        {
+            id: 'sbi-page-hook',
+            matches,
+            js: ['page-hook.js'],
+            world: 'MAIN',
+            runAt: 'document_start',
+            persistAcrossSessions: true,
+        },
+        {
+            id: 'sbi-page-relay',
+            matches,
+            js: ['page-relay.js'],
+            runAt: 'document_start',
+            persistAcrossSessions: true,
+        },
     ]);
 }
 chrome.runtime.onInstalled.addListener(() => void registerHooks());
@@ -70,7 +92,10 @@ async function appTab(state, key) {
 async function tabCommand(state, message) {
     const tab = await appTab(state, message.key);
     if (!tab) {
-        return { ok: false, error: 'Der Tab der Anwendung ist nicht offen – zuerst «Öffnen».' };
+        return {
+            ok: false,
+            error: 'Der Tab der Anwendung ist nicht offen – zuerst «Öffnen».',
+        };
     }
     const origin = new URL(tab.url || state.apps[message.key].origin).origin;
     const args = message.args || {};
@@ -117,7 +142,10 @@ async function tabCommand(state, message) {
         case 'fetch': {
             // Abruf über die Anmeldung im Tab: nur lesend (GET oder als lesend markierte Listen per POST)
             if (!sameOrigin(args.path)) {
-                return { ok: false, error: 'Nur Adressen derselben Anwendung.' };
+                return {
+                    ok: false,
+                    error: 'Nur Adressen derselben Anwendung.',
+                };
             }
             const method = String(args.method || 'GET').toUpperCase();
             if (method !== 'GET' && args.read !== true) {
@@ -131,7 +159,10 @@ async function tabCommand(state, message) {
                     body: args.body ?? null,
                 });
             } catch {
-                return { ok: false, error: 'Website noch nicht freigegeben oder Seite neu laden (Symbol der Erweiterung → «Website verbinden»).' };
+                return {
+                    ok: false,
+                    error: 'Website noch nicht freigegeben oder Seite neu laden (Symbol der Erweiterung → «Website verbinden»).',
+                };
             }
         }
         default:
@@ -157,15 +188,29 @@ function fillField(selector, value) {
 function readTable(selector) {
     const table = document.querySelector(selector || 'table');
     if (!table) {
-        return { ok: false, error: 'Keine Tabelle gefunden (' + selector + ').' };
+        return {
+            ok: false,
+            error: 'Keine Tabelle gefunden (' + selector + ').',
+        };
     }
-    const text = (c) => (c.innerText || c.textContent || '').trim().replace(/\s+/g, ' ');
+    const text = (c) =>
+        (c.innerText || c.textContent || '').trim().replace(/\s+/g, ' ');
     const rows = Array.from(table.querySelectorAll('tr'));
     const headRow = table.querySelector('thead tr') || rows[0];
-    const columns = headRow ? Array.from(headRow.children).slice(0, 30).map(text) : [];
-    const body = rows.filter((r) => r !== headRow).slice(0, 500).map((r) => Array.from(r.children).slice(0, 30).map(text));
+    const columns = headRow
+        ? Array.from(headRow.children).slice(0, 30).map(text)
+        : [];
+    const body = rows
+        .filter((r) => r !== headRow)
+        .slice(0, 500)
+        .map((r) => Array.from(r.children).slice(0, 30).map(text));
 
-    return { ok: true, columns, rows: body.filter((r) => r.some((c) => c !== '')), total: rows.length - 1 };
+    return {
+        ok: true,
+        columns,
+        rows: body.filter((r) => r.some((c) => c !== '')),
+        total: rows.length - 1,
+    };
 }
 
 // Seitenwechsel in Fachanwendungs-Tabs an das Intranet melden
@@ -177,7 +222,12 @@ chrome.tabs.onUpdated.addListener(async (tabId, info, tab) => {
     for (const [key, app] of Object.entries(state.apps)) {
         if (app.tabId === tabId) {
             try {
-                await chrome.tabs.sendMessage(app.intranetTab, { kind: 'tab-context', key, url: tab.url, title: tab.title });
+                await chrome.tabs.sendMessage(app.intranetTab, {
+                    kind: 'tab-context',
+                    key,
+                    url: tab.url,
+                    title: tab.title,
+                });
             } catch {
                 // Intranet-Tab geschlossen
             }
@@ -205,7 +255,9 @@ async function handle(message, sender) {
                 return { ok: false };
             }
             // Bereits offen: nach vorne holen statt neuen Tab
-            const existing = message.key ? await appTab(state, message.key) : null;
+            const existing = message.key
+                ? await appTab(state, message.key)
+                : null;
             if (existing) {
                 await chrome.tabs.update(existing.id, { active: true });
                 state.apps[message.key].intranetTab = sender.tab.id;
@@ -232,7 +284,11 @@ async function handle(message, sender) {
                 // Gruppen nicht verfügbar (z. B. anderer Browser): Tab bleibt ungruppiert
             }
             if (message.key) {
-                state.apps[message.key] = { tabId: tab.id, origin: new URL(message.url).origin, intranetTab: sender.tab.id };
+                state.apps[message.key] = {
+                    tabId: tab.id,
+                    origin: new URL(message.url).origin,
+                    intranetTab: sender.tab.id,
+                };
                 await save(state);
             }
 
@@ -249,26 +305,58 @@ async function handle(message, sender) {
             const width = Math.max(800, Number(area.width) || 1600);
             const height = Math.max(500, Number(area.height) || 900);
             const half = Math.floor(width / 2);
-            await chrome.windows.update(sender.tab.windowId, { state: 'normal' });
-            await chrome.windows.update(sender.tab.windowId, { left, top, width: half, height, focused: true });
-            const existing = message.key ? await appTab(state, message.key) : null;
+            await chrome.windows.update(sender.tab.windowId, {
+                state: 'normal',
+            });
+            await chrome.windows.update(sender.tab.windowId, {
+                left,
+                top,
+                width: half,
+                height,
+                focused: true,
+            });
+            const existing = message.key
+                ? await appTab(state, message.key)
+                : null;
             let tabId;
             if (existing) {
-                const win = await chrome.windows.create({ tabId: existing.id, left: left + half, top, width: width - half, height, focused: false });
+                const win = await chrome.windows.create({
+                    tabId: existing.id,
+                    left: left + half,
+                    top,
+                    width: width - half,
+                    height,
+                    focused: false,
+                });
                 tabId = win.tabs ? win.tabs[0].id : existing.id;
             } else {
-                const win = await chrome.windows.create({ url: message.url, left: left + half, top, width: width - half, height, focused: false });
+                const win = await chrome.windows.create({
+                    url: message.url,
+                    left: left + half,
+                    top,
+                    width: width - half,
+                    height,
+                    focused: false,
+                });
                 tabId = win.tabs[0].id;
             }
             if (message.key) {
-                state.apps[message.key] = { tabId, origin: new URL(message.url).origin, intranetTab: sender.tab.id };
+                state.apps[message.key] = {
+                    tabId,
+                    origin: new URL(message.url).origin,
+                    intranetTab: sender.tab.id,
+                };
                 await save(state);
             }
 
             return { ok: true };
         }
         case 'tab':
-            if (!sender.tab || !sender.tab.url || !sender.tab.url.startsWith(INTRANET_ORIGIN)) {
+            if (
+                !sender.tab ||
+                !sender.tab.url ||
+                !sender.tab.url.startsWith(INTRANET_ORIGIN)
+            ) {
                 return { ok: false, error: 'Nur aus dem Intranet.' };
             }
 
@@ -302,8 +390,15 @@ async function handle(message, sender) {
         case 'connect': {
             // Aus dem Fenster der Erweiterung nach Freigabe: Hook sofort einschalten (künftig ab Seitenbeginn)
             await registerHooks();
-            await chrome.scripting.executeScript({ target: { tabId: message.tabId }, world: 'MAIN', files: ['page-hook.js'] });
-            await chrome.scripting.executeScript({ target: { tabId: message.tabId }, files: ['page-relay.js'] });
+            await chrome.scripting.executeScript({
+                target: { tabId: message.tabId },
+                world: 'MAIN',
+                files: ['page-hook.js'],
+            });
+            await chrome.scripting.executeScript({
+                target: { tabId: message.tabId },
+                files: ['page-relay.js'],
+            });
 
             return { ok: true };
         }

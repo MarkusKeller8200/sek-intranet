@@ -25,14 +25,23 @@
         const id = Date.now() + '-' + Math.random().toString(36).slice(2);
         const timer = setTimeout(() => {
             pending.delete(id);
-            sendResponse({ ok: false, error: 'Keine Antwort der Seite (neu laden?).' });
+            sendResponse({
+                ok: false,
+                error: 'Keine Antwort der Seite (neu laden?).',
+            });
         }, 20000);
         pending.set(id, (result) => {
             clearTimeout(timer);
             sendResponse(result);
         });
         window.postMessage(
-            { __sbiCommand: 'fetch', id, path: message.path, method: message.method, body: message.body },
+            {
+                __sbiCommand: 'fetch',
+                id,
+                path: message.path,
+                method: message.method,
+                body: message.body,
+            },
             location.origin,
         );
 

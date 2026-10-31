@@ -13,13 +13,13 @@ laufend unter **Unveröffentlicht** und werden beim Erhöhen der Version zur neu
 
 - Verbindung Intranet ⇄ Tab einer Fachanwendung (SBI-Connector), auf der Seite jeder Fachanwendung mit
   «Über die Browser-Erweiterung» bzw. «Nebeneinander»:
-  - **Abfragen:** Was ist im Tab offen? IDs aus der Adresse werden über die Datenherkunft (PersonLinks) mit
-    Personen im Intranet abgeglichen (Escola, Jamf); Schüler:innen nur mit Recht «view-students»
-  - **Melden:** Wechselt die Seite im Tab, aktualisiert sich die Anzeige von selbst
-  - **Abruf über die Anmeldung im Tab:** lesende Plugin-Endpunkte derselben Adresse (z. B. LMVZ Digital
-    Lizenzübersicht) – die Anmeldung der Seite verlässt den Tab nie; nur Fachstelle ICT und Administration
-  - **Steuern:** Seite öffnen, Tab nach vorne, Feld ausfüllen (nie absenden)
-  - **Übernehmen:** Tabelle aus dem Tab als Vorschau mit CSV (nur im Browser)
+    - **Abfragen:** Was ist im Tab offen? IDs aus der Adresse werden über die Datenherkunft (PersonLinks) mit
+      Personen im Intranet abgeglichen (Escola, Jamf); Schüler:innen nur mit Recht «view-students»
+    - **Melden:** Wechselt die Seite im Tab, aktualisiert sich die Anzeige von selbst
+    - **Abruf über die Anmeldung im Tab:** lesende Plugin-Endpunkte derselben Adresse (z. B. LMVZ Digital
+      Lizenzübersicht) – die Anmeldung der Seite verlässt den Tab nie; nur Fachstelle ICT und Administration
+    - **Steuern:** Seite öffnen, Tab nach vorne, Feld ausfüllen (nie absenden)
+    - **Übernehmen:** Tabelle aus dem Tab als Vorschau mit CSV (nur im Browser)
 - «Nebeneinander»: Intranet und Fachanwendung als zwei Fenster je halber Bildschirm (Einstellung und Knopf)
 - Fachanwendung «LMVZ Digital» (über die Browser-Erweiterung)
 - Erweiterung: «Website verbinden» im Fenster der Erweiterung; Adressen der Fachanwendungen sind im

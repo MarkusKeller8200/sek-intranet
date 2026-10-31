@@ -45,7 +45,11 @@
             return;
         }
         const data = event.data;
-        if (!data || data.__sbiCommand !== 'fetch' || typeof data.id !== 'string') {
+        if (
+            !data ||
+            data.__sbiCommand !== 'fetch' ||
+            typeof data.id !== 'string'
+        ) {
             return;
         }
         let url;
@@ -57,7 +61,10 @@
             return;
         }
         if (url.origin !== location.origin) {
-            reply(data.id, { ok: false, error: 'Nur Adressen derselben Anwendung.' });
+            reply(data.id, {
+                ok: false,
+                error: 'Nur Adressen derselben Anwendung.',
+            });
 
             return;
         }

@@ -64,14 +64,14 @@ Intranet-Tab ──postMessage──► intranet.js ──runtime──► backg
 
 ### Verbindung Intranet ⇄ Tab (ab 0.24.0)
 
-| Funktion | Befehl | Wirkung | Grenzen |
-| --- | --- | --- | --- |
-| Abfragen | `context` | Adresse und Titel des Tabs; IDs daraus → Personen über `PersonLinks` (System aus `embed.system`) | Adresse wird nicht gespeichert; Schüler:innen nur mit `view-students` |
-| Melden | (automatisch) | Seitenwechsel im Tab aktualisieren die Anzeige im Intranet | nur Tabs, die das Intranet geöffnet hat |
-| Abruf | `fetch` | lesende Plugin-Endpunkte derselben Adresse, mit der Anmeldung der Seite (`page-hook.js` merkt sich die Kopfzeile, die die Seite selbst sendet) | nur gleiche Adresse, nur GET bzw. `effect: read`; Kopfzeile verlässt die Seite nie; nur `use-ict` |
-| Steuern | `navigate`, `focus`, `fill` | Seite derselben Anwendung öffnen, Tab nach vorne, Feld ausfüllen | nie absenden |
-| Übernehmen | `table` | Tabelle als Vorschau und CSV | nur im Browser; Import erst auf dem Schweizer Server |
-| Nebeneinander | `split` | zwei Fenster, je halber Bildschirm | Fensterverwaltung des Browsers |
+| Funktion      | Befehl                      | Wirkung                                                                                                                                        | Grenzen                                                                                           |
+| ------------- | --------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
+| Abfragen      | `context`                   | Adresse und Titel des Tabs; IDs daraus → Personen über `PersonLinks` (System aus `embed.system`)                                               | Adresse wird nicht gespeichert; Schüler:innen nur mit `view-students`                             |
+| Melden        | (automatisch)               | Seitenwechsel im Tab aktualisieren die Anzeige im Intranet                                                                                     | nur Tabs, die das Intranet geöffnet hat                                                           |
+| Abruf         | `fetch`                     | lesende Plugin-Endpunkte derselben Adresse, mit der Anmeldung der Seite (`page-hook.js` merkt sich die Kopfzeile, die die Seite selbst sendet) | nur gleiche Adresse, nur GET bzw. `effect: read`; Kopfzeile verlässt die Seite nie; nur `use-ict` |
+| Steuern       | `navigate`, `focus`, `fill` | Seite derselben Anwendung öffnen, Tab nach vorne, Feld ausfüllen                                                                               | nie absenden                                                                                      |
+| Übernehmen    | `table`                     | Tabelle als Vorschau und CSV                                                                                                                   | nur im Browser; Import erst auf dem Schweizer Server                                              |
+| Nebeneinander | `split`                     | zwei Fenster, je halber Bildschirm                                                                                                             | Fensterverwaltung des Browsers                                                                    |
 
 Nachrichten: Seite → `{source: 'sbi-intranet', action: 'tab', id, key, command, args}`, Antwort
 `{source: 'sbi-connector', type: 'reply', id, result}`; Meldungen `type: 'context'`. Umsetzung:

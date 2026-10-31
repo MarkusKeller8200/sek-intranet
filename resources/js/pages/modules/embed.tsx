@@ -113,7 +113,14 @@ export default function Embed({
                     : openWithConnector(module.url, module.title, module.key),
             );
         }
-    }, [viaExtension, extension, module.url, module.key, module.title, module.open]);
+    }, [
+        viaExtension,
+        extension,
+        module.url,
+        module.key,
+        module.title,
+        module.open,
+    ]);
 
     return (
         <>
