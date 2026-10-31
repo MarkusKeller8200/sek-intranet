@@ -7,6 +7,12 @@ laufend unter **Unveröffentlicht** und werden beim Erhöhen der Version zur neu
 
 ## [Unveröffentlicht]
 
+## [0.23.2] – 2026-10-31
+
+### Geändert
+
+- Klick auf die erste Brotkrume einer Einbindung (z. B. «Fachanwendungen») blendet das Seitenmenü wieder ein
+
 ## [0.23.1] – 2026-10-31
 
 ### Neu
