@@ -103,6 +103,7 @@ Route::middleware('auth')->group(function () {
         Route::get('einstellungen/browser-erweiterung', [BrowserExtensionController::class, 'show'])->name('browser-extension');
         Route::get('einstellungen/browser-erweiterung/download', [BrowserExtensionController::class, 'download'])->name('browser-extension.download');
         Route::get('einstellungen/{section}', [ModuleSettingsController::class, 'index'])->whereIn('section', ['fachanwendungen', 'einbindungen'])->name('module-settings');
+        Route::get('einstellungen/menuepunkt/{key}/pruefen', [ModuleSettingsController::class, 'check'])->middleware('throttle:30,1')->name('module-settings.check');
         Route::put('einstellungen/menuepunkt/{key}', [ModuleSettingsController::class, 'update'])->name('module-settings.update');
         Route::delete('einstellungen/menuepunkt/{key}', [ModuleSettingsController::class, 'destroy'])->name('module-settings.destroy');
 

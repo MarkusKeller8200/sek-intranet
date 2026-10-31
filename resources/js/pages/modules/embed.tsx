@@ -8,6 +8,8 @@ import {
     ShieldAlert,
 } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
+import FrameDiagnosis from '@/components/frame-diagnosis';
+import type { FrameResult } from '@/components/frame-diagnosis';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { useSidebar } from '@/components/ui/sidebar';
@@ -38,7 +40,7 @@ type Embedded = {
     stack: string | null;
 };
 
-type Frame = { embeddable: boolean | null; reason: string } | null;
+type Frame = FrameResult | null;
 
 /** Schritte, um ein eigenes Projekt (GitHub) als Anwendung einzubinden. */
 const steps = [
@@ -235,8 +237,9 @@ export default function Embed({
                                     'Diese Seite wird nur in einem neuen Tab geöffnet.'}
                             </CardDescription>
                         </CardHeader>
-                        <CardContent>
-                            <Button asChild>
+                        <CardContent className="grid gap-4">
+                            {frame?.details && <FrameDiagnosis result={frame} />}
+                            <Button asChild className="w-fit">
                                 <a
                                     href={module.url}
                                     target="_blank"

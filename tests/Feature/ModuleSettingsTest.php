@@ -61,7 +61,7 @@ class ModuleSettingsTest extends TestCase
 
         // Zurücksetzen: Vorgabe gilt wieder
         $this->delete('/einstellungen/menuepunkt/escola')->assertRedirect();
-        $this->get('/einbindung/escola')->assertInertia(fn (Assert $page) => $page->where('module.open', 'both'));
+        $this->get('/einbindung/escola')->assertInertia(fn (Assert $page) => $page->where('module.open', 'tab'));
         $this->assertCount(1, app(JsonStore::class)->all(ModuleSettings::COLLECTION));
     }
 

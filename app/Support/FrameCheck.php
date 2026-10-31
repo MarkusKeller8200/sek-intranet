@@ -14,16 +14,29 @@ use Throwable;
 class FrameCheck
 {
     /**
-     * @return array{embeddable: bool|null, reason: string}
+     * @return array{embeddable: bool|null, reason: string, details?: array{x_frame_options: string|null, frame_ancestors: string|null, server: string|null, cloudflare: bool, status: int|null}}
      */
     public static function check(string $url): array
     {
-        /** @var array{embeddable: bool|null, reason: string} */
-        return Cache::remember('frame-check:'.sha1($url), now()->addHours(6), fn (): array => self::fetch($url));
+        /** @var array{embeddable: bool|null, reason: string, details?: array{x_frame_options: string|null, frame_ancestors: string|null, server: string|null, cloudflare: bool, status: int|null}} */
+        return Cache::remember('frame-check:v2:'.sha1($url), now()->addHours(6), fn (): array => self::fetch($url));
     }
 
     /**
-     * @return array{embeddable: bool|null, reason: string}
+     * Ohne Zwischenspeicher prüfen (Knopf «Einbetten prüfen» in den Einstellungen) und Ergebnis neu merken.
+     *
+     * @return array{embeddable: bool|null, reason: string, details?: array{x_frame_options: string|null, frame_ancestors: string|null, server: string|null, cloudflare: bool, status: int|null}}
+     */
+    public static function fresh(string $url): array
+    {
+        $result = self::fetch($url);
+        Cache::put('frame-check:v2:'.sha1($url), $result, now()->addHours(6));
+
+        return $result;
+    }
+
+    /**
+     * @return array{embeddable: bool|null, reason: string, details?: array{x_frame_options: string|null, frame_ancestors: string|null, server: string|null, cloudflare: bool, status: int|null}}
      */
     private static function fetch(string $url): array
     {
@@ -36,11 +49,19 @@ class FrameCheck
             return ['embeddable' => null, 'reason' => 'Seite nicht erreichbar'];
         }
 
-        return self::evaluate(
-            (string) $response->header('X-Frame-Options'),
-            (string) $response->header('Content-Security-Policy'),
-            (string) parse_url((string) config('app.url'), PHP_URL_HOST),
-        );
+        $frameOptions = (string) $response->header('X-Frame-Options');
+        $csp = (string) $response->header('Content-Security-Policy');
+        $server = (string) $response->header('Server');
+        $result = self::evaluate($frameOptions, $csp, (string) parse_url((string) config('app.url'), PHP_URL_HOST));
+
+        // Angaben für die Diagnose auf der Seite (wer verhindert das Einbetten?)
+        return $result + ['details' => [
+            'x_frame_options' => $frameOptions !== '' ? $frameOptions : null,
+            'frame_ancestors' => preg_match('/frame-ancestors\s+([^;]*)/i', $csp, $m) === 1 ? trim($m[1]) : null,
+            'server' => $server !== '' ? $server : null,
+            'cloudflare' => $response->header('CF-Ray') !== '' || stripos($server, 'cloudflare') !== false,
+            'status' => $response->status(),
+        ]];
     }
 
     /**
@@ -57,7 +78,9 @@ class FrameCheck
                 }
             }
 
-            return ['embeddable' => false, 'reason' => 'Anbieter erlaubt nur eigene Einbettungen (frame-ancestors)'];
+            $allowed = trim($m[1]) === "'self'" ? 'nur Seiten der eigenen Adresse' : 'nur: '.trim($m[1]);
+
+            return ['embeddable' => false, 'reason' => "Die Seite darf nur von bestimmten Adressen eingebettet werden ({$allowed}) – das Intranet gehört nicht dazu (Content-Security-Policy frame-ancestors)"];
         }
 
         $value = strtoupper(trim($frameOptions));

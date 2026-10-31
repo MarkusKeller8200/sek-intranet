@@ -7,6 +7,19 @@ laufend unter **Unveröffentlicht** und werden beim Erhöhen der Version zur neu
 
 ## [Unveröffentlicht]
 
+## [0.23.1] – 2026-10-31
+
+### Neu
+
+- Einstellungen: «Einbetten prüfen» je Menüpunkt zeigt, warum sich eine Seite nicht einbetten lässt
+  (X-Frame-Options, Content-Security-Policy frame-ancestors, Server, Cloudflare ja/nein); dieselbe Erklärung
+  erscheint auf der Seite der Einbindung
+
+### Behoben
+
+- Escola sendet `frame-ancestors 'self'` (nur www.sekbuelach.ch darf einbetten, nicht das Intranet): Escola
+  öffnet wieder in einem eigenen Tab statt in einem leeren Rahmen (Bestätigung aus 0.22.1 zurückgenommen)
+
 ## [0.23.0] – 2026-10-31
 
 ### Neu

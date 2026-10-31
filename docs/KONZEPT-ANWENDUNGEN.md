@@ -57,9 +57,12 @@ eines Menüpunkts).
 | Apple School Manager | `https://school.apple.com`                                                              | immer neuer Tab (Apple verbietet das Einbetten)        |
 | Jamf Pro             | `.env` `INTRANET_APP_JAMF_URL`                                                          | Rahmen, falls erlaubt, sonst neuer Tab (Daten: Plugin) |
 
-Escola liegt auf derselben Domain wie das Intranet (`sekbuelach.ch`) und erlaubt das Einbetten (bestätigt,
-`embed.allowed: true` überspringt die automatische Prüfung). Die Anmeldung bleibt im Rahmen erhalten.
-«In neuem Tab öffnen» bleibt als Ausweg. Bessere Lösung als ein Rahmen wäre eine Anmeldung per SSO
+Escola sendet `Content-Security-Policy: … frame-ancestors 'self'` (geprüft am 31.10.2026, Server Apache, kein
+Cloudflare). `'self'` heisst: nur Seiten derselben Adresse (`https://www.sekbuelach.ch`) dürfen Escola einbetten.
+Das Intranet (`https://intranet.sekbuelach.ch`) ist eine andere Adresse – der Browser zeigt den Rahmen leer.
+Lösung: eigener Tab oder Browser-Erweiterung; für einen Rahmen müsste der Betreiber von www.sekbuelach.ch/Escola
+`frame-ancestors 'self' https://intranet.sekbuelach.ch` setzen. `embed.allowed: true` nur verwenden, wenn die
+Kopfzeilen das Einbetten wirklich erlauben (Prüfung unter Einstellungen → «Einbetten prüfen»). Bessere Lösung als ein Rahmen wäre eine Anmeldung per SSO
 (Edulog/Microsoft) mit Escola als eigener Tab; Daten aus Escola kommen ohnehin über das Plugin «Escola».
 
 ## Einstellungen (ab 0.23.0)

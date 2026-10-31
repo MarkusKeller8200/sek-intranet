@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Support\AuditLog;
+use App\Support\FrameCheck;
 use App\Support\ModuleNavigation;
 use App\Support\ModuleSettings;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -75,6 +77,19 @@ class ModuleSettingsController extends Controller
         $this->toast('Vorgabe wiederhergestellt.');
 
         return back();
+    }
+
+    /** «Einbetten prüfen»: Kopfzeilen der Seite lesen und erklären, ob und warum sie sich nicht einbetten lässt. */
+    public function check(string $key): JsonResponse
+    {
+        $this->known($key);
+        $item = collect($this->navigation->embedSettings())->firstWhere('key', $key);
+        $url = is_array($item) ? $item['url'] : null;
+        if (! is_string($url)) {
+            return response()->json(['embeddable' => null, 'reason' => 'Noch keine Adresse eingetragen.']);
+        }
+
+        return response()->json(FrameCheck::fresh($url) + ['url' => $url]);
     }
 
     private function known(string $key): void

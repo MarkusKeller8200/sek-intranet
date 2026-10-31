@@ -1,6 +1,9 @@
 import { Head, Link, router, useForm } from '@inertiajs/react';
-import { ExternalLink, Puzzle, RotateCcw, Save } from 'lucide-react';
+import { ExternalLink, Puzzle, RotateCcw, Save, ScanSearch } from 'lucide-react';
+import { useState } from 'react';
 import type { FormEvent } from 'react';
+import FrameDiagnosis from '@/components/frame-diagnosis';
+import type { FrameResult } from '@/components/frame-diagnosis';
 import InputError from '@/components/input-error';
 import PageHeader from '@/components/page-header';
 import SelectField from '@/components/select-field';
@@ -48,6 +51,22 @@ function ItemCard({ item }: { item: Item }) {
         url: item.custom ? (item.url ?? '') : '',
         open: item.open,
     });
+
+    const [check, setCheck] = useState<FrameResult | null>(null);
+    const [checking, setChecking] = useState(false);
+    const runCheck = async () => {
+        setChecking(true);
+        try {
+            const res = await fetch(`/einstellungen/menuepunkt/${item.key}/pruefen`, {
+                headers: { Accept: 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
+                credentials: 'same-origin',
+            });
+            setCheck((await res.json()) as FrameResult);
+        } catch {
+            setCheck({ embeddable: null, reason: t('Prüfung nicht möglich.') });
+        }
+        setChecking(false);
+    };
 
     const submit = (e: FormEvent) => {
         e.preventDefault();
@@ -176,7 +195,24 @@ function ItemCard({ item }: { item: Item }) {
                             Prüfung).
                         </span>
                     )}
+                    {item.url && (
+                        <Button
+                            type="button"
+                            variant="ghost"
+                            size="sm"
+                            disabled={checking}
+                            onClick={() => void runCheck()}
+                            data-testid={`check-${item.key}`}
+                        >
+                            <ScanSearch /> Einbetten prüfen
+                        </Button>
+                    )}
                 </div>
+                {check && (
+                    <div className="mt-3">
+                        <FrameDiagnosis result={check} />
+                    </div>
+                )}
             </CardContent>
         </Card>
     );
