@@ -1,7 +1,7 @@
 {
     "id": "epost",
     "name": "ePost (Schweizerische Post)",
-    "version": "0.1",
+    "version": "0.2",
     "api": 1,
     "category": "communication",
     "author": "SekBülach Intranet",
@@ -564,7 +564,10 @@
                     "https://api-test.klara-epost.tech",
                     "Test (api-test.klara-epost.tech)"
                 ],
-                ["https://api.epost.ch", "Produktion (api.epost.ch)"]
+                [
+                    "https://api.epost.ch",
+                    "Produktion (api.epost.ch)"
+                ]
             ],
             "help": "Im Prototyp nur die Testumgebung verwenden."
         },
@@ -572,13 +575,15 @@
             "key": "username",
             "type": "text",
             "label": "Benutzername (E-Mail des KLARA/ePost-Kontos)",
-            "required": true
+            "required": true,
+            "required_unless": "api_key"
         },
         {
             "key": "password",
             "type": "password",
             "label": "Passwort",
-            "required": true
+            "required": true,
+            "required_unless": "api_key"
         },
         {
             "key": "tenant_id",
@@ -595,7 +600,8 @@
         {
             "key": "api_key",
             "type": "password",
-            "label": "API-Schlüssel (optional, statt Passwort-Anmeldung)"
+            "label": "Token / API-Schlüssel (optional, statt Benutzername und Passwort)",
+            "help": "Zugriffstoken (beginnt mit «eyJ…», gilt nur kurz) oder API-Schlüssel der Post. Ist er gesetzt, braucht es Benutzername und Passwort nicht."
         }
     ],
     "actions": [

@@ -221,9 +221,12 @@ final class PluginContext
             ),
             'oauth2_client_credentials' => $request->withToken($this->oauthToken($auth)),
             // Passwort-Anmeldung (z. B. KLARA/ePost); ist ein API-Schlüssel hinterlegt, gilt dieser
-            'oauth2_password' => $this->apiKey($auth) !== null
-                ? $request->withHeaders([(string) ($auth['api_key_header'] ?? 'X-API-KEY') => (string) $this->apiKey($auth)])
-                : $request->withToken($this->oauthToken($auth)),
+            'oauth2_password' => match (true) {
+                $this->apiKey($auth) === null => $request->withToken($this->oauthToken($auth)),
+                // ein eingefügtes Zugriffstoken (JWT) gilt als Bearer-Token, sonst als API-Schlüssel
+                self::isJwt((string) $this->apiKey($auth)) => $request->withToken((string) $this->apiKey($auth)),
+                default => $request->withHeaders([(string) ($auth['api_key_header'] ?? 'X-API-KEY') => (string) $this->apiKey($auth)]),
+            },
             default => $request,
         };
     }
@@ -251,6 +254,13 @@ final class PluginContext
         return [$name => $prefix === '' || $prefix === 'none' ? $token : "{$prefix} {$token}"];
     }
 
+    private static function isJwt(string $value): bool
+    {
+        $value = (string) preg_replace('/^Bearer\s+/i', '', $value);
+
+        return preg_match('/^eyJ[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]*$/', $value) === 1;
+    }
+
     /**
      * @param  array<string, mixed>  $auth
      */
@@ -260,8 +270,12 @@ final class PluginContext
             return null;
         }
         $key = $this->secret((string) $auth['api_key_setting']) ?? $this->setting((string) $auth['api_key_setting']);
+        if (! is_scalar($key) || trim((string) $key) === '') {
+            return null;
+        }
 
-        return is_scalar($key) && (string) $key !== '' ? (string) $key : null;
+        // «Bearer » mitkopiert? Weglassen.
+        return (string) preg_replace('/^Bearer\s+/i', '', trim((string) $key));
     }
 
     /**

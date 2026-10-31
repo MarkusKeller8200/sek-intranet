@@ -6,6 +6,9 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import type { PluginField } from '@/types';
 
+/** Anzeige für gespeicherte Zugangsdaten (der Wert selbst wird nie an den Browser gesendet). */
+export const STORED_MASK = '********';
+
 export type FieldValues = Record<string, string | number | boolean | null>;
 
 /** Formularfelder aus der Beschreibung im Plugin-Manifest. */
@@ -81,10 +84,10 @@ export default function PluginFields({
                 }
 
                 const isSecret = field.type === 'password';
-                const hint =
-                    isSecret && secretsSet.includes(field.key)
-                        ? 'Gespeichert (verschlüsselt). Leer lassen = unverändert.'
-                        : field.help;
+                const stored = isSecret && secretsSet.includes(field.key);
+                const hint = stored
+                    ? 'Gespeichert (verschlüsselt). Leer lassen = unverändert.'
+                    : field.help;
 
                 return (
                     <FormField
@@ -131,7 +134,15 @@ export default function PluginFields({
                                 }
                                 autoComplete={isSecret ? 'new-password' : 'off'}
                                 value={String(value ?? '')}
-                                placeholder={field.placeholder}
+                                placeholder={
+                                    stored ? STORED_MASK : field.placeholder
+                                }
+                                data-stored={stored ? 'true' : undefined}
+                                className={
+                                    stored
+                                        ? 'placeholder:tracking-widest placeholder:text-foreground'
+                                        : undefined
+                                }
                                 onChange={(e) =>
                                     onChange(field.key, e.target.value)
                                 }

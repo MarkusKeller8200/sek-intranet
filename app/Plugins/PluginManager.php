@@ -112,15 +112,20 @@ final class PluginManager
     {
         $state = $this->state($id);
 
+        $secretKeys = $this->manifest($id)->secretKeys();
+        $isSet = fn (string $key): bool => in_array($key, $secretKeys, true)
+            ? ($state['secrets'][$key] ?? '') !== ''
+            : ($state['settings'][$key] ?? '') !== '' && ($state['settings'][$key] ?? null) !== null;
+
         foreach ($this->manifest($id)->settings() as $setting) {
             if (($setting['required'] ?? false) !== true) {
                 continue;
             }
-            $key = (string) $setting['key'];
-            $set = in_array($key, $this->manifest($id)->secretKeys(), true)
-                ? ($state['secrets'][$key] ?? '') !== ''
-                : ($state['settings'][$key] ?? '') !== '' && ($state['settings'][$key] ?? null) !== null;
-            if (! $set) {
+            // «required_unless»: nicht nötig, wenn die genannte Einstellung gesetzt ist (z. B. Token statt Passwort)
+            if (is_string($setting['required_unless'] ?? null) && $isSet($setting['required_unless'])) {
+                continue;
+            }
+            if (! $isSet((string) $setting['key'])) {
                 return false;
             }
         }

@@ -7,6 +7,19 @@ laufend unter **Unveröffentlicht** und werden beim Erhöhen der Version zur neu
 
 ## [Unveröffentlicht]
 
+## [0.26.1] – 2026-11-01
+
+### Behoben
+
+- ePost: Mit nur einem Token (ohne Benutzername/Passwort) galt das Plugin als «nicht fertig eingerichtet»,
+  Verbindungstest und API-Tester waren gesperrt. Ein eingefügtes Zugriffstoken («eyJ…», auch mit «Bearer »)
+  wird jetzt als Bearer-Token gesendet, ein API-Schlüssel als X-API-KEY
+
+### Geändert
+
+- Plugins: gespeicherte Zugangsdaten (Token, Passwörter, Secrets) erscheinen im Formular als «********»
+- Manifest: Einstellung `required_unless` (Pflicht nur, wenn eine andere Einstellung leer ist)
+
 ## [0.26.0] – 2026-10-31
 
 ### Neu

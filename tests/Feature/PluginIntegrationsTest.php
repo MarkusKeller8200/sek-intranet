@@ -254,6 +254,25 @@ class PluginIntegrationsTest extends TestCase
         $this->postJson('/plugins/epost/test')->assertOk()->assertJson(['ok' => true]);
         Http::assertSent(fn (Request $r): bool => $r->hasHeader('X-API-KEY', 'epost-key-123456') && ! $r->hasHeader('Authorization'));
         Http::assertNotSent(fn (Request $r): bool => str_contains($r->url(), '/core/latest/token'));
+
+        // Nur Token eingetragen: gilt als eingerichtet (Benutzername/Passwort «required_unless»)
+        $this->assertTrue(app(PluginManager::class)->isConfigured('epost'));
+    }
+
+    public function test_epost_sends_pasted_access_token_as_bearer(): void
+    {
+        Http::fake(['api-test.klara-epost.tech/epost/deliveries/monitoring*' => Http::response([])]);
+        $jwt = 'eyJhbGciOiJSUzI1NiJ9.eyJzdWIiOiJ0ZXN0In0.c2lnbmF0dXJl';
+
+        $this->enable('epost', ['base_url' => 'https://api-test.klara-epost.tech', 'api_key' => 'Bearer '.$jwt]);
+        $this->signInAs('admin');
+
+        $this->postJson('/plugins/epost/test')->assertOk()->assertJson(['ok' => true]);
+        Http::assertSent(fn (Request $r): bool => $r->hasHeader('Authorization', 'Bearer '.$jwt) && ! $r->hasHeader('X-API-KEY'));
+
+        // Endpunkt im API-Tester
+        $this->postJson('/plugins/epost/api', ['endpoint' => 'monitoring', 'params' => ['limit' => '1']])->assertOk();
+        $this->assertFalse(app(PluginManager::class)->isConfigured('inventory360'));
     }
 
     public function test_ida_checks_health_without_token(): void
