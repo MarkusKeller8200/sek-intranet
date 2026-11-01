@@ -61,6 +61,9 @@ export type GuiComponent = {
 };
 
 /** Name zu einer Personen-ID (oder «–»). */
-export function nameOf(names: Record<string, string>, id: string | null | undefined): string {
+export function nameOf(
+    names: Record<string, string>,
+    id: string | null | undefined,
+): string {
     return id ? (names[id] ?? 'Unbekannt') : '–';
 }

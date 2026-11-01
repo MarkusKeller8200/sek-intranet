@@ -136,7 +136,13 @@ function VersionCard({
     );
 }
 
-function StatusActions({ componentKey, open }: { componentKey: string; open: GuiVersion }) {
+function StatusActions({
+    componentKey,
+    open,
+}: {
+    componentKey: string;
+    open: GuiVersion;
+}) {
     const [comment, setComment] = useState('');
     const [busy, setBusy] = useState(false);
 
@@ -215,7 +221,13 @@ function StatusActions({ componentKey, open }: { componentKey: string; open: Gui
     );
 }
 
-function NewVersion({ componentKey, record }: { componentKey: string; record: GuiRecord }) {
+function NewVersion({
+    componentKey,
+    record,
+}: {
+    componentKey: string;
+    record: GuiRecord;
+}) {
     const form = useForm<{ bump: string; changes: string; wishes: string[] }>({
         bump: 'minor',
         changes: '',
@@ -239,12 +251,17 @@ function NewVersion({ componentKey, record }: { componentKey: string; record: Gu
                     <span>Neue Version anlegen</span>
                 </CardTitle>
                 <CardDescription>
-                    Startet in «Entwicklung». Es kann immer nur eine Version offen sein.
+                    Startet in «Entwicklung». Es kann immer nur eine Version
+                    offen sein.
                 </CardDescription>
             </CardHeader>
             <CardContent>
                 <form onSubmit={submit} className="grid gap-4">
-                    <FormField id="gui-bump" label="Art der Änderung" className="max-w-sm">
+                    <FormField
+                        id="gui-bump"
+                        label="Art der Änderung"
+                        className="max-w-sm"
+                    >
                         <SelectField
                             id="gui-bump"
                             value={form.data.bump}
@@ -265,27 +282,44 @@ function NewVersion({ componentKey, record }: { componentKey: string; record: Gu
                             id="gui-changes"
                             rows={3}
                             value={form.data.changes}
-                            onChange={(e) => form.setData('changes', e.target.value)}
+                            onChange={(e) =>
+                                form.setData('changes', e.target.value)
+                            }
                         />
                     </FormField>
                     {openWishes.length > 0 && (
                         <div className="grid gap-2">
                             <Label>Wünsche übernehmen</Label>
                             {openWishes.map((w) => (
-                                <div key={w.id} className="flex items-start gap-2">
+                                <div
+                                    key={w.id}
+                                    className="flex items-start gap-2"
+                                >
                                     <Checkbox
                                         id={`wish-${w.id}`}
-                                        checked={form.data.wishes.includes(w.id)}
-                                        onCheckedChange={(c: boolean | 'indeterminate') =>
+                                        checked={form.data.wishes.includes(
+                                            w.id,
+                                        )}
+                                        onCheckedChange={(
+                                            c: boolean | 'indeterminate',
+                                        ) =>
                                             form.setData(
                                                 'wishes',
                                                 c === true
-                                                    ? [...form.data.wishes, w.id]
-                                                    : form.data.wishes.filter((id) => id !== w.id),
+                                                    ? [
+                                                          ...form.data.wishes,
+                                                          w.id,
+                                                      ]
+                                                    : form.data.wishes.filter(
+                                                          (id) => id !== w.id,
+                                                      ),
                                             )
                                         }
                                     />
-                                    <Label htmlFor={`wish-${w.id}`} className="font-normal">
+                                    <Label
+                                        htmlFor={`wish-${w.id}`}
+                                        className="font-normal"
+                                    >
                                         {w.text}
                                     </Label>
                                 </div>
@@ -303,7 +337,15 @@ function NewVersion({ componentKey, record }: { componentKey: string; record: Gu
     );
 }
 
-function Wishes({ componentKey, record, names }: { componentKey: string; record: GuiRecord; names: Record<string, string> }) {
+function Wishes({
+    componentKey,
+    record,
+    names,
+}: {
+    componentKey: string;
+    record: GuiRecord;
+    names: Record<string, string>;
+}) {
     const form = useForm({ text: '' });
 
     const submit = (e: FormEvent) => {
@@ -323,21 +365,32 @@ function Wishes({ componentKey, record, names }: { componentKey: string; record:
                         <span>Verbesserungswunsch erfassen</span>
                     </CardTitle>
                     <CardDescription>
-                        Wünsche sammeln sich hier und werden beim Anlegen der nächsten Version übernommen.
+                        Wünsche sammeln sich hier und werden beim Anlegen der
+                        nächsten Version übernommen.
                     </CardDescription>
                 </CardHeader>
                 <CardContent>
                     <form onSubmit={submit} className="grid gap-3">
-                        <FormField id="gui-wish" label="Wunsch *" error={form.errors.text}>
+                        <FormField
+                            id="gui-wish"
+                            label="Wunsch *"
+                            error={form.errors.text}
+                        >
                             <Textarea
                                 id="gui-wish"
                                 rows={2}
                                 value={form.data.text}
-                                onChange={(e) => form.setData('text', e.target.value)}
+                                onChange={(e) =>
+                                    form.setData('text', e.target.value)
+                                }
                             />
                         </FormField>
                         <div>
-                            <Button type="submit" variant="outline" disabled={form.processing}>
+                            <Button
+                                type="submit"
+                                variant="outline"
+                                disabled={form.processing}
+                            >
                                 <Lightbulb /> Wunsch erfassen
                             </Button>
                         </div>
@@ -345,11 +398,16 @@ function Wishes({ componentKey, record, names }: { componentKey: string; record:
                 </CardContent>
             </Card>
             {record.wishes.length === 0 ? (
-                <p className="text-sm text-muted-foreground">Noch keine Wünsche.</p>
+                <p className="text-sm text-muted-foreground">
+                    Noch keine Wünsche.
+                </p>
             ) : (
                 <ul className="grid gap-2">
                     {[...record.wishes].reverse().map((w) => (
-                        <li key={w.id} className="rounded-md border p-3 text-sm">
+                        <li
+                            key={w.id}
+                            className="rounded-md border p-3 text-sm"
+                        >
                             <div className="flex flex-wrap items-center gap-2">
                                 {w.version ? (
                                     <Badge variant="outline">{`in v${w.version}`}</Badge>
@@ -377,7 +435,11 @@ function Rework({
     names,
 }: Omit<Props, 'component'> & { componentKey: string }) {
     const toggle = (file: string, done: boolean) =>
-        router.post(`/gui-prototypen/${componentKey}/ueberarbeitung`, { file, done }, { preserveScroll: true });
+        router.post(
+            `/gui-prototypen/${componentKey}/ueberarbeitung`,
+            { file, done },
+            { preserveScroll: true },
+        );
 
     return (
         <div className="grid gap-4">
@@ -398,14 +460,23 @@ function Rework({
                     <CardContent>
                         <ul className="grid gap-2" data-testid="rework-list">
                             {record.rework.map((r) => (
-                                <li key={r.file} className="flex items-start gap-2 text-sm">
+                                <li
+                                    key={r.file}
+                                    className="flex items-start gap-2 text-sm"
+                                >
                                     <Checkbox
                                         id={`rw-${r.file}`}
                                         checked={r.done_at !== null}
-                                        onCheckedChange={(c: boolean | 'indeterminate') => toggle(r.file, c === true)}
+                                        onCheckedChange={(
+                                            c: boolean | 'indeterminate',
+                                        ) => toggle(r.file, c === true)}
                                     />
                                     <div className="grid gap-0.5">
-                                        <Label htmlFor={`rw-${r.file}`} className="font-mono text-xs font-normal" translate="no">
+                                        <Label
+                                            htmlFor={`rw-${r.file}`}
+                                            className="font-mono text-xs font-normal"
+                                            translate="no"
+                                        >
                                             {r.file}
                                         </Label>
                                         {r.done_at && (
@@ -424,14 +495,20 @@ function Rework({
                 <CardHeader>
                     <CardTitle>Verwendet heute in</CardTitle>
                     <CardDescription>
-                        Seiten, die den Baustein derzeit importieren (automatisch gesucht).
+                        Seiten, die den Baustein derzeit importieren
+                        (automatisch gesucht).
                     </CardDescription>
                 </CardHeader>
                 <CardContent>
                     {usages.length === 0 ? (
-                        <p className="text-sm text-muted-foreground">Keine Seiten gefunden.</p>
+                        <p className="text-sm text-muted-foreground">
+                            Keine Seiten gefunden.
+                        </p>
                     ) : (
-                        <ul className="grid gap-1 font-mono text-xs" translate="no">
+                        <ul
+                            className="grid gap-1 font-mono text-xs"
+                            translate="no"
+                        >
                             {usages.map((u) => (
                                 <li key={u}>{u}</li>
                             ))}
@@ -454,22 +531,33 @@ export default function GuiPrototypeShow(props: Props) {
         <>
             <Head title={component.title} />
             <div className="flex max-w-6xl flex-1 flex-col gap-6 p-4 md:p-6">
-                <PageHeader title={component.title} description={component.description} />
+                <PageHeader
+                    title={component.title}
+                    description={component.description}
+                />
 
                 <div className="flex flex-wrap items-center gap-3 text-sm">
                     <Icon className="size-5 text-muted-foreground" />
                     {summary.released ? (
-                        <span className="flex items-center gap-2" data-testid="binding">
+                        <span
+                            className="flex items-center gap-2"
+                            data-testid="binding"
+                        >
                             <CheckCircle2 className="size-4 text-success" />
                             <span>{`Verbindlich: v${summary.released.version} (${formatDateTime(summary.released.released_at ?? null)})`}</span>
                         </span>
                     ) : (
-                        <span className="text-muted-foreground">Noch keine freigegebene Version</span>
+                        <span className="text-muted-foreground">
+                            Noch keine freigegebene Version
+                        </span>
                     )}
                     {summary.open && (
                         <span className="flex items-center gap-2">
                             <span>{`In Arbeit: v${summary.open.version}`}</span>
-                            <OptionBadge list="guiStatuses" value={summary.open.status} />
+                            <OptionBadge
+                                list="guiStatuses"
+                                value={summary.open.status}
+                            />
                         </span>
                     )}
                     {summary.rework_open > 0 && (
@@ -502,30 +590,46 @@ export default function GuiPrototypeShow(props: Props) {
                     </ToggleGroupItem>
                 </ToggleGroup>
 
-                {section === 'beispiele' && <GuiDemo componentKey={component.key} />}
+                {section === 'beispiele' && (
+                    <GuiDemo componentKey={component.key} />
+                )}
 
                 {section === 'versionen' && (
                     <div className="grid gap-4">
                         {summary.open ? (
-                            <StatusActions componentKey={component.key} open={summary.open} />
+                            <StatusActions
+                                componentKey={component.key}
+                                open={summary.open}
+                            />
                         ) : (
-                            <NewVersion componentKey={component.key} record={record} />
+                            <NewVersion
+                                componentKey={component.key}
+                                record={record}
+                            />
                         )}
                         {versions.map((v) => (
                             <VersionCard
                                 key={v.version}
                                 version={v}
-                                current={summary.released?.version === v.version}
+                                current={
+                                    summary.released?.version === v.version
+                                }
                                 names={names}
                             />
                         ))}
                     </div>
                 )}
 
-                {section === 'ueberarbeitung' && <Rework {...props} componentKey={component.key} />}
+                {section === 'ueberarbeitung' && (
+                    <Rework {...props} componentKey={component.key} />
+                )}
 
                 {section === 'wuensche' && (
-                    <Wishes componentKey={component.key} record={record} names={names} />
+                    <Wishes
+                        componentKey={component.key}
+                        record={record}
+                        names={names}
+                    />
                 )}
             </div>
         </>
@@ -535,6 +639,9 @@ export default function GuiPrototypeShow(props: Props) {
 GuiPrototypeShow.layout = (props: Props) => ({
     breadcrumbs: [
         { title: 'GUI-Prototypen', href: '/gui-prototypen' },
-        { title: props.component.title, href: `/gui-prototypen/${props.component.key}` },
+        {
+            title: props.component.title,
+            href: `/gui-prototypen/${props.component.key}`,
+        },
     ],
 });

@@ -268,7 +268,9 @@ function TableDemo() {
                 mitarbeitende: 'Mitarbeiter:in',
                 extern: 'Externe Fachperson',
             },
-            render: (p) => <OptionBadge list="personTypes" value={p.person_type} />,
+            render: (p) => (
+                <OptionBadge list="personTypes" value={p.person_type} />
+            ),
         },
         {
             id: 'school',
@@ -424,7 +426,10 @@ function DropdownDemo() {
             >
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                        <Button variant="outline" className="w-64 justify-between">
+                        <Button
+                            variant="outline"
+                            className="w-64 justify-between"
+                        >
                             <span>
                                 {many.length === 0
                                     ? 'Klassen wählen'
@@ -495,7 +500,10 @@ function ButtonDemo() {
                     <span className="sr-only">Bearbeiten</span>
                 </Button>
             </Demo>
-            <Demo title="Zustände" hint="Lädt: gesperrt mit Spinner; gesperrt: nicht klickbar.">
+            <Demo
+                title="Zustände"
+                hint="Lädt: gesperrt mit Spinner; gesperrt: nicht klickbar."
+            >
                 <Button
                     disabled={loading}
                     onClick={() => {
@@ -518,7 +526,11 @@ function FormDemo() {
     return (
         <>
             <Demo title="Textfelder" className="grid md:grid-cols-2">
-                <FormField id="gui-f-name" label="Name *" hint="Wie im Ausweis.">
+                <FormField
+                    id="gui-f-name"
+                    label="Name *"
+                    hint="Wie im Ausweis."
+                >
                     <Input id="gui-f-name" defaultValue="Muster Anna" />
                 </FormField>
                 <FormField
@@ -537,7 +549,11 @@ function FormDemo() {
                     <Input id="gui-f-number" type="number" defaultValue={24} />
                 </FormField>
                 <FormField id="gui-f-date" label="Datum">
-                    <Input id="gui-f-date" type="date" defaultValue="2026-11-01" />
+                    <Input
+                        id="gui-f-date"
+                        type="date"
+                        defaultValue="2026-11-01"
+                    />
                 </FormField>
                 <FormField
                     id="gui-f-text"
@@ -547,7 +563,11 @@ function FormDemo() {
                     <Textarea id="gui-f-text" rows={3} placeholder="Optional" />
                 </FormField>
                 <FormField id="gui-f-off" label="Gesperrt">
-                    <Input id="gui-f-off" disabled defaultValue="nicht änderbar" />
+                    <Input
+                        id="gui-f-off"
+                        disabled
+                        defaultValue="nicht änderbar"
+                    />
                 </FormField>
             </Demo>
             <Demo title="Kontrollkästchen">
@@ -560,7 +580,9 @@ function FormDemo() {
                         }
                     />
                     <div className="grid gap-0.5">
-                        <Label htmlFor="gui-f-check">Im Telefonbuch anzeigen</Label>
+                        <Label htmlFor="gui-f-check">
+                            Im Telefonbuch anzeigen
+                        </Label>
                         <p className="text-xs text-muted-foreground">
                             Nur Schul-Telefon, nie private Nummern.
                         </p>
@@ -694,7 +716,9 @@ function CardDemo() {
                 <Card>
                     <CardHeader>
                         <CardTitle>Karte</CardTitle>
-                        <CardDescription>Mit Kopf, Inhalt und Fuss.</CardDescription>
+                        <CardDescription>
+                            Mit Kopf, Inhalt und Fuss.
+                        </CardDescription>
                     </CardHeader>
                     <CardContent className="text-sm">
                         Inhalt der Karte.
@@ -711,7 +735,9 @@ function CardDemo() {
                             <Users className="size-4" />
                             <span>Personen</span>
                         </CardDescription>
-                        <CardTitle className="text-3xl tabular-nums">142</CardTitle>
+                        <CardTitle className="text-3xl tabular-nums">
+                            142
+                        </CardTitle>
                     </CardHeader>
                 </Card>
                 <Card>

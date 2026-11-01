@@ -17,11 +17,11 @@ Symbol, Beschreibung, `imports`) und Beispiele in `resources/js/components/gui-d
 
 ## Status und Versionen
 
-| Status        | Bedeutung                                                    | Datum           |
-| ------------- | ------------------------------------------------------------ | --------------- |
-| Entwicklung   | Baustein wird gebaut bzw. geändert                           | `created_at`    |
-| Prüfung       | Beispiele, Barrierefreiheit, Farbkonzept werden kontrolliert | `review_at`     |
-| Freigegeben   | verbindliches Template                                       | `released_at`   |
+| Status      | Bedeutung                                                    | Datum         |
+| ----------- | ------------------------------------------------------------ | ------------- |
+| Entwicklung | Baustein wird gebaut bzw. geändert                           | `created_at`  |
+| Prüfung     | Beispiele, Barrierefreiheit, Farbkonzept werden kontrolliert | `review_at`   |
+| Freigegeben | verbindliches Template                                       | `released_at` |
 
 - Versionsnummer SemVer je Baustein: Korrektur (x.x.+1), Erweiterung (x.+1.0), grundlegend neu (+1.0.0).
 - Es ist immer höchstens **eine Version offen**. Prüfung kann mit Bemerkung an die Entwicklung zurückgehen.

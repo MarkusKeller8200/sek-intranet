@@ -42,21 +42,28 @@ export default function GuiPrototypesIndex({ items }: { items: Item[] }) {
                     <AlertTitle>Ablauf</AlertTitle>
                     <AlertDescription>
                         <span>
-                            Entwicklung → Prüfung → Freigegeben. Mit der Freigabe
-                            einer neuen Version werden alle Seiten, die den
-                            Baustein verwenden, zur Überarbeitung vorgemerkt.
-                            Verbesserungswünsche werden beim Baustein erfasst und
-                            fliessen in die nächste Version ein.
+                            Entwicklung → Prüfung → Freigegeben. Mit der
+                            Freigabe einer neuen Version werden alle Seiten, die
+                            den Baustein verwenden, zur Überarbeitung
+                            vorgemerkt. Verbesserungswünsche werden beim
+                            Baustein erfasst und fliessen in die nächste Version
+                            ein.
                         </span>
                     </AlertDescription>
                 </Alert>
 
                 {openRework > 0 && (
                     <p className="text-sm" data-testid="rework-total">
-                        <Badge variant="secondary" className="mr-2 tabular-nums">
+                        <Badge
+                            variant="secondary"
+                            className="mr-2 tabular-nums"
+                        >
                             {openRework}
                         </Badge>
-                        <span>Seiten müssen an freigegebene Versionen angepasst werden.</span>
+                        <span>
+                            Seiten müssen an freigegebene Versionen angepasst
+                            werden.
+                        </span>
                     </p>
                 )}
 
@@ -114,7 +121,9 @@ export default function GuiPrototypesIndex({ items }: { items: Item[] }) {
                                                         </span>
                                                         <OptionBadge
                                                             list="guiStatuses"
-                                                            value={item.open.status}
+                                                            value={
+                                                                item.open.status
+                                                            }
                                                         />
                                                     </span>
                                                 ) : (
@@ -138,7 +147,9 @@ export default function GuiPrototypesIndex({ items }: { items: Item[] }) {
                                                     title="Öffnen"
                                                 >
                                                     <ArrowRight className="size-4" />
-                                                    <span className="sr-only">Öffnen</span>
+                                                    <span className="sr-only">
+                                                        Öffnen
+                                                    </span>
                                                 </Link>
                                             </TableCell>
                                         </TableRow>
