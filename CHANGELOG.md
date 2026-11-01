@@ -9,6 +9,8 @@ laufend unter **Unveröffentlicht**. Ab 0.32.0 entsteht eine Version nur bei ein
 
 ## [Unveröffentlicht]
 
+## [0.32.0] – 2026-11-01
+
 ### Neu
 
 - **GitHub-Ablauf aus TagStudio (#2):** Issue-Vorlagen Fehler, Verbesserung, Neue Funktion, Plugin-Idee und
