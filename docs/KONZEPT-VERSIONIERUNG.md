@@ -40,10 +40,10 @@ leer = Knöpfe ausblenden.
 ## 2. Versionen
 
 - **SemVer** MAJOR.MINOR.PATCH, Nummer nur in `VERSION`. Solange 0.x: Prototyp.
-  - PATCH: nur Fehlerbehebungen (0.32.0 → 0.32.1)
-  - MINOR: neue Funktionen (0.32.1 → 0.33.0)
-  - MAJOR: Produktivbetrieb bzw. Umbrüche (1.0.0 = erster Betrieb mit echten Daten auf Infomaniak)
-  - Vorabversion: 0.33.0-beta.1
+    - PATCH: nur Fehlerbehebungen (0.32.0 → 0.32.1)
+    - MINOR: neue Funktionen (0.32.1 → 0.33.0)
+    - MAJOR: Produktivbetrieb bzw. Umbrüche (1.0.0 = erster Betrieb mit echten Daten auf Infomaniak)
+    - Vorabversion: 0.33.0-beta.1
 - Änderungen kommen **laufend** in `CHANGELOG.md` unter «Unveröffentlicht» (Neu / Geändert / Behoben).
 - **`VERSION` ändert sich nur beim freigegebenen Release.** Bis Version 0.31.0 wurde bei jeder Änderung erhöht;
   ab 0.32.0 gilt der neue Ablauf.
@@ -65,11 +65,11 @@ Aktualisierungsmeldung im Browser zeigt bei einem Developer Release die unveröf
    ankündigen, was hineinkommt.
 2. Nach der Bestätigung:
 
-   ```bash
-   php tools/release.php --check            # Version, CHANGELOG, Plugin-Versionen
-   php tools/release.php 0.32.0 --commit    # VERSION + CHANGELOG «[0.32.0] – Datum», Commit «Version 0.32.0»
-   git push
-   ```
+    ```bash
+    php tools/release.php --check            # Version, CHANGELOG, Plugin-Versionen
+    php tools/release.php 0.32.0 --commit    # VERSION + CHANGELOG «[0.32.0] – Datum», Commit «Version 0.32.0»
+    git push
+    ```
 
 3. Der Workflow **deploy** prüft und rollt aus. Danach legt der Workflow **release** Tag `v0.32.0` auf genau diesen
    Commit und das GitHub-Release «Intranet 0.32.0» mit dem Text aus dem CHANGELOG an (Vorabversion =

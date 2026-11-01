@@ -536,7 +536,8 @@ function Wishes({
                                         rel="noopener noreferrer"
                                         title="Öffnet das GitHub-Formular vorausgefüllt (ohne Namen) – abschicken von Hand"
                                     >
-                                        <ExternalLink /> Als GitHub-Issue vorbereiten
+                                        <ExternalLink /> Als GitHub-Issue
+                                        vorbereiten
                                     </a>
                                 </Button>
                             )}
