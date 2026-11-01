@@ -56,10 +56,31 @@ ein anderes Publikum und einen anderen Schutzbedarf als das Intranet.
   - Benötigte Sprachen
   - Ob das Projekt auch Erlasse anderer Stellen (Gemeinde, Kanton) verlinkt
 
-## Nächste Schritte (Issues)
+## Planung (Issues und Meilensteine)
 
-1. Modulgerüst im Intranet: Erkennung von `modules/*/module.json`, Menü, Rechte, Seiten, Schema, Tests,
-   Architekturprüfung.
-2. Pilotmodul (z. B. Zeiterfassung) mit eigenem Schema, als Muster für alle weiteren.
-3. Bestehende Bereiche schrittweise in Module verschieben.
-4. Rechtssammlung: Projekt anlegen (Repository, Grundgerüst, API), danach Plugin im Intranet.
+**Meilenstein «0.33.0 – Modulgerüst & Pilot Zeiterfassung»**
+
+- #7 Modulgerüst mit den Teilen:
+  - #10 Manifest und Laden der Module
+  - #11 Seiten und Übersetzungen
+  - #12 Datenhaltung pro Modul
+  - #13 Architekturprüfung
+  - #14 Generator und Doku
+- #8 Pilotmodul Zeiterfassung (Umfang und Felder vorher abstimmen)
+
+**Meilenstein «Rechtssammlung – Projektstart»**
+
+- #9 Rechtssammlung als eigenes Projekt mit den Teilen:
+  - #16 Offene Fragen klären
+  - #17 Repository und Grundgerüst
+  - #18 Website und Redaktion
+  - #19 Öffentliche API
+  - #20 Plugin und Menüpunkt im Intranet
+- #18 und #19 werden im neuen Repository umgesetzt und dort weitergeführt.
+
+**Später (Sammlung Verbesserungen)**
+
+- #15 Bestehende Bereiche schrittweise in Module verschieben
+
+Alle Issues tragen `triage`. Umgesetzt wird erst nach Freigabe mit `_1 bereit`; das neue Repository wird erst nach
+ausdrücklicher Bestätigung angelegt.
