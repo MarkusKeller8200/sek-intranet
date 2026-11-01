@@ -97,7 +97,8 @@ function TypographyDemo() {
                     <Lead>Neuigkeiten für Lehrpersonen und Mitarbeitende.</Lead>
                     <H2>Sporttag 2027</H2>
                     <Text>
-                        Der Sporttag findet am Donnerstag statt. Bei schlechtem Wetter gilt das Ersatzdatum.
+                        Der Sporttag findet am Donnerstag statt. Bei schlechtem
+                        Wetter gilt das Ersatzdatum.
                     </Text>
                     <H3>Ablauf</H3>
                     <List ordered>
@@ -158,31 +159,49 @@ function InputGroupDemo() {
                         placeholder="Name, E-Mail …"
                     />
                     {query && (
-                        <InputGroupButton onClick={() => setQuery('')} title="Leeren">
+                        <InputGroupButton
+                            onClick={() => setQuery('')}
+                            title="Leeren"
+                        >
                             <X />
                             <span className="sr-only">Leeren</span>
                         </InputGroupButton>
                     )}
                 </InputGroup>
             </FormField>
-            <FormField id="gui-ig-mail" label="E-Mail" hint="Nur der Teil vor dem @.">
+            <FormField
+                id="gui-ig-mail"
+                label="E-Mail"
+                hint="Nur der Teil vor dem @."
+            >
                 <InputGroup>
                     <InputGroupAddon>
                         <AtSign />
                     </InputGroupAddon>
-                    <InputGroupInput id="gui-ig-mail" defaultValue="anna.muster" />
+                    <InputGroupInput
+                        id="gui-ig-mail"
+                        defaultValue="anna.muster"
+                    />
                     <InputGroupAddon>@sekbuelach.ch</InputGroupAddon>
                 </InputGroup>
             </FormField>
             <FormField id="gui-ig-chf" label="Betrag">
                 <InputGroup>
                     <InputGroupAddon>CHF</InputGroupAddon>
-                    <InputGroupInput id="gui-ig-chf" inputMode="decimal" defaultValue="49.90" />
+                    <InputGroupInput
+                        id="gui-ig-chf"
+                        inputMode="decimal"
+                        defaultValue="49.90"
+                    />
                 </InputGroup>
             </FormField>
             <FormField id="gui-ig-link" label="Link zum Teilen">
                 <InputGroup>
-                    <InputGroupInput id="gui-ig-link" readOnly value="https://intranet.sekbuelach.ch/termine" />
+                    <InputGroupInput
+                        id="gui-ig-link"
+                        readOnly
+                        value="https://intranet.sekbuelach.ch/termine"
+                    />
                     <InputGroupButton
                         onClick={() => {
                             setCopied(true);
@@ -202,7 +221,10 @@ function ButtonGroupDemo() {
 
     return (
         <>
-            <Demo title="Export" hint="Zusammengehörende Aktionen ohne Abstand.">
+            <Demo
+                title="Export"
+                hint="Zusammengehörende Aktionen ohne Abstand."
+            >
                 <ButtonGroup label="Exportieren">
                     <Button variant="outline">
                         <Download /> CSV
@@ -212,7 +234,11 @@ function ButtonGroupDemo() {
                     </Button>
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                            <Button variant="outline" size="icon" title="Weitere">
+                            <Button
+                                variant="outline"
+                                size="icon"
+                                title="Weitere"
+                            >
                                 <MoreHorizontal />
                                 <span className="sr-only">Weitere</span>
                             </Button>
@@ -224,12 +250,23 @@ function ButtonGroupDemo() {
                     </DropdownMenu>
                 </ButtonGroup>
             </Demo>
-            <Demo title="Ansicht und Format" hint="Auswahl mit aria-pressed; Toggle für Format.">
+            <Demo
+                title="Ansicht und Format"
+                hint="Auswahl mit aria-pressed; Toggle für Format."
+            >
                 <ButtonGroup label="Ansicht">
-                    <Button variant={view === 'liste' ? 'secondary' : 'outline'} aria-pressed={view === 'liste'} onClick={() => setView('liste')}>
+                    <Button
+                        variant={view === 'liste' ? 'secondary' : 'outline'}
+                        aria-pressed={view === 'liste'}
+                        onClick={() => setView('liste')}
+                    >
                         <ListIcon /> Liste
                     </Button>
-                    <Button variant={view === 'kacheln' ? 'secondary' : 'outline'} aria-pressed={view === 'kacheln'} onClick={() => setView('kacheln')}>
+                    <Button
+                        variant={view === 'kacheln' ? 'secondary' : 'outline'}
+                        aria-pressed={view === 'kacheln'}
+                        onClick={() => setView('kacheln')}
+                    >
                         <LayoutGrid /> Kacheln
                     </Button>
                 </ButtonGroup>
@@ -266,7 +303,11 @@ function ItemDemo() {
                         description="anna.muster@example.test · Schulhaus Hinterbirch"
                         meta="seit 2019"
                         actions={
-                            <Button size="icon" variant="ghost" title="Bearbeiten">
+                            <Button
+                                size="icon"
+                                variant="ghost"
+                                title="Bearbeiten"
+                            >
                                 <Pencil />
                                 <span className="sr-only">Bearbeiten</span>
                             </Button>
@@ -279,7 +320,11 @@ function ItemDemo() {
                         description="Dokumente & Links · 240 kB"
                         meta="12.10.2026"
                         actions={
-                            <Button size="icon" variant="ghost" title="Herunterladen">
+                            <Button
+                                size="icon"
+                                variant="ghost"
+                                title="Herunterladen"
+                            >
                                 <Download />
                                 <span className="sr-only">Herunterladen</span>
                             </Button>
@@ -295,12 +340,23 @@ function ItemDemo() {
                             </>
                         }
                         description="Geräteverwaltung – nicht eingerichtet"
-                        actions={<Switch checked={false} onCheckedChange={() => undefined} aria-label="Jamf Pro einschalten" />}
+                        actions={
+                            <Switch
+                                checked={false}
+                                onCheckedChange={() => undefined}
+                                aria-label="Jamf Pro einschalten"
+                            />
+                        }
                     />
                 </ItemList>
             </Demo>
             <Demo title="Einzeln, gedämpft" className="block">
-                <Item variant="muted" media={<Mail />} title="3 neue Mitteilungen" description="Seit deinem letzten Besuch." />
+                <Item
+                    variant="muted"
+                    media={<Mail />}
+                    title="3 neue Mitteilungen"
+                    description="Seit deinem letzten Besuch."
+                />
             </Demo>
         </>
     );
@@ -310,13 +366,43 @@ function QuestionnaireDemo() {
     const [key, setKey] = useState(0);
 
     return (
-        <Demo title="Umfrage" hint="Erfundene Fragen; nichts wird gespeichert." className="block max-w-xl">
+        <Demo
+            title="Umfrage"
+            hint="Erfundene Fragen; nichts wird gespeichert."
+            className="block max-w-xl"
+        >
             <Questionnaire
                 key={key}
                 questions={[
-                    { id: 'q1', type: 'single', title: 'Wie zufrieden bist du mit den iPads?', options: ['Sehr zufrieden', 'Zufrieden', 'Eher unzufrieden', 'Unzufrieden'], required: true },
-                    { id: 'q2', type: 'multiple', title: 'Welche Apps brauchst du im Unterricht?', hint: 'Mehrere möglich.', options: ['Keynote', 'Pages', 'OneNote', 'Lernapp LMVZ'] },
-                    { id: 'q3', type: 'text', title: 'Was sollen wir verbessern?' },
+                    {
+                        id: 'q1',
+                        type: 'single',
+                        title: 'Wie zufrieden bist du mit den iPads?',
+                        options: [
+                            'Sehr zufrieden',
+                            'Zufrieden',
+                            'Eher unzufrieden',
+                            'Unzufrieden',
+                        ],
+                        required: true,
+                    },
+                    {
+                        id: 'q2',
+                        type: 'multiple',
+                        title: 'Welche Apps brauchst du im Unterricht?',
+                        hint: 'Mehrere möglich.',
+                        options: [
+                            'Keynote',
+                            'Pages',
+                            'OneNote',
+                            'Lernapp LMVZ',
+                        ],
+                    },
+                    {
+                        id: 'q3',
+                        type: 'text',
+                        title: 'Was sollen wir verbessern?',
+                    },
                 ]}
                 onSubmit={() => {
                     toast.success('Beispiel: Antworten gesendet.');
@@ -332,7 +418,10 @@ function AlertDialogDemo() {
     const [open2, setOpen2] = useState(false);
 
     return (
-        <Demo title="Rückfrage" hint="Schliesst nicht mit Klick daneben; Fokus zuerst auf «Abbrechen».">
+        <Demo
+            title="Rückfrage"
+            hint="Schliesst nicht mit Klick daneben; Fokus zuerst auf «Abbrechen»."
+        >
             <Button variant="destructive" onClick={() => setOpen(true)}>
                 <Trash2 /> Person löschen …
             </Button>
@@ -362,10 +451,28 @@ function AlertDialogDemo() {
 
 function ContextMenuDemo() {
     const actions = [
-        { label: 'Öffnen', icon: <FileText />, onSelect: () => toast.success('Beispiel: öffnen') },
-        { label: 'Umbenennen', icon: <Pencil />, onSelect: () => toast.success('Beispiel: umbenennen') },
-        { label: 'Herunterladen', icon: <Download />, onSelect: () => toast.success('Beispiel: herunterladen') },
-        { label: 'Löschen', icon: <Trash2 />, destructive: true, separator: true, onSelect: () => toast.success('Beispiel: löschen') },
+        {
+            label: 'Öffnen',
+            icon: <FileText />,
+            onSelect: () => toast.success('Beispiel: öffnen'),
+        },
+        {
+            label: 'Umbenennen',
+            icon: <Pencil />,
+            onSelect: () => toast.success('Beispiel: umbenennen'),
+        },
+        {
+            label: 'Herunterladen',
+            icon: <Download />,
+            onSelect: () => toast.success('Beispiel: herunterladen'),
+        },
+        {
+            label: 'Löschen',
+            icon: <Trash2 />,
+            destructive: true,
+            separator: true,
+            onSelect: () => toast.success('Beispiel: löschen'),
+        },
     ];
 
     return (
@@ -382,14 +489,26 @@ function ContextMenuDemo() {
                     </span>
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                            <Button size="icon" variant="ghost" title="Aktionen">
+                            <Button
+                                size="icon"
+                                variant="ghost"
+                                title="Aktionen"
+                            >
                                 <MoreHorizontal />
                                 <span className="sr-only">Aktionen</span>
                             </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
                             {actions.map((a) => (
-                                <DropdownMenuItem key={a.label} onSelect={a.onSelect} variant={a.destructive ? 'destructive' : 'default'}>
+                                <DropdownMenuItem
+                                    key={a.label}
+                                    onSelect={a.onSelect}
+                                    variant={
+                                        a.destructive
+                                            ? 'destructive'
+                                            : 'default'
+                                    }
+                                >
                                     {a.icon} {a.label}
                                 </DropdownMenuItem>
                             ))}
@@ -403,24 +522,38 @@ function ContextMenuDemo() {
 
 function HoverCardDemo() {
     return (
-        <Demo title="Vorschaukarte" hint="Mit Maus überfahren oder mit Tab fokussieren.">
+        <Demo
+            title="Vorschaukarte"
+            hint="Mit Maus überfahren oder mit Tab fokussieren."
+        >
             <p className="text-sm">
                 <span>Klassenlehrperson: </span>
                 <HoverCard
                     trigger={
-                        <a href="#person" className="text-primary underline" translate="no">
+                        <a
+                            href="#person"
+                            className="text-primary underline"
+                            translate="no"
+                        >
                             Muster Anna
                         </a>
                     }
                 >
                     <div className="flex gap-3">
-                        <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-muted text-sm font-medium">AM</span>
+                        <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-muted text-sm font-medium">
+                            AM
+                        </span>
                         <div className="grid gap-0.5">
                             <span className="font-medium" translate="no">
                                 Muster Anna
                             </span>
-                            <span className="text-xs text-muted-foreground">Lehrperson · M_A1a</span>
-                            <span className="text-xs text-muted-foreground" translate="no">
+                            <span className="text-xs text-muted-foreground">
+                                Lehrperson · M_A1a
+                            </span>
+                            <span
+                                className="text-xs text-muted-foreground"
+                                translate="no"
+                            >
                                 anna.muster@example.test
                             </span>
                         </div>
@@ -435,7 +568,11 @@ function ScrollAreaDemo() {
     const rows = Array.from({ length: 30 }, (_, i) => `Mitteilung ${i + 1}`);
 
     return (
-        <Demo title="Scrollbereich" hint="Mit Tab hineinspringen, dann Pfeiltasten." className="grid gap-4 md:grid-cols-2">
+        <Demo
+            title="Scrollbereich"
+            hint="Mit Tab hineinspringen, dann Pfeiltasten."
+            className="grid gap-4 md:grid-cols-2"
+        >
             <ScrollArea label="Mitteilungen" className="h-48">
                 <ul className="divide-y text-sm">
                     {rows.map((r) => (
@@ -447,8 +584,24 @@ function ScrollAreaDemo() {
             </ScrollArea>
             <ScrollArea label="Klassen" orientation="horizontal">
                 <div className="flex w-max gap-2 p-3">
-                    {['M_A1a', 'M_A1b', 'M_B1a', 'M_B1b', 'H_A1a', 'H_A2a', 'H_B2a', 'M_C3a', 'M_C3b', 'H_C3a'].map((c) => (
-                        <Badge key={c} variant="outline" className="px-3 py-1" translate="no">
+                    {[
+                        'M_A1a',
+                        'M_A1b',
+                        'M_B1a',
+                        'M_B1b',
+                        'H_A1a',
+                        'H_A2a',
+                        'H_B2a',
+                        'M_C3a',
+                        'M_C3b',
+                        'H_C3a',
+                    ].map((c) => (
+                        <Badge
+                            key={c}
+                            variant="outline"
+                            className="px-3 py-1"
+                            translate="no"
+                        >
                             {c}
                         </Badge>
                     ))}
@@ -469,8 +622,19 @@ function CodeBlockDemo() {
                 />
             </Demo>
             <Demo title="Konsolenausgabe und Vergleich" className="grid gap-3">
-                <CodeBlock language="Konsole" code={'$ php artisan intranet:upgrade\nUpgrade fertig (0 Änderungen).'} />
-                <CodeBlock title="plugin.json" diff code={'  "version": "0.1",\n- "status": "planned",\n+ "status": "partial",\n  "api": 1'} />
+                <CodeBlock
+                    language="Konsole"
+                    code={
+                        '$ php artisan intranet:upgrade\nUpgrade fertig (0 Änderungen).'
+                    }
+                />
+                <CodeBlock
+                    title="plugin.json"
+                    diff
+                    code={
+                        '  "version": "0.1",\n- "status": "planned",\n+ "status": "partial",\n  "api": 1'
+                    }
+                />
             </Demo>
         </>
     );
@@ -478,15 +642,25 @@ function CodeBlockDemo() {
 
 function ResizableDemo() {
     return (
-        <Demo title="Geteilte Ansicht" hint="Trennlinie ziehen oder fokussieren und Pfeiltasten (Shift = grössere Schritte), Doppelklick = zurück." className="block">
+        <Demo
+            title="Geteilte Ansicht"
+            hint="Trennlinie ziehen oder fokussieren und Pfeiltasten (Shift = grössere Schritte), Doppelklick = zurück."
+            className="block"
+        >
             <ResizablePanels
                 first={
                     <ul className="divide-y text-sm">
-                        {['Muster Anna', 'Beispiel Ben', 'Probe Carla'].map((n) => (
-                            <li key={n} className="px-3 py-2" translate="no">
-                                {n}
-                            </li>
-                        ))}
+                        {['Muster Anna', 'Beispiel Ben', 'Probe Carla'].map(
+                            (n) => (
+                                <li
+                                    key={n}
+                                    className="px-3 py-2"
+                                    translate="no"
+                                >
+                                    {n}
+                                </li>
+                            ),
+                        )}
                     </ul>
                 }
                 second={
@@ -494,7 +668,9 @@ function ResizableDemo() {
                         <span className="font-medium" translate="no">
                             Muster Anna
                         </span>
-                        <span className="text-muted-foreground">Details zur gewählten Person.</span>
+                        <span className="text-muted-foreground">
+                            Details zur gewählten Person.
+                        </span>
                     </div>
                 }
             />
@@ -506,23 +682,34 @@ function ResizableDemo() {
 
 function MenuExtra() {
     return (
-        <Demo title="Navigationsmenü (oben)" hint="Für Bereiche mit wenigen Hauptpunkten, z. B. eine öffentliche Seite. Im Intranet gilt die Seitenleiste.">
+        <Demo
+            title="Navigationsmenü (oben)"
+            hint="Für Bereiche mit wenigen Hauptpunkten, z. B. eine öffentliche Seite. Im Intranet gilt die Seitenleiste."
+        >
             <NavigationMenu>
                 <NavigationMenuList>
                     <NavigationMenuItem>
                         <NavigationMenuTrigger>Schule</NavigationMenuTrigger>
                         <NavigationMenuContent>
                             <ul className="grid w-64 gap-1 p-2 text-sm">
-                                {['Schulhaus Hinterbirch', 'Schulhaus Mettmenriet', 'Schulverwaltung'].map((s) => (
+                                {[
+                                    'Schulhaus Hinterbirch',
+                                    'Schulhaus Mettmenriet',
+                                    'Schulverwaltung',
+                                ].map((s) => (
                                     <li key={s}>
-                                        <NavigationMenuLink href="#schule">{s}</NavigationMenuLink>
+                                        <NavigationMenuLink href="#schule">
+                                            {s}
+                                        </NavigationMenuLink>
                                     </li>
                                 ))}
                             </ul>
                         </NavigationMenuContent>
                     </NavigationMenuItem>
                     <NavigationMenuItem>
-                        <NavigationMenuLink href="#termine">Termine</NavigationMenuLink>
+                        <NavigationMenuLink href="#termine">
+                            Termine
+                        </NavigationMenuLink>
                     </NavigationMenuItem>
                 </NavigationMenuList>
             </NavigationMenu>
@@ -532,7 +719,10 @@ function MenuExtra() {
 
 function SheetExtra() {
     return (
-        <Demo title="Von unten (Drawer)" hint="Auf dem Handy für Aktionen und kurze Formulare.">
+        <Demo
+            title="Von unten (Drawer)"
+            hint="Auf dem Handy für Aktionen und kurze Formulare."
+        >
             <Sheet>
                 <SheetTrigger asChild>
                     <Button variant="outline">Aktionen</Button>
@@ -540,7 +730,9 @@ function SheetExtra() {
                 <SheetContent side="bottom">
                     <SheetHeader>
                         <SheetTitle>Aktionen</SheetTitle>
-                        <SheetDescription>Reglement Geräteausgabe.pdf</SheetDescription>
+                        <SheetDescription>
+                            Reglement Geräteausgabe.pdf
+                        </SheetDescription>
                     </SheetHeader>
                     <div className="grid gap-2 px-4 pb-4">
                         <Button variant="outline">
@@ -558,7 +750,11 @@ function SheetExtra() {
 
 function DropdownExtra() {
     return (
-        <Demo title="Einfaches Auswahlfeld (Browser)" hint="Für kurze Listen und Tabellenzellen; auf dem Handy öffnet sich die Auswahl des Geräts." className="grid max-w-sm">
+        <Demo
+            title="Einfaches Auswahlfeld (Browser)"
+            hint="Für kurze Listen und Tabellenzellen; auf dem Handy öffnet sich die Auswahl des Geräts."
+            className="grid max-w-sm"
+        >
             <FormField id="gui-native" label="Schulhaus">
                 <NativeSelect id="gui-native" defaultValue="hinterbirch">
                     <option value="hinterbirch">Schulhaus Hinterbirch</option>
@@ -574,21 +770,42 @@ function FormExtra() {
     const [notify, setNotify] = useState(true);
 
     return (
-        <Demo title="Feldgruppen" hint="Zusammengehörende Felder mit Überschrift; Einstellungen als Zeile." className="block">
+        <Demo
+            title="Feldgruppen"
+            hint="Zusammengehörende Felder mit Überschrift; Einstellungen als Zeile."
+            className="block"
+        >
             <div className="grid gap-4">
-                <FieldSet legend="Kontakt Schule" description="Wird im Telefonbuch angezeigt.">
+                <FieldSet
+                    legend="Kontakt Schule"
+                    description="Wird im Telefonbuch angezeigt."
+                >
                     <FieldGroup>
                         <FormField id="gui-fs-mail" label="E-Mail">
-                            <Input id="gui-fs-mail" defaultValue="anna.muster@example.test" />
+                            <Input
+                                id="gui-fs-mail"
+                                defaultValue="anna.muster@example.test"
+                            />
                         </FormField>
                         <FormField id="gui-fs-tel" label="Telefon">
-                            <Input id="gui-fs-tel" defaultValue="044 000 00 00" />
+                            <Input
+                                id="gui-fs-tel"
+                                defaultValue="044 000 00 00"
+                            />
                         </FormField>
                     </FieldGroup>
                 </FieldSet>
                 <FieldSet legend="Benachrichtigungen">
-                    <FieldRow htmlFor="gui-fs-notify" label="E-Mail bei neuen Mitteilungen" description="Höchstens eine pro Tag.">
-                        <Switch id="gui-fs-notify" checked={notify} onCheckedChange={setNotify} />
+                    <FieldRow
+                        htmlFor="gui-fs-notify"
+                        label="E-Mail bei neuen Mitteilungen"
+                        description="Höchstens eine pro Tag."
+                    >
+                        <Switch
+                            id="gui-fs-notify"
+                            checked={notify}
+                            onCheckedChange={setNotify}
+                        />
                     </FieldRow>
                 </FieldSet>
             </div>
@@ -596,7 +813,15 @@ function FormExtra() {
     );
 }
 
-type Upload = { id: string; name: string; size: number; type: string; preview?: string; state: AttachmentState; progress: number };
+type Upload = {
+    id: string;
+    name: string;
+    size: number;
+    type: string;
+    preview?: string;
+    state: AttachmentState;
+    progress: number;
+};
 
 function UploadExtra() {
     const [files, setFiles] = useState<File[]>([]);
@@ -609,7 +834,16 @@ function UploadExtra() {
         const t = window.setInterval(() => {
             setUploads((list) =>
                 list.map((u) =>
-                    u.state !== 'uploading' ? u : u.progress >= 100 ? { ...u, state: u.name.includes('fehler') ? 'error' : 'done' } : { ...u, progress: u.progress + 20 },
+                    u.state !== 'uploading'
+                        ? u
+                        : u.progress >= 100
+                          ? {
+                                ...u,
+                                state: u.name.includes('fehler')
+                                    ? 'error'
+                                    : 'done',
+                            }
+                          : { ...u, progress: u.progress + 20 },
                 ),
             );
         }, 300);
@@ -617,10 +851,18 @@ function UploadExtra() {
         return () => window.clearInterval(t);
     }, [uploads]);
 
-    useEffect(() => () => uploads.forEach((u) => u.preview && URL.revokeObjectURL(u.preview)), [uploads]);
+    useEffect(
+        () => () =>
+            uploads.forEach((u) => u.preview && URL.revokeObjectURL(u.preview)),
+        [uploads],
+    );
 
     return (
-        <Demo title="Anhänge mit Vorschau und Fortschritt" hint="Bilder zeigen ein Vorschaubild. Hochladen ist hier nur simuliert." className="grid gap-3">
+        <Demo
+            title="Anhänge mit Vorschau und Fortschritt"
+            hint="Bilder zeigen ein Vorschaubild. Hochladen ist hier nur simuliert."
+            className="grid gap-3"
+        >
             <FileDrop
                 accept="image/png,image/jpeg,.pdf"
                 multiple
@@ -635,7 +877,9 @@ function UploadExtra() {
                             name: f.name,
                             size: f.size,
                             type: f.type,
-                            preview: f.type.startsWith('image/') ? URL.createObjectURL(f) : undefined,
+                            preview: f.type.startsWith('image/')
+                                ? URL.createObjectURL(f)
+                                : undefined,
                             state: 'uploading' as const,
                             progress: 0,
                         })),
@@ -645,8 +889,22 @@ function UploadExtra() {
             />
             {[
                 ...uploads,
-                { id: 'b1', name: 'Klassenfoto_M_A1a.jpg', size: 2_400_000, type: 'image/jpeg', state: 'done' as const, progress: 100 },
-                { id: 'b2', name: 'Elternbrief_fehler.pdf', size: 180_000, type: 'application/pdf', state: 'error' as const, progress: 0 },
+                {
+                    id: 'b1',
+                    name: 'Klassenfoto_M_A1a.jpg',
+                    size: 2_400_000,
+                    type: 'image/jpeg',
+                    state: 'done' as const,
+                    progress: 100,
+                },
+                {
+                    id: 'b2',
+                    name: 'Elternbrief_fehler.pdf',
+                    size: 180_000,
+                    type: 'application/pdf',
+                    state: 'error' as const,
+                    progress: 0,
+                },
             ].map((u) => (
                 <Attachment
                     key={u.id}
@@ -656,8 +914,12 @@ function UploadExtra() {
                     preview={'preview' in u ? u.preview : undefined}
                     state={u.state}
                     progress={u.progress}
-                    onRemove={() => setUploads((list) => list.filter((x) => x.id !== u.id))}
-                    onRetry={() => toast.success('Beispiel: nochmals hochladen')}
+                    onRemove={() =>
+                        setUploads((list) => list.filter((x) => x.id !== u.id))
+                    }
+                    onRetry={() =>
+                        toast.success('Beispiel: nochmals hochladen')
+                    }
                 />
             ))}
         </Demo>

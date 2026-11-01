@@ -459,18 +459,18 @@ Code: `@/components/ui/spinner`, `@/components/ui/skeleton`
 
 Bausteine aus shadcn/ui, die wir bewusst noch nicht umsetzen.
 
-| Baustein | Wofür | Warum später |
-| --- | --- | --- |
-| Seitenverhältnis (Aspect Ratio) | Bilder und Videos in festem Format. | niedrige Priorität |
-| Karussell (Carousel) | Bilder zum Durchblättern, z. B. Pinnwand oder Startseite. | niedrige Priorität |
-| Menüleiste (Menubar) | Menüleiste wie in Programmen. | niedrige Priorität |
-| Einmal-Code (Input OTP) | Eingabe von Codes in Feldern pro Ziffer. | niedrige Priorität – Anmeldung über Entra ID |
-| Schreibrichtung (Direction) | Schrift von rechts nach links. | nicht nötig (Deutsch, Englisch) |
-| Chat-Blase (Bubble) | Nachricht in einer Unterhaltung mit Reaktionen. | Chat / KI – später |
-| Nachricht (Message) | Nachricht mit Avatar, Kopf und Fuss. | Chat / KI – später |
-| Nachrichtenverlauf (Message Scroller) | Scrollbereich für Unterhaltungen. | Chat / KI – später |
-| Markierung (Marker) | Status oder Trenner in einer Unterhaltung. | Chat / KI – später |
-| Ablauf (Trace) | Schritte eines KI-Assistenten: Überlegungen, Werkzeuge, Quellen. | Chat / KI – später |
+| Baustein                              | Wofür                                                            | Warum später                                 |
+| ------------------------------------- | ---------------------------------------------------------------- | -------------------------------------------- |
+| Seitenverhältnis (Aspect Ratio)       | Bilder und Videos in festem Format.                              | niedrige Priorität                           |
+| Karussell (Carousel)                  | Bilder zum Durchblättern, z. B. Pinnwand oder Startseite.        | niedrige Priorität                           |
+| Menüleiste (Menubar)                  | Menüleiste wie in Programmen.                                    | niedrige Priorität                           |
+| Einmal-Code (Input OTP)               | Eingabe von Codes in Feldern pro Ziffer.                         | niedrige Priorität – Anmeldung über Entra ID |
+| Schreibrichtung (Direction)           | Schrift von rechts nach links.                                   | nicht nötig (Deutsch, Englisch)              |
+| Chat-Blase (Bubble)                   | Nachricht in einer Unterhaltung mit Reaktionen.                  | Chat / KI – später                           |
+| Nachricht (Message)                   | Nachricht mit Avatar, Kopf und Fuss.                             | Chat / KI – später                           |
+| Nachrichtenverlauf (Message Scroller) | Scrollbereich für Unterhaltungen.                                | Chat / KI – später                           |
+| Markierung (Marker)                   | Status oder Trenner in einer Unterhaltung.                       | Chat / KI – später                           |
+| Ablauf (Trace)                        | Schritte eines KI-Assistenten: Überlegungen, Werkzeuge, Quellen. | Chat / KI – später                           |
 
 <a id="drag-und-drop"></a>
 
