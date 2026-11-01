@@ -98,7 +98,21 @@ Aktualisierungsmeldung im Browser zeigt bei einem Developer Release die unveröf
 ### Bestehende Versionen
 
 Die Tags `v0.11.0` bis `v0.31.0` kommen rückwirkend auf den jeweils ausgerollten Stand (letzter Commit vor der
-nächsten Version), mit Releases aus dem CHANGELOG. Die Liste steht in `.github/release-backfill.txt`; nachgetragen wird
-einmalig über Actions → **release** → Run workflow mit «nachtragen». Tags und Releases legt nur GitHub Actions an
-(mit dem Repository-Token), nicht ein Agent direkt. Bis es einen Versions-Tag gibt, legt der automatische Lauf nichts an. Die Versionen 0.1 bis 0.10 wurden erst mit 0.11.0
-nachträglich beschrieben und haben keinen eigenen Commit.
+nächsten Version). Die Liste steht in `.github/release-backfill.txt`. Der `GITHUB_TOKEN` darf keine Tags auf alte
+Commits setzen, weil diese andere Workflow-Dateien enthalten. Darum geht das Nachtragen in zwei Schritten:
+
+1. Tags einmal lokal setzen und pushen (eigene Anmeldung). In PowerShell:
+
+   ```powershell
+   git fetch origin
+   Get-Content .github/release-backfill.txt | Where-Object { $_ -and $_ -notmatch '^#' } |
+     ForEach-Object { $v, $s = $_ -split ' '; git tag "v$v" $s }
+   git push origin --tags
+   ```
+
+   In bash: `grep -v '^#' .github/release-backfill.txt | while read v s; do git tag "v$v" "$s"; done; git push origin --tags`
+
+2. Actions → **release** → Run workflow mit «nachtragen». Das legt die Releases mit dem Text aus dem CHANGELOG an.
+
+Die Versionen 0.1 bis 0.10 wurden erst mit 0.11.0 nachträglich beschrieben und haben keinen eigenen Commit. Bis es
+einen Versions-Tag gibt, legt der automatische Lauf nichts an.

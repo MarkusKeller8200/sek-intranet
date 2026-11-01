@@ -42,24 +42,32 @@ jobs:
           ref: ${{ github.event.workflow_run.head_sha || github.sha }}
 
       - name: Fehlende Releases nachtragen
+        # Tags auf alte Commits darf der GITHUB_TOKEN nicht anlegen (die alten Commits enthalten andere Workflow-Dateien
+        # → «Resource not accessible by integration»). Darum: Tags einmal lokal setzen und pushen (siehe
+        # docs/KONZEPT-VERSIONIERUNG.md), dieser Schritt legt danach nur die Releases zu den vorhandenen Tags an.
         if: ${{ inputs.nachtragen }}
         env:
           GH_TOKEN: ${{ github.token }}
           GH_REPO: ${{ github.repository }}
         run: |
           set -euo pipefail
+          last="$(grep -v '^#' .github/release-backfill.txt | grep -v '^$' | tail -n1 | cut -d' ' -f1)"
+          missing=0
           grep -v '^#' .github/release-backfill.txt | while read -r ver sha; do
             [ -n "$ver" ] || continue
-            if gh api "repos/$GH_REPO/git/ref/tags/v$ver" --silent 2>/dev/null; then
-              echo "v$ver gibt es schon"; continue
+            if gh release view "v$ver" >/dev/null 2>&1; then
+              echo "Release v$ver gibt es schon"; continue
+            fi
+            if ! gh api "repos/$GH_REPO/git/ref/tags/v$ver" --silent 2>/dev/null; then
+              echo "::warning title=Tag fehlt::v$ver – zuerst lokal setzen und pushen (docs/KONZEPT-VERSIONIERUNG.md)"; continue
             fi
             date="$(grep -m1 "^## \[$ver\]" CHANGELOG.md | sed 's/.*– //')"
             php tools/release.php --notes "$ver" > notes.md
             printf '\n\n---\n_Rückwirkend angelegt (Stand vom %s). Bis 0.31.0 wurde die Version bei jeder Änderung erhöht._\n' "$date" >> notes.md
             latest=false
-            [ "$ver" = "$(grep -v '^#' .github/release-backfill.txt | tail -n1 | cut -d' ' -f1)" ] && latest=true
-            gh release create "v$ver" --target "$sha" --title "Intranet $ver" --notes-file notes.md --latest="$latest"
-            echo "v$ver → ${sha::7}"
+            [ "$ver" = "$last" ] && latest=true
+            gh release create "v$ver" --verify-tag --title "Intranet $ver" --notes-file notes.md --latest="$latest"
+            echo "v$ver → Release angelegt"
           done
 
       - name: Tag und Release anlegen
