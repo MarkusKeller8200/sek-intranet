@@ -62,6 +62,10 @@ Projekt: SekBülach Intranet, Prototyp. Stack und Konventionen wie IDA.
 - Wird ein Schlüssel einer Auswahlliste umbenannt, Umstellung unter `renames` eintragen
   (`php artisan intranet:upgrade` stellt bestehende Daten beim Start um).
 
+- Module (`docs/KONZEPT-MODULE.md`): ein Intranet, ein Deployment. Neue Fachthemen als Modul (`modules/<Name>/`, sobald
+  das Gerüst steht) mit eigener Datenhaltung (eigenes Schema/DB-Benutzer), keine Zugriffe quer zwischen Modulen;
+  fremde Systeme nur als Plugin; eigenständige Projekte (z. B. Rechtssammlung) nur über API/Plugin oder `embed`.
+
 ## GitHub-Ablauf und Releases
 
 Übernommen aus TagStudio, Details in `docs/KONZEPT-VERSIONIERUNG.md`.

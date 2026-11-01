@@ -25,6 +25,8 @@ laufend unter **Unveröffentlicht**. Ab 0.32.0 entsteht eine Version nur bei ein
 - **Als GitHub-Issue vorbereiten (#5):** Bei offenen Wünschen zu GUI-Bausteinen und auf «Versionen» («Fehler
   melden», «Idee vorschlagen») öffnet die Administration das GitHub-Formular vorausgefüllt – ohne Namen,
   abgeschickt wird von Hand (`INTRANET_GITHUB_REPO`).
+- **Konzept Module (`docs/KONZEPT-MODULE.md`):** ein Intranet, ein Deployment; Module als Ordner mit eigener
+  Datenhaltung; Systematische Rechtssammlung als eigenes öffentliches Projekt mit API (#7–#9, noch nicht freigegeben).
 - **Meilensteine per Kommentar (#6):** `/milestone list|create|close|reopen` auf Issue #1 (`milestone-admin.yml`).
 
 ## [0.31.0] – 2026-11-01
