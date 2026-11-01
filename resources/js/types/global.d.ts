@@ -14,6 +14,11 @@ declare module '@inertiajs/core' {
                 build: string | null;
                 build_date: string | null;
                 prototype: boolean;
+                dev: {
+                    commits: number;
+                    base: string;
+                    planned: string;
+                } | null;
             };
             store: string;
             sidebarOpen: boolean;

@@ -1,0 +1,35 @@
+name: Meilenstein nach Art
+# Neue Meldungen ohne Meilenstein der passenden Sammlung zuordnen (übernommen aus TagStudio):
+#   fehler → „Fehler“, verbesserung → „Verbesserungen“, funktion → „Funktionen“ (Labels und Meilensteine auf Deutsch).
+# Nur Labels werden gelesen – kein Text aus dem Issue; bestehende Meilensteine (z. B. Release, CodeQL) bleiben.
+on:
+  issues:
+    types: [opened]          # nur beim Anlegen – nicht bei jedem Label-Wechsel (weniger Durchläufe)
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  assign:
+    if: ${{ github.event.issue.milestone == null }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - name: Meilenstein setzen
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+          NUMBER: ${{ github.event.issue.number }}
+        run: |
+          labels="$(jq -r '[.issue.labels[].name] | join(",")' "$GITHUB_EVENT_PATH")"
+          case ",$labels," in
+            *,fehler,*) ms="Fehler" ;;
+            *,verbesserung,*) ms="Verbesserungen" ;;
+            *,funktion,*) ms="Funktionen" ;;
+            *) echo "Keine passende Art ($labels)"; exit 0 ;;
+          esac
+          num="$(gh api "repos/$REPO/milestones?state=open&per_page=100" --jq ".[] | select(.title == \"$ms\") | .number" | head -n1)"
+          if [ -z "$num" ]; then echo "::warning::Meilenstein $ms nicht gefunden"; exit 0; fi
+          gh api -X PATCH "repos/$REPO/issues/$NUMBER" -F milestone="$num" --silent
+          echo "Issue #$NUMBER → $ms"

@@ -3,9 +3,29 @@
 Format angelehnt an [Keep a Changelog](https://keepachangelog.com/de/), Versionen nach
 [Semantic Versioning](https://semver.org/lang/de/) (MAJOR.MINOR.PATCH). Solange die Version mit 0 beginnt, ist das
 Intranet ein Prototyp (nur erfundene Testdaten). Die Versionsnummer steht nur in `VERSION`; neue Einträge kommen
-laufend unter **Unveröffentlicht** und werden beim Erhöhen der Version zur neuen Version.
+laufend unter **Unveröffentlicht**. Ab 0.32.0 entsteht eine Version nur bei einem freigegebenen Release
+(`php tools/release.php X.Y.Z`, siehe `docs/KONZEPT-VERSIONIERUNG.md`); dazwischen ist der ausgerollte Stand ein
+«Developer Release».
 
 ## [Unveröffentlicht]
+
+### Neu
+
+- **GitHub-Ablauf aus TagStudio (#2):** Issue-Vorlagen Fehler, Verbesserung, Neue Funktion, Plugin-Idee und
+  GUI-Baustein mit Label `triage`; Freigabe zur Umsetzung nur über `_1 bereit`. Deutsche Labels, Sammlungen
+  «Fehler», «Verbesserungen», «Funktionen» mit automatischer Zuordnung (`issue-milestone.yml`), PR-Vorlage,
+  `CONTRIBUTING.md`, `SECURITY.md`, Regeln in `AGENTS.md`.
+- **Versionierung (#3):** `VERSION` ändert sich nur noch beim freigegebenen Release (`tools/release.php`); der
+  Workflow `release.yml` legt nach grünem Deployment Tag `vX.Y.Z` und GitHub-Release mit dem Text aus dem
+  CHANGELOG an. Tags und Releases v0.11.0–v0.31.0 rückwirkend über «release» mit «nachtragen»
+  (`.github/release-backfill.txt`). `tools/release.php --check` prüft in
+  `composer ci:check` Version, CHANGELOG und Plugin-Versionen.
+- **Developer Release (#4):** Seitenleiste und «Versionen» zeigen Stände nach dem letzten Tag als «Developer Release»
+  mit Anzahl Änderungen und geplanter Version; «Unveröffentlicht» erscheint als «In Entwicklung».
+- **Als GitHub-Issue vorbereiten (#5):** Bei offenen Wünschen zu GUI-Bausteinen und auf «Versionen» («Fehler
+  melden», «Idee vorschlagen») öffnet die Administration das GitHub-Formular vorausgefüllt – ohne Namen,
+  abgeschickt wird von Hand (`INTRANET_GITHUB_REPO`).
+- **Meilensteine per Kommentar (#6):** `/milestone list|create|close|reopen` auf Issue #1 (`milestone-admin.yml`).
 
 ## [0.31.0] – 2026-11-01
 

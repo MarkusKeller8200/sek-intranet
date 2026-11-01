@@ -1,0 +1,55 @@
+name: Verbesserung vorschlagen
+description: Eine bestehende Funktion soll besser, einfacher oder schneller werden.
+title: "Verbesserung: "
+labels: ["verbesserung", "triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        **Ablauf:** Neue Meldungen erhalten das Label `triage` und werden vom Projektverantwortlichen geprüft. Erst seine
+        ausdrückliche Freigabe (Label `_1 bereit`) macht daraus einen Entwicklungsauftrag.
+
+        **Datenschutz (IDG Kanton Zürich):** Keine echten Namen, Klassen, Telefonnummern oder Bildschirmfotos mit
+        Personendaten anhängen. Das Intranet ist ein Prototyp mit erfundenen Testdaten – bitte nur diese verwenden.
+  - type: dropdown
+    id: area
+    attributes:
+      label: Bereich
+      options:
+        - Start / Mitteilungen / Termine
+        - Pinnwand / Umfragen
+        - Fachanwendungen (CMI, Escola, ASM, Jamf, LMVZ)
+        - Wissen & Ablage
+        - Personen & Organisation
+        - Unterricht
+        - Räume & Geräte
+        - Verwaltung / Bestellungen
+        - Fachstelle ICT
+        - Plugins
+        - GUI-Prototypen / Farbkonzept
+        - Benachrichtigungen
+        - Anmeldung / Rechte / Rollen
+        - Einstellungen / Administration
+        - Browser-Erweiterung
+        - Deployment / Betrieb
+        - anderes
+    validations:
+      required: true
+  - type: textarea
+    id: today
+    attributes:
+      label: Wie ist es heute?
+      description: Was stört oder ist umständlich?
+    validations:
+      required: true
+  - type: textarea
+    id: wish
+    attributes:
+      label: Wie sollte es sein?
+    validations:
+      required: true
+  - type: textarea
+    id: who
+    attributes:
+      label: Wer profitiert?
+      description: z. B. Lehrpersonen, Schulverwaltung, Fachstelle ICT – und wie oft kommt es vor?

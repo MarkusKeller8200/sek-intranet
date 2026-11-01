@@ -35,6 +35,14 @@ export function VersionBox({ store }: { store: string }) {
                     </span>
                 )}
             </span>
+            {appVersion.dev && (
+                <span
+                    className="pl-5.5 font-medium text-foreground/80"
+                    title={`${appVersion.dev.commits} Änderungen seit Version ${appVersion.dev.base} – Ziel ${appVersion.dev.planned}`}
+                >
+                    Developer Release
+                </span>
+            )}
             {appVersion.prototype && (
                 <span className="pl-5.5 text-muted-foreground">
                     Prototyp · Speicher:{' '}

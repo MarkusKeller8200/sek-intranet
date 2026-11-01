@@ -72,6 +72,16 @@ bei jedem Push auf `main`: siehe [DEPLOY.md](DEPLOY.md).
 Konzepte: [docs/](docs) (Rollen, Datenherkunft, Sprachen, PWA, MCP, API-Recorder, Browser-Connector,
 GUI-Prototypen, Themes, Benachrichtigungen).
 
+## Mitmachen, Issues und Versionen
+
+- Fehler, Verbesserungen, Ideen, Plugin-Ideen und Wünsche zu GUI-Bausteinen als
+  [Issue mit Vorlage](https://github.com/MarkusKeller8200/sek-intranet/issues/new/choose); neue Meldungen tragen
+  `triage`, umgesetzt wird erst nach Freigabe (`_1 bereit`). Ablauf in [CONTRIBUTING.md](CONTRIBUTING.md),
+  Sicherheitslücken nach [SECURITY.md](SECURITY.md).
+- Jeder Push auf `main` wird ausgerollt (Developer Release). Eine neue Versionsnummer, ein Tag `vX.Y.Z` und ein
+  GitHub-Release entstehen nur bei einem freigegebenen Release (`php tools/release.php X.Y.Z --commit`) –
+  siehe [docs/KONZEPT-VERSIONIERUNG.md](docs/KONZEPT-VERSIONIERUNG.md).
+
 ## So funktioniert der Dateispeicher
 
 ```text

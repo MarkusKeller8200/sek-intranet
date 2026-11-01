@@ -66,6 +66,7 @@
             "npm run check",
             "npm run types:check",
             "node tools/i18n-extract.mjs --check",
+            "@php tools/release.php --check",
             "@test"
         ],
         "types:check": [

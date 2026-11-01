@@ -1,0 +1,64 @@
+name: Neue Funktion / Idee
+description: Etwas Neues, das es im Intranet noch nicht gibt.
+title: "Funktion: "
+labels: ["funktion", "triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        **Ablauf:** Neue Meldungen erhalten das Label `triage` und werden vom Projektverantwortlichen geprüft. Erst seine
+        ausdrückliche Freigabe (Label `_1 bereit`) macht daraus einen Entwicklungsauftrag.
+
+        **Datenschutz (IDG Kanton Zürich):** Keine echten Namen, Klassen, Telefonnummern oder Bildschirmfotos mit
+        Personendaten anhängen. Das Intranet ist ein Prototyp mit erfundenen Testdaten – bitte nur diese verwenden.
+  - type: markdown
+    attributes:
+      value: |
+        Vorher kurz in den Issues und Meilensteinen nachsehen, ob die Idee schon erfasst oder geplant ist.
+  - type: dropdown
+    id: area
+    attributes:
+      label: Bereich
+      options:
+        - Start / Mitteilungen / Termine
+        - Pinnwand / Umfragen
+        - Fachanwendungen (CMI, Escola, ASM, Jamf, LMVZ)
+        - Wissen & Ablage
+        - Personen & Organisation
+        - Unterricht
+        - Räume & Geräte
+        - Verwaltung / Bestellungen
+        - Fachstelle ICT
+        - Plugins
+        - GUI-Prototypen / Farbkonzept
+        - Benachrichtigungen
+        - Anmeldung / Rechte / Rollen
+        - Einstellungen / Administration
+        - Browser-Erweiterung
+        - Deployment / Betrieb
+        - anderes
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: Welches Problem löst die Funktion?
+    validations:
+      required: true
+  - type: textarea
+    id: idea
+    attributes:
+      label: Idee
+      description: Wie stellst du dir die Funktion vor? Skizze oder Beispiel aus einer anderen Anwendung willkommen.
+    validations:
+      required: true
+  - type: textarea
+    id: who
+    attributes:
+      label: Wer braucht sie?
+      description: Rollen und ungefähre Anzahl Personen
+  - type: textarea
+    id: data
+    attributes:
+      label: Betroffene Daten
+      description: Welche Daten würden verarbeitet (z. B. Personendaten, Noten, Gesundheitsdaten)? Wichtig für die IDG-Prüfung.

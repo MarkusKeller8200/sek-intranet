@@ -5,11 +5,14 @@ namespace App\Support;
 /**
  * Version des Intranets: Nummer aus der Datei VERSION, Build (Commit) und Zeitpunkt aus dem
  * Deployment (INTRANET_BUILD, INTRANET_BUILD_DATE), Änderungen aus CHANGELOG.md.
+ *
+ * Developer Release (wie TagStudio): Ausgerollter Stand mit Commits nach dem Tag v<VERSION>, also weder Beta noch
+ * Release. Das Deployment übergibt dazu `git describe --tags --long` (INTRANET_BUILD_DESCRIBE).
  */
 final class AppVersion
 {
     /**
-     * @return array{version: string, build: string|null, build_date: string|null, prototype: bool}
+     * @return array{version: string, build: string|null, build_date: string|null, prototype: bool, dev: array{commits: int, base: string, planned: string}|null}
      */
     public static function info(): array
     {
@@ -20,7 +23,28 @@ final class AppVersion
             'build' => config('intranet.build') !== null ? (string) config('intranet.build') : null,
             'build_date' => config('intranet.build_date') !== null ? (string) config('intranet.build_date') : null,
             'prototype' => str_starts_with($version, '0.'),
+            'dev' => self::developerRelease($version, config('intranet.build_describe') !== null ? (string) config('intranet.build_describe') : null),
         ];
+    }
+
+    /**
+     * Aus `git describe --tags --long --match 'v[0-9]*'` (z. B. v0.31.0-5-gabc1234): Commits nach dem Tag
+     * und die geplante nächste Version. Null = genau ein Release oder unbekannt.
+     *
+     * @return array{commits: int, base: string, planned: string}|null
+     */
+    public static function developerRelease(string $version, ?string $describe): ?array
+    {
+        if ($describe === null || preg_match('/^v(.+)-(\d+)-g[0-9a-f]+$/', trim($describe), $m) !== 1) {
+            return null;
+        }
+        $commits = (int) $m[2];
+        if ($commits === 0 && $m[1] === $version) {
+            return null;
+        }
+        $changelog = (string) @file_get_contents(base_path('CHANGELOG.md'));
+
+        return ['commits' => $commits, 'base' => $m[1], 'planned' => Release::planned($version, $changelog)];
     }
 
     /**

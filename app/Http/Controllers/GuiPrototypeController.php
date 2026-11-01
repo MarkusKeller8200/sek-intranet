@@ -91,6 +91,8 @@ class GuiPrototypeController extends Controller
                 'develop' => Gate::allows('manage-users'),
                 'review' => Gate::allows('review-gui'),
             ],
+            // «Als GitHub-Issue vorbereiten» bei Wünschen (nur Administration)
+            'github' => Gate::allows('manage-users') ? VersionController::githubRepo() : null,
         ]);
     }
 

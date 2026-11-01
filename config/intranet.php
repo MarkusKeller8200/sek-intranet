@@ -294,6 +294,10 @@ return [
     'version' => trim((string) @file_get_contents(base_path('VERSION'))) ?: '0.0.0',
     'build' => env('INTRANET_BUILD'),
     'build_date' => env('INTRANET_BUILD_DATE'),
+    // git describe --tags --long (Developer Release: Commits nach dem Tag v<VERSION>)
+    'build_describe' => env('INTRANET_BUILD_DESCRIBE'),
+    // GitHub-Repository für «Als GitHub-Issue vorbereiten» (leer = Knopf ausblenden)
+    'github_repo' => env('INTRANET_GITHUB_REPO', 'MarkusKeller8200/sek-intranet'),
 
     'store' => env('INTRANET_STORE', 'json'),
 

@@ -1,0 +1,47 @@
+name: Plugin-Idee
+description: Anbindung eines weiteren Dienstes oder einer Fachanwendung als Plugin.
+title: "Plugin: "
+labels: ["funktion", "plugin", "triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        **Ablauf:** Neue Meldungen erhalten das Label `triage` und werden vom Projektverantwortlichen geprüft. Erst seine
+        ausdrückliche Freigabe (Label `_1 bereit`) macht daraus einen Entwicklungsauftrag.
+
+        **Datenschutz (IDG Kanton Zürich):** Keine echten Namen, Klassen, Telefonnummern oder Bildschirmfotos mit
+        Personendaten anhängen. Das Intranet ist ein Prototyp mit erfundenen Testdaten – bitte nur diese verwenden.
+  - type: input
+    id: service
+    attributes:
+      label: Dienst / Fachanwendung
+      placeholder: z. B. Klapp, Schulnetz, Microsoft Teams
+    validations:
+      required: true
+  - type: input
+    id: docs
+    attributes:
+      label: Link zur API-Dokumentation
+      placeholder: https://…
+  - type: dropdown
+    id: auth
+    attributes:
+      label: Anmeldung an der API (falls bekannt)
+      options:
+        - unbekannt
+        - API-Schlüssel / Token
+        - OAuth 2 (Client Credentials)
+        - Benutzername und Passwort
+        - keine
+  - type: textarea
+    id: actions
+    attributes:
+      label: Was soll das Plugin können?
+      description: z. B. Liste anzeigen, Eintrag suchen, Daten abgleichen – lesend oder auch schreibend?
+    validations:
+      required: true
+  - type: textarea
+    id: data
+    attributes:
+      label: Betroffene Daten und Speicherort
+      description: Welche Daten fliessen? Wo werden sie beim Anbieter gespeichert (Schweiz/EU/USA)?

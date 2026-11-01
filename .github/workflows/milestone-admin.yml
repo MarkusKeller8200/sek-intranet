@@ -1,0 +1,30 @@
+name: milestone-admin
+
+# Meilensteine per Kommentar verwalten (übernommen aus TagStudio, .github/scripts/MILESTONE-ADMIN.md).
+# Nur einzeilige Kommentare des Repository-Eigentümers auf dem Administrations-Issue #1.
+on:
+  issue_comment:
+    types: [created]
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  milestone-admin:
+    if: >-
+      ${{ github.event.issue.number == 1 &&
+          github.event.comment.user.login == github.repository_owner &&
+          startsWith(github.event.comment.body, '/milestone ') }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Geprüften Befehl ausführen
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ADMIN_ISSUE_NUMBER: "1"
+        run: python3 .github/scripts/milestone_admin.py

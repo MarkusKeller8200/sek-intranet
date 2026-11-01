@@ -1,6 +1,7 @@
 import { Head, Link, router, useForm } from '@inertiajs/react';
 import {
     CheckCircle2,
+    ExternalLink,
     GitBranchPlus,
     Lightbulb,
     Moon,
@@ -38,6 +39,7 @@ import type {
     GuiSummary,
     GuiVersion,
 } from '@/lib/gui-prototypes';
+import { githubIssueUrl } from '@/lib/github';
 import { nameOf } from '@/lib/gui-prototypes';
 import { t } from '@/lib/i18n';
 import { moduleIcon } from '@/lib/module-icons';
@@ -56,6 +58,7 @@ type Props = {
     themeDefaults: ThemeDefaults;
     section?: Section;
     can?: { develop: boolean; review: boolean };
+    github?: string | null;
 };
 
 type Can = { develop: boolean; review: boolean };
@@ -422,12 +425,18 @@ function NewVersion({
 
 function Wishes({
     componentKey,
+    componentTitle,
+    released,
     record,
     names,
+    github,
 }: {
     componentKey: string;
+    componentTitle: string;
+    released: string | null;
     record: GuiRecord;
     names: Record<string, string>;
+    github: string | null;
 }) {
     const form = useForm({ text: '' });
 
@@ -502,6 +511,35 @@ function Wishes({
                                 </span>
                             </div>
                             <p className="mt-1 whitespace-pre-line">{w.text}</p>
+                            {github && !w.version && (
+                                <Button
+                                    asChild
+                                    variant="link"
+                                    size="sm"
+                                    className="mt-1 h-auto px-0"
+                                >
+                                    <a
+                                        href={githubIssueUrl(
+                                            github,
+                                            'gui_component.yml',
+                                            {
+                                                component: componentTitle,
+                                                version: released
+                                                    ? `v${released}`
+                                                    : '',
+                                                wish: w.text,
+                                                pages: `/gui-prototypen/${componentKey}`,
+                                            },
+                                            `GUI: ${componentTitle} – ${w.text.split('\n')[0].slice(0, 60)}`,
+                                        )}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        title="Öffnet das GitHub-Formular vorausgefüllt (ohne Namen) – abschicken von Hand"
+                                    >
+                                        <ExternalLink /> Als GitHub-Issue vorbereiten
+                                    </a>
+                                </Button>
+                            )}
                         </li>
                     ))}
                 </ul>
@@ -741,8 +779,11 @@ export default function GuiPrototypeShow(props: Props) {
                 {section === 'wuensche' && (
                     <Wishes
                         componentKey={component.key}
+                        componentTitle={component.title}
+                        released={summary.released?.version ?? null}
                         record={record}
                         names={names}
+                        github={props.github ?? null}
                     />
                 )}
             </div>
