@@ -7,10 +7,10 @@ Code zu ändern.
 ## Bedienung (nur Administration)
 
 - **Themes** im Farbkonzept: Liste mit Farbmustern hell/dunkel, Kennzeichen «aktiv» und «Vorgabe».
-  - **Vorschau:** färbt nur die Seite Farbkonzept und nur für dich (nichts gespeichert); unten Musterseite hell und dunkel.
-  - **Für alle aktivieren:** gilt sofort im ganzen Intranet (alle Personen, hell und dunkel).
-  - **Bearbeiten**, **Kopieren**, **Löschen** (mit Rückfrage). Wird das aktive Theme gelöscht, gilt wieder der Standard.
-  - **Neues Theme:** leer oder aus einer Vorlage (Hoher Kontrast, Petrol, Violett).
+    - **Vorschau:** färbt nur die Seite Farbkonzept und nur für dich (nichts gespeichert); unten Musterseite hell und dunkel.
+    - **Für alle aktivieren:** gilt sofort im ganzen Intranet (alle Personen, hell und dunkel).
+    - **Bearbeiten**, **Kopieren**, **Löschen** (mit Rückfrage). Wird das aktive Theme gelöscht, gilt wieder der Standard.
+    - **Neues Theme:** leer oder aus einer Vorlage (Hoher Kontrast, Petrol, Violett).
 - **Theme bearbeiten** (`/farbkonzept/themes/{id}/bearbeiten`): Name, Beschreibung, Farben in Gruppen (Marke &
   Hauptfarbe, Flächen & Text, Akzent & Neben, Status, Seitenleiste, Diagramme) je hell und dunkel mit Farbwähler oder
   `#rrggbb`. Leer = Vorgabe. **Kontrastprüfung** (WCAG AA, 4,5 : 1) für die wichtigen Schrift/Fläche-Paare und

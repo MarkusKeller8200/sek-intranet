@@ -28,7 +28,11 @@ export function ThemeScope({
         <div
             data-theme-scope={mode}
             style={{ ...cssVars(colors), colorScheme: mode }}
-            className={cn(mode === 'dark' && 'dark', 'bg-background text-foreground', className)}
+            className={cn(
+                mode === 'dark' && 'dark',
+                'bg-background text-foreground',
+                className,
+            )}
         >
             {children}
         </div>
@@ -50,7 +54,9 @@ export function ThemeSample() {
             <div className="grid gap-3 p-3">
                 <div>
                     <p className="font-semibold">Mitteilungen</p>
-                    <p className="text-xs text-muted-foreground">Leiser Text für Erklärungen.</p>
+                    <p className="text-xs text-muted-foreground">
+                        Leiser Text für Erklärungen.
+                    </p>
                 </div>
                 <div className="flex flex-wrap gap-2">
                     <Button size="sm">Speichern</Button>
@@ -66,25 +72,41 @@ export function ThemeSample() {
                 </div>
                 <div className="rounded-md border bg-card p-3 text-card-foreground">
                     <p className="font-medium">Karte</p>
-                    <p className="text-xs text-muted-foreground">Leiser Text in der Karte.</p>
-                    <span className="text-xs text-primary underline">Ein Link</span>
+                    <p className="text-xs text-muted-foreground">
+                        Leiser Text in der Karte.
+                    </p>
+                    <span className="text-xs text-primary underline">
+                        Ein Link
+                    </span>
                     <Input className="mt-2 h-8" placeholder="Eingabefeld" />
                 </div>
                 <div className="flex flex-wrap gap-2">
                     <Badge>Neu</Badge>
                     <Badge variant="secondary">Entwurf</Badge>
                     <Badge variant="outline">Vorgabe</Badge>
-                    <span className={cn('inline-flex items-center gap-1 rounded-md border px-2 py-0.5 text-xs', statusClasses.success)}>
+                    <span
+                        className={cn(
+                            'inline-flex items-center gap-1 rounded-md border px-2 py-0.5 text-xs',
+                            statusClasses.success,
+                        )}
+                    >
                         <CheckCircle2 className="size-3" /> Erfolg
                     </span>
-                    <span className={cn('inline-flex items-center gap-1 rounded-md border px-2 py-0.5 text-xs', statusClasses.warning)}>
+                    <span
+                        className={cn(
+                            'inline-flex items-center gap-1 rounded-md border px-2 py-0.5 text-xs',
+                            statusClasses.warning,
+                        )}
+                    >
                         <AlertTriangle className="size-3" /> Warnung
                     </span>
                 </div>
                 <Alert>
                     <Info />
                     <AlertTitle>Hinweis</AlertTitle>
-                    <AlertDescription>Nur erfundene Testdaten.</AlertDescription>
+                    <AlertDescription>
+                        Nur erfundene Testdaten.
+                    </AlertDescription>
                 </Alert>
             </div>
         </div>

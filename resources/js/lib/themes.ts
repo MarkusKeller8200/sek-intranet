@@ -17,8 +17,12 @@ export type ThemeData = {
 export type ThemeDefaults = { light: Colors; dark: Colors };
 
 /** Vollständige Farben eines Modus: Vorgabe aus app.css + Abweichungen des Themes. */
-export function resolveColors(theme: Pick<ThemeData, 'light' | 'dark'> | null, defaults: ThemeDefaults, mode: Mode): Colors {
-    return { ...defaults[mode], ...(theme?.[mode] ?? {}) };
+export function resolveColors(
+    theme: Pick<ThemeData, 'light' | 'dark'> | null,
+    defaults: ThemeDefaults,
+    mode: Mode,
+): Colors {
+    return { ...defaults[mode], ...theme?.[mode] };
 }
 
 /**
@@ -42,7 +46,11 @@ function luminance(hex: string): number {
         return s <= 0.03928 ? s / 12.92 : ((s + 0.055) / 1.055) ** 2.4;
     };
 
-    return 0.2126 * channel((n >> 16) & 255) + 0.7152 * channel((n >> 8) & 255) + 0.0722 * channel(n & 255);
+    return (
+        0.2126 * channel((n >> 16) & 255) +
+        0.7152 * channel((n >> 8) & 255) +
+        0.0722 * channel(n & 255)
+    );
 }
 
 /** Kontrastverhältnis nach WCAG (1 bis 21). */
@@ -59,12 +67,36 @@ export function contrast(a: string, b: string): number {
 export const CONTRAST_PAIRS: { label: string; fg: string; bg: string }[] = [
     { label: 'Text auf Hintergrund', fg: 'foreground', bg: 'background' },
     { label: 'Text auf Karte', fg: 'card-foreground', bg: 'card' },
-    { label: 'Leiser Text auf Hintergrund', fg: 'muted-foreground', bg: 'background' },
-    { label: 'Button-Schrift auf Hauptfarbe', fg: 'primary-foreground', bg: 'primary' },
-    { label: 'Hauptfarbe (Links) auf Hintergrund', fg: 'primary', bg: 'background' },
-    { label: 'Akzent-Schrift auf Akzent', fg: 'accent-foreground', bg: 'accent' },
-    { label: 'Neben-Schrift auf Neben', fg: 'secondary-foreground', bg: 'secondary' },
-    { label: 'Menü-Schrift auf Seitenleiste', fg: 'sidebar-foreground', bg: 'sidebar' },
+    {
+        label: 'Leiser Text auf Hintergrund',
+        fg: 'muted-foreground',
+        bg: 'background',
+    },
+    {
+        label: 'Button-Schrift auf Hauptfarbe',
+        fg: 'primary-foreground',
+        bg: 'primary',
+    },
+    {
+        label: 'Hauptfarbe (Links) auf Hintergrund',
+        fg: 'primary',
+        bg: 'background',
+    },
+    {
+        label: 'Akzent-Schrift auf Akzent',
+        fg: 'accent-foreground',
+        bg: 'accent',
+    },
+    {
+        label: 'Neben-Schrift auf Neben',
+        fg: 'secondary-foreground',
+        bg: 'secondary',
+    },
+    {
+        label: 'Menü-Schrift auf Seitenleiste',
+        fg: 'sidebar-foreground',
+        bg: 'sidebar',
+    },
     { label: 'Erfolg auf hellem Erfolg', fg: 'success', bg: 'success-soft' },
     { label: 'Warnung auf heller Warnung', fg: 'warning', bg: 'warning-soft' },
 ];
