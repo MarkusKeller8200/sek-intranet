@@ -22,6 +22,16 @@ verwenden – weder in Issues noch im Code oder in Tests.
 - Was umgesetzt wird, kommt in den Meilenstein des nächsten Releases (z. B. «0.32.0 – …»); sonst bleibt es in der
   Sammlung «Fehler», «Verbesserungen» oder «Funktionen».
 - Jedes Issue bekommt eine Testliste «Zum Testen abhaken:». Geschlossen wird, wenn alles abgehakt ist.
+
+Status eines Issues (immer nur ein Status-Label, das vorherige wird entfernt):
+
+| Status-Label    | Bedeutung                                                      | Wer setzt es               |
+| --------------- | -------------------------------------------------------------- | -------------------------- |
+| `triage`        | Gemeldet, noch nicht freigegeben – kein Entwicklungsauftrag    | Vorlage (automatisch)      |
+| `_1 bereit`     | Zur Umsetzung freigegeben                                      | nur der Projektverantwortliche |
+| `_2 in Arbeit`  | Wird gerade umgesetzt                                          | wer umsetzt (auch KI-Agent) |
+| `_3 Beta-Test`  | Umgesetzt und ausgerollt, wartet auf deinen Test (Testliste)   | wer umsetzt                |
+| geschlossen     | Testliste abgehakt                                             | Projektverantwortlicher    |
 - Wünsche zu GUI-Bausteinen lassen sich auch im Intranet erfassen (GUI-Prototypen › Baustein › Wünsche); die
   Administration kann sie mit «Als GitHub-Issue vorbereiten» übernehmen.
 - **Sicherheitslücken** nie als Issue – siehe [SECURITY.md](SECURITY.md).

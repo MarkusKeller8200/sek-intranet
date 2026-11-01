@@ -12,7 +12,7 @@ laufend unter **Unveröffentlicht**. Ab 0.32.0 entsteht eine Version nur bei ein
 ### Neu
 
 - **GitHub-Ablauf aus TagStudio (#2):** Issue-Vorlagen Fehler, Verbesserung, Neue Funktion, Plugin-Idee und
-  GUI-Baustein mit Label `triage`; Freigabe zur Umsetzung nur über `_1 bereit`. Deutsche Labels, Sammlungen
+  GUI-Baustein mit Label `triage`; Freigabe zur Umsetzung nur über `_1 bereit`, danach Status `_2 in Arbeit` und `_3 Beta-Test`. Deutsche Labels, Sammlungen
   «Fehler», «Verbesserungen», «Funktionen» mit automatischer Zuordnung (`issue-milestone.yml`), PR-Vorlage,
   `CONTRIBUTING.md`, `SECURITY.md`, Regeln in `AGENTS.md`.
 - **Versionierung (#3):** `VERSION` ändert sich nur noch beim freigegebenen Release (`tools/release.php`); der
