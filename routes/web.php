@@ -22,6 +22,7 @@ use App\Http\Controllers\PersonController;
 use App\Http\Controllers\PersonLinkController;
 use App\Http\Controllers\PluginController;
 use App\Http\Controllers\RoleConceptController;
+use App\Http\Controllers\ThemeController;
 use App\Http\Controllers\VersionController;
 use Illuminate\Support\Facades\Route;
 
@@ -96,7 +97,13 @@ Route::middleware('auth')->group(function () {
         Route::delete('personen/{id}/herkunft/{link}', [PersonLinkController::class, 'destroy'])->name('people.links.destroy');
 
         Route::get('datenstrukturen', DataStructureController::class)->name('data-structures');
-        Route::inertia('farbkonzept', 'color-concept')->name('color-concept');
+        Route::get('farbkonzept', [ThemeController::class, 'index'])->name('color-concept');
+        Route::get('farbkonzept/themes/neu', [ThemeController::class, 'create'])->name('themes.create');
+        Route::post('farbkonzept/themes', [ThemeController::class, 'store'])->name('themes.store');
+        Route::get('farbkonzept/themes/{id}/bearbeiten', [ThemeController::class, 'edit'])->name('themes.edit');
+        Route::put('farbkonzept/themes/{id}', [ThemeController::class, 'update'])->name('themes.update');
+        Route::post('farbkonzept/themes/{id}/aktivieren', [ThemeController::class, 'activate'])->name('themes.activate');
+        Route::delete('farbkonzept/themes/{id}', [ThemeController::class, 'destroy'])->name('themes.destroy');
         Route::inertia('sprachkonzept', 'language-concept')->name('language-concept');
         Route::get('rollenkonzept', RoleConceptController::class)->name('role-concept');
         Route::get('mcp-konzept', McpConceptController::class)->name('mcp-concept');

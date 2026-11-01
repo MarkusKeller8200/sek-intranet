@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Data\Contracts\UserRepository;
 use App\Support\AuditLog;
 use App\Support\GuiPrototypes;
+use App\Support\Themes;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -77,6 +78,9 @@ class GuiPrototypeController extends Controller
             'summary' => GuiPrototypes::summary($record),
             'usages' => GuiPrototypes::usages($key),
             'names' => $this->names(self::userIds($record)),
+            // Vorschau der Beispiele hell/dunkel und mit einem Theme
+            'themes' => app(Themes::class)->all(),
+            'themeDefaults' => Themes::defaults(),
         ]);
     }
 

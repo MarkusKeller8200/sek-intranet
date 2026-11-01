@@ -7,6 +7,16 @@ laufend unter **Unveröffentlicht** und werden beim Erhöhen der Version zur neu
 
 ## [Unveröffentlicht]
 
+## [0.29.0] – 2026-11-01
+
+### Neu
+
+- Farbkonzept mit **Theme-Auswahl**: Farbkonzepte (Themes) für hell und dunkel speichern, als Vorschau ansehen,
+  für alle aktivieren, bearbeiten, kopieren und löschen; Vorlagen «Hoher Kontrast», «Petrol», «Violett»
+- Theme-Editor mit Farbwählern je Farbwert (hell/dunkel), Kontrastprüfung nach WCAG AA und Live-Vorschau
+- GUI-Prototypen: Leiste «Vorschau» über den Beispielen mit Umschalter **Hell / Dunkel** und **Theme-Auswahl**
+- Aktives Theme gilt sofort im ganzen Intranet; Konzept `docs/KONZEPT-THEMES.md`, Sammlung `themes`
+
 ## [0.28.0] – 2026-11-01
 
 ### Neu

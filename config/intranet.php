@@ -755,6 +755,28 @@ return [
     ],
 
     'gui_components' => $guiComponents,
+
+    // Vorlagen für neue Themes (Farbkonzept → Themes); nur abweichende Farben, Rest aus app.css
+    'theme_presets' => [
+        'kontrast' => [
+            'name' => 'Hoher Kontrast',
+            'description' => 'Dunklere Schrift, kräftigere Linien und Fokus – für schwierige Lichtverhältnisse und Sehschwäche.',
+            'light' => ['primary' => '#00507a', 'foreground' => '#000000', 'card-foreground' => '#000000', 'muted-foreground' => '#3a3d40', 'border' => '#8a9096', 'input' => '#6b7177', 'ring' => '#00507a', 'sidebar-foreground' => '#000000', 'sidebar-border' => '#8a9096'],
+            'dark' => ['background' => '#000000', 'card' => '#0d0d0d', 'popover' => '#0d0d0d', 'foreground' => '#ffffff', 'card-foreground' => '#ffffff', 'muted-foreground' => '#d0d4d8', 'border' => '#6b7177', 'input' => '#8a9096', 'primary' => '#7fd4ff', 'ring' => '#7fd4ff', 'sidebar' => '#000000', 'sidebar-foreground' => '#ffffff', 'sidebar-border' => '#6b7177'],
+        ],
+        'petrol' => [
+            'name' => 'Petrol',
+            'description' => 'Grün-blaue Hauptfarbe (z. B. für das Schulhaus Hinterbirch).',
+            'light' => ['brand' => '#0d9488', 'primary' => '#0f766e', 'ring' => '#0d9488', 'accent' => '#e6f6f4', 'accent-foreground' => '#134e4a', 'secondary' => '#eef8f7', 'secondary-foreground' => '#134e4a', 'sidebar-primary' => '#0f766e', 'sidebar-accent' => '#e6f6f4', 'sidebar-accent-foreground' => '#134e4a', 'sidebar-ring' => '#0d9488', 'info' => '#0f766e', 'info-soft' => '#e6f6f4', 'chart-1' => '#0d9488'],
+            'dark' => ['brand' => '#2dd4bf', 'primary' => '#2dd4bf', 'ring' => '#2dd4bf', 'accent' => '#123c38', 'accent-foreground' => '#ccfbf1', 'secondary' => '#10302d', 'secondary-foreground' => '#ccfbf1', 'sidebar-primary' => '#2dd4bf', 'sidebar-accent' => '#123c38', 'sidebar-accent-foreground' => '#ccfbf1', 'info' => '#2dd4bf', 'info-soft' => '#10302d', 'chart-1' => '#2dd4bf'],
+        ],
+        'violett' => [
+            'name' => 'Violett',
+            'description' => 'Violette Hauptfarbe (z. B. für das Schulhaus Mettmenriet).',
+            'light' => ['brand' => '#7c3aed', 'primary' => '#6d28d9', 'ring' => '#7c3aed', 'accent' => '#f3eefe', 'accent-foreground' => '#3b1a78', 'secondary' => '#f6f2fe', 'secondary-foreground' => '#3b1a78', 'sidebar-primary' => '#6d28d9', 'sidebar-accent' => '#f3eefe', 'sidebar-accent-foreground' => '#3b1a78', 'info' => '#6d28d9', 'info-soft' => '#f3eefe', 'chart-1' => '#7c3aed'],
+            'dark' => ['brand' => '#a78bfa', 'primary' => '#a78bfa', 'primary-foreground' => '#191718', 'ring' => '#a78bfa', 'accent' => '#2e2250', 'accent-foreground' => '#ede9fe', 'secondary' => '#261c42', 'secondary-foreground' => '#ede9fe', 'sidebar-primary' => '#a78bfa', 'sidebar-accent' => '#2e2250', 'sidebar-accent-foreground' => '#ede9fe', 'info' => '#a78bfa', 'info-soft' => '#261c42', 'chart-1' => '#a78bfa'],
+        ],
+    ],
     'gui_categories' => $guiCategories,
 
     // Inhaltsverzeichnis: Themen für alle Bausteine (kein eigener Prototyp)
@@ -1011,6 +1033,18 @@ return [
             ],
         ],
 
+        'themes' => [
+            'label' => 'System: Themes (Farbkonzepte)',
+            'description' => 'Farbkonzept → Themes: gespeicherte Farbsätze für hell und dunkel, die die Farbwerte aus resources/css/app.css übersteuern. Höchstens eines ist aktiv (für alle).',
+            'fields' => [
+                'name' => ['type' => 'string', 'required' => true, 'label' => 'Name'],
+                'description' => ['type' => 'string', 'required' => false, 'label' => 'Beschreibung'],
+                'light' => ['type' => 'json', 'required' => true, 'label' => 'Farben hell {farbwert: #rrggbb} (nur Abweichungen)'],
+                'dark' => ['type' => 'json', 'required' => true, 'label' => 'Farben dunkel {farbwert: #rrggbb} (nur Abweichungen)'],
+                'active' => ['type' => 'bool', 'required' => true, 'label' => 'Aktiv für alle'],
+                'updated_by' => ['type' => 'ref', 'references' => 'users', 'required' => false, 'label' => 'Geändert von'],
+            ],
+        ],
         'gui_components' => [
             'label' => 'System: GUI-Prototypen',
             'description' => 'Menü «GUI-Prototypen»: Versionen je Baustein mit Status (Entwicklung, Prüfung, Freigegeben) und Datum je Status, Verbesserungswünsche und die nach einer Freigabe zu überarbeitenden Seiten.',

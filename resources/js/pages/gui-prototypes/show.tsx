@@ -1,16 +1,20 @@
-import { Head, router, useForm } from '@inertiajs/react';
+import { Head, Link, router, useForm } from '@inertiajs/react';
 import {
     CheckCircle2,
     GitBranchPlus,
     Lightbulb,
+    Moon,
+    Palette,
     RotateCcw,
     Send,
     ShieldCheck,
+    Sun,
 } from 'lucide-react';
 import { useState } from 'react';
 import type { FormEvent } from 'react';
 import FormField from '@/components/form-field';
 import GuiDemo from '@/components/gui-demos';
+import { ThemeScope } from '@/components/theme-scope';
 import OptionBadge from '@/components/option-badge';
 import PageHeader from '@/components/page-header';
 import SelectField from '@/components/select-field';
@@ -37,6 +41,8 @@ import type {
 import { nameOf } from '@/lib/gui-prototypes';
 import { t } from '@/lib/i18n';
 import { moduleIcon } from '@/lib/module-icons';
+import { resolveColors } from '@/lib/themes';
+import type { Mode, ThemeData, ThemeDefaults } from '@/lib/themes';
 
 type Section = 'beispiele' | 'versionen' | 'ueberarbeitung' | 'wuensche';
 
@@ -46,7 +52,66 @@ type Props = {
     summary: GuiSummary;
     usages: string[];
     names: Record<string, string>;
+    themes: ThemeData[];
+    themeDefaults: ThemeDefaults;
 };
+
+/** Vorschau der Beispiele: Hell/Dunkel und Theme (nur Anzeige, wird nicht gespeichert). */
+function PreviewBar({
+    mode,
+    onMode,
+    themeId,
+    onTheme,
+    themes,
+}: {
+    mode: Mode;
+    onMode: (mode: Mode) => void;
+    themeId: string;
+    onTheme: (id: string) => void;
+    themes: ThemeData[];
+}) {
+    return (
+        <div
+            className="flex flex-wrap items-center gap-4 rounded-lg border bg-muted/40 px-3 py-2 text-sm"
+            data-testid="preview-bar"
+        >
+            <span className="font-medium">Vorschau</span>
+            <ToggleGroup
+                type="single"
+                variant="outline"
+                size="sm"
+                value={mode}
+                onValueChange={(v: string) => v && onMode(v as Mode)}
+                aria-label="Hell oder dunkel"
+            >
+                <ToggleGroupItem value="light" className="px-3">
+                    <Sun /> Hell
+                </ToggleGroupItem>
+                <ToggleGroupItem value="dark" className="px-3">
+                    <Moon /> Dunkel
+                </ToggleGroupItem>
+            </ToggleGroup>
+            <label className="flex items-center gap-2">
+                <Palette className="size-4 text-muted-foreground" />
+                <span>Theme</span>
+                <select
+                    value={themeId}
+                    onChange={(e) => onTheme(e.target.value)}
+                    className="h-8 rounded-md border border-input bg-background px-2 text-sm"
+                >
+                    {themes.map((th) => (
+                        <option key={th.id} value={th.id}>
+                            {th.active ? `${th.name} (aktiv)` : th.name}
+                        </option>
+                    ))}
+                </select>
+            </label>
+            <Link href="/farbkonzept" className="text-primary hover:underline">
+                Themes verwalten
+            </Link>
+        </div>
+    );
+}
 
 /** Ein Status-Schritt einer Version mit Datum und Person. */
 function Step({
@@ -522,8 +587,18 @@ function Rework({
 
 /** GUI-Prototyp: Beispiele, Versionen mit Status, Überarbeitung und Wünsche eines Bausteins. */
 export default function GuiPrototypeShow(props: Props) {
-    const { component, record, summary, names } = props;
+    const { component, record, summary, names, themes, themeDefaults } = props;
     const [section, setSection] = useState<Section>('beispiele');
+    const [mode, setMode] = useState<Mode>(() =>
+        typeof document !== 'undefined' &&
+        document.documentElement.classList.contains('dark')
+            ? 'dark'
+            : 'light',
+    );
+    const [themeId, setThemeId] = useState(
+        () => themes.find((th) => th.active)?.id ?? 'standard',
+    );
+    const theme = themes.find((th) => th.id === themeId) ?? null;
     const Icon = moduleIcon(component.icon);
     const versions = [...record.versions].reverse();
 
@@ -591,7 +666,22 @@ export default function GuiPrototypeShow(props: Props) {
                 </ToggleGroup>
 
                 {section === 'beispiele' && (
-                    <GuiDemo componentKey={component.key} />
+                    <div className="grid gap-3">
+                        <PreviewBar
+                            mode={mode}
+                            onMode={setMode}
+                            themeId={themeId}
+                            onTheme={setThemeId}
+                            themes={themes}
+                        />
+                        <ThemeScope
+                            colors={resolveColors(theme, themeDefaults, mode)}
+                            mode={mode}
+                            className="rounded-lg border p-4"
+                        >
+                            <GuiDemo componentKey={component.key} />
+                        </ThemeScope>
+                    </div>
                 )}
 
                 {section === 'versionen' && (

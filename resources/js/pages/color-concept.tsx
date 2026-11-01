@@ -4,6 +4,7 @@ import AppWordmark from '@/components/app-wordmark';
 import FontPicker from '@/components/font-picker';
 import OptionBadge from '@/components/option-badge';
 import PageHeader from '@/components/page-header';
+import ThemeSelector from '@/components/theme-selector';
 import { Button } from '@/components/ui/button';
 import {
     Card,
@@ -16,6 +17,7 @@ import { useOptions } from '@/hooks/use-options';
 import { isColorName, palette, statusClasses } from '@/lib/colors';
 import { moduleIcon } from '@/lib/module-icons';
 import type { ColoredList } from '@/lib/colors';
+import type { ThemeData, ThemeDefaults } from '@/lib/themes';
 import { cn } from '@/lib/utils';
 
 const brandColors = [
@@ -98,7 +100,15 @@ const lists: { list: ColoredList; title: string; dot?: boolean }[] = [
     { list: 'roles', title: 'Rollen' },
 ];
 
-export default function ColorConcept() {
+export default function ColorConcept({
+    themes,
+    defaults,
+    presets,
+}: {
+    themes: ThemeData[];
+    defaults: ThemeDefaults;
+    presets: Record<string, { name: string; description: string }>;
+}) {
     const options = useOptions();
     const { navigation } = usePage().props;
 
@@ -109,6 +119,12 @@ export default function ColorConcept() {
                 <PageHeader
                     title="Farbkonzept"
                     description="Abgeleitet aus dem Auftritt von sekbuelach.ch. Schrift: Open Sans (umstellbar)."
+                />
+
+                <ThemeSelector
+                    themes={themes}
+                    defaults={defaults}
+                    presets={presets}
                 />
 
                 <Card>

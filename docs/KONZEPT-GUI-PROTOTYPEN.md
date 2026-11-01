@@ -14,7 +14,8 @@ Hauptmenü «GUI-Prototypen» (letzter Menüpunkt, nur Administration):
 - **Freigaben & Status** (`/gui-prototypen/freigaben`): Tabelle mit verbindlicher Version, Version in Arbeit, offener
   Überarbeitung und Wünschen.
 - Untermenüs **Navigation & Aufbau**, **Eingabe**, **Daten anzeigen**, **Rückmeldung** mit je einer Seite pro Baustein
-  und den Reitern **Beispiele**, **Versionen & Status**, **Überarbeitung**, **Wünsche**.
+  und den Reitern **Beispiele**, **Versionen & Status**, **Überarbeitung**, **Wünsche**. Über den Beispielen die Leiste
+  **Vorschau** mit **Hell / Dunkel** und **Theme** (ab 0.29.0, siehe [KONZEPT-THEMES.md](KONZEPT-THEMES.md)).
 
 Bausteine (ab 0.28.0, 29): Menü, Seitenpanel, Reiter (Tabs), Seitenweise Anzeige, Schrittanzeige, Befehlspalette,
 Umschalter & Aufklappen · Button, Formularfelder, Dropdown, Optionsfelder, Schalter, Auswahl mit Suche,

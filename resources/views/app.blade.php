@@ -61,6 +61,11 @@
                 visibility: hidden;
             }
         </style>
+        {{-- Aktives Theme (Farbkonzept → Themes): nur geprüfte Farbwerte #rrggbb --}}
+        @php($themeCss = app(\App\Support\Themes::class)->activeCss())
+        @if ($themeCss !== '')
+            <style id="intranet-theme">{!! $themeCss !!}</style>
+        @endif
 
         <link rel="icon" href="/favicon.ico" sizes="any">
         <link rel="icon" href="/favicon.svg" type="image/svg+xml">
