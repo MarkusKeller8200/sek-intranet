@@ -24,6 +24,33 @@ class GuiPrototypeController extends Controller
         private readonly AuditLog $audit,
     ) {}
 
+    /** Inhaltsverzeichnis: Bereiche mit Bausteinen, Erklärung, Bestandteilen und Status. */
+    public function contents(): Response
+    {
+        $categories = [];
+        foreach ((array) config('intranet.gui_categories') as $key => $category) {
+            $categories[$key] = ['key' => $key, 'items' => []] + $category;
+        }
+        foreach (GuiPrototypes::components() as $key => $component) {
+            $summary = GuiPrototypes::summary($this->prototypes->get($key));
+            $categories[$component['category']]['items'][] = [
+                'key' => $key,
+                'title' => $component['title'],
+                'icon' => $component['icon'],
+                'description' => $component['description'],
+                'parts' => $component['parts'],
+                'released' => $summary['released']['version'] ?? null,
+                'open' => $summary['open'] === null ? null : ['version' => $summary['open']['version'], 'status' => $summary['open']['status']],
+            ];
+        }
+
+        return Inertia::render('gui-prototypes/contents', [
+            'categories' => array_values($categories),
+            'crosscutting' => (array) config('intranet.gui_crosscutting'),
+        ]);
+    }
+
+    /** Freigaben & Status aller Bausteine. */
     public function index(): Response
     {
         $items = [];
@@ -31,7 +58,7 @@ class GuiPrototypeController extends Controller
         foreach (GuiPrototypes::components() as $key => $component) {
             $record = $this->prototypes->get($key);
             $summary = GuiPrototypes::summary($record);
-            $items[] = ['key' => $key, 'title' => $component['title'], 'icon' => $component['icon'], 'description' => $component['description']] + $summary;
+            $items[] = ['key' => $key, 'title' => $component['title'], 'icon' => $component['icon'], 'description' => $component['description'], 'category' => (string) (config('intranet.gui_categories.'.$component['category'].'.title') ?? '')] + $summary;
             $ids = [...$ids, ...self::userIds($record)];
         }
 

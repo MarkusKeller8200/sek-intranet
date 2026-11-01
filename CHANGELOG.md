@@ -7,6 +7,26 @@ laufend unter **Unveröffentlicht** und werden beim Erhöhen der Version zur neu
 
 ## [Unveröffentlicht]
 
+## [0.28.0] – 2026-11-01
+
+### Neu
+
+- GUI-Prototypen: **Inhaltsverzeichnis** (`/gui-prototypen`) mit allen Bausteinen nach Bereich, Erklärung,
+  Bestandteilen, Status und Link zum Prototyp sowie den Regeln «Für alle Bausteine»; dieselbe Übersicht als
+  `docs/GUI-KOMPONENTEN.md`. «Freigaben & Status» neu unter `/gui-prototypen/freigaben`
+- Menü «GUI-Prototypen» mit Untermenüs Navigation & Aufbau, Eingabe, Daten anzeigen, Rückmeldung
+- 19 neue Bausteine mit Beispielen: Seitenpanel, Reiter (Tabs), Seitenweise Anzeige, Schrittanzeige,
+  Befehlspalette (Ctrl+K), Optionsfelder, Schalter, Auswahl mit Suche, Mehrfachauswahl, Datumsauswahl (TT.MM.JJJJ,
+  Kalender ab Montag), Datei hochladen (Ablagefläche), Schieberegler, Drag & Drop, Akkordeon, Fortschritt,
+  Diagramme (mit «Als Tabelle»), Zeitleiste, Popover, Banner; Avatar bei «Badges, Status & Avatar»
+- **Drag & Drop** mit dnd-kit: Liste umsortieren (Griff, Tastatur, Nach oben/unten), Zuordnen Schüler:innen →
+  Klassen und Kanban (Ziehen oder «Nach …»), deutsche Ansagen für Bildschirmleser; Regeln in
+  `docs/GUI-KOMPONENTEN.md`
+
+### Geändert
+
+- «Reiter & Umschalter» heisst neu «Umschalter & Aufklappen» (Reiter sind ein eigener Baustein)
+
 ## [0.27.0] – 2026-11-01
 
 ### Neu

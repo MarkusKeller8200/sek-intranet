@@ -58,8 +58,11 @@ class ModuleNavigationTest extends TestCase
 
         foreach (config('intranet.modules') as $group) {
             foreach ($group['items'] as $key => $module) {
-                $href = $module['href'] ?? (isset($module['embed']) ? "/einbindung/{$key}" : "/module/{$key}");
-                $this->get($href)->assertOk();
+                // Untermenü: dessen Einträge prüfen
+                foreach (isset($module['items']) ? $module['items'] : [$key => $module] as $childKey => $child) {
+                    $href = $child['href'] ?? (isset($child['embed']) ? "/einbindung/{$childKey}" : "/module/{$childKey}");
+                    $this->get($href)->assertOk();
+                }
             }
         }
     }

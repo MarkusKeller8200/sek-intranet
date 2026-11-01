@@ -21,11 +21,13 @@ import { toast } from 'sonner';
 import DataGrid from '@/components/data-grid';
 import type { GridColumn } from '@/components/data-grid';
 import EmptyState from '@/components/empty-state';
+import { EXTRA_DEMOS } from '@/components/gui-demos-extra';
 import FormField from '@/components/form-field';
 import OptionBadge from '@/components/option-badge';
 import PageHeader from '@/components/page-header';
 import SelectField from '@/components/select-field';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import {
     Breadcrumb,
@@ -615,6 +617,16 @@ function BadgeDemo() {
                 <OptionBadge list="roles" value="lehrperson" />
                 <OptionBadge list="schools" value="hinterbirch" dot />
             </Demo>
+            <Demo
+                title="Avatar"
+                hint="Initialen, wenn kein Bild vorhanden ist; nie Fotos von Schüler:innen."
+            >
+                {['AM', 'BB', 'CP'].map((initials) => (
+                    <Avatar key={initials}>
+                        <AvatarFallback>{initials}</AvatarFallback>
+                    </Avatar>
+                ))}
+            </Demo>
         </>
     );
 }
@@ -759,7 +771,11 @@ function ToggleDemo() {
 
     return (
         <>
-            <Demo title="Reiter (Umschaltgruppe)" className="grid">
+            <Demo
+                title="Umschaltgruppe"
+                hint="Für Ansichten; für Bereiche einer Seite den Baustein «Reiter (Tabs)» verwenden."
+                className="grid"
+            >
                 <ToggleGroup
                     type="single"
                     variant="outline"
@@ -843,6 +859,7 @@ const DEMOS: Record<string, () => ReactNode> = {
     karten: CardDemo,
     umschalter: ToggleDemo,
     laden: LoadingDemo,
+    ...EXTRA_DEMOS,
 };
 
 /** Live-Beispiele eines GUI-Bausteins (verwenden die echten Komponenten). */

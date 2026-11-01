@@ -102,7 +102,8 @@ Route::middleware('auth')->group(function () {
         Route::get('mcp-konzept', McpConceptController::class)->name('mcp-concept');
 
         // Menü «GUI-Prototypen»: Bausteine mit Status und Versionen
-        Route::get('gui-prototypen', [GuiPrototypeController::class, 'index'])->name('gui.index');
+        Route::get('gui-prototypen', [GuiPrototypeController::class, 'contents'])->name('gui.contents');
+        Route::get('gui-prototypen/freigaben', [GuiPrototypeController::class, 'index'])->name('gui.index');
         Route::get('gui-prototypen/{key}', [GuiPrototypeController::class, 'show'])->name('gui.show');
         Route::post('gui-prototypen/{key}/versionen', [GuiPrototypeController::class, 'storeVersion'])->name('gui.versions.store');
         Route::post('gui-prototypen/{key}/status', [GuiPrototypeController::class, 'transition'])->name('gui.transition');

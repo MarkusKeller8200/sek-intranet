@@ -26,11 +26,11 @@ final class GuiPrototypes
     public function __construct(private readonly JsonStore $store) {}
 
     /**
-     * @return array<string, array{title: string, icon: string, description: string, imports: list<string>}>
+     * @return array<string, array{category: string, title: string, icon: string, description: string, parts: list<string>, imports: list<string>}>
      */
     public static function components(): array
     {
-        /** @var array<string, array{title: string, icon: string, description: string, imports: list<string>}> */
+        /** @var array<string, array{category: string, title: string, icon: string, description: string, parts: list<string>, imports: list<string>}> */
         return (array) config('intranet.gui_components', []);
     }
 

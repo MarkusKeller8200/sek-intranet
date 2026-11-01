@@ -22,6 +22,7 @@ type Item = GuiSummary & {
     title: string;
     icon: string;
     description: string;
+    category: string;
 };
 
 /** GUI-Prototypen: Übersicht über alle Bausteine mit Status, Versionen und offener Überarbeitung. */
@@ -30,10 +31,10 @@ export default function GuiPrototypesIndex({ items }: { items: Item[] }) {
 
     return (
         <>
-            <Head title="GUI-Prototypen" />
+            <Head title="Freigaben & Status" />
             <div className="flex max-w-6xl flex-1 flex-col gap-6 p-4 md:p-6">
                 <PageHeader
-                    title="GUI-Prototypen"
+                    title="Freigaben & Status"
                     description="Bausteine der Oberfläche mit Beispielen, Status und Versionen. Die zuletzt freigegebene Version ist das verbindliche Template für das ganze Intranet."
                 />
 
@@ -101,6 +102,9 @@ export default function GuiPrototypesIndex({ items }: { items: Item[] }) {
                                                     <Icon className="size-4 text-muted-foreground" />
                                                     <span>{item.title}</span>
                                                 </Link>
+                                                <span className="text-xs text-muted-foreground">
+                                                    {item.category}
+                                                </span>
                                             </TableCell>
                                             <TableCell>
                                                 {item.released ? (
@@ -165,5 +169,8 @@ export default function GuiPrototypesIndex({ items }: { items: Item[] }) {
 }
 
 GuiPrototypesIndex.layout = {
-    breadcrumbs: [{ title: 'GUI-Prototypen', href: '/gui-prototypen' }],
+    breadcrumbs: [
+        { title: 'GUI-Prototypen', href: '/gui-prototypen' },
+        { title: 'Freigaben & Status', href: '/gui-prototypen/freigaben' },
+    ],
 };

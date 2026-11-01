@@ -12,30 +12,68 @@ use Tests\TestCase;
  */
 class GuiPrototypesTest extends TestCase
 {
-    public function test_menu_is_last_and_lists_components(): void
+    public function test_menu_is_last_with_contents_and_submenus_per_area(): void
     {
         $this->signInAs('admin');
         $this->get('/start')->assertInertia(fn (Assert $page) => $page->where('navigation', function ($groups): bool {
             $last = collect($groups)->last();
-            $hrefs = collect($last['items'])->pluck('href')->all();
+            $items = collect($last['items']);
+            $children = $items->flatMap(fn (array $i): array => $i['children'] ?? [])->pluck('href')->all();
 
             return $last['key'] === 'gui'
-                && $hrefs[0] === '/gui-prototypen'
-                && in_array('/gui-prototypen/tabelle', $hrefs, true)
-                && in_array('/gui-prototypen/dropdown', $hrefs, true)
-                && in_array('/gui-prototypen/button', $hrefs, true)
-                && in_array('/gui-prototypen/menue', $hrefs, true);
+                && $items->pluck('href')->take(2)->all() === ['/gui-prototypen', '/gui-prototypen/freigaben']
+                && $items->pluck('key')->contains('gui-eingabe')
+                && count($children) === count(GuiPrototypes::components())
+                && in_array('/gui-prototypen/dragdrop', $children, true)
+                && in_array('/gui-prototypen/combobox', $children, true)
+                && in_array('/gui-prototypen/tabelle', $children, true);
         }));
 
+        // Inhaltsverzeichnis: jeder Baustein genau einmal, mit Erklärung und Bestandteilen
         $this->get('/gui-prototypen')->assertOk()->assertInertia(fn (Assert $page) => $page
+            ->component('gui-prototypes/contents')
+            ->has('categories', 4)
+            ->where('categories', function ($categories): bool {
+                $keys = collect($categories)->flatMap(fn (array $c): array => array_column($c['items'], 'key'))->all();
+
+                return $keys === array_keys(GuiPrototypes::components())
+                    && collect($categories)->flatMap(fn (array $c): array => $c['items'])->every(fn (array $i): bool => $i['description'] !== '' && $i['parts'] !== []);
+            })
+            ->has('crosscutting', 4));
+
+        $this->get('/gui-prototypen/freigaben')->assertOk()->assertInertia(fn (Assert $page) => $page
             ->component('gui-prototypes/index')
             ->where('items.0.open.status', 'entwicklung')
             ->where('items.0.open.version', '1.0.0')
             ->where('items.0.released', null));
 
+        $this->get('/gui-prototypen/dragdrop')->assertOk()->assertInertia(fn (Assert $page) => $page
+            ->component('gui-prototypes/show')
+            ->where('component.category', 'eingabe'));
+
         $this->signInAs('lehrperson');
         $this->get('/gui-prototypen')->assertForbidden();
+        $this->get('/gui-prototypen/freigaben')->assertForbidden();
         $this->post('/gui-prototypen/button/status', ['action' => 'pruefen'])->assertForbidden();
+    }
+
+    public function test_every_component_has_valid_category_and_icon(): void
+    {
+        $categories = array_keys((array) config('intranet.gui_categories'));
+        $icons = (string) file_get_contents(resource_path('js/lib/module-icons.ts'));
+        $demos = (string) file_get_contents(resource_path('js/components/gui-demos.tsx')).file_get_contents(resource_path('js/components/gui-demos-extra.tsx'));
+
+        foreach (GuiPrototypes::components() as $key => $component) {
+            $this->assertContains($component['category'], $categories, $key);
+            $this->assertMatchesRegularExpression('/\b'.$component['icon'].',/', $icons, "Symbol {$component['icon']} fehlt in module-icons.ts");
+            $this->assertMatchesRegularExpression('/\b'.$key.': /', $demos, "Beispiele für {$key} fehlen");
+            foreach ($component['imports'] as $import) {
+                if (str_starts_with($import, '@/')) {
+                    $base = resource_path('js/'.substr($import, 2));
+                    $this->assertTrue(is_file($base.'.tsx') || is_file($base.'.ts'), "{$key}: {$import} gibt es nicht");
+                }
+            }
+        }
     }
 
     public function test_release_makes_version_binding_and_marks_pages_for_rework(): void

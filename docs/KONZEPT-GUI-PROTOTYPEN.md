@@ -1,4 +1,4 @@
-# Konzept GUI-Prototypen (ab 0.27.0)
+# Konzept GUI-Prototypen (ab 0.27.0, erweitert 0.28.0)
 
 Ziel: Das Intranet sieht am Ende einheitlich aus. Jeder Baustein der Oberfläche (Menü, Tabelle, Dropdown,
 Button …) hat **eine verbindliche Vorlage**. Verbesserungen werden am Baustein entwickelt, geprüft und
@@ -6,14 +6,25 @@ freigegeben – danach werden alle Seiten, die ihn verwenden, angepasst.
 
 ## Menü
 
-Hauptmenü «GUI-Prototypen» (letzter Menüpunkt, nur Administration): «Übersicht & Freigaben» und je Baustein ein
-Untermenü mit den Reitern **Beispiele** (Live-Beispiele mit den echten Komponenten, erfundene Daten),
-**Versionen & Status**, **Überarbeitung** und **Wünsche**.
+Hauptmenü «GUI-Prototypen» (letzter Menüpunkt, nur Administration):
 
-Bausteine (`config/intranet.php` → `gui_components`): Menü, Tabellen (Grundlage: Tabelle «Personen»), Dropdown
-(ohne/mit Vorauswahl, Fehler, Mehrfachauswahl), Button, Formularfelder, Badges & Status, Meldungen & Dialoge,
-Karten & Seitenkopf, Reiter & Umschalter, Ladezustände. Neuer Baustein: Eintrag in `gui_components` (Titel,
-Symbol, Beschreibung, `imports`) und Beispiele in `resources/js/components/gui-demos.tsx`.
+- **Inhaltsverzeichnis** (`/gui-prototypen`): alle Bausteine nach Bereich nummeriert, mit Erklärung, Bestandteilen,
+  Status und Link zum Prototyp, dazu die Regeln «Für alle Bausteine». Gleicher Inhalt als Datei:
+  [GUI-KOMPONENTEN.md](GUI-KOMPONENTEN.md).
+- **Freigaben & Status** (`/gui-prototypen/freigaben`): Tabelle mit verbindlicher Version, Version in Arbeit, offener
+  Überarbeitung und Wünschen.
+- Untermenüs **Navigation & Aufbau**, **Eingabe**, **Daten anzeigen**, **Rückmeldung** mit je einer Seite pro Baustein
+  und den Reitern **Beispiele**, **Versionen & Status**, **Überarbeitung**, **Wünsche**.
+
+Bausteine (ab 0.28.0, 29): Menü, Seitenpanel, Reiter (Tabs), Seitenweise Anzeige, Schrittanzeige, Befehlspalette,
+Umschalter & Aufklappen · Button, Formularfelder, Dropdown, Optionsfelder, Schalter, Auswahl mit Suche,
+Mehrfachauswahl, Datumsauswahl, Datei hochladen, Schieberegler, Drag & Drop · Tabellen, Karten & Seitenkopf, Badges,
+Status & Avatar, Akkordeon, Fortschritt, Diagramme, Zeitleiste · Meldungen & Dialoge, Popover, Banner, Ladezustände.
+
+Neuer Baustein: Eintrag in `config/intranet.php` → `gui_components` (Bereich `category`, Titel, Symbol,
+Beschreibung, `parts`, `imports`), Komponente unter `resources/js/components/ui/`, Beispiele in
+`resources/js/components/gui-demos.tsx` bzw. `gui-demos-extra.tsx`. `GuiPrototypesTest` prüft Bereich, Symbol,
+Beispiele und Imports. Drag & Drop: Regeln in [GUI-KOMPONENTEN.md](GUI-KOMPONENTEN.md#drag-und-drop).
 
 ## Status und Versionen
 

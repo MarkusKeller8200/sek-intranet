@@ -18,68 +18,205 @@
 | (Entwicklung → Prüfung → Freigegeben) und Versionen. Eine freigegebene Version ist das verbindliche
 | Template; alle Seiten, die den Baustein verwenden («imports»), müssen danach überarbeitet werden.
 */
+$guiCategories = [
+    'navigation' => ['title' => 'Navigation & Aufbau', 'icon' => 'Compass', 'description' => 'Wie man sich im Intranet bewegt und wie eine Seite aufgebaut ist.'],
+    'eingabe' => ['title' => 'Eingabe', 'icon' => 'TextCursorInput', 'description' => 'Wie Angaben erfasst, gewählt und Dateien übergeben werden.'],
+    'daten' => ['title' => 'Daten anzeigen', 'icon' => 'Table2', 'description' => 'Wie Listen, Kennzahlen und Verläufe dargestellt werden.'],
+    'rueckmeldung' => ['title' => 'Rückmeldung', 'icon' => 'MessageSquareWarning', 'description' => 'Wie das Intranet antwortet: Meldungen, Rückfragen, Laden, Hinweise.'],
+];
+
 $guiComponents = [
+    // Navigation & Aufbau
     'menue' => [
-        'title' => 'Menü',
-        'icon' => 'Menu',
+        'category' => 'navigation', 'title' => 'Menü', 'icon' => 'Menu',
         'description' => 'Seitenleiste mit Hauptmenüs und Untermenüs, Aktionsmenü (Dropdown-Menü) und Breadcrumbs.',
+        'parts' => ['Seitenleiste: Hauptmenüs mit Farbe, Untermenüs, aktiver Eintrag', 'Aktionsmenü: Aktionen zu einer Zeile oder Seite, Gefährliches zuletzt', 'Breadcrumbs: wo bin ich; der erste Eintrag öffnet das Menü wieder'],
         'imports' => ['@/components/ui/dropdown-menu', '@/components/ui/sidebar', '@/components/ui/breadcrumb', '@/components/nav-modules'],
     ],
-    'tabelle' => [
-        'title' => 'Tabellen',
-        'icon' => 'Table2',
-        'description' => 'Bearbeitbare Tabelle (Grundlage: Personen) mit Suche, Filtern, Sortierung, Spaltenwahl, Auswahl, Export und einfache Tabelle.',
-        'imports' => ['@/components/data-grid', '@/components/ui/table'],
+    'seitenpanel' => [
+        'category' => 'navigation', 'title' => 'Seitenpanel', 'icon' => 'PanelRight',
+        'description' => 'Fährt von der Seite ein (Sheet): Details, Filter oder Bearbeiten, ohne die Seite zu verlassen; auf dem Handy auch das Menü.',
+        'parts' => ['Von rechts: Details und Bearbeiten', 'Von links: Menü auf dem Handy', 'Schliesst mit Esc, Klick daneben oder «Schliessen»'],
+        'imports' => ['@/components/ui/sheet'],
     ],
-    'dropdown' => [
-        'title' => 'Dropdown',
-        'icon' => 'ChevronsUpDown',
-        'description' => 'Auswahlfeld ohne und mit Vorauswahl, gesperrt, mit Fehler sowie Mehrfachauswahl.',
-        'imports' => ['@/components/select-field', '@/components/ui/select'],
+    'tabs' => [
+        'category' => 'navigation', 'title' => 'Reiter (Tabs)', 'icon' => 'Folders',
+        'description' => 'Teilt eine Seite in Bereiche, von denen immer einer sichtbar ist. Pfeiltasten wechseln den Reiter.',
+        'parts' => ['Reiter mit und ohne Symbol', 'Gesperrter Reiter', 'Tastatur: Pfeiltasten, Anfang und Ende'],
+        'imports' => ['@/components/ui/tabs'],
     ],
+    'pagination' => [
+        'category' => 'navigation', 'title' => 'Seitenweise Anzeige', 'icon' => 'ListOrdered',
+        'description' => 'Blättern in langen Listen ausserhalb der Tabelle (z. B. Mitteilungen, Verlauf).',
+        'parts' => ['Zurück / Weiter', 'Seitenzahlen mit «…»', 'Aktuelle Seite für Bildschirmleser markiert'],
+        'imports' => ['@/components/ui/pagination'],
+    ],
+    'stepper' => [
+        'category' => 'navigation', 'title' => 'Schrittanzeige', 'icon' => 'Footprints',
+        'description' => 'Zeigt Abläufe in Schritten (Geräteausgabe, Import, Versand): erledigt, aktuell, offen.',
+        'parts' => ['Schritte mit Titel und Beschreibung', 'Zurück / Weiter', 'Auf dem Handy untereinander'],
+        'imports' => ['@/components/ui/stepper'],
+    ],
+    'befehlspalette' => [
+        'category' => 'navigation', 'title' => 'Befehlspalette', 'icon' => 'Command',
+        'description' => 'Mit Ctrl+K schnell zu Seiten, Personen und Aktionen springen – ohne Maus.',
+        'parts' => ['Öffnen mit Ctrl+K (Mac: Cmd+K) oder Knopf', 'Tippen filtert, Gruppen nach Art', 'Pfeiltasten und Enter'],
+        'imports' => ['@/components/ui/command-palette'],
+    ],
+    'umschalter' => [
+        'category' => 'navigation', 'title' => 'Umschalter & Aufklappen', 'icon' => 'ToggleRight',
+        'description' => 'Umschaltgruppe für Ansichten, Ein/Aus-Knopf und ein aufklappbarer Bereich.',
+        'parts' => ['Umschaltgruppe (z. B. Ansicht wählen)', 'Ein/Aus-Knopf (Toggle)', 'Aufklappbarer Bereich (Collapsible)'],
+        'imports' => ['@/components/ui/toggle-group', '@/components/ui/toggle', '@/components/ui/collapsible'],
+    ],
+    // Eingabe
     'button' => [
-        'title' => 'Button',
-        'icon' => 'MousePointerClick',
+        'category' => 'eingabe', 'title' => 'Button', 'icon' => 'MousePointerClick',
         'description' => 'Varianten (Haupt-, Neben-, Umriss-, Text-, Gefahr-Button), Grössen, mit Symbol, nur Symbol, lädt, gesperrt.',
+        'parts' => ['Varianten und Grössen', 'Mit Symbol, nur Symbol (mit Titel)', 'Lädt, gesperrt'],
         'imports' => ['@/components/ui/button', '@/components/delete-button'],
     ],
     'formular' => [
-        'title' => 'Formularfelder',
-        'icon' => 'TextCursorInput',
+        'category' => 'eingabe', 'title' => 'Formularfelder', 'icon' => 'TextCursorInput',
         'description' => 'Textfeld, Textbereich, Zahl, Datum, Kontrollkästchen, Beschriftung, Hinweis und Fehlermeldung.',
+        'parts' => ['Text, Zahl, Textbereich', 'Beschriftung, Hinweis, Fehler', 'Kontrollkästchen, gesperrtes Feld'],
         'imports' => ['@/components/ui/input', '@/components/ui/textarea', '@/components/ui/checkbox', '@/components/form-field', '@/components/input-error', '@/components/ui/label'],
     ],
-    'badge' => [
-        'title' => 'Badges & Status',
-        'icon' => 'Tag',
-        'description' => 'Kennzeichen für Status, Auswahlwerte in den Farben des Farbkonzepts und Zähler.',
-        'imports' => ['@/components/ui/badge', '@/components/option-badge'],
+    'dropdown' => [
+        'category' => 'eingabe', 'title' => 'Dropdown', 'icon' => 'ChevronsUpDown',
+        'description' => 'Auswahlfeld ohne und mit Vorauswahl, gesperrt, mit Fehler sowie Mehrfachauswahl.',
+        'parts' => ['Ohne Vorauswahl («Bitte wählen»)', 'Mit Vorauswahl', 'Mit Fehler, kurze Mehrfachauswahl'],
+        'imports' => ['@/components/select-field', '@/components/ui/select'],
     ],
-    'meldungen' => [
-        'title' => 'Meldungen & Dialoge',
-        'icon' => 'MessageSquareWarning',
-        'description' => 'Hinweisboxen, Rückfrage-Dialog, kurze Meldungen (Toast) und Tooltips.',
-        'imports' => ['@/components/ui/alert', '@/components/ui/dialog', '@/components/ui/tooltip', 'sonner', '@/components/alert-error'],
+    'radio' => [
+        'category' => 'eingabe', 'title' => 'Optionsfelder', 'icon' => 'CircleDot',
+        'description' => 'Genau eine Wahl aus wenigen (2–5) sichtbaren Möglichkeiten, z. B. Zielgruppe oder Art der Abgabe.',
+        'parts' => ['Untereinander und nebeneinander', 'Mit Hinweis je Möglichkeit', 'Gesperrte Möglichkeit, Fehler'],
+        'imports' => ['@/components/ui/radio-group'],
+    ],
+    'switch' => [
+        'category' => 'eingabe', 'title' => 'Schalter', 'icon' => 'ToggleLeft',
+        'description' => 'Ein/Aus für Einstellungen, die sofort gelten (z. B. Benachrichtigungen). In Formularen mit «Speichern» Kontrollkästchen verwenden.',
+        'parts' => ['Schalter mit Beschriftung und Hinweis', 'Gesperrt', 'Wann Schalter, wann Kontrollkästchen'],
+        'imports' => ['@/components/ui/switch'],
+    ],
+    'combobox' => [
+        'category' => 'eingabe', 'title' => 'Auswahl mit Suche', 'icon' => 'SearchCheck',
+        'description' => 'Auswahl aus langen Listen mit Suchfeld (Combobox), z. B. eine Person aus 500 oder ein Gerät.',
+        'parts' => ['Tippen filtert (ohne Akzente, Gross/Klein)', 'Zusatzangabe je Eintrag', 'Pfeiltasten, Enter, Esc'],
+        'imports' => ['@/components/ui/combobox'],
+    ],
+    'mehrfachauswahl' => [
+        'category' => 'eingabe', 'title' => 'Mehrfachauswahl', 'icon' => 'ListChecks',
+        'description' => 'Mehrere Werte wählen, z. B. Klassen oder Zielgruppen – mit Suche, «Alle» / «Keine» und entfernbaren Kennzeichen.',
+        'parts' => ['Suche in der Liste', 'Alle / Keine', 'Gewählte Werte als Kennzeichen, einzeln entfernbar'],
+        'imports' => ['@/components/ui/multi-select'],
+    ],
+    'datum' => [
+        'category' => 'eingabe', 'title' => 'Datumsauswahl', 'icon' => 'CalendarDays',
+        'description' => 'Datum eintippen (TT.MM.JJJJ) oder im Kalender wählen; Woche beginnt am Montag, Bereich einschränkbar.',
+        'parts' => ['Eintippen oder Kalender', 'Frühestes / spätestes Datum', 'Tastatur: Pfeile, Bild auf/ab'],
+        'imports' => ['@/components/ui/calendar'],
+    ],
+    'upload' => [
+        'category' => 'eingabe', 'title' => 'Datei hochladen', 'icon' => 'FileUp',
+        'description' => 'Ablagefläche zum Hineinziehen oder Anklicken (Klassenliste, Escola-Export, Dokument, PDF für ePost) mit Prüfung von Typ und Grösse.',
+        'parts' => ['Eine oder mehrere Dateien', 'Erlaubte Dateitypen, Höchstgrösse', 'Liste mit Entfernen; Dateien bleiben im Browser bis zum Senden'],
+        'imports' => ['@/components/ui/file-drop'],
+    ],
+    'slider' => [
+        'category' => 'eingabe', 'title' => 'Schieberegler', 'icon' => 'SlidersHorizontal',
+        'description' => 'Wert in einem Bereich einstellen (z. B. Anzahl Geräte, Prozent); der Wert steht immer daneben.',
+        'parts' => ['Mit Einheit', 'Schritte', 'Tastatur: Pfeile'],
+        'imports' => ['@/components/ui/slider'],
+    ],
+    'dragdrop' => [
+        'category' => 'eingabe', 'title' => 'Drag & Drop', 'icon' => 'Move',
+        'description' => 'Ziehen und Ablegen mit dnd-kit: Liste umsortieren, Zuordnen (Schüler:innen → Klassen) und Kanban-Tafel. Alles geht auch ohne Ziehen (Tastatur, Knöpfe, «Nach …»).',
+        'parts' => ['Liste umsortieren: Griff, Tastatur (Leertaste, Pfeile), Nach oben/unten', 'Zuordnen: Karten in Spalten ziehen oder «Nach …» wählen', 'Kanban: Status von Tickets/Bestellungen', 'Dateien: siehe «Datei hochladen»', 'Tabelle: Spalten ziehen oder im Spaltenmenü verschieben'],
+        'imports' => ['@/components/ui/sortable-list', '@/components/ui/drag-board', '@/components/ui/file-drop'],
+    ],
+    // Daten anzeigen
+    'tabelle' => [
+        'category' => 'daten', 'title' => 'Tabellen', 'icon' => 'Table2',
+        'description' => 'Bearbeitbare Tabelle (Grundlage: Personen) mit Suche, Filtern, Sortierung, Spaltenwahl, Auswahl, Export und einfache Tabelle.',
+        'parts' => ['Bearbeitbare Tabelle wie in Excel', 'Filter je Spalte, Sortierung, Spalten, Ansichten', 'Einfache Tabelle für kurze Listen'],
+        'imports' => ['@/components/data-grid', '@/components/ui/table'],
     ],
     'karten' => [
-        'title' => 'Karten & Seitenkopf',
-        'icon' => 'PanelsTopLeft',
+        'category' => 'daten', 'title' => 'Karten & Seitenkopf', 'icon' => 'PanelsTopLeft',
         'description' => 'Seitenkopf mit Titel und Beschreibung, Karten mit Kopf, Inhalt und Fuss, Kennzahlen, leerer Zustand.',
+        'parts' => ['Seitenkopf mit Aktion', 'Karte, Kennzahl', 'Leerer Zustand'],
         'imports' => ['@/components/ui/card', '@/components/page-header', '@/components/empty-state', '@/components/heading'],
     ],
-    'umschalter' => [
-        'title' => 'Reiter & Umschalter',
-        'icon' => 'ToggleRight',
-        'description' => 'Reiter (Umschaltgruppe), Ein/Aus-Schalter, aufklappbare Bereiche.',
-        'imports' => ['@/components/ui/toggle-group', '@/components/ui/toggle', '@/components/ui/collapsible'],
+    'badge' => [
+        'category' => 'daten', 'title' => 'Badges, Status & Avatar', 'icon' => 'Tag',
+        'description' => 'Kennzeichen für Status, Auswahlwerte in den Farben des Farbkonzepts, Zähler und Avatar (Initialen).',
+        'parts' => ['Grundformen und Zähler', 'Auswahlwerte im Farbkonzept', 'Avatar mit Initialen'],
+        'imports' => ['@/components/ui/badge', '@/components/option-badge', '@/components/ui/avatar'],
+    ],
+    'akkordeon' => [
+        'category' => 'daten', 'title' => 'Akkordeon', 'icon' => 'ListCollapse',
+        'description' => 'Mehrere aufklappbare Abschnitte, z. B. Fragen & Antworten im Handbuch; einer oder mehrere offen.',
+        'parts' => ['Nur einer offen', 'Mehrere offen', 'Überschrift als Knopf (Bildschirmleser)'],
+        'imports' => ['@/components/ui/accordion'],
+    ],
+    'fortschritt' => [
+        'category' => 'daten', 'title' => 'Fortschritt', 'icon' => 'Gauge',
+        'description' => 'Fortschrittsbalken für Import, Versand oder Abgabe; bestimmt (Prozent) oder unbestimmt.',
+        'parts' => ['Mit Prozent', 'Unbestimmt (Dauer unbekannt)', 'Kennzahl mit Balken (z. B. Lizenzen)'],
+        'imports' => ['@/components/ui/progress'],
+    ],
+    'diagramm' => [
+        'category' => 'daten', 'title' => 'Diagramme', 'icon' => 'ChartColumn',
+        'description' => 'Balkendiagramme für Kennzahlen (Lizenzen, Geräte, Abgaben) in den Farben des Farbkonzepts, immer auch als Tabelle.',
+        'parts' => ['Einfache Balken', 'Zwei Werte je Zeile (z. B. gekauft / zugewiesen)', 'Umschalter «Als Tabelle»'],
+        'imports' => ['@/components/ui/bar-chart'],
+    ],
+    'zeitleiste' => [
+        'category' => 'daten', 'title' => 'Zeitleiste', 'icon' => 'History',
+        'description' => 'Verlauf mit Datum, z. B. Versionen, Änderungen, Status einer Bestellung (neueste oben).',
+        'parts' => ['Eintrag mit Datum, Titel, Beschreibung', 'Farbe nach Art (Erfolg, Warnung, Hinweis)'],
+        'imports' => ['@/components/ui/timeline'],
+    ],
+    // Rückmeldung
+    'meldungen' => [
+        'category' => 'rueckmeldung', 'title' => 'Meldungen & Dialoge', 'icon' => 'MessageSquareWarning',
+        'description' => 'Hinweisboxen, Rückfrage-Dialog, kurze Meldungen (Toast) und Tooltips.',
+        'parts' => ['Hinweisbox (Info, Fehler)', 'Rückfrage vor Löschen', 'Toast und Tooltip'],
+        'imports' => ['@/components/ui/alert', '@/components/ui/dialog', '@/components/ui/tooltip', 'sonner', '@/components/alert-error'],
+    ],
+    'popover' => [
+        'category' => 'rueckmeldung', 'title' => 'Popover', 'icon' => 'MessageSquareMore',
+        'description' => 'Kleines Fenster an einem Knopf für Hilfe, Filter oder eine kurze Auswahl; schliesst mit Esc oder Klick daneben.',
+        'parts' => ['Hilfe zu einem Feld', 'Kleiner Filter mit Übernehmen', 'Fokus zurück zum Knopf'],
+        'imports' => ['@/components/ui/popover', '@/components/grid/popover'],
+    ],
+    'banner' => [
+        'category' => 'rueckmeldung', 'title' => 'Banner', 'icon' => 'Flag',
+        'description' => 'Hinweis über die ganze Breite oben auf der Seite, z. B. Wartung, Prototyp, neue Version.',
+        'parts' => ['Info, Warnung, Erfolg', 'Mit Aktion', 'Schliessbar'],
+        'imports' => ['@/components/ui/banner'],
     ],
     'laden' => [
-        'title' => 'Ladezustände',
-        'icon' => 'Loader',
+        'category' => 'rueckmeldung', 'title' => 'Ladezustände', 'icon' => 'Loader',
         'description' => 'Ladeanzeige (Spinner) und Platzhalter (Skeleton), solange Daten geladen werden.',
+        'parts' => ['Spinner', 'Platzhalter in der Form des Inhalts'],
         'imports' => ['@/components/ui/spinner', '@/components/ui/skeleton'],
     ],
 ];
+
+// Menü «GUI-Prototypen»: Untermenü je Bereich
+$guiMenu = [];
+foreach ($guiCategories as $categoryKey => $category) {
+    $children = [];
+    foreach ($guiComponents as $componentKey => $component) {
+        if ($component['category'] === $categoryKey) {
+            $children['gui-'.$componentKey] = ['title' => $component['title'], 'icon' => $component['icon'], 'href' => '/gui-prototypen/'.$componentKey];
+        }
+    }
+    $guiMenu['gui-'.$categoryKey] = ['title' => $category['title'], 'icon' => $category['icon'], 'items' => $children];
+}
 
 return [
 
@@ -610,15 +747,23 @@ return [
             'color' => 'indigo',
             'icon' => 'LayoutTemplate',
             'can' => 'manage-users',
-            'items' => ['gui-uebersicht' => ['title' => 'Übersicht & Freigaben', 'icon' => 'LayoutList', 'href' => '/gui-prototypen']]
-                + array_combine(
-                    array_map(fn (string $k): string => 'gui-'.$k, array_keys($guiComponents)),
-                    array_map(fn (string $k, array $c): array => ['title' => $c['title'], 'icon' => $c['icon'], 'href' => '/gui-prototypen/'.$k], array_keys($guiComponents), $guiComponents),
-                ),
+            'items' => [
+                'gui-inhalt' => ['title' => 'Inhaltsverzeichnis', 'icon' => 'BookOpen', 'href' => '/gui-prototypen'],
+                'gui-freigaben' => ['title' => 'Freigaben & Status', 'icon' => 'LayoutList', 'href' => '/gui-prototypen/freigaben'],
+            ] + $guiMenu,
         ],
     ],
 
     'gui_components' => $guiComponents,
+    'gui_categories' => $guiCategories,
+
+    // Inhaltsverzeichnis: Themen für alle Bausteine (kein eigener Prototyp)
+    'gui_crosscutting' => [
+        ['title' => 'Hell- und Dunkelmodus, Farben', 'description' => 'Farben nur über die Farbwerte in resources/css/app.css und config/intranet.php → colors; jeder Baustein funktioniert hell und dunkel.', 'href' => '/farbkonzept'],
+        ['title' => 'Tastatur und Bildschirmleser', 'description' => 'Alles ohne Maus bedienbar, sichtbarer Fokus, Beschriftungen für Knöpfe mit Symbol; Ziehen immer mit Alternative (WCAG 2.2, 2.5.7).', 'href' => '/gui-prototypen/dragdrop'],
+        ['title' => 'Handy und Tablet', 'description' => 'Jeder Baustein passt sich der Breite an; Touch-Ziele mindestens 24 × 24 Pixel; Ziehen auf dem iPad mit kurzem Halten.', 'href' => null],
+        ['title' => 'Mehrsprachigkeit', 'description' => 'Texte im Code auf Deutsch, Übersetzungen in den Katalogen; Namen und Daten mit translate="no" schützen.', 'href' => '/sprachkonzept'],
+    ],
 
     // Status der GUI-Prototypen (Reihenfolge = Ablauf)
     'gui_statuses' => [
