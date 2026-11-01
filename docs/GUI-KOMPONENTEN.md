@@ -345,20 +345,20 @@ meldet, was verschoben wird. Für Dateien genügt das Drag & Drop des Browsers (
 
 **Bausteine**
 
-| Baustein                         | Datei                                 | Wofür                                              |
-| -------------------------------- | ------------------------------------- | -------------------------------------------------- |
-| `SortableList`                   | `components/ui/sortable-list.tsx`     | Reihenfolge ändern (Links, Menüpunkte, Checklisten) |
-| `DragBoard`                      | `components/ui/drag-board.tsx`        | Zuordnen (Schüler:innen → Klassen), Kanban (Status) |
-| `FileDrop`                       | `components/ui/file-drop.tsx`         | Dateien ablegen (Klassenliste, Dokumente, PDF)      |
-| Tabelle: Spalten verschieben     | `components/data-grid.tsx`            | Spaltenkopf ziehen oder Spaltenmenü                 |
+| Baustein                     | Datei                             | Wofür                                               |
+| ---------------------------- | --------------------------------- | --------------------------------------------------- |
+| `SortableList`               | `components/ui/sortable-list.tsx` | Reihenfolge ändern (Links, Menüpunkte, Checklisten) |
+| `DragBoard`                  | `components/ui/drag-board.tsx`    | Zuordnen (Schüler:innen → Klassen), Kanban (Status) |
+| `FileDrop`                   | `components/ui/file-drop.tsx`     | Dateien ablegen (Klassenliste, Dokumente, PDF)      |
+| Tabelle: Spalten verschieben | `components/data-grid.tsx`        | Spaltenkopf ziehen oder Spaltenmenü                 |
 
 **Regeln (verbindlich)**
 
 1. **Alles geht auch ohne Ziehen** (WCAG 2.2, Kriterium 2.5.7 «Ziehbewegungen»):
-   - Liste: Griff fokussieren, Leertaste, Pfeiltasten, Leertaste (Esc bricht ab) – und Knöpfe «Nach oben / Nach unten»
-   - Tafel: je Karte die Auswahl «Nach …»
-   - Dateien: Ablagefläche ist anklickbar und mit Tab/Enter erreichbar
-   - Tabelle: im Spaltenmenü «Nach links / Nach rechts»
+    - Liste: Griff fokussieren, Leertaste, Pfeiltasten, Leertaste (Esc bricht ab) – und Knöpfe «Nach oben / Nach unten»
+    - Tafel: je Karte die Auswahl «Nach …»
+    - Dateien: Ablagefläche ist anklickbar und mit Tab/Enter erreichbar
+    - Tabelle: im Spaltenmenü «Nach links / Nach rechts»
 2. **Ziehen nur am Griff** (Symbol ⋮⋮), damit Klicken, Markieren und Scrollen normal funktionieren. Auf dem iPad
    startet das Ziehen nach kurzem Halten (150 ms), damit Wischen die Seite scrollt.
 3. **Ansagen auf Deutsch** für Bildschirmleser («… aufgenommen», «… abgelegt bei Platz 3», «abgebrochen»).

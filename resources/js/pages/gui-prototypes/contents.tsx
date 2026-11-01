@@ -57,7 +57,10 @@ export default function GuiContents({
                     }
                 />
 
-                <nav aria-label="Bereiche" className="flex flex-wrap gap-2 text-sm">
+                <nav
+                    aria-label="Bereiche"
+                    className="flex flex-wrap gap-2 text-sm"
+                >
                     {categories.map((c) => (
                         <a
                             key={c.key}

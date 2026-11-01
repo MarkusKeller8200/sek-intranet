@@ -11,7 +11,10 @@ import { DatePicker } from '@/components/ui/calendar';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Combobox } from '@/components/ui/combobox';
 import type { ComboOption } from '@/components/ui/combobox';
-import { CommandPalette, useCommandShortcut } from '@/components/ui/command-palette';
+import {
+    CommandPalette,
+    useCommandShortcut,
+} from '@/components/ui/command-palette';
 import type { Command } from '@/components/ui/command-palette';
 import { DragBoard } from '@/components/ui/drag-board';
 import type { BoardCard } from '@/components/ui/drag-board';
@@ -91,12 +94,21 @@ const PEOPLE: ComboOption[] = [
 ].map((name, i) => ({
     value: `p${i + 1}`,
     label: name,
-    hint: i % 3 === 0 ? 'Lehrperson' : i % 3 === 1 ? 'Schüler:in M_A1a' : 'Schüler:in H_A2a',
+    hint:
+        i % 3 === 0
+            ? 'Lehrperson'
+            : i % 3 === 1
+              ? 'Schüler:in M_A1a'
+              : 'Schüler:in H_A2a',
 }));
 
-const CLASSES: ComboOption[] = ['M_A1a', 'M_B1b', 'H_A1a', 'H_A2a', 'M_C3a'].map(
-    (c) => ({ value: c.toLowerCase(), label: c }),
-);
+const CLASSES: ComboOption[] = [
+    'M_A1a',
+    'M_B1b',
+    'H_A1a',
+    'H_A2a',
+    'M_C3a',
+].map((c) => ({ value: c.toLowerCase(), label: c }));
 
 function SheetDemo() {
     return (
@@ -251,12 +263,44 @@ function CommandDemo() {
     const go = (label: string) => () => toast.success(`Beispiel: ${label}`);
     const commands: Command[] = [
         { id: 'start', label: 'Start', group: 'Seiten', onSelect: go('Start') },
-        { id: 'personen', label: 'Personen', group: 'Seiten', onSelect: go('Personen') },
-        { id: 'termine', label: 'Termine', group: 'Seiten', onSelect: go('Termine') },
-        { id: 'p1', label: 'Muster Anna', group: 'Personen', hint: 'Lehrperson', onSelect: go('Muster Anna') },
-        { id: 'p2', label: 'Beispiel Ben', group: 'Personen', hint: 'Schulleitung', onSelect: go('Beispiel Ben') },
-        { id: 'neu', label: 'Neue Mitteilung', group: 'Aktionen', onSelect: go('Neue Mitteilung') },
-        { id: 'export', label: 'Personen exportieren', group: 'Aktionen', onSelect: go('Export') },
+        {
+            id: 'personen',
+            label: 'Personen',
+            group: 'Seiten',
+            onSelect: go('Personen'),
+        },
+        {
+            id: 'termine',
+            label: 'Termine',
+            group: 'Seiten',
+            onSelect: go('Termine'),
+        },
+        {
+            id: 'p1',
+            label: 'Muster Anna',
+            group: 'Personen',
+            hint: 'Lehrperson',
+            onSelect: go('Muster Anna'),
+        },
+        {
+            id: 'p2',
+            label: 'Beispiel Ben',
+            group: 'Personen',
+            hint: 'Schulleitung',
+            onSelect: go('Beispiel Ben'),
+        },
+        {
+            id: 'neu',
+            label: 'Neue Mitteilung',
+            group: 'Aktionen',
+            onSelect: go('Neue Mitteilung'),
+        },
+        {
+            id: 'export',
+            label: 'Personen exportieren',
+            group: 'Aktionen',
+            onSelect: go('Export'),
+        },
     ];
 
     return (
@@ -291,10 +335,19 @@ function RadioDemo() {
                     value={audience}
                     onChange={setAudience}
                     options={[
-                        { value: 'alle', label: 'Alle', hint: 'Lehrpersonen und Mitarbeitende' },
+                        {
+                            value: 'alle',
+                            label: 'Alle',
+                            hint: 'Lehrpersonen und Mitarbeitende',
+                        },
                         { value: 'lehrpersonen', label: 'Nur Lehrpersonen' },
                         { value: 'verwaltung', label: 'Nur Verwaltung' },
-                        { value: 'eltern', label: 'Eltern', hint: 'erst mit ePost', disabled: true },
+                        {
+                            value: 'eltern',
+                            label: 'Eltern',
+                            hint: 'erst mit ePost',
+                            disabled: true,
+                        },
                     ]}
                 />
             </Demo>
@@ -326,13 +379,31 @@ function SwitchDemo() {
             className="grid max-w-md"
         >
             {[
-                { id: 'gui-sw-mail', label: 'E-Mail bei neuen Mitteilungen', hint: 'Höchstens eine pro Tag.', checked: mail, set: setMail },
-                { id: 'gui-sw-push', label: 'Mitteilung auf dem Gerät', hint: 'Nur in der installierten App.', checked: push, set: setPush },
+                {
+                    id: 'gui-sw-mail',
+                    label: 'E-Mail bei neuen Mitteilungen',
+                    hint: 'Höchstens eine pro Tag.',
+                    checked: mail,
+                    set: setMail,
+                },
+                {
+                    id: 'gui-sw-push',
+                    label: 'Mitteilung auf dem Gerät',
+                    hint: 'Nur in der installierten App.',
+                    checked: push,
+                    set: setPush,
+                },
             ].map((s) => (
-                <div key={s.id} className="flex items-start justify-between gap-4">
+                <div
+                    key={s.id}
+                    className="flex items-start justify-between gap-4"
+                >
                     <div className="grid gap-0.5">
                         <Label htmlFor={s.id}>{s.label}</Label>
-                        <span id={`${s.id}-hint`} className="text-xs text-muted-foreground">
+                        <span
+                            id={`${s.id}-hint`}
+                            className="text-xs text-muted-foreground"
+                        >
                             {s.hint}
                         </span>
                     </div>
@@ -342,14 +413,21 @@ function SwitchDemo() {
                         aria-describedby={`${s.id}-hint`}
                         onCheckedChange={(v) => {
                             s.set(v);
-                            toast.success(v ? 'Eingeschaltet.' : 'Ausgeschaltet.');
+                            toast.success(
+                                v ? 'Eingeschaltet.' : 'Ausgeschaltet.',
+                            );
                         }}
                     />
                 </div>
             ))}
             <div className="flex items-center justify-between gap-4">
                 <Label htmlFor="gui-sw-off">Gesperrt</Label>
-                <Switch id="gui-sw-off" checked onCheckedChange={() => undefined} disabled />
+                <Switch
+                    id="gui-sw-off"
+                    checked
+                    onCheckedChange={() => undefined}
+                    disabled
+                />
             </div>
         </Demo>
     );
@@ -443,7 +521,11 @@ function UploadDemo() {
 
     return (
         <>
-            <Demo title="Eine Datei" hint="Klassenliste als Excel oder CSV." className="block">
+            <Demo
+                title="Eine Datei"
+                hint="Klassenliste als Excel oder CSV."
+                className="block"
+            >
                 <FileDrop
                     accept=".xlsx,.csv"
                     files={list}
@@ -451,7 +533,11 @@ function UploadDemo() {
                     hint="Excel (.xlsx) oder CSV · wird nur im Browser gelesen"
                 />
             </Demo>
-            <Demo title="Mehrere Dateien" hint="Höchstens 10 MB je Datei." className="block">
+            <Demo
+                title="Mehrere Dateien"
+                hint="Höchstens 10 MB je Datei."
+                className="block"
+            >
                 <FileDrop
                     accept=".pdf"
                     multiple
@@ -472,10 +558,23 @@ function SliderDemo() {
     return (
         <Demo title="Schieberegler" className="grid max-w-md gap-4">
             <FormField id="gui-slider" label="Anzahl iPads">
-                <Slider id="gui-slider" value={count} onChange={setCount} min={0} max={30} unit="Stk." />
+                <Slider
+                    id="gui-slider"
+                    value={count}
+                    onChange={setCount}
+                    min={0}
+                    max={30}
+                    unit="Stk."
+                />
             </FormField>
             <FormField id="gui-slider2" label="Anteil Präsenz">
-                <Slider id="gui-slider2" value={share} onChange={setShare} step={10} unit="%" />
+                <Slider
+                    id="gui-slider2"
+                    value={share}
+                    onChange={setShare}
+                    step={10}
+                    unit="%"
+                />
             </FormField>
         </Demo>
     );
@@ -499,13 +598,37 @@ function DragDropDemo() {
         { id: 's5', title: 'Testfall Hugo', column: 'offen' },
     ]);
     const [tickets, setTickets] = useState<BoardCard[]>([
-        { id: 't1', title: 'Beamer Zimmer 104', column: 'offen', meta: 'Ticket · 28.10.' },
-        { id: 't2', title: 'iPad 2a-07 Display', column: 'arbeit', meta: 'Reparatur · 29.10.' },
-        { id: 't3', title: 'Drucker Lehrerzimmer', column: 'erledigt', meta: 'Ticket · 25.10.' },
-        { id: 't4', title: 'Lizenz Lernapp', column: 'offen', meta: 'Bestellung · 30.10.' },
+        {
+            id: 't1',
+            title: 'Beamer Zimmer 104',
+            column: 'offen',
+            meta: 'Ticket · 28.10.',
+        },
+        {
+            id: 't2',
+            title: 'iPad 2a-07 Display',
+            column: 'arbeit',
+            meta: 'Reparatur · 29.10.',
+        },
+        {
+            id: 't3',
+            title: 'Drucker Lehrerzimmer',
+            column: 'erledigt',
+            meta: 'Ticket · 25.10.',
+        },
+        {
+            id: 't4',
+            title: 'Lizenz Lernapp',
+            column: 'offen',
+            meta: 'Bestellung · 30.10.',
+        },
     ]);
-    const move = (set: (f: (cards: BoardCard[]) => BoardCard[]) => void) => (card: string, column: string) =>
-        set((cards) => cards.map((c) => (c.id === card ? { ...c, column } : c)));
+    const move =
+        (set: (f: (cards: BoardCard[]) => BoardCard[]) => void) =>
+        (card: string, column: string) =>
+            set((cards) =>
+                cards.map((c) => (c.id === card ? { ...c, column } : c)),
+            );
 
     return (
         <>
@@ -515,7 +638,10 @@ function DragDropDemo() {
                 className="block max-w-lg"
             >
                 <SortableList items={links} onChange={setLinks} />
-                <p className="mt-2 text-xs text-muted-foreground" translate="no">
+                <p
+                    className="mt-2 text-xs text-muted-foreground"
+                    translate="no"
+                >
                     {links.map((l) => l.label).join(' · ')}
                 </p>
             </Demo>
@@ -554,7 +680,9 @@ function DragDropDemo() {
                 hint="Dateien: Baustein «Datei hochladen». Tabelle: Spalten am Griff ziehen oder im Spaltenmenü «Nach links / Nach rechts»."
                 className="text-sm text-muted-foreground"
             >
-                <span>Regel: Alles, was man ziehen kann, geht auch ohne Ziehen.</span>
+                <span>
+                    Regel: Alles, was man ziehen kann, geht auch ohne Ziehen.
+                </span>
             </Demo>
         </>
     );
@@ -567,9 +695,24 @@ function AccordionDemo() {
                 <Accordion
                     defaultOpen={['a1']}
                     items={[
-                        { id: 'a1', title: 'Wie melde ich ein defektes Gerät?', content: 'Im Menü «Tickets» ein Ticket erfassen; die Fachstelle ICT meldet sich.' },
-                        { id: 'a2', title: 'Wo finde ich den Stundenplan?', content: 'Unter «Personen & Organisation» → «Stundenpläne».' },
-                        { id: 'a3', title: 'Wer darf Mitteilungen schreiben?', content: 'Schulleitung, Redaktion und Administration.' },
+                        {
+                            id: 'a1',
+                            title: 'Wie melde ich ein defektes Gerät?',
+                            content:
+                                'Im Menü «Tickets» ein Ticket erfassen; die Fachstelle ICT meldet sich.',
+                        },
+                        {
+                            id: 'a2',
+                            title: 'Wo finde ich den Stundenplan?',
+                            content:
+                                'Unter «Personen & Organisation» → «Stundenpläne».',
+                        },
+                        {
+                            id: 'a3',
+                            title: 'Wer darf Mitteilungen schreiben?',
+                            content:
+                                'Schulleitung, Redaktion und Administration.',
+                        },
                     ]}
                 />
             </Demo>
@@ -577,8 +720,16 @@ function AccordionDemo() {
                 <Accordion
                     multiple
                     items={[
-                        { id: 'b1', title: 'Kontakt', content: 'Schul-E-Mail und Telefon.' },
-                        { id: 'b2', title: 'Organisation', content: 'Schulhaus, Klasse, Funktion.' },
+                        {
+                            id: 'b1',
+                            title: 'Kontakt',
+                            content: 'Schul-E-Mail und Telefon.',
+                        },
+                        {
+                            id: 'b2',
+                            title: 'Organisation',
+                            content: 'Schulhaus, Klasse, Funktion.',
+                        },
                     ]}
                 />
             </Demo>
@@ -593,15 +744,27 @@ function ProgressDemo() {
         <Demo title="Fortschritt" className="grid max-w-md gap-4">
             <Progress label="Import Klassenliste" value={value} />
             <div className="flex gap-2">
-                <Button size="sm" variant="outline" onClick={() => setValue((v) => Math.max(0, v - 10))}>
+                <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => setValue((v) => Math.max(0, v - 10))}
+                >
                     −10 %
                 </Button>
-                <Button size="sm" variant="outline" onClick={() => setValue((v) => Math.min(100, v + 10))}>
+                <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => setValue((v) => Math.min(100, v + 10))}
+                >
                     +10 %
                 </Button>
             </div>
             <Progress label="Versand wird vorbereitet" value={null} />
-            <Progress label="Lizenzen zugewiesen: 412 von 500" value={412} max={500} />
+            <Progress
+                label="Lizenzen zugewiesen: 412 von 500"
+                value={412}
+                max={500}
+            />
         </Demo>
     );
 }
@@ -642,10 +805,33 @@ function TimelineDemo() {
         <Demo title="Verlauf einer Bestellung" className="block">
             <Timeline
                 entries={[
-                    { id: 'e4', at: '31.10.2026, 09:12', title: 'Geliefert', description: 'An Fachstelle ICT', tone: 'success' },
-                    { id: 'e3', at: '28.10.2026, 14:40', title: 'Bestellt', description: 'Beim Lieferanten ausgelöst', tone: 'info' },
-                    { id: 'e2', at: '27.10.2026, 08:05', title: 'Rückfrage', description: 'Menge geklärt', tone: 'warning' },
-                    { id: 'e1', at: '26.10.2026, 16:30', title: 'Erfasst', description: 'Durch Muster Anna' },
+                    {
+                        id: 'e4',
+                        at: '31.10.2026, 09:12',
+                        title: 'Geliefert',
+                        description: 'An Fachstelle ICT',
+                        tone: 'success',
+                    },
+                    {
+                        id: 'e3',
+                        at: '28.10.2026, 14:40',
+                        title: 'Bestellt',
+                        description: 'Beim Lieferanten ausgelöst',
+                        tone: 'info',
+                    },
+                    {
+                        id: 'e2',
+                        at: '27.10.2026, 08:05',
+                        title: 'Rückfrage',
+                        description: 'Menge geklärt',
+                        tone: 'warning',
+                    },
+                    {
+                        id: 'e1',
+                        at: '26.10.2026, 16:30',
+                        title: 'Erfasst',
+                        description: 'Durch Muster Anna',
+                    },
                 ]}
             />
         </Demo>
@@ -656,7 +842,10 @@ function PopoverDemo() {
     const [onlyActive, setOnlyActive] = useState(true);
 
     return (
-        <Demo title="Popover" hint="Schliesst mit Esc oder Klick daneben; der Fokus geht zurück zum Knopf.">
+        <Demo
+            title="Popover"
+            hint="Schliesst mit Esc oder Klick daneben; der Fokus geht zurück zum Knopf."
+        >
             <PopoverButton
                 label={
                     <>
@@ -669,7 +858,9 @@ function PopoverDemo() {
                 title="Hilfe"
             >
                 <p className="font-medium">Geräte-Nr.</p>
-                <p className="text-muted-foreground">Steht auf der Rückseite des iPads, z. B. «2a-07».</p>
+                <p className="text-muted-foreground">
+                    Steht auf der Rückseite des iPads, z. B. «2a-07».
+                </p>
             </PopoverButton>
             <PopoverButton
                 label={
@@ -684,7 +875,9 @@ function PopoverDemo() {
                             <Checkbox
                                 id="gui-pop-active"
                                 checked={onlyActive}
-                                onCheckedChange={(c: boolean | 'indeterminate') => setOnlyActive(c === true)}
+                                onCheckedChange={(
+                                    c: boolean | 'indeterminate',
+                                ) => setOnlyActive(c === true)}
                             />
                             <Label htmlFor="gui-pop-active">Nur aktive</Label>
                         </div>
@@ -708,8 +901,15 @@ function BannerDemo() {
     const [visible, setVisible] = useState(true);
 
     return (
-        <Demo title="Banner" hint="Über die ganze Breite oben auf der Seite." className="grid p-0">
-            <Banner tone="warning">Wartung heute ab 18 Uhr – das Intranet ist kurz nicht erreichbar.</Banner>
+        <Demo
+            title="Banner"
+            hint="Über die ganze Breite oben auf der Seite."
+            className="grid p-0"
+        >
+            <Banner tone="warning">
+                Wartung heute ab 18 Uhr – das Intranet ist kurz nicht
+                erreichbar.
+            </Banner>
             <Banner
                 tone="info"
                 action={
@@ -726,7 +926,11 @@ function BannerDemo() {
                 </Banner>
             ) : (
                 <div className="p-3">
-                    <Button size="sm" variant="ghost" onClick={() => setVisible(true)}>
+                    <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={() => setVisible(true)}
+                    >
                         <Bell /> Banner wieder zeigen
                     </Button>
                 </div>
