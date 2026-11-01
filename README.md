@@ -10,15 +10,15 @@ PostgreSQL darunter gebaut, ohne Controller oder Oberfläche anzufassen.
 
 ## Stack (wie IDA, ADR-001 bis ADR-005)
 
-| Schicht  | Technologie                                                   |
-| -------- | ------------------------------------------------------------- |
-| Backend  | Laravel 13 (PHP 8.3+, empfohlen 8.4)                          |
+| Schicht  | Technologie                                                     |
+| -------- | --------------------------------------------------------------- |
+| Backend  | Laravel 13 (PHP 8.3+, empfohlen 8.4)                            |
 | Frontend | React 19 + TypeScript, Inertia 3, shadcn/ui (Radix), Tailwind 4 |
-| Listen   | eigene bearbeitbare Tabelle (`components/data-grid.tsx`)      |
-| Ziehen   | dnd-kit (Drag & Drop mit Tastatur-Alternative)                |
-| Speicher | **JSON-Dateien** (`storage/app/data/*.json`) statt PostgreSQL |
-| Login    | Demo-Auswahl (Prototyp) statt OIDC Entra ID / Edulog          |
-| Tests    | PHPUnit, PHPStan Level 7 (Larastan), Pint                     |
+| Listen   | eigene bearbeitbare Tabelle (`components/data-grid.tsx`)        |
+| Ziehen   | dnd-kit (Drag & Drop mit Tastatur-Alternative)                  |
+| Speicher | **JSON-Dateien** (`storage/app/data/*.json`) statt PostgreSQL   |
+| Login    | Demo-Auswahl (Prototyp) statt OIDC Entra ID / Edulog            |
+| Tests    | PHPUnit, PHPStan Level 7 (Larastan), Pint                       |
 
 Bewusst weggelassen gegenüber dem Starterkit: Fortify (Passwörter, 2FA,
 Passkeys, Registrierung) – das Intranet meldet später über das Schulkonto an.

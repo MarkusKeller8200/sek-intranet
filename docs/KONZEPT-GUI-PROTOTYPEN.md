@@ -66,17 +66,16 @@ Sammlung `gui_components` (Schema in `config/intranet.php`), Logik in `App\Suppo
 
 ## Wer darf was, und wer erfährt es (ab 0.31.0)
 
-| Schritt | Wer darf | Was passiert | Benachrichtigt (Glocke) |
-| --- | --- | --- | --- |
-| Neue Version anlegen | Administration (`manage-users`) | Version x.y.z in «Entwicklung»; gewählte Wünsche werden ihr zugeordnet | Autor:innen der übernommenen Wünsche |
-| Zur Prüfung geben | Administration | Status «Prüfung», Datum und Person, optional Bemerkung | alle mit `review-gui` (Administration, Schulleitung) |
-| Zurück an Entwicklung | `review-gui` | Status «Entwicklung», Bemerkung im Verlauf | wer die Version angelegt hat und die Administration |
-| Freigeben | `review-gui` | Version verbindlich, verwendende Seiten zur Überarbeitung vorgemerkt | alle mit `use-gui` |
-| Wunsch erfassen | alle mit `use-gui` | Wunsch beim Baustein, «offen» | Administration (Entwicklung) |
-| Überarbeitung abhaken | Administration | Seite mit Datum und Person erledigt | – |
+| Schritt               | Wer darf                        | Was passiert                                                           | Benachrichtigt (Glocke)                              |
+| --------------------- | ------------------------------- | ---------------------------------------------------------------------- | ---------------------------------------------------- |
+| Neue Version anlegen  | Administration (`manage-users`) | Version x.y.z in «Entwicklung»; gewählte Wünsche werden ihr zugeordnet | Autor:innen der übernommenen Wünsche                 |
+| Zur Prüfung geben     | Administration                  | Status «Prüfung», Datum und Person, optional Bemerkung                 | alle mit `review-gui` (Administration, Schulleitung) |
+| Zurück an Entwicklung | `review-gui`                    | Status «Entwicklung», Bemerkung im Verlauf                             | wer die Version angelegt hat und die Administration  |
+| Freigeben             | `review-gui`                    | Version verbindlich, verwendende Seiten zur Überarbeitung vorgemerkt   | alle mit `use-gui`                                   |
+| Wunsch erfassen       | alle mit `use-gui`              | Wunsch beim Baustein, «offen»                                          | Administration (Entwicklung)                         |
+| Überarbeitung abhaken | Administration                  | Seite mit Datum und Person erledigt                                    | –                                                    |
 
 Die auslösende Person erhält keine Meldung. Ein Klick auf die Benachrichtigung öffnet den Baustein direkt im
 passenden Reiter (`?reiter=versionen|ueberarbeitung|wuensche`). Neue Meldungen erscheinen ohne Neuladen
 (Abfrage alle 45 Sekunden) zusätzlich als kurze Meldung mit «Öffnen». Siehe
 [KONZEPT-BENACHRICHTIGUNGEN.md](KONZEPT-BENACHRICHTIGUNGEN.md).
-

@@ -214,8 +214,7 @@ function StatusActions({
     open: GuiVersion;
     can: Can;
 }) {
-    const allowed =
-        open.status === 'entwicklung' ? can.develop : can.review;
+    const allowed = open.status === 'entwicklung' ? can.develop : can.review;
     const [comment, setComment] = useState('');
     const [busy, setBusy] = useState(false);
 
@@ -262,41 +261,44 @@ function StatusActions({
                         : 'Diese Version wartet auf Prüfung. Prüfen und freigeben dürfen Administration und Schulleitung.'}
                 </CardContent>
             ) : (
-            <CardContent className="grid gap-3">
-                <FormField id="gui-comment" label="Bemerkung (optional)">
-                    <Textarea
-                        id="gui-comment"
-                        rows={2}
-                        value={comment}
-                        onChange={(e) => setComment(e.target.value)}
-                    />
-                </FormField>
-                <div className="flex flex-wrap gap-2">
-                    {open.status === 'entwicklung' && (
-                        <Button disabled={busy} onClick={() => send('pruefen')}>
-                            <Send /> Zur Prüfung geben
-                        </Button>
-                    )}
-                    {open.status === 'pruefung' && (
-                        <>
+                <CardContent className="grid gap-3">
+                    <FormField id="gui-comment" label="Bemerkung (optional)">
+                        <Textarea
+                            id="gui-comment"
+                            rows={2}
+                            value={comment}
+                            onChange={(e) => setComment(e.target.value)}
+                        />
+                    </FormField>
+                    <div className="flex flex-wrap gap-2">
+                        {open.status === 'entwicklung' && (
                             <Button
                                 disabled={busy}
-                                onClick={() => send('freigeben')}
-                                data-testid="release"
+                                onClick={() => send('pruefen')}
                             >
-                                <ShieldCheck /> Freigeben
+                                <Send /> Zur Prüfung geben
                             </Button>
-                            <Button
-                                variant="outline"
-                                disabled={busy}
-                                onClick={() => send('zurueck')}
-                            >
-                                <RotateCcw /> Zurück an Entwicklung
-                            </Button>
-                        </>
-                    )}
-                </div>
-            </CardContent>
+                        )}
+                        {open.status === 'pruefung' && (
+                            <>
+                                <Button
+                                    disabled={busy}
+                                    onClick={() => send('freigeben')}
+                                    data-testid="release"
+                                >
+                                    <ShieldCheck /> Freigeben
+                                </Button>
+                                <Button
+                                    variant="outline"
+                                    disabled={busy}
+                                    onClick={() => send('zurueck')}
+                                >
+                                    <RotateCcw /> Zurück an Entwicklung
+                                </Button>
+                            </>
+                        )}
+                    </div>
+                </CardContent>
             )}
         </Card>
     );

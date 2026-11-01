@@ -22,13 +22,13 @@ Tickets, Bestellungen, Abgaben oder Plugins.
 
 ## Meldungen heute
 
-| Art (`kind`) | Auslöser | Empfänger:innen |
-| --- | --- | --- |
-| `gui.review` | Version zur Prüfung gegeben | `review-gui` |
-| `gui.returned` | Prüfung: zurück an Entwicklung | Ersteller:in der Version, Administration |
-| `gui.released` | Version freigegeben | `use-gui` |
-| `gui.wish` | neuer Wunsch | Administration |
-| `gui.wish.planned` | Wunsch in neue Version übernommen | Autor:in des Wunsches |
+| Art (`kind`)       | Auslöser                          | Empfänger:innen                          |
+| ------------------ | --------------------------------- | ---------------------------------------- |
+| `gui.review`       | Version zur Prüfung gegeben       | `review-gui`                             |
+| `gui.returned`     | Prüfung: zurück an Entwicklung    | Ersteller:in der Version, Administration |
+| `gui.released`     | Version freigegeben               | `use-gui`                                |
+| `gui.wish`         | neuer Wunsch                      | Administration                           |
+| `gui.wish.planned` | Wunsch in neue Version übernommen | Autor:in des Wunsches                    |
 
 ## Technik
 
