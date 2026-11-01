@@ -48,6 +48,7 @@ class GuiPrototypeController extends Controller
         return Inertia::render('gui-prototypes/contents', [
             'categories' => array_values($categories),
             'crosscutting' => (array) config('intranet.gui_crosscutting'),
+            'later' => (array) config('intranet.gui_later'),
         ]);
     }
 

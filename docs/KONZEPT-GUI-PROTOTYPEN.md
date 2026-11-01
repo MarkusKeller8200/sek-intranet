@@ -17,14 +17,20 @@ Hauptmenü «GUI-Prototypen» (letzter Menüpunkt, nur Administration):
   und den Reitern **Beispiele**, **Versionen & Status**, **Überarbeitung**, **Wünsche**. Über den Beispielen die Leiste
   **Vorschau** mit **Hell / Dunkel** und **Theme** (ab 0.29.0, siehe [KONZEPT-THEMES.md](KONZEPT-THEMES.md)).
 
-Bausteine (ab 0.28.0, 29): Menü, Seitenpanel, Reiter (Tabs), Seitenweise Anzeige, Schrittanzeige, Befehlspalette,
-Umschalter & Aufklappen · Button, Formularfelder, Dropdown, Optionsfelder, Schalter, Auswahl mit Suche,
-Mehrfachauswahl, Datumsauswahl, Datei hochladen, Schieberegler, Drag & Drop · Tabellen, Karten & Seitenkopf, Badges,
-Status & Avatar, Akkordeon, Fortschritt, Diagramme, Zeitleiste · Meldungen & Dialoge, Popover, Banner, Ladezustände.
+Bausteine (ab 0.30.0, 40, Abgleich mit der Komponentenliste von shadcn/ui): Menü (inkl. Navigationsmenü),
+Seitenpanel (inkl. Drawer), Reiter, Seitenweise Anzeige, Schrittanzeige, Befehlspalette, Umschalter & Aufklappen,
+Kontextmenü, Geteilte Ansicht · Button, Knopfgruppe, Formularfelder (inkl. Feldgruppen), Eingabegruppe, Dropdown (inkl.
+Native Select), Optionsfelder, Schalter, Auswahl mit Suche, Mehrfachauswahl, Datumsauswahl, Datei hochladen (inkl.
+Anhang), Schieberegler, Drag & Drop, Fragebogen · Tabellen, Typografie (inkl. Kbd, Trennlinie), Eintrag, Karten &
+Seitenkopf, Badges/Status/Avatar, Akkordeon, Fortschritt, Diagramme (Balken, Linien, Ring), Zeitleiste, Scrollbereich,
+Codeblock · Meldungen & Dialoge, Rückfrage (Alert Dialog), Popover, Vorschaukarte, Banner, Ladezustände.
+Bewusst später (`gui_later`, Abschnitt «Später» im Inhaltsverzeichnis): Aspect Ratio, Carousel, Menubar, Input OTP,
+Direction sowie die Chat-/KI-Bausteine Bubble, Message, Message Scroller, Marker, Trace.
 
 Neuer Baustein: Eintrag in `config/intranet.php` → `gui_components` (Bereich `category`, Titel, Symbol,
 Beschreibung, `parts`, `imports`), Komponente unter `resources/js/components/ui/`, Beispiele in
-`resources/js/components/gui-demos.tsx` bzw. `gui-demos-extra.tsx`. `GuiPrototypesTest` prüft Bereich, Symbol,
+`resources/js/components/gui-demos.tsx`, `gui-demos-extra.tsx` bzw. `gui-demos-more.tsx` (Ergänzungen bestehender
+Bausteine über `DEMO_EXTENSIONS`). `GuiPrototypesTest` prüft Bereich, Symbol,
 Beispiele und Imports. Drag & Drop: Regeln in [GUI-KOMPONENTEN.md](GUI-KOMPONENTEN.md#drag-und-drop).
 
 ## Status und Versionen

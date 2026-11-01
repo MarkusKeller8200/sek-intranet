@@ -22,6 +22,7 @@ import DataGrid from '@/components/data-grid';
 import type { GridColumn } from '@/components/data-grid';
 import EmptyState from '@/components/empty-state';
 import { EXTRA_DEMOS } from '@/components/gui-demos-extra';
+import { DEMO_EXTENSIONS, MORE_DEMOS } from '@/components/gui-demos-more';
 import FormField from '@/components/form-field';
 import OptionBadge from '@/components/option-badge';
 import PageHeader from '@/components/page-header';
@@ -860,15 +861,18 @@ const DEMOS: Record<string, () => ReactNode> = {
     umschalter: ToggleDemo,
     laden: LoadingDemo,
     ...EXTRA_DEMOS,
+    ...MORE_DEMOS,
 };
 
 /** Live-Beispiele eines GUI-Bausteins (verwenden die echten Komponenten). */
 export default function GuiDemo({ componentKey }: { componentKey: string }) {
     const Component = DEMOS[componentKey];
+    const Extension = DEMO_EXTENSIONS[componentKey];
 
     return Component ? (
         <div className="grid gap-6">
             <Component />
+            {Extension && <Extension />}
         </div>
     ) : (
         <p className="text-sm text-muted-foreground">

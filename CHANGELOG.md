@@ -7,6 +7,19 @@ laufend unter **Unveröffentlicht** und werden beim Erhöhen der Version zur neu
 
 ## [Unveröffentlicht]
 
+## [0.30.0] – 2026-11-01
+
+### Neu
+
+- GUI-Prototypen nach Abgleich mit shadcn/ui um 11 Bausteine ergänzt: Typografie (mit Tasten/Kbd und Trennlinie),
+  Eingabegruppe, Knopfgruppe, Eintrag, Fragebogen (für «Umfragen»), Rückfrage (Alert Dialog), Kontextmenü (mit
+  sichtbarer Alternative), Vorschaukarte (Hover Card), Scrollbereich, Codeblock, Geteilte Ansicht (Resizable)
+- Bestehende Bausteine erweitert: Navigationsmenü (Menü), Drawer von unten (Seitenpanel), einfaches Auswahlfeld
+  (Dropdown), Feldgruppen (Formularfelder), Anhang mit Vorschaubild und Fortschritt (Datei hochladen), Linien- und
+  Ringdiagramm (Diagramme)
+- Inhaltsverzeichnis mit Abschnitt «Später»: Aspect Ratio, Carousel, Menubar, Input OTP, Direction sowie Chat- und
+  KI-Bausteine; ebenso in `docs/GUI-KOMPONENTEN.md`
+
 ## [0.29.0] – 2026-11-01
 
 ### Neu

@@ -39,7 +39,8 @@ class GuiPrototypesTest extends TestCase
                 return $keys === array_keys(GuiPrototypes::components())
                     && collect($categories)->flatMap(fn (array $c): array => $c['items'])->every(fn (array $i): bool => $i['description'] !== '' && $i['parts'] !== []);
             })
-            ->has('crosscutting', 4));
+            ->has('crosscutting', 4)
+            ->has('later', 10));
 
         $this->get('/gui-prototypen/freigaben')->assertOk()->assertInertia(fn (Assert $page) => $page
             ->component('gui-prototypes/index')
@@ -61,7 +62,7 @@ class GuiPrototypesTest extends TestCase
     {
         $categories = array_keys((array) config('intranet.gui_categories'));
         $icons = (string) file_get_contents(resource_path('js/lib/module-icons.ts'));
-        $demos = (string) file_get_contents(resource_path('js/components/gui-demos.tsx')).file_get_contents(resource_path('js/components/gui-demos-extra.tsx'));
+        $demos = (string) file_get_contents(resource_path('js/components/gui-demos.tsx')).file_get_contents(resource_path('js/components/gui-demos-extra.tsx')).file_get_contents(resource_path('js/components/gui-demos-more.tsx'));
 
         foreach (GuiPrototypes::components() as $key => $component) {
             $this->assertContains($component['category'], $categories, $key);

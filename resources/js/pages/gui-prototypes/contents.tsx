@@ -37,9 +37,11 @@ type Topic = { title: string; description: string; href: string | null };
 export default function GuiContents({
     categories,
     crosscutting,
+    later = [],
 }: {
     categories: Category[];
     crosscutting: Topic[];
+    later?: { title: string; description: string; reason: string }[];
 }) {
     return (
         <>
@@ -70,6 +72,12 @@ export default function GuiContents({
                             {c.title}
                         </a>
                     ))}
+                    <a
+                        href="#spaeter"
+                        className="rounded-md border px-3 py-1.5 hover:bg-accent"
+                    >
+                        Später
+                    </a>
                     <a
                         href="#querschnitt"
                         className="rounded-md border px-3 py-1.5 hover:bg-accent"
@@ -198,6 +206,38 @@ export default function GuiContents({
                                         </CardDescription>
                                     </CardHeader>
                                 </Card>
+                            </li>
+                        ))}
+                    </ul>
+                </section>
+
+                <section id="spaeter" className="grid scroll-mt-20 gap-3">
+                    <div>
+                        <h2 className="text-lg font-semibold">
+                            {`${categories.length + 2}. Später`}
+                        </h2>
+                        <p className="text-sm text-muted-foreground">
+                            Bausteine aus shadcn/ui, die wir bewusst noch nicht
+                            umsetzen (niedrige Priorität, Chat und KI).
+                        </p>
+                    </div>
+                    <ul className="grid gap-1 text-sm" data-testid="toc-later">
+                        {later.map((item) => (
+                            <li
+                                key={item.title}
+                                className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-0.5 rounded-md border px-3 py-2"
+                            >
+                                <span>
+                                    <span className="font-medium">
+                                        {item.title}
+                                    </span>
+                                    <span className="text-muted-foreground">
+                                        {` – ${item.description}`}
+                                    </span>
+                                </span>
+                                <span className="text-xs text-muted-foreground">
+                                    {item.reason}
+                                </span>
                             </li>
                         ))}
                     </ul>

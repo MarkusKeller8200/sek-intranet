@@ -30,13 +30,13 @@ $guiComponents = [
     'menue' => [
         'category' => 'navigation', 'title' => 'Menü', 'icon' => 'Menu',
         'description' => 'Seitenleiste mit Hauptmenüs und Untermenüs, Aktionsmenü (Dropdown-Menü) und Breadcrumbs.',
-        'parts' => ['Seitenleiste: Hauptmenüs mit Farbe, Untermenüs, aktiver Eintrag', 'Aktionsmenü: Aktionen zu einer Zeile oder Seite, Gefährliches zuletzt', 'Breadcrumbs: wo bin ich; der erste Eintrag öffnet das Menü wieder'],
-        'imports' => ['@/components/ui/dropdown-menu', '@/components/ui/sidebar', '@/components/ui/breadcrumb', '@/components/nav-modules'],
+        'parts' => ['Seitenleiste: Hauptmenüs mit Farbe, Untermenüs, aktiver Eintrag', 'Aktionsmenü: Aktionen zu einer Zeile oder Seite, Gefährliches zuletzt', 'Breadcrumbs: wo bin ich; der erste Eintrag öffnet das Menü wieder', 'Navigationsmenü oben (Navigation Menu)'],
+        'imports' => ['@/components/ui/dropdown-menu', '@/components/ui/sidebar', '@/components/ui/breadcrumb', '@/components/nav-modules', '@/components/ui/navigation-menu'],
     ],
     'seitenpanel' => [
         'category' => 'navigation', 'title' => 'Seitenpanel', 'icon' => 'PanelRight',
-        'description' => 'Fährt von der Seite ein (Sheet): Details, Filter oder Bearbeiten, ohne die Seite zu verlassen; auf dem Handy auch das Menü.',
-        'parts' => ['Von rechts: Details und Bearbeiten', 'Von links: Menü auf dem Handy', 'Schliesst mit Esc, Klick daneben oder «Schliessen»'],
+        'description' => 'Fährt von der Seite oder von unten ein (Sheet, Drawer): Details, Filter oder Bearbeiten, ohne die Seite zu verlassen; auf dem Handy auch Menü und Aktionen.',
+        'parts' => ['Von rechts: Details und Bearbeiten', 'Von links: Menü auf dem Handy', 'Von unten (Drawer): Aktionen auf dem Handy', 'Schliesst mit Esc, Klick daneben oder «Schliessen»'],
         'imports' => ['@/components/ui/sheet'],
     ],
     'tabs' => [
@@ -69,6 +69,18 @@ $guiComponents = [
         'parts' => ['Umschaltgruppe (z. B. Ansicht wählen)', 'Ein/Aus-Knopf (Toggle)', 'Aufklappbarer Bereich (Collapsible)'],
         'imports' => ['@/components/ui/toggle-group', '@/components/ui/toggle', '@/components/ui/collapsible'],
     ],
+    'kontextmenue' => [
+        'category' => 'navigation', 'title' => 'Kontextmenü', 'icon' => 'SquareMousePointer',
+        'description' => 'Aktionen mit Rechtsklick, langem Drücken (iPad) oder Shift+F10 – immer zusätzlich als sichtbarer Knopf «…».',
+        'parts' => ['Rechtsklick, langes Drücken, Shift+F10, Menütaste', 'Pfeiltasten, Esc', 'Gleiche Aktionen im Knopf «…»'],
+        'imports' => ['@/components/ui/context-menu'],
+    ],
+    'geteilt' => [
+        'category' => 'navigation', 'title' => 'Geteilte Ansicht', 'icon' => 'Columns2',
+        'description' => 'Zwei Bereiche nebeneinander mit verschiebbarer Trennlinie, z. B. Liste links und Details rechts.',
+        'parts' => ['Ziehen mit Maus und Touch', 'Pfeiltasten, Pos1/Ende, Doppelklick zurück', 'Grenzen für kleinste und grösste Breite'],
+        'imports' => ['@/components/ui/resizable'],
+    ],
     // Eingabe
     'button' => [
         'category' => 'eingabe', 'title' => 'Button', 'icon' => 'MousePointerClick',
@@ -76,17 +88,29 @@ $guiComponents = [
         'parts' => ['Varianten und Grössen', 'Mit Symbol, nur Symbol (mit Titel)', 'Lädt, gesperrt'],
         'imports' => ['@/components/ui/button', '@/components/delete-button'],
     ],
+    'knopfgruppe' => [
+        'category' => 'eingabe', 'title' => 'Knopfgruppe', 'icon' => 'Group',
+        'description' => 'Zusammengehörende Knöpfe ohne Abstand, z. B. Export CSV / Excel, Ansicht Liste / Kacheln, Textformat.',
+        'parts' => ['Aktionen mit Menü «Weitere»', 'Auswahl der Ansicht (aria-pressed)', 'Ein/Aus-Knöpfe (Fett, Kursiv)'],
+        'imports' => ['@/components/ui/button-group'],
+    ],
     'formular' => [
         'category' => 'eingabe', 'title' => 'Formularfelder', 'icon' => 'TextCursorInput',
         'description' => 'Textfeld, Textbereich, Zahl, Datum, Kontrollkästchen, Beschriftung, Hinweis und Fehlermeldung.',
-        'parts' => ['Text, Zahl, Textbereich', 'Beschriftung, Hinweis, Fehler', 'Kontrollkästchen, gesperrtes Feld'],
-        'imports' => ['@/components/ui/input', '@/components/ui/textarea', '@/components/ui/checkbox', '@/components/form-field', '@/components/input-error', '@/components/ui/label'],
+        'parts' => ['Text, Zahl, Textbereich', 'Beschriftung, Hinweis, Fehler', 'Kontrollkästchen, gesperrtes Feld', 'Feldgruppen mit Überschrift, Einstellung als Zeile (Field)'],
+        'imports' => ['@/components/ui/input', '@/components/ui/textarea', '@/components/ui/checkbox', '@/components/form-field', '@/components/input-error', '@/components/ui/label', '@/components/ui/field'],
+    ],
+    'eingabegruppe' => [
+        'category' => 'eingabe', 'title' => 'Eingabegruppe', 'icon' => 'RectangleEllipsis',
+        'description' => 'Feld mit Symbol, Text davor/danach oder Knopf in einem Rahmen: Suche, «@sekbuelach.ch», «CHF», Kopieren.',
+        'parts' => ['Suche mit Symbol und Leeren', 'Text davor und danach', 'Knopf im Feld (Kopieren)'],
+        'imports' => ['@/components/ui/input-group'],
     ],
     'dropdown' => [
         'category' => 'eingabe', 'title' => 'Dropdown', 'icon' => 'ChevronsUpDown',
         'description' => 'Auswahlfeld ohne und mit Vorauswahl, gesperrt, mit Fehler sowie Mehrfachauswahl.',
-        'parts' => ['Ohne Vorauswahl («Bitte wählen»)', 'Mit Vorauswahl', 'Mit Fehler, kurze Mehrfachauswahl'],
-        'imports' => ['@/components/select-field', '@/components/ui/select'],
+        'parts' => ['Ohne Vorauswahl («Bitte wählen»)', 'Mit Vorauswahl', 'Mit Fehler, kurze Mehrfachauswahl', 'Einfaches Auswahlfeld des Browsers (Native Select)'],
+        'imports' => ['@/components/select-field', '@/components/ui/select', '@/components/ui/native-select'],
     ],
     'radio' => [
         'category' => 'eingabe', 'title' => 'Optionsfelder', 'icon' => 'CircleDot',
@@ -121,8 +145,8 @@ $guiComponents = [
     'upload' => [
         'category' => 'eingabe', 'title' => 'Datei hochladen', 'icon' => 'FileUp',
         'description' => 'Ablagefläche zum Hineinziehen oder Anklicken (Klassenliste, Escola-Export, Dokument, PDF für ePost) mit Prüfung von Typ und Grösse.',
-        'parts' => ['Eine oder mehrere Dateien', 'Erlaubte Dateitypen, Höchstgrösse', 'Liste mit Entfernen; Dateien bleiben im Browser bis zum Senden'],
-        'imports' => ['@/components/ui/file-drop'],
+        'parts' => ['Eine oder mehrere Dateien', 'Erlaubte Dateitypen, Höchstgrösse', 'Liste mit Entfernen; Dateien bleiben im Browser bis zum Senden', 'Anhang mit Vorschaubild, Fortschritt und Fehler (Attachment)'],
+        'imports' => ['@/components/ui/file-drop', '@/components/ui/attachment'],
     ],
     'slider' => [
         'category' => 'eingabe', 'title' => 'Schieberegler', 'icon' => 'SlidersHorizontal',
@@ -136,12 +160,30 @@ $guiComponents = [
         'parts' => ['Liste umsortieren: Griff, Tastatur (Leertaste, Pfeile), Nach oben/unten', 'Zuordnen: Karten in Spalten ziehen oder «Nach …» wählen', 'Kanban: Status von Tickets/Bestellungen', 'Dateien: siehe «Datei hochladen»', 'Tabelle: Spalten ziehen oder im Spaltenmenü verschieben'],
         'imports' => ['@/components/ui/sortable-list', '@/components/ui/drag-board', '@/components/ui/file-drop'],
     ],
+    'fragebogen' => [
+        'category' => 'eingabe', 'title' => 'Fragebogen', 'icon' => 'ClipboardList',
+        'description' => 'Umfrage in Schritten mit Einfach-, Mehrfachauswahl und Freitext, überspringbaren Fragen und Übersicht vor dem Absenden (Modul «Umfragen»).',
+        'parts' => ['Eine Frage pro Schritt mit Fortschritt', 'Pflichtfragen und Überspringen', 'Übersicht mit «Ändern»'],
+        'imports' => ['@/components/ui/questionnaire'],
+    ],
     // Daten anzeigen
     'tabelle' => [
         'category' => 'daten', 'title' => 'Tabellen', 'icon' => 'Table2',
         'description' => 'Bearbeitbare Tabelle (Grundlage: Personen) mit Suche, Filtern, Sortierung, Spaltenwahl, Auswahl, Export und einfache Tabelle.',
         'parts' => ['Bearbeitbare Tabelle wie in Excel', 'Filter je Spalte, Sortierung, Spalten, Ansichten', 'Einfache Tabelle für kurze Listen'],
         'imports' => ['@/components/data-grid', '@/components/ui/table'],
+    ],
+    'typografie' => [
+        'category' => 'daten', 'title' => 'Typografie', 'icon' => 'Type',
+        'description' => 'Einheitliche Überschriften, Absätze, Listen, Zitate, Code im Text, Tasten (Kbd) und Trennlinien – Grundlage für Mitteilungen und Handbuch.',
+        'parts' => ['Überschriften H1–H4, Einleitung, Text', 'Listen, Zitat, leiser und kleiner Text', 'Code im Text, Tasten, Trennlinie'],
+        'imports' => ['@/components/ui/typography', '@/components/ui/kbd', '@/components/ui/separator'],
+    ],
+    'eintrag' => [
+        'category' => 'daten', 'title' => 'Eintrag', 'icon' => 'Rows3',
+        'description' => 'Zeile mit Symbol oder Bild, Titel, Beschreibung, Zusatzangabe und Aktionen – für Listen von Personen, Dokumenten, Plugins.',
+        'parts' => ['Liste mit Trennlinien', 'Mit Kennzeichen und Aktionen', 'Gedämpfte Variante'],
+        'imports' => ['@/components/ui/item'],
     ],
     'karten' => [
         'category' => 'daten', 'title' => 'Karten & Seitenkopf', 'icon' => 'PanelsTopLeft',
@@ -169,15 +211,27 @@ $guiComponents = [
     ],
     'diagramm' => [
         'category' => 'daten', 'title' => 'Diagramme', 'icon' => 'ChartColumn',
-        'description' => 'Balkendiagramme für Kennzahlen (Lizenzen, Geräte, Abgaben) in den Farben des Farbkonzepts, immer auch als Tabelle.',
-        'parts' => ['Einfache Balken', 'Zwei Werte je Zeile (z. B. gekauft / zugewiesen)', 'Umschalter «Als Tabelle»'],
-        'imports' => ['@/components/ui/bar-chart'],
+        'description' => 'Balken-, Linien- und Ringdiagramme für Kennzahlen (Lizenzen, Geräte, Tickets) in den Farben des Farbkonzepts, immer auch als Tabelle.',
+        'parts' => ['Einfache Balken', 'Zwei Werte je Zeile (z. B. gekauft / zugewiesen)', 'Verlauf als Linien', 'Anteile als Ring', 'Umschalter «Als Tabelle»'],
+        'imports' => ['@/components/ui/bar-chart', '@/components/ui/line-chart', '@/components/ui/donut-chart'],
     ],
     'zeitleiste' => [
         'category' => 'daten', 'title' => 'Zeitleiste', 'icon' => 'History',
         'description' => 'Verlauf mit Datum, z. B. Versionen, Änderungen, Status einer Bestellung (neueste oben).',
         'parts' => ['Eintrag mit Datum, Titel, Beschreibung', 'Farbe nach Art (Erfolg, Warnung, Hinweis)'],
         'imports' => ['@/components/ui/timeline'],
+    ],
+    'scrollbereich' => [
+        'category' => 'daten', 'title' => 'Scrollbereich', 'icon' => 'ScrollText',
+        'description' => 'Bereich mit fester Höhe oder Breite und schmaler, einheitlicher Bildlaufleiste; mit Tastatur erreichbar.',
+        'parts' => ['Senkrecht (lange Liste)', 'Waagrecht (Klassen, Kacheln)', 'Fokus und Pfeiltasten'],
+        'imports' => ['@/components/ui/scroll-area'],
+    ],
+    'codeblock' => [
+        'category' => 'daten', 'title' => 'Codeblock', 'icon' => 'Code',
+        'description' => 'Code, Konsolenausgabe und Vergleiche mit Kopfzeile, Zeilennummern und Kopieren – für API-Tester, Plugins und das Skript der Geräteausgabe.',
+        'parts' => ['Mit Zeilennummern', 'Konsolenausgabe', 'Vergleich (+/−), Kopieren'],
+        'imports' => ['@/components/ui/code-block'],
     ],
     // Rückmeldung
     'meldungen' => [
@@ -186,11 +240,23 @@ $guiComponents = [
         'parts' => ['Hinweisbox (Info, Fehler)', 'Rückfrage vor Löschen', 'Toast und Tooltip'],
         'imports' => ['@/components/ui/alert', '@/components/ui/dialog', '@/components/ui/tooltip', 'sonner', '@/components/alert-error'],
     ],
+    'rueckfrage' => [
+        'category' => 'rueckmeldung', 'title' => 'Rückfrage', 'icon' => 'ShieldAlert',
+        'description' => 'Dialog, der bewusst beantwortet werden muss (Alert Dialog): schliesst nicht mit Klick daneben, Fokus zuerst auf «Abbrechen». Für Löschen und unumkehrbare Schritte.',
+        'parts' => ['Gefährlich (Löschen)', 'Wichtig (Freigeben)', 'Fokus auf «Abbrechen», kein Schliessen daneben'],
+        'imports' => ['@/components/ui/alert-dialog'],
+    ],
     'popover' => [
         'category' => 'rueckmeldung', 'title' => 'Popover', 'icon' => 'MessageSquareMore',
         'description' => 'Kleines Fenster an einem Knopf für Hilfe, Filter oder eine kurze Auswahl; schliesst mit Esc oder Klick daneben.',
         'parts' => ['Hilfe zu einem Feld', 'Kleiner Filter mit Übernehmen', 'Fokus zurück zum Knopf'],
         'imports' => ['@/components/ui/popover', '@/components/grid/popover'],
+    ],
+    'vorschaukarte' => [
+        'category' => 'rueckmeldung', 'title' => 'Vorschaukarte', 'icon' => 'IdCard',
+        'description' => 'Kleine Vorschau beim Überfahren oder Fokussieren eines Links (Hover Card), z. B. einer Person – nur Zusatzinformation.',
+        'parts' => ['Öffnet mit Maus und Tastatur (Fokus)', 'Kurze Verzögerung, Esc schliesst', 'Link führt immer zur ganzen Seite'],
+        'imports' => ['@/components/ui/hover-card'],
     ],
     'banner' => [
         'category' => 'rueckmeldung', 'title' => 'Banner', 'icon' => 'Flag',
@@ -778,6 +844,20 @@ return [
         ],
     ],
     'gui_categories' => $guiCategories,
+
+    // Inhaltsverzeichnis: Bausteine für später (kein Prototyp; shadcn/ui-Namen in Klammern)
+    'gui_later' => [
+        ['title' => 'Seitenverhältnis (Aspect Ratio)', 'description' => 'Bilder und Videos in festem Format.', 'reason' => 'niedrige Priorität'],
+        ['title' => 'Karussell (Carousel)', 'description' => 'Bilder zum Durchblättern, z. B. Pinnwand oder Startseite.', 'reason' => 'niedrige Priorität'],
+        ['title' => 'Menüleiste (Menubar)', 'description' => 'Menüleiste wie in Programmen.', 'reason' => 'niedrige Priorität'],
+        ['title' => 'Einmal-Code (Input OTP)', 'description' => 'Eingabe von Codes in Feldern pro Ziffer.', 'reason' => 'niedrige Priorität – Anmeldung über Entra ID'],
+        ['title' => 'Schreibrichtung (Direction)', 'description' => 'Schrift von rechts nach links.', 'reason' => 'nicht nötig (Deutsch, Englisch)'],
+        ['title' => 'Chat-Blase (Bubble)', 'description' => 'Nachricht in einer Unterhaltung mit Reaktionen.', 'reason' => 'Chat / KI – später'],
+        ['title' => 'Nachricht (Message)', 'description' => 'Nachricht mit Avatar, Kopf und Fuss.', 'reason' => 'Chat / KI – später'],
+        ['title' => 'Nachrichtenverlauf (Message Scroller)', 'description' => 'Scrollbereich für Unterhaltungen.', 'reason' => 'Chat / KI – später'],
+        ['title' => 'Markierung (Marker)', 'description' => 'Status oder Trenner in einer Unterhaltung.', 'reason' => 'Chat / KI – später'],
+        ['title' => 'Ablauf (Trace)', 'description' => 'Schritte eines KI-Assistenten: Überlegungen, Werkzeuge, Quellen.', 'reason' => 'Chat / KI – später'],
+    ],
 
     // Inhaltsverzeichnis: Themen für alle Bausteine (kein eigener Prototyp)
     'gui_crosscutting' => [

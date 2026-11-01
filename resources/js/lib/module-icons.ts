@@ -90,6 +90,17 @@ import {
     UsersRound,
     UserX,
     Vote,
+    SquareMousePointer,
+    Columns2,
+    RectangleEllipsis,
+    Group,
+    ClipboardList,
+    Type,
+    Rows3,
+    ScrollText,
+    Code,
+    ShieldAlert,
+    IdCard,
 } from 'lucide-react';
 
 /**
@@ -186,6 +197,17 @@ const icons: Record<string, LucideIcon> = {
     UsersRound,
     UserX,
     Vote,
+    SquareMousePointer,
+    Columns2,
+    RectangleEllipsis,
+    Group,
+    ClipboardList,
+    Type,
+    Rows3,
+    ScrollText,
+    Code,
+    ShieldAlert,
+    IdCard,
 };
 
 export function moduleIcon(name: string): LucideIcon {
