@@ -54,7 +54,11 @@ type Props = {
     names: Record<string, string>;
     themes: ThemeData[];
     themeDefaults: ThemeDefaults;
+    section?: Section;
+    can?: { develop: boolean; review: boolean };
 };
+
+type Can = { develop: boolean; review: boolean };
 
 /** Vorschau der Beispiele: Hell/Dunkel und Theme (nur Anzeige, wird nicht gespeichert). */
 function PreviewBar({
@@ -204,10 +208,14 @@ function VersionCard({
 function StatusActions({
     componentKey,
     open,
+    can,
 }: {
     componentKey: string;
     open: GuiVersion;
+    can: Can;
 }) {
+    const allowed =
+        open.status === 'entwicklung' ? can.develop : can.review;
     const [comment, setComment] = useState('');
     const [busy, setBusy] = useState(false);
 
@@ -243,10 +251,17 @@ function StatusActions({
                 </CardTitle>
                 <CardDescription>
                     {open.status === 'entwicklung'
-                        ? 'Wenn die Beispiele und der Code fertig sind: zur Prüfung geben.'
-                        : 'Prüfen: Beispiele ansehen, Barrierefreiheit und Farbkonzept kontrollieren. Dann freigeben oder mit Bemerkung zurückgeben.'}
+                        ? 'Wenn die Beispiele und der Code fertig sind: zur Prüfung geben. Alle mit dem Recht «GUI-Prototypen prüfen» erhalten eine Benachrichtigung.'
+                        : 'Prüfen: Beispiele ansehen, Barrierefreiheit und Farbkonzept kontrollieren. Dann freigeben oder mit Bemerkung zurückgeben – die Entwicklung wird benachrichtigt.'}
                 </CardDescription>
             </CardHeader>
+            {!allowed ? (
+                <CardContent className="text-sm text-muted-foreground">
+                    {open.status === 'entwicklung'
+                        ? 'Diese Version ist in Entwicklung. Zur Prüfung gibt sie die Administration.'
+                        : 'Diese Version wartet auf Prüfung. Prüfen und freigeben dürfen Administration und Schulleitung.'}
+                </CardContent>
+            ) : (
             <CardContent className="grid gap-3">
                 <FormField id="gui-comment" label="Bemerkung (optional)">
                     <Textarea
@@ -282,6 +297,7 @@ function StatusActions({
                     )}
                 </div>
             </CardContent>
+            )}
         </Card>
     );
 }
@@ -498,6 +514,7 @@ function Rework({
     usages,
     summary,
     names,
+    can,
 }: Omit<Props, 'component'> & { componentKey: string }) {
     const toggle = (file: string, done: boolean) =>
         router.post(
@@ -532,6 +549,7 @@ function Rework({
                                     <Checkbox
                                         id={`rw-${r.file}`}
                                         checked={r.done_at !== null}
+                                        disabled={!can?.develop}
                                         onCheckedChange={(
                                             c: boolean | 'indeterminate',
                                         ) => toggle(r.file, c === true)}
@@ -588,7 +606,10 @@ function Rework({
 /** GUI-Prototyp: Beispiele, Versionen mit Status, Überarbeitung und Wünsche eines Bausteins. */
 export default function GuiPrototypeShow(props: Props) {
     const { component, record, summary, names, themes, themeDefaults } = props;
-    const [section, setSection] = useState<Section>('beispiele');
+    const can: Can = props.can ?? { develop: false, review: false };
+    const [section, setSection] = useState<Section>(
+        props.section ?? 'beispiele',
+    );
     const [mode, setMode] = useState<Mode>(() =>
         typeof document !== 'undefined' &&
         document.documentElement.classList.contains('dark')
@@ -690,13 +711,14 @@ export default function GuiPrototypeShow(props: Props) {
                             <StatusActions
                                 componentKey={component.key}
                                 open={summary.open}
+                                can={can}
                             />
-                        ) : (
+                        ) : can.develop ? (
                             <NewVersion
                                 componentKey={component.key}
                                 record={record}
                             />
-                        )}
+                        ) : null}
                         {versions.map((v) => (
                             <VersionCard
                                 key={v.version}

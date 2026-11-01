@@ -7,6 +7,24 @@ laufend unter **Unveröffentlicht** und werden beim Erhöhen der Version zur neu
 
 ## [Unveröffentlicht]
 
+## [0.31.0] – 2026-11-01
+
+### Neu
+
+- **Benachrichtigungen:** Glocke oben rechts (ungelesene, neueste, «Alle gelesen»), Seite `/benachrichtigungen`;
+  neue Meldungen erscheinen ohne Neuladen zusätzlich als kurze Meldung mit «Öffnen»
+- GUI-Prototypen melden: «… wartet auf Prüfung» (an Prüfer:innen), «zurück an Entwicklung» mit Bemerkung,
+  «freigegeben» (an alle mit GUI-Zugang), «Neuer Wunsch» (an die Entwicklung), «dein Wunsch fliesst ein» (an die
+  Autor:in). Ein Klick öffnet den Baustein im passenden Reiter
+- Rechte `use-gui` (Administration, Schulleitung, Fachstelle ICT, Redaktion: ansehen, Wünsche) und `review-gui`
+  (Administration, Schulleitung: prüfen, freigeben); Versionen anlegen und zur Prüfung geben weiterhin Administration
+- Konzept `docs/KONZEPT-BENACHRICHTIGUNGEN.md`; Sammlung `notifications`
+
+### Geändert
+
+- Menü «GUI-Prototypen» auch für Schulleitung, Fachstelle ICT und Redaktion; Knöpfe je nach Recht
+- Dokumentation nachgeführt: README, AGENTS, Rollen-, GUI- und Theme-Konzept
+
 ## [0.30.0] – 2026-11-01
 
 ### Neu

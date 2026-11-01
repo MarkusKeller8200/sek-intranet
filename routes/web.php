@@ -18,6 +18,7 @@ use App\Http\Controllers\GuiPrototypeController;
 use App\Http\Controllers\McpConceptController;
 use App\Http\Controllers\ModuleController;
 use App\Http\Controllers\ModuleSettingsController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PersonController;
 use App\Http\Controllers\PersonLinkController;
 use App\Http\Controllers\PluginController;
@@ -80,6 +81,23 @@ Route::middleware('auth')->group(function () {
         Route::get('geraeteausgabe/schueler', [DeviceHandoutController::class, 'students'])->middleware('throttle:60,1')->name('device-handout.students');
     });
 
+    // Benachrichtigungen (Glocke), für alle Angemeldeten
+    Route::get('benachrichtigungen', [NotificationController::class, 'index'])->name('notifications');
+    Route::get('benachrichtigungen/stand', [NotificationController::class, 'status'])->middleware('throttle:120,1')->name('notifications.status');
+    Route::get('benachrichtigungen/{id}', [NotificationController::class, 'open'])->name('notifications.open');
+    Route::post('benachrichtigungen/gelesen', [NotificationController::class, 'readAll'])->name('notifications.read-all');
+
+    // Menü «GUI-Prototypen» (Recht use-gui; Versionen, Status und Überarbeitung prüft der Controller)
+    Route::middleware('can:use-gui')->group(function () {
+        Route::get('gui-prototypen', [GuiPrototypeController::class, 'contents'])->name('gui.contents');
+        Route::get('gui-prototypen/freigaben', [GuiPrototypeController::class, 'index'])->name('gui.index');
+        Route::get('gui-prototypen/{key}', [GuiPrototypeController::class, 'show'])->name('gui.show');
+        Route::post('gui-prototypen/{key}/versionen', [GuiPrototypeController::class, 'storeVersion'])->name('gui.versions.store');
+        Route::post('gui-prototypen/{key}/status', [GuiPrototypeController::class, 'transition'])->name('gui.transition');
+        Route::post('gui-prototypen/{key}/ueberarbeitung', [GuiPrototypeController::class, 'rework'])->name('gui.rework');
+        Route::post('gui-prototypen/{key}/wuensche', [GuiPrototypeController::class, 'wish'])->name('gui.wishes.store');
+    });
+
     Route::middleware('can:manage-users')->group(function () {
         Route::get('personen/neu', [PersonController::class, 'create'])->name('people.create');
         Route::post('personen', [PersonController::class, 'store'])->name('people.store');
@@ -107,15 +125,6 @@ Route::middleware('auth')->group(function () {
         Route::inertia('sprachkonzept', 'language-concept')->name('language-concept');
         Route::get('rollenkonzept', RoleConceptController::class)->name('role-concept');
         Route::get('mcp-konzept', McpConceptController::class)->name('mcp-concept');
-
-        // Menü «GUI-Prototypen»: Bausteine mit Status und Versionen
-        Route::get('gui-prototypen', [GuiPrototypeController::class, 'contents'])->name('gui.contents');
-        Route::get('gui-prototypen/freigaben', [GuiPrototypeController::class, 'index'])->name('gui.index');
-        Route::get('gui-prototypen/{key}', [GuiPrototypeController::class, 'show'])->name('gui.show');
-        Route::post('gui-prototypen/{key}/versionen', [GuiPrototypeController::class, 'storeVersion'])->name('gui.versions.store');
-        Route::post('gui-prototypen/{key}/status', [GuiPrototypeController::class, 'transition'])->name('gui.transition');
-        Route::post('gui-prototypen/{key}/ueberarbeitung', [GuiPrototypeController::class, 'rework'])->name('gui.rework');
-        Route::post('gui-prototypen/{key}/wuensche', [GuiPrototypeController::class, 'wish'])->name('gui.wishes.store');
 
         // REST-API: Beschreibung mit Tester und Tokens
         // Menü «Einstellungen»: Einstellungen der Menüpunkte, Browser-Erweiterung

@@ -37,9 +37,13 @@ Stand: Version 0.14.0. Quelle der Wahrheit: `config/intranet.php` → `roles`, `
 | `use-verwaltung` | Verwaltung (Workflows)                      |   ✓   |      ✓       |     ✓      |     |           |            |               |
 | `use-unterricht` | Unterricht (Klassen, Stundenpläne …)        |   ✓   |      ✓       |            |  ✓  |           |     ✓      |               |
 | `order`          | Bestellen (Ausrüstung, Lehrmittel …)        |   ✓   |      ✓       |     ✓      |  ✓  |           |     ✓      |               |
+| `view-students`  | Schüler:innen und Eltern sehen              |   ✓   |      ✓       |     ✓      |  ✓  |           |     ✓      |               |
+| `use-gui`        | GUI-Prototypen ansehen, Wünsche erfassen    |   ✓   |      ✓       |            |  ✓  |     ✓     |            |               |
+| `review-gui`     | GUI-Prototypen prüfen und freigeben         |   ✓   |      ✓       |            |     |           |            |               |
 
 Lesen (Start, Mitteilungen, Termine, Dokumente, Personalverzeichnis ohne Admin-Felder, Wissen, Tickets,
-Elternportal) dürfen alle angemeldeten Personen.
+Elternportal) und die eigenen Benachrichtigungen dürfen alle angemeldeten Personen. Bei den GUI-Prototypen legen
+nur Personen mit `manage-users` Versionen an, geben zur Prüfung und haken Überarbeitungen ab.
 
 ## Umsetzung
 

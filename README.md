@@ -13,8 +13,9 @@ PostgreSQL darunter gebaut, ohne Controller oder Oberfläche anzufassen.
 | Schicht  | Technologie                                                   |
 | -------- | ------------------------------------------------------------- |
 | Backend  | Laravel 13 (PHP 8.3+, empfohlen 8.4)                          |
-| Frontend | React 19 + TypeScript, Inertia 3, shadcn/ui, Tailwind 4       |
-| Listen   | TanStack Table (Personen), Kartenansicht auf Mobile           |
+| Frontend | React 19 + TypeScript, Inertia 3, shadcn/ui (Radix), Tailwind 4 |
+| Listen   | eigene bearbeitbare Tabelle (`components/data-grid.tsx`)      |
+| Ziehen   | dnd-kit (Drag & Drop mit Tastatur-Alternative)                |
 | Speicher | **JSON-Dateien** (`storage/app/data/*.json`) statt PostgreSQL |
 | Login    | Demo-Auswahl (Prototyp) statt OIDC Entra ID / Edulog          |
 | Tests    | PHPUnit, PHPStan Level 7 (Larastan), Pint                     |
@@ -54,14 +55,22 @@ bei jedem Push auf `main`: siehe [DEPLOY.md](DEPLOY.md).
 - **Mitteilungen**: Kategorien, Zielgruppe, anheften, zeitgesteuert veröffentlichen
 - **Termine**: nach Monat gruppiert, ganztägig oder mit Uhrzeit, vergangene einblendbar
 - **Dokumente & Links**: Datei-Upload (max. 20 MB) oder Link, nach Kategorie
-- **Personen**: Verzeichnis mit Suche und Sortierung; Verwaltung nur Administration
-- **Datenstrukturen** (Administration): alle Sammlungen mit Feldern, Füllgrad,
-  PostgreSQL-Typvorschlag und Warnung bei Feldern ausserhalb des Schemas
-- **Plugins** (Administration, `/plugins`): andere Systeme per API anschliessen – Microsoft 365/Entra ID,
-  Jamf Pro, Inventory360, IDA. Siehe [PLUGINS.md](PLUGINS.md)
-- **Farbkonzept** (Administration, `/farbkonzept`): Farben und Logo aus dem Auftritt von
-  sekbuelach.ch, Farben je Kategorie, Schulhaus, Zielgruppe und Rolle, Statusfarben
-- Hell/Dunkel, responsive, deutsche Validierungsmeldungen
+- **Personen** und **Schüler:innen**: Tabelle wie Excel, Filter, Ansichten, Export, Datenherkunft; Verwaltung nur
+  Administration
+- **Geräteausgabe** (Fachstelle ICT): Zugangsdaten, Kärtchen, PDF, PowerShell-Skript
+- **Fachanwendungen**: CMI, Escola, Apple School Manager, Jamf Pro, LMVZ Digital – eingebettet, im eigenen Tab oder
+  über die Browser-Erweiterung «SBI-Connector» (auch nebeneinander mit dem Intranet)
+- **Benachrichtigungen**: Glocke oben rechts mit ungelesenen Meldungen, Seite `/benachrichtigungen`
+- **Einstellungen** (Administration): Adresse und Art des Öffnens je Fachanwendung, Browser-Erweiterung
+- **Prototyp** (Administration): Plugins (Microsoft 365/Entra ID, Jamf Pro, Inventory360, IDA, Escola, LMVZ, ePost –
+  siehe [PLUGINS.md](PLUGINS.md)), Datenstrukturen, Farbkonzept mit Themes, API mit Scalar, API-Recorder,
+  MCP-Konzept, Sprach- und Rollenkonzept
+- **GUI-Prototypen**: 40 Bausteine der Oberfläche mit Beispielen, Status (Entwicklung → Prüfung → Freigegeben),
+  Versionen, Überarbeitung und Wünschen; Inhaltsverzeichnis [docs/GUI-KOMPONENTEN.md](docs/GUI-KOMPONENTEN.md)
+- Hell/Dunkel, Themes, responsive, PWA, Deutsch/Englisch/Züritüütsch
+
+Konzepte: [docs/](docs) (Rollen, Datenherkunft, Sprachen, PWA, MCP, API-Recorder, Browser-Connector,
+GUI-Prototypen, Themes, Benachrichtigungen).
 
 ## So funktioniert der Dateispeicher
 
@@ -118,4 +127,4 @@ Wenn Funktionen und Datenstrukturen stabil sind:
 
 - Kategorien und Rollen in `config/intranet.php` sind Vorschläge und können angepasst werden.
 - Zugriffsschutz vorerst über ein gemeinsames Passwort (`INTRANET_ACCESS_PASSWORD`), später OIDC.
-- Keine Volltextsuche über alle Bereiche, keine Benachrichtigungen, keine PWA – bewusst für später.
+- Keine Volltextsuche über alle Bereiche; Benachrichtigungen nur im Intranet (noch keine E-Mail/Push).

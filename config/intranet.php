@@ -393,6 +393,8 @@ return [
         'use-unterricht' => ['label' => 'Unterricht (Klassen, Stundenpläne, Absenzen)', 'roles' => ['admin', 'schulleitung', 'lehrperson', 'ict']],
         'order' => ['label' => 'Bestellen (Ausrüstung, Lehrmittel, Anträge)', 'roles' => ['admin', 'schulleitung', 'verwaltung', 'ict', 'lehrperson']],
         'view-students' => ['label' => 'Schüler:innen und Eltern sehen', 'roles' => ['admin', 'schulleitung', 'verwaltung', 'ict', 'lehrperson']],
+        'use-gui' => ['label' => 'GUI-Prototypen ansehen und Wünsche erfassen', 'roles' => ['admin', 'schulleitung', 'ict', 'redaktion']],
+        'review-gui' => ['label' => 'GUI-Prototypen prüfen und freigeben', 'roles' => ['admin', 'schulleitung']],
     ],
 
     'schools' => [
@@ -812,7 +814,7 @@ return [
             'title' => 'GUI-Prototypen',
             'color' => 'indigo',
             'icon' => 'LayoutTemplate',
-            'can' => 'manage-users',
+            'can' => 'use-gui',
             'items' => [
                 'gui-inhalt' => ['title' => 'Inhaltsverzeichnis', 'icon' => 'BookOpen', 'href' => '/gui-prototypen'],
                 'gui-freigaben' => ['title' => 'Freigaben & Status', 'icon' => 'LayoutList', 'href' => '/gui-prototypen/freigaben'],
@@ -1113,6 +1115,20 @@ return [
             ],
         ],
 
+        'notifications' => [
+            'label' => 'System: Benachrichtigungen',
+            'description' => 'Glocke oben rechts: Meldungen an einzelne Personen, z. B. «Button v1.1.0 wartet auf Prüfung» oder «Neuer Wunsch». Je Person höchstens 200 gelesene.',
+            'fields' => [
+                'user_id' => ['type' => 'ref', 'references' => 'users', 'required' => true, 'label' => 'Für'],
+                'kind' => ['type' => 'string', 'required' => true, 'label' => 'Art (z. B. gui.review, gui.wish)'],
+                'title' => ['type' => 'string', 'required' => true, 'label' => 'Titel'],
+                'body' => ['type' => 'string', 'required' => false, 'label' => 'Text'],
+                'href' => ['type' => 'string', 'required' => true, 'label' => 'Link im Intranet'],
+                'created_by' => ['type' => 'ref', 'references' => 'users', 'required' => false, 'label' => 'Ausgelöst von'],
+                'read_at' => ['type' => 'datetime', 'required' => false, 'label' => 'Gelesen am'],
+                'sent_at' => ['type' => 'datetime', 'required' => true, 'label' => 'Gesendet am'],
+            ],
+        ],
         'themes' => [
             'label' => 'System: Themes (Farbkonzepte)',
             'description' => 'Farbkonzept → Themes: gespeicherte Farbsätze für hell und dunkel, die die Farbwerte aus resources/css/app.css übersteuern. Höchstens eines ist aktiv (für alle).',

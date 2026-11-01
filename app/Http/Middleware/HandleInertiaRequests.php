@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use App\Support\AppVersion;
 use App\Support\ModuleNavigation;
+use App\Support\Notifications;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Inertia\Middleware;
@@ -38,6 +39,8 @@ class HandleInertiaRequests extends Middleware
                     'manageContent' => $user !== null && Gate::forUser($user)->allows('manage-content'),
                     'manageUsers' => $user !== null && Gate::forUser($user)->allows('manage-users'),
                 ],
+                // Glocke: ungelesene und neueste Benachrichtigungen
+                'notifications' => fn (): ?array => $user !== null ? app(Notifications::class)->summary((string) $user->getAuthIdentifier()) : null,
             ],
             'options' => fn (): array => [
                 'roles' => config('intranet.roles'),

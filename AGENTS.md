@@ -51,11 +51,13 @@ Projekt: SekBülach Intranet, Prototyp. Stack und Konventionen wie IDA.
   `lib/api-recorder/capture.ts` gemeinsam nachführen.
 - GUI-Prototypen (`docs/KONZEPT-GUI-PROTOTYPEN.md`): Oberflächen nur aus den Bausteinen unter Menü «GUI-Prototypen»
   bauen und an die freigegebene Version halten. Neue Bausteine in `config/intranet.php` → `gui_components` und
-  `components/gui-demos.tsx` (bzw. `gui-demos-extra.tsx`), Übersicht in `docs/GUI-KOMPONENTEN.md`; nach einer Freigabe
+  `components/gui-demos.tsx` (bzw. `gui-demos-extra.tsx`, `gui-demos-more.tsx`), Übersicht in `docs/GUI-KOMPONENTEN.md`; nach einer Freigabe
   die Liste «Überarbeitung» abarbeiten. Drag & Drop nur mit dnd-kit (`components/ui/sortable-list.tsx`,
   `drag-board.tsx`) und immer mit Alternative ohne Ziehen (WCAG 2.2, 2.5.7).
 - Themes (`docs/KONZEPT-THEMES.md`): neue Farbwerte in `resources/css/app.css` (hell und dunkel) und in
   `App\Support\Themes::GROUPS` sowie `lib/themes.ts` (Bezeichnung) eintragen, damit Themes sie übersteuern können.
+- Benachrichtigungen (`docs/KONZEPT-BENACHRICHTIGUNGEN.md`): Ereignisse nur über `App\Support\Notifications`
+  melden (`toAbility` nach Recht, `toUsers` einzeln), Link nur innerhalb des Intranets, keine Schülerdaten im Text.
 - Wird ein Schlüssel einer Auswahlliste umbenannt, Umstellung unter `renames` eintragen
   (`php artisan intranet:upgrade` stellt bestehende Daten beim Start um).
 
