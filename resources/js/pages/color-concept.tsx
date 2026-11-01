@@ -93,6 +93,7 @@ const lists: { list: ColoredList; title: string; dot?: boolean }[] = [
     { list: 'announcementCategories', title: 'Kategorien Mitteilungen' },
     { list: 'eventCategories', title: 'Arten von Terminen' },
     { list: 'documentCategories', title: 'Kategorien Dokumente' },
+    { list: 'guiStatuses', title: 'Status GUI-Prototypen' },
     { list: 'audiences', title: 'Zielgruppen', dot: true },
     { list: 'roles', title: 'Rollen' },
 ];

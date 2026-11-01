@@ -1,6 +1,17 @@
 import type { LucideIcon } from 'lucide-react';
 import {
     Apple,
+    LayoutTemplate,
+    LayoutList,
+    Menu,
+    Table2,
+    ChevronsUpDown,
+    MousePointerClick,
+    TextCursorInput,
+    MessageSquareWarning,
+    PanelsTopLeft,
+    ToggleRight,
+    Loader,
     Puzzle,
     Settings,
     AppWindow,
@@ -68,6 +79,17 @@ import {
  * Neue Module: Symbol hier eintragen, sonst erscheint ein Kreis.
  */
 const icons: Record<string, LucideIcon> = {
+    LayoutTemplate,
+    LayoutList,
+    Menu,
+    Table2,
+    ChevronsUpDown,
+    MousePointerClick,
+    TextCursorInput,
+    MessageSquareWarning,
+    PanelsTopLeft,
+    ToggleRight,
+    Loader,
     Apple,
     Puzzle,
     Settings,

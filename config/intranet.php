@@ -13,6 +13,74 @@
 |
 */
 
+/*
+| GUI-Prototypen (Menü «GUI-Prototypen», App\Support\GuiPrototypes): Bausteine der Oberfläche mit Status
+| (Entwicklung → Prüfung → Freigegeben) und Versionen. Eine freigegebene Version ist das verbindliche
+| Template; alle Seiten, die den Baustein verwenden («imports»), müssen danach überarbeitet werden.
+*/
+$guiComponents = [
+    'menue' => [
+        'title' => 'Menü',
+        'icon' => 'Menu',
+        'description' => 'Seitenleiste mit Hauptmenüs und Untermenüs, Aktionsmenü (Dropdown-Menü) und Breadcrumbs.',
+        'imports' => ['@/components/ui/dropdown-menu', '@/components/ui/sidebar', '@/components/ui/breadcrumb', '@/components/nav-modules'],
+    ],
+    'tabelle' => [
+        'title' => 'Tabellen',
+        'icon' => 'Table2',
+        'description' => 'Bearbeitbare Tabelle (Grundlage: Personen) mit Suche, Filtern, Sortierung, Spaltenwahl, Auswahl, Export und einfache Tabelle.',
+        'imports' => ['@/components/data-grid', '@/components/ui/table'],
+    ],
+    'dropdown' => [
+        'title' => 'Dropdown',
+        'icon' => 'ChevronsUpDown',
+        'description' => 'Auswahlfeld ohne und mit Vorauswahl, gesperrt, mit Fehler sowie Mehrfachauswahl.',
+        'imports' => ['@/components/select-field', '@/components/ui/select'],
+    ],
+    'button' => [
+        'title' => 'Button',
+        'icon' => 'MousePointerClick',
+        'description' => 'Varianten (Haupt-, Neben-, Umriss-, Text-, Gefahr-Button), Grössen, mit Symbol, nur Symbol, lädt, gesperrt.',
+        'imports' => ['@/components/ui/button', '@/components/delete-button'],
+    ],
+    'formular' => [
+        'title' => 'Formularfelder',
+        'icon' => 'TextCursorInput',
+        'description' => 'Textfeld, Textbereich, Zahl, Datum, Kontrollkästchen, Beschriftung, Hinweis und Fehlermeldung.',
+        'imports' => ['@/components/ui/input', '@/components/ui/textarea', '@/components/ui/checkbox', '@/components/form-field', '@/components/input-error', '@/components/ui/label'],
+    ],
+    'badge' => [
+        'title' => 'Badges & Status',
+        'icon' => 'Tag',
+        'description' => 'Kennzeichen für Status, Auswahlwerte in den Farben des Farbkonzepts und Zähler.',
+        'imports' => ['@/components/ui/badge', '@/components/option-badge'],
+    ],
+    'meldungen' => [
+        'title' => 'Meldungen & Dialoge',
+        'icon' => 'MessageSquareWarning',
+        'description' => 'Hinweisboxen, Rückfrage-Dialog, kurze Meldungen (Toast) und Tooltips.',
+        'imports' => ['@/components/ui/alert', '@/components/ui/dialog', '@/components/ui/tooltip', 'sonner', '@/components/alert-error'],
+    ],
+    'karten' => [
+        'title' => 'Karten & Seitenkopf',
+        'icon' => 'PanelsTopLeft',
+        'description' => 'Seitenkopf mit Titel und Beschreibung, Karten mit Kopf, Inhalt und Fuss, Kennzahlen, leerer Zustand.',
+        'imports' => ['@/components/ui/card', '@/components/page-header', '@/components/empty-state', '@/components/heading'],
+    ],
+    'umschalter' => [
+        'title' => 'Reiter & Umschalter',
+        'icon' => 'ToggleRight',
+        'description' => 'Reiter (Umschaltgruppe), Ein/Aus-Schalter, aufklappbare Bereiche.',
+        'imports' => ['@/components/ui/toggle-group', '@/components/ui/toggle', '@/components/ui/collapsible'],
+    ],
+    'laden' => [
+        'title' => 'Ladezustände',
+        'icon' => 'Loader',
+        'description' => 'Ladeanzeige (Spinner) und Platzhalter (Skeleton), solange Daten geladen werden.',
+        'imports' => ['@/components/ui/spinner', '@/components/ui/skeleton'],
+    ],
+];
+
 return [
 
     // json = Dateien (Prototyp). Später: database (PostgreSQL, wie IDA ADR-003).
@@ -537,6 +605,26 @@ return [
                 'rollenkonzept' => ['title' => 'Rollenkonzept', 'icon' => 'ShieldCheck', 'href' => '/rollenkonzept'],
             ],
         ],
+        'gui' => [
+            'title' => 'GUI-Prototypen',
+            'color' => 'indigo',
+            'icon' => 'LayoutTemplate',
+            'can' => 'manage-users',
+            'items' => ['gui-uebersicht' => ['title' => 'Übersicht & Freigaben', 'icon' => 'LayoutList', 'href' => '/gui-prototypen']]
+                + array_combine(
+                    array_map(fn (string $k): string => 'gui-'.$k, array_keys($guiComponents)),
+                    array_map(fn (string $k, array $c): array => ['title' => $c['title'], 'icon' => $c['icon'], 'href' => '/gui-prototypen/'.$k], array_keys($guiComponents), $guiComponents),
+                ),
+        ],
+    ],
+
+    'gui_components' => $guiComponents,
+
+    // Status der GUI-Prototypen (Reihenfolge = Ablauf)
+    'gui_statuses' => [
+        'entwicklung' => 'Entwicklung',
+        'pruefung' => 'Prüfung',
+        'freigegeben' => 'Freigegeben',
     ],
 
     /*
@@ -564,6 +652,11 @@ return [
             'lehrperson' => 'amber',
             'mitarbeitende' => 'slate',
             'kein-zugang' => 'teal',
+        ],
+        'gui_statuses' => [
+            'entwicklung' => 'amber',
+            'pruefung' => 'sky',
+            'freigegeben' => 'emerald',
         ],
         'person_types' => [
             'schueler' => 'sky',
@@ -773,6 +866,16 @@ return [
             ],
         ],
 
+        'gui_components' => [
+            'label' => 'System: GUI-Prototypen',
+            'description' => 'Menü «GUI-Prototypen»: Versionen je Baustein mit Status (Entwicklung, Prüfung, Freigegeben) und Datum je Status, Verbesserungswünsche und die nach einer Freigabe zu überarbeitenden Seiten.',
+            'fields' => [
+                'key' => ['type' => 'string', 'required' => true, 'label' => 'Baustein (Schlüssel aus gui_components)'],
+                'versions' => ['type' => 'json', 'required' => true, 'label' => 'Versionen [{version, status, changes, created_at/by, review_at/by, released_at/by, log}]'],
+                'wishes' => ['type' => 'json', 'required' => false, 'label' => 'Verbesserungswünsche [{id, text, by, at, version}]'],
+                'rework' => ['type' => 'json', 'required' => false, 'label' => 'Überarbeitung nach Freigabe [{file, version, done_at, done_by}]'],
+            ],
+        ],
         'module_settings' => [
             'label' => 'System: Einstellungen der Menüpunkte',
             'description' => 'Menü «Einstellungen»: Adresse und Art des Öffnens je Fachanwendung bzw. Einbindung. Übersteuert config/intranet.php und die .env.',

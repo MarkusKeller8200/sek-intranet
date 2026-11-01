@@ -7,6 +7,21 @@ laufend unter **Unveröffentlicht** und werden beim Erhöhen der Version zur neu
 
 ## [Unveröffentlicht]
 
+## [0.27.0] – 2026-11-01
+
+### Neu
+
+- Hauptmenü «GUI-Prototypen» (zuunterst, Administration) mit Untermenüs je Baustein: Menü, Tabellen (Grundlage:
+  Personen), Dropdown (ohne/mit Vorauswahl, Fehler, Mehrfachauswahl), Button, Formularfelder, Badges & Status,
+  Meldungen & Dialoge, Karten & Seitenkopf, Reiter & Umschalter, Ladezustände – je mit Live-Beispielen
+- Status je Version Entwicklung → Prüfung → Freigegeben (zurück an Entwicklung mit Bemerkung), Versionsnummer
+  (Korrektur/Erweiterung/grundlegend neu) und Datum mit Person je Status; höchstens eine offene Version
+- Freigabe = verbindliches Template: alle Seiten, die den Baustein verwenden, werden automatisch zur Überarbeitung
+  vorgemerkt und einzeln abgehakt; Übersicht mit offenen Überarbeitungen
+- Verbesserungswünsche je Baustein, übernehmbar in die nächste Version
+- Konzept `docs/KONZEPT-GUI-PROTOTYPEN.md`; Sammlung `gui_components`; Auswahlliste «Status GUI-Prototypen» im
+  Farbkonzept
+
 ## [0.26.1] – 2026-11-01
 
 ### Behoben

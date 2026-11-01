@@ -1,0 +1,165 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Data\Contracts\UserRepository;
+use App\Support\AuditLog;
+use App\Support\GuiPrototypes;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
+use Inertia\Inertia;
+use Inertia\Response;
+use InvalidArgumentException;
+
+/**
+ * Menü «GUI-Prototypen»: Bausteine der Oberfläche mit Beispielen, Status und Versionen.
+ * Eine freigegebene Version ist das verbindliche Template (siehe App\Support\GuiPrototypes).
+ */
+class GuiPrototypeController extends Controller
+{
+    public function __construct(
+        private readonly GuiPrototypes $prototypes,
+        private readonly UserRepository $users,
+        private readonly AuditLog $audit,
+    ) {}
+
+    public function index(): Response
+    {
+        $items = [];
+        $ids = [];
+        foreach (GuiPrototypes::components() as $key => $component) {
+            $record = $this->prototypes->get($key);
+            $summary = GuiPrototypes::summary($record);
+            $items[] = ['key' => $key, 'title' => $component['title'], 'icon' => $component['icon'], 'description' => $component['description']] + $summary;
+            $ids = [...$ids, ...self::userIds($record)];
+        }
+
+        return Inertia::render('gui-prototypes/index', ['items' => $items, 'names' => $this->names($ids)]);
+    }
+
+    public function show(string $key): Response
+    {
+        abort_unless(GuiPrototypes::exists($key), 404);
+        $component = GuiPrototypes::components()[$key];
+        $record = $this->prototypes->get($key);
+
+        return Inertia::render('gui-prototypes/show', [
+            'component' => ['key' => $key] + $component,
+            'record' => $record,
+            'summary' => GuiPrototypes::summary($record),
+            'usages' => GuiPrototypes::usages($key),
+            'names' => $this->names(self::userIds($record)),
+        ]);
+    }
+
+    public function storeVersion(Request $request, string $key): RedirectResponse
+    {
+        abort_unless(GuiPrototypes::exists($key), 404);
+        $data = $request->validate([
+            'bump' => ['required', Rule::in(['major', 'minor', 'patch'])],
+            'changes' => ['required', 'string', 'max:2000'],
+            'wishes' => ['array'],
+            'wishes.*' => ['string'],
+        ], ['changes.required' => 'Bitte beschreiben, was sich ändert.']);
+
+        return $this->run($request, $key, fn (?string $user): array => $this->prototypes->createVersion(
+            $key, $data['bump'], trim($data['changes']), array_values($data['wishes'] ?? []), $user,
+        ), 'Neue Version angelegt (Entwicklung).');
+    }
+
+    public function transition(Request $request, string $key): RedirectResponse
+    {
+        abort_unless(GuiPrototypes::exists($key), 404);
+        $data = $request->validate([
+            'action' => ['required', Rule::in(['pruefen', 'zurueck', 'freigeben'])],
+            'comment' => ['nullable', 'string', 'max:2000'],
+        ]);
+
+        $message = match ($data['action']) {
+            'pruefen' => 'Zur Prüfung gegeben.',
+            'zurueck' => 'Zurück an die Entwicklung.',
+            default => 'Freigegeben – diese Version ist jetzt das verbindliche Template. Verwendende Seiten sind zur Überarbeitung vorgemerkt.',
+        };
+
+        return $this->run($request, $key, fn (?string $user): array => $this->prototypes->transition(
+            $key, $data['action'], isset($data['comment']) ? trim($data['comment']) : null, $user,
+        ), $message);
+    }
+
+    public function rework(Request $request, string $key): RedirectResponse
+    {
+        abort_unless(GuiPrototypes::exists($key), 404);
+        $data = $request->validate(['file' => ['required', 'string', 'max:300'], 'done' => ['required', 'boolean']]);
+
+        return $this->run($request, $key, fn (?string $user): array => $this->prototypes->markRework(
+            $key, $data['file'], (bool) $data['done'], $user,
+        ), $data['done'] ? 'Als überarbeitet markiert.' : 'Wieder offen.');
+    }
+
+    public function wish(Request $request, string $key): RedirectResponse
+    {
+        abort_unless(GuiPrototypes::exists($key), 404);
+        $data = $request->validate(['text' => ['required', 'string', 'max:2000']], ['text.required' => 'Bitte den Wunsch beschreiben.']);
+
+        return $this->run($request, $key, fn (?string $user): array => $this->prototypes->addWish($key, trim($data['text']), $user), 'Wunsch erfasst.');
+    }
+
+    /**
+     * @param  callable(?string): array{before: array<string, mixed>|null, after: array<string, mixed>}  $change
+     */
+    private function run(Request $request, string $key, callable $change, string $message): RedirectResponse
+    {
+        try {
+            $result = $change($request->user()?->getAuthIdentifier() !== null ? (string) $request->user()->getAuthIdentifier() : null);
+        } catch (InvalidArgumentException $e) {
+            $this->toast($e->getMessage(), 'error');
+
+            return back();
+        }
+        $this->audit->record(GuiPrototypes::COLLECTION, $result['before'], $result['after'], 'GUI-Prototypen', $request->user());
+        $this->toast($message);
+
+        return back();
+    }
+
+    /**
+     * @param  array<string, mixed>  $record
+     * @return list<string>
+     */
+    private static function userIds(array $record): array
+    {
+        $ids = [];
+        foreach ((array) $record['versions'] as $v) {
+            foreach (['created_by', 'review_by', 'released_by'] as $field) {
+                $ids[] = $v[$field] ?? null;
+            }
+            foreach ((array) ($v['log'] ?? []) as $entry) {
+                $ids[] = $entry['by'] ?? null;
+            }
+        }
+        foreach ((array) ($record['wishes'] ?? []) as $w) {
+            $ids[] = $w['by'] ?? null;
+        }
+        foreach ((array) ($record['rework'] ?? []) as $r) {
+            $ids[] = $r['done_by'] ?? null;
+        }
+
+        return array_values(array_unique(array_filter($ids, 'is_string')));
+    }
+
+    /**
+     * @param  list<string>  $ids
+     * @return array<string, string>
+     */
+    private function names(array $ids): array
+    {
+        $names = [];
+        foreach (array_unique($ids) as $id) {
+            $user = $this->users->find($id);
+            $names[$id] = $user !== null ? (string) ($user['name'] ?? $id) : 'Unbekannt';
+        }
+
+        return $names;
+    }
+}

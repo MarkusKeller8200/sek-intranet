@@ -19,5 +19,11 @@
     "( column: GridColumn",
     "( urlToCheck: NonNullable",
     "part.startsWith('**') ? (",
-    "p.sync_pending ? ("
+    "p.sync_pending ? (",
+    "Muster Anna",
+    "Beispiel Ben",
+    "Probe Carla",
+    "Fiktiv Dario",
+    "Vorlage Elena",
+    "Platzhalter Finn"
 ]

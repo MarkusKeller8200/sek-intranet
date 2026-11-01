@@ -95,7 +95,8 @@ export type ColoredList =
     | 'audiences'
     | 'announcementCategories'
     | 'eventCategories'
-    | 'documentCategories';
+    | 'documentCategories'
+    | 'guiStatuses';
 
 /** Schlüssel in config/intranet.php → colors. */
 export const colorConfigKey: Record<ColoredList, string> = {
@@ -106,6 +107,7 @@ export const colorConfigKey: Record<ColoredList, string> = {
     announcementCategories: 'announcement_categories',
     eventCategories: 'event_categories',
     documentCategories: 'document_categories',
+    guiStatuses: 'gui_statuses',
 };
 
 export function isColorName(value: unknown): value is ColorName {

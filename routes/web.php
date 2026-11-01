@@ -14,6 +14,7 @@ use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\EmbedController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\GridViewController;
+use App\Http\Controllers\GuiPrototypeController;
 use App\Http\Controllers\McpConceptController;
 use App\Http\Controllers\ModuleController;
 use App\Http\Controllers\ModuleSettingsController;
@@ -99,6 +100,14 @@ Route::middleware('auth')->group(function () {
         Route::inertia('sprachkonzept', 'language-concept')->name('language-concept');
         Route::get('rollenkonzept', RoleConceptController::class)->name('role-concept');
         Route::get('mcp-konzept', McpConceptController::class)->name('mcp-concept');
+
+        // Menü «GUI-Prototypen»: Bausteine mit Status und Versionen
+        Route::get('gui-prototypen', [GuiPrototypeController::class, 'index'])->name('gui.index');
+        Route::get('gui-prototypen/{key}', [GuiPrototypeController::class, 'show'])->name('gui.show');
+        Route::post('gui-prototypen/{key}/versionen', [GuiPrototypeController::class, 'storeVersion'])->name('gui.versions.store');
+        Route::post('gui-prototypen/{key}/status', [GuiPrototypeController::class, 'transition'])->name('gui.transition');
+        Route::post('gui-prototypen/{key}/ueberarbeitung', [GuiPrototypeController::class, 'rework'])->name('gui.rework');
+        Route::post('gui-prototypen/{key}/wuensche', [GuiPrototypeController::class, 'wish'])->name('gui.wishes.store');
 
         // REST-API: Beschreibung mit Tester und Tokens
         // Menü «Einstellungen»: Einstellungen der Menüpunkte, Browser-Erweiterung

@@ -49,6 +49,9 @@ Projekt: SekBülach Intranet, Prototyp. Stack und Konventionen wie IDA.
   bzw. `.env`, Anpassung über das Menü. Browser-Erweiterung `browser-extension/` (docs/KONZEPT-BROWSER-CONNECTOR.md):
   Nachrichten nur über `resources/js/lib/connector.ts`; Erfassung in `background.js` und
   `lib/api-recorder/capture.ts` gemeinsam nachführen.
+- GUI-Prototypen (`docs/KONZEPT-GUI-PROTOTYPEN.md`): Oberflächen nur aus den Bausteinen unter Menü «GUI-Prototypen»
+  bauen und an die freigegebene Version halten. Neue Bausteine in `config/intranet.php` → `gui_components` und
+  `components/gui-demos.tsx`; nach einer Freigabe die Liste «Überarbeitung» abarbeiten.
 - Wird ein Schlüssel einer Auswahlliste umbenannt, Umstellung unter `renames` eintragen
   (`php artisan intranet:upgrade` stellt bestehende Daten beim Start um).
 
