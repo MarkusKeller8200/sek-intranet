@@ -21,13 +21,13 @@ freigegebenen Stand.
   befolgt.
 - **Status** (immer nur ein Status-Label, das vorherige wird entfernt):
 
-  | Status-Label    | Bedeutung                                                      | Wer setzt es               |
-  | --------------- | -------------------------------------------------------------- | -------------------------- |
-  | `triage`        | Gemeldet, noch nicht freigegeben – kein Entwicklungsauftrag    | Vorlage (automatisch)      |
-  | `_1 bereit`     | Zur Umsetzung freigegeben                                      | nur der Projektverantwortliche |
-  | `_2 in Arbeit`  | Wird gerade umgesetzt                                          | wer umsetzt (auch KI-Agent) |
-  | `_3 Beta-Test`  | Umgesetzt und ausgerollt, wartet auf deinen Test (Testliste)   | wer umsetzt                |
-  | geschlossen     | Testliste abgehakt                                             | Projektverantwortlicher    |
+    | Status-Label   | Bedeutung                                                    | Wer setzt es                   |
+    | -------------- | ------------------------------------------------------------ | ------------------------------ |
+    | `triage`       | Gemeldet, noch nicht freigegeben – kein Entwicklungsauftrag  | Vorlage (automatisch)          |
+    | `_1 bereit`    | Zur Umsetzung freigegeben                                    | nur der Projektverantwortliche |
+    | `_2 in Arbeit` | Wird gerade umgesetzt                                        | wer umsetzt (auch KI-Agent)    |
+    | `_3 Beta-Test` | Umgesetzt und ausgerollt, wartet auf deinen Test (Testliste) | wer umsetzt                    |
+    | geschlossen    | Testliste abgehakt                                           | Projektverantwortlicher        |
 
 - Der Workflow `issue-milestone.yml` ordnet neue Issues ohne Meilenstein nach Label der Sammlung zu.
 - Was im nächsten Release umgesetzt wird, kommt in dessen Meilenstein (z. B. «0.32.0 – GitHub-Ablauf &
@@ -103,14 +103,14 @@ Commits setzen, weil diese andere Workflow-Dateien enthalten. Darum geht das Nac
 
 1. Tags einmal lokal setzen und pushen (eigene Anmeldung). In PowerShell:
 
-   ```powershell
-   git fetch origin
-   Get-Content .github/release-backfill.txt | Where-Object { $_ -and $_ -notmatch '^#' } |
-     ForEach-Object { $v, $s = $_ -split ' '; git tag "v$v" $s }
-   git push origin --tags
-   ```
+    ```powershell
+    git fetch origin
+    Get-Content .github/release-backfill.txt | Where-Object { $_ -and $_ -notmatch '^#' } |
+      ForEach-Object { $v, $s = $_ -split ' '; git tag "v$v" $s }
+    git push origin --tags
+    ```
 
-   In bash: `grep -v '^#' .github/release-backfill.txt | while read v s; do git tag "v$v" "$s"; done; git push origin --tags`
+    In bash: `grep -v '^#' .github/release-backfill.txt | while read v s; do git tag "v$v" "$s"; done; git push origin --tags`
 
 2. Actions → **release** → Run workflow mit «nachtragen». Das legt die Releases mit dem Text aus dem CHANGELOG an.
 

@@ -10,10 +10,10 @@ Entscheid des Projektverantwortlichen vom 01.11.2026. Umsetzung erst nach Freiga
 2. **Module sind eine Ordnerstruktur im Intranet** und trennen die Themen fachlich:
    `modules/<Name>/` mit `module.json`, eigenen Rechten, eigenem Menü, eigenen Tests und eigenem CHANGELOG.
 3. **Jedes Modul hat seine eigene Datenhaltung.**
-   - Mit Datenbank: ein PostgreSQL-Schema und ein DB-Benutzer pro Modul. Der Benutzer darf nur im eigenen Schema
-     schreiben («eigener DB-Writer»).
-   - Jedes Modul hat eigene Migrationen und eigene Repositories (Contracts mit JSON- und Database-Umsetzung).
-     Die Umstellung auf die Datenbank erfolgt pro Modul.
+    - Mit Datenbank: ein PostgreSQL-Schema und ein DB-Benutzer pro Modul. Der Benutzer darf nur im eigenen Schema
+      schreiben («eigener DB-Writer»).
+    - Jedes Modul hat eigene Migrationen und eigene Repositories (Contracts mit JSON- und Database-Umsetzung).
+      Die Umstellung auf die Datenbank erfolgt pro Modul.
 4. **Keine Zugriffe quer zwischen Modulen.** Erlaubt sind nur Core-Schnittstellen (z. B. Personen), Ereignisse
    und die REST-API. Fremdschlüssel nur auf Core-Stammdaten (UUID). Eine Architekturprüfung in der CI soll das
    sicherstellen.
@@ -25,12 +25,12 @@ Entscheid des Projektverantwortlichen vom 01.11.2026. Umsetzung erst nach Freiga
 
 ## Abgrenzung
 
-| | Core | Modul | Plugin | Eigenständiges Projekt |
-|---|---|---|---|---|
-| Ort | Intranet | `modules/<Name>/` im Intranet | `plugins/<Ordner>/` | eigenes Repository, eigenes Deployment |
-| Daten | Stammdaten (Personen, Organisation, Rechte) | eigenes Schema | keine eigenen Fachdaten (nur Einstellungen, Läufe) | eigene Datenbank |
-| Login | OIDC (später) | über den Core | – | eigenes, falls nötig |
-| Beispiele | Anmeldung, Personen, Rollen, Navigation, Benachrichtigungen, GUI-Bausteine, Plugin-Laufzeit, API | Kommunikation, Wissen, Zeiterfassung, Beschaffung (HW/SW bestellen), ICT/Lizenzen verteilen, Unterricht, Synchronisation | Entra, Jamf, Escola, ePost, Inventory360, LMVZ | Systematische Rechtssammlung |
+|           | Core                                                                                             | Modul                                                                                                                    | Plugin                                             | Eigenständiges Projekt                 |
+| --------- | ------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------ | -------------------------------------------------- | -------------------------------------- |
+| Ort       | Intranet                                                                                         | `modules/<Name>/` im Intranet                                                                                            | `plugins/<Ordner>/`                                | eigenes Repository, eigenes Deployment |
+| Daten     | Stammdaten (Personen, Organisation, Rechte)                                                      | eigenes Schema                                                                                                           | keine eigenen Fachdaten (nur Einstellungen, Läufe) | eigene Datenbank                       |
+| Login     | OIDC (später)                                                                                    | über den Core                                                                                                            | –                                                  | eigenes, falls nötig                   |
+| Beispiele | Anmeldung, Personen, Rollen, Navigation, Benachrichtigungen, GUI-Bausteine, Plugin-Laufzeit, API | Kommunikation, Wissen, Zeiterfassung, Beschaffung (HW/SW bestellen), ICT/Lizenzen verteilen, Unterricht, Synchronisation | Entra, Jamf, Escola, ePost, Inventory360, LMVZ     | Systematische Rechtssammlung           |
 
 ## Systematische Rechtssammlung (eigenes Projekt)
 
@@ -43,41 +43,41 @@ ein anderes Publikum und einen anderen Schutzbedarf als das Intranet.
 - **Öffentliche, lesende REST-API** mit OpenAPI-Beschreibung (z. B. `/api/v1/erlasse`, `/erlasse/{id}`,
   `/systematik`, `/suche?q=`), ohne Token, mit Rate-Limit.
 - **Anbindung ans Intranet:**
-  - Plugin `Rechtssammlung` mit den Aktionen «Erlass suchen» und «Erlass anzeigen», einer Kachel «Neu/geändert»
-    und gegebenenfalls einer Benachrichtigung bei neuen Fassungen.
-  - Menüpunkt unter «Wissen & Ablage» als Einbindung bzw. Link.
+    - Plugin `Rechtssammlung` mit den Aktionen «Erlass suchen» und «Erlass anzeigen», einer Kachel «Neu/geändert»
+      und gegebenenfalls einer Benachrichtigung bei neuen Fassungen.
+    - Menüpunkt unter «Wissen & Ablage» als Einbindung bzw. Link.
 - **Stack** wie IDA und Intranet (Laravel, React/Inertia, GUI-Bausteine und Farbkonzept des Intranets), damit das
   Aussehen einheitlich ist. Der GitHub-Ablauf (Vorlagen, Labels, Releases) wird aus diesem Repository übernommen.
 - **Hosting:** eigenes kleines Deployment, `rechtssammlung.sekbuelach.ch`. Die Daten sind öffentlich, trotzdem gilt
   Infomaniak als Ziel.
 - **Antworten (02.11.2026, #16):**
-  - Bestand nur als **Archiv-PDF**. Import mit Prüfansicht (#21); das PDF bleibt als Archivfassung verlinkt.
-  - Sprache: **Deutsch**.
-  - **Verweise** auf Erlasse anderer Stellen (Gemeinde, Kanton/ZH-Lex): ja, als Links mit Titel und Stand.
-  - Adresse: **rechtssammlung.sekbuelach.ch**.
-  - Offen: verbindliche Fassung / Publikationsorgan.
+    - Bestand nur als **Archiv-PDF**. Import mit Prüfansicht (#21); das PDF bleibt als Archivfassung verlinkt.
+    - Sprache: **Deutsch**.
+    - **Verweise** auf Erlasse anderer Stellen (Gemeinde, Kanton/ZH-Lex): ja, als Links mit Titel und Stand.
+    - Adresse: **rechtssammlung.sekbuelach.ch**.
+    - Offen: verbindliche Fassung / Publikationsorgan.
 
 ## Planung (Issues und Meilensteine)
 
 **Meilenstein «0.33.0 – Modulgerüst & Pilot Zeiterfassung»**
 
 - #7 Modulgerüst mit den Teilen:
-  - #10 Manifest und Laden der Module
-  - #11 Seiten und Übersetzungen
-  - #12 Datenhaltung pro Modul
-  - #13 Architekturprüfung
-  - #14 Generator und Doku
+    - #10 Manifest und Laden der Module
+    - #11 Seiten und Übersetzungen
+    - #12 Datenhaltung pro Modul
+    - #13 Architekturprüfung
+    - #14 Generator und Doku
 - #8 Pilotmodul Zeiterfassung (Umfang und Felder vorher abstimmen)
 
 **Meilenstein «Rechtssammlung – Projektstart»**
 
 - #9 Rechtssammlung als eigenes Projekt mit den Teilen:
-  - #16 Offene Fragen klären
-  - #17 Repository und Grundgerüst
-  - #18 Website und Redaktion
-  - #19 Öffentliche API
-  - #20 Plugin und Menüpunkt im Intranet
-  - #21 Import der Archiv-PDFs und Verweise
+    - #16 Offene Fragen klären
+    - #17 Repository und Grundgerüst
+    - #18 Website und Redaktion
+    - #19 Öffentliche API
+    - #20 Plugin und Menüpunkt im Intranet
+    - #21 Import der Archiv-PDFs und Verweise
 - #18 und #19 werden im neuen Repository umgesetzt und dort weitergeführt.
 
 **Später (Sammlung Verbesserungen)**
