@@ -1,5 +1,13 @@
 # Rückwirkende Tags (Version, Commit = ausgerollter Stand vor der nächsten Version). Einmalig nachgetragen mit
 # Actions → release → Run workflow → «Fehlende Releases aus .github/release-backfill.txt nachtragen».
+# 0.1.0–0.10.0 nachträglich zugeordnet (02.11.2026): Versionsdatei gab es erst ab 0.11.0, Stand rekonstruiert aus
+# Commit-Meldungen und CHANGELOG (letzter Commit vor den Funktionen der nächsten Version). 0.2–0.5 gibt es nicht.
+0.1.0 a41c2d246dac959292ca88fc6cf556f8abfd1a1d
+0.6.0 1236aef7150829ac5c38aec3c8f6daa3bd4b9156
+0.7.0 5612c8c2964ca8db21f6369c4f3e3cc6e1e6e8c1
+0.8.0 8901064429de869a0e32c7d176ff80a9b85b29cb
+0.9.0 f88d3851a99c142351dcbf3a9094afdc07337934
+0.10.0 40451ce4e9de08b4a439aac7839786d951257167
 0.11.0 c5a8336d86345d6306aa241f86e24a5155a37f05
 0.12.0 0fe0217b0c0c97b34de6a902a669d9863ec94858
 0.12.1 9f8b57f1c7b0f9befb7ad0538924dc0926a42cfe

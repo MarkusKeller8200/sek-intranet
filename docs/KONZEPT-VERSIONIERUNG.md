@@ -114,5 +114,5 @@ Commits setzen, weil diese andere Workflow-Dateien enthalten. Darum geht das Nac
 
 2. Actions → **release** → Run workflow mit «nachtragen». Das legt die Releases mit dem Text aus dem CHANGELOG an.
 
-Die Versionen 0.1 bis 0.10 wurden erst mit 0.11.0 nachträglich beschrieben und haben keinen eigenen Commit. Bis es
+Die Versionen 0.1.0 und 0.6.0 bis 0.10.0 wurden erst mit 0.11.0 beschrieben. Ihre Tags sind darum rekonstruiert: jeweils der letzte Commit vor den Funktionen der nächsten Version, nach Commit-Meldungen und CHANGELOG. Versionen 0.2 bis 0.5 gibt es nicht. Bis es
 einen Versions-Tag gibt, legt der automatische Lauf nichts an.
