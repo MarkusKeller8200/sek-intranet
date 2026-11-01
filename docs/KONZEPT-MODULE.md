@@ -48,13 +48,14 @@ ein anderes Publikum und einen anderen Schutzbedarf als das Intranet.
   - Menüpunkt unter «Wissen & Ablage» als Einbindung bzw. Link.
 - **Stack** wie IDA und Intranet (Laravel, React/Inertia, GUI-Bausteine und Farbkonzept des Intranets), damit das
   Aussehen einheitlich ist. Der GitHub-Ablauf (Vorlagen, Labels, Releases) wird aus diesem Repository übernommen.
-- **Hosting:** eigenes kleines Deployment, z. B. `recht.sekbuelach.ch`. Die Daten sind öffentlich, trotzdem gilt
+- **Hosting:** eigenes kleines Deployment, `rechtssammlung.sekbuelach.ch`. Die Daten sind öffentlich, trotzdem gilt
   Infomaniak als Ziel.
-- **Offen:**
-  - Datenquelle und Import bestehender Erlasse (Word/PDF?)
-  - Verbindliche Fassung (Publikationsorgan)
-  - Benötigte Sprachen
-  - Ob das Projekt auch Erlasse anderer Stellen (Gemeinde, Kanton) verlinkt
+- **Antworten (02.11.2026, #16):**
+  - Bestand nur als **Archiv-PDF**. Import mit Prüfansicht (#21); das PDF bleibt als Archivfassung verlinkt.
+  - Sprache: **Deutsch**.
+  - **Verweise** auf Erlasse anderer Stellen (Gemeinde, Kanton/ZH-Lex): ja, als Links mit Titel und Stand.
+  - Adresse: **rechtssammlung.sekbuelach.ch**.
+  - Offen: verbindliche Fassung / Publikationsorgan.
 
 ## Planung (Issues und Meilensteine)
 
@@ -76,6 +77,7 @@ ein anderes Publikum und einen anderen Schutzbedarf als das Intranet.
   - #18 Website und Redaktion
   - #19 Öffentliche API
   - #20 Plugin und Menüpunkt im Intranet
+  - #21 Import der Archiv-PDFs und Verweise
 - #18 und #19 werden im neuen Repository umgesetzt und dort weitergeführt.
 
 **Später (Sammlung Verbesserungen)**
