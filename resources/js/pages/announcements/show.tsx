@@ -1,5 +1,5 @@
 import { Head, Link, usePage } from '@inertiajs/react';
-import { ArrowLeft, Clock, Pencil, Pin } from 'lucide-react';
+import { ArrowLeft, Clock, History, Pencil, Pin } from 'lucide-react';
 import DeleteButton from '@/components/delete-button';
 import OptionBadge from '@/components/option-badge';
 import { Badge } from '@/components/ui/badge';
@@ -82,6 +82,15 @@ export default function AnnouncementShow({
                 >
                     {announcement.body}
                 </div>
+                {announcement.release_version && (
+                    <div>
+                        <Button asChild variant="outline">
+                            <Link href="/versionen">
+                                <History /> Alle Änderungen
+                            </Link>
+                        </Button>
+                    </div>
+                )}
             </article>
         </>
     );

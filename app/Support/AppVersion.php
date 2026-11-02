@@ -58,12 +58,34 @@ final class AppVersion
         if (! is_file($path)) {
             return [];
         }
+        $releases = self::parse((string) file_get_contents($path));
 
+        // Rechte-Kürzel der Punkte «Für Mitarbeitende» ([recht] …) nicht anzeigen
+        $releases = array_map(fn (array $release): array => [
+            'version' => $release['version'],
+            'date' => $release['date'],
+            'sections' => array_map(fn (array $section): array => [
+                'title' => $section['title'],
+                'items' => array_map(ReleaseAnnouncements::stripTag(...), $section['items']),
+            ], $release['sections']),
+        ], $releases);
+
+        // «Unveröffentlicht» nur zeigen, wenn es Einträge hat
+        return array_values(array_filter($releases, fn (array $r): bool => $r['version'] !== 'Unveröffentlicht' || $r['sections'] !== []));
+    }
+
+    /**
+     * Text eines CHANGELOG in Versionen, Abschnitte und Einträge zerlegen (Einträge unverändert).
+     *
+     * @return list<array{version: string, date: string|null, sections: list<array{title: string, items: list<string>}>}>
+     */
+    public static function parse(string $text): array
+    {
         $releases = [];
         $current = null;
         $item = null;
 
-        foreach ([...(preg_split('/\R/', (string) file_get_contents($path)) ?: []), ''] as $line) {
+        foreach ([...(preg_split('/\R/', $text) ?: []), ''] as $line) {
             // Fortsetzungszeile eines Eintrags (eingerückt)
             if ($item !== null && preg_match('/^\s{2,}(\S.*)$/u', $line, $m) === 1) {
                 $item .= ' '.$m[1];
@@ -91,8 +113,7 @@ final class AppVersion
             $releases[] = $current;
         }
 
-        // «Unveröffentlicht» nur zeigen, wenn es Einträge hat
-        return array_values(array_filter($releases, fn (array $r): bool => $r['version'] !== 'Unveröffentlicht' || $r['sections'] !== []));
+        return $releases;
     }
 
     /**

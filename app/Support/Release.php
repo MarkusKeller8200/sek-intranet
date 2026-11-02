@@ -134,7 +134,14 @@ final class Release
         }
         file_put_contents($this->root.'/VERSION', $version."\n");
 
-        return ["VERSION: {$current} → {$version}", self::isPrerelease($version) ? 'Vorabversion: CHANGELOG unverändert.' : "CHANGELOG: «Unveröffentlicht» → [{$version}] – {$date}"];
+        $lines = ["VERSION: {$current} → {$version}", self::isPrerelease($version) ? 'Vorabversion: CHANGELOG unverändert.' : "CHANGELOG: «Unveröffentlicht» → [{$version}] – {$date}"];
+        if (! self::isPrerelease($version)) {
+            $lines[] = ReleaseAnnouncements::items($changelog, $version) !== []
+                ? 'Mitteilung «'.ReleaseAnnouncements::title($version).'» entsteht nach dem Deployment.'
+                : 'Hinweis: kein Abschnitt «### '.ReleaseAnnouncements::SECTION.'» – es entsteht keine Mitteilung.';
+        }
+
+        return $lines;
     }
 
     /**

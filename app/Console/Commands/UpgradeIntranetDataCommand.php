@@ -7,13 +7,14 @@ use App\Support\DemoStudents;
 use App\Support\PersonFields;
 use App\Support\PersonLinks;
 use App\Support\PersonTypes;
+use App\Support\ReleaseAnnouncements;
 use Illuminate\Console\Command;
 
 /**
  * Stellt gespeicherte Werte um, wenn Schlüssel von Auswahllisten umbenannt wurden
  * (config/intranet.php → renames) und ergänzt neue abgeleitete Felder.
  * Idempotent: läuft bei jedem Containerstart.
- * Ändert nur Werte, löscht nie Datensätze.
+ * Ändert nur Werte, löscht nie Datensätze. Legt zum freigegebenen Release einmal die Mitteilung «Neu im Intranet» an.
  */
 class UpgradeIntranetDataCommand extends Command
 {
@@ -81,6 +82,13 @@ class UpgradeIntranetDataCommand extends Command
         // Prototyp: erfundene Schüler:innen und Eltern, Beispiel-Datenherkunft
         $total += DemoStudents::addIfMissing($store);
         $total += DemoStudents::addDemoLinks($store);
+
+        // Neuerungen des freigegebenen Releases einmal als Mitteilung (CHANGELOG «Für Mitarbeitende»)
+        $version = (string) config('intranet.version', '0.0.0');
+        $announcement = app(ReleaseAnnouncements::class)->publish($version, (string) @file_get_contents(base_path('CHANGELOG.md')));
+        if ($announcement !== null) {
+            $this->components->info("Mitteilung «{$announcement['title']}» angelegt.");
+        }
 
         $total === 0
             ? $this->components->info('Daten aktuell, keine Umstellung nötig.')

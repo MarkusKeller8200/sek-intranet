@@ -9,7 +9,22 @@ laufend unter **Unveröffentlicht**. Ab 0.32.0 entsteht eine Version nur bei ein
 
 ## [Unveröffentlicht]
 
+### Neu
+
+- **Neuerungen als Mitteilung (#26):** Bei einem freigegebenen Release erscheinen die Punkte «Für Mitarbeitende» aus
+  dem CHANGELOG einmal als Mitteilung «Neu im Intranet: Version X.Y» (Kategorie neu «Neuerungen», Autor «Intranet»).
+  Punkte mit Recht (`- [recht] …`) sehen nur Personen mit diesem Recht. Gelöschte Mitteilungen kommen nicht wieder;
+  bearbeitete gelten für alle. Ein/aus für die Administration auf der Seite «Versionen».
+
 ## [0.33.0] – 2026-11-02
+
+### Für Mitarbeitende
+
+- Zeiterfassung (Menü «Personen & Organisation»): Arbeitszeit, Tätigkeiten, Projekte und Abwesenheiten erfassen,
+  den Monat einreichen und das Monatsblatt als PDF drucken.
+- [visum-zeiterfassung] Monatsvisum: eingereichte Monate visieren oder mit Bemerkung zurückgeben, Export für die
+  Lohnbuchhaltung.
+- [manage-users] Einstellungen → Module: Fachbereiche wie die Zeiterfassung ein- und ausschalten.
 
 ### Neu
 

@@ -8,6 +8,7 @@ use App\Data\Contracts\DocumentRepository;
 use App\Data\Contracts\EventRepository;
 use App\Data\Contracts\UserRepository;
 use App\Plugins\PluginManager;
+use App\Support\ReleaseAnnouncements;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -26,8 +27,8 @@ class DashboardController extends Controller
 
         return Inertia::render('dashboard', [
             'announcements' => array_map(
-                fn (array $a): array => $a + ['author_name' => $names[$a['author_id'] ?? ''] ?? null],
-                $announcements->published(4),
+                fn (array $a): array => $a + ['author_name' => $names[$a['author_id'] ?? ''] ?? (is_string($a['author_label'] ?? null) ? $a['author_label'] : null)],
+                array_slice(ReleaseAnnouncements::filterForViewer($announcements->published(8)), 0, 4),
             ),
             'events' => $events->upcoming(5),
             'links' => array_slice(array_values(array_filter(

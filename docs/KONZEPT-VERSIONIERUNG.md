@@ -52,6 +52,29 @@ Der Workflow **release** wartet, bis **deploy** für diesen Commit grün ist (`r
 GitHub-Release «Intranet 0.33.0» an. Ist deploy nicht grün (z. B. Formatfehler), holt der nächste grüne Push das
 Release nach.
 
+### Neuerungen als Mitteilung
+
+Jede Version kann im CHANGELOG einen Abschnitt `### Für Mitarbeitende` haben – kurze Punkte in Alltagssprache.
+Er wird beim Vorbereiten des Releases geschrieben und zusammen mit dem Release freigegeben.
+
+```markdown
+### Für Mitarbeitende
+
+- Zeiterfassung: Arbeitszeit erfassen, Monat einreichen und als PDF drucken.
+- [visum-zeiterfassung] Monatsvisum: eingereichte Monate visieren oder zurückgeben.
+```
+
+- Nach dem Deployment legt `php artisan intranet:upgrade` für ein freigegebenes Release **einmal** die Mitteilung
+  «Neu im Intranet: Version X.Y» an: Kategorie «Neuerungen», Zielgruppe «Alle», Autor «Intranet», nicht angeheftet,
+  mit Link «Alle Änderungen». Keine Mitteilung für Vorabversionen, Developer Releases oder ohne Abschnitt.
+- Punkte, die mit `[recht]` beginnen, sehen nur Personen mit diesem Recht (Recht aus `config/intranet.php` →
+  `abilities` oder einem Modul). Sieht jemand keinen Punkt, fehlt die Mitteilung für diese Person. Unbekannte Rechte
+  gelten als «für alle». Auf der Seite «Versionen» wird das Kürzel nicht angezeigt.
+- Die Sammlung `release_announcements` merkt sich die Version: Eine gelöschte Mitteilung kommt nicht wieder. Wird
+  die Mitteilung bearbeitet, gilt der bearbeitete Text für alle.
+- Ein/aus auf der Seite «Versionen» (Recht `manage-users`, Sammlung `app_settings`), Vorgabe ein.
+- `php tools/release.php X.Y.Z` meldet, ob eine Mitteilung entsteht.
+
 ### Prüfungen
 
 - `php tools/release.php --check` läuft in `composer ci:check`: `VERSION` ist gültiges SemVer, der CHANGELOG hat

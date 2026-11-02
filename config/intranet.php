@@ -424,6 +424,7 @@ return [
         'it' => 'IT & Geräte',
         'personal' => 'Personal',
         'anlass' => 'Anlass',
+        'neuerungen' => 'Neuerungen',
     ],
 
     'event_categories' => [
@@ -936,6 +937,7 @@ return [
             'it' => 'cyan',
             'personal' => 'rose',
             'anlass' => 'amber',
+            'neuerungen' => 'emerald',
         ],
         'event_categories' => [
             'schulanlass' => 'sky',
@@ -1061,10 +1063,12 @@ return [
                 'audience' => ['type' => 'enum', 'values' => 'audiences', 'required' => true, 'label' => 'Zielgruppe'],
                 'pinned' => ['type' => 'bool', 'required' => true, 'label' => 'Angeheftet'],
                 'published_at' => ['type' => 'datetime', 'required' => true, 'label' => 'Veröffentlicht ab'],
-                'author_id' => ['type' => 'ref', 'references' => 'users', 'required' => true, 'label' => 'Autor/in'],
+                'author_id' => ['type' => 'ref', 'references' => 'users', 'required' => false, 'label' => 'Autor/in'],
+                'author_label' => ['type' => 'string', 'required' => false, 'label' => 'Autor/in (ohne Person, z. B. «Intranet»)'],
+                'release_version' => ['type' => 'string', 'required' => false, 'label' => 'Neuerungen der Version'],
+                'release_items' => ['type' => 'json', 'required' => false, 'label' => 'Punkte mit Recht (Neuerungen, bis zur Bearbeitung)'],
             ],
         ],
-
         'events' => [
             'label' => 'Termine',
             'description' => 'Schulanlässe, Konferenzen, Weiterbildungen und Ferien.',
@@ -1244,6 +1248,20 @@ return [
                 'owner_id' => ['type' => 'ref', 'references' => 'users', 'required' => true, 'label' => 'Erstellt von'],
                 'shared' => ['type' => 'bool', 'required' => true, 'label' => 'Für alle sichtbar'],
                 'state' => ['type' => 'json', 'required' => true, 'label' => 'Ansicht'],
+            ],
+        ],
+        'release_announcements' => [
+            'label' => 'System: Neuerungen als Mitteilung',
+            'description' => 'Für welche Version die Mitteilung «Neu im Intranet» schon angelegt wurde (id = Version).',
+            'fields' => [
+                'announcement_id' => ['type' => 'ref', 'references' => 'announcements', 'required' => true, 'label' => 'Mitteilung'],
+            ],
+        ],
+        'app_settings' => [
+            'label' => 'System: Einstellungen',
+            'description' => 'Allgemeine Schalter (id = Einstellung), z. B. «release_announcements» (Neuerungen als Mitteilung).',
+            'fields' => [
+                'enabled' => ['type' => 'bool', 'required' => true, 'label' => 'Eingeschaltet'],
             ],
         ],
 

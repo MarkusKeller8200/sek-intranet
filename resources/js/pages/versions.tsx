@@ -1,9 +1,10 @@
-import { Head } from '@inertiajs/react';
+import { Head, router } from '@inertiajs/react';
 import {
     Bug,
     ExternalLink,
     GitCommitHorizontal,
     Lightbulb,
+    Megaphone,
     Tag,
 } from 'lucide-react';
 import PageHeader from '@/components/page-header';
@@ -16,6 +17,7 @@ import {
     CardHeader,
     CardTitle,
 } from '@/components/ui/card';
+import { Switch } from '@/components/ui/switch';
 import { formatDate, formatDateTime } from '@/lib/format';
 import { githubIssueUrl, versionLabel } from '@/lib/github';
 
@@ -61,10 +63,12 @@ export default function Versions({
     info,
     changelog,
     github,
+    announcements,
 }: {
     info: Info;
     changelog: Release[];
     github: string | null;
+    announcements: { enabled: boolean } | null;
 }) {
     const version = versionLabel(info);
 
@@ -136,6 +140,36 @@ export default function Versions({
                         )}
                     </CardContent>
                 </Card>
+
+                {announcements && (
+                    <Card>
+                        <CardHeader>
+                            <CardTitle className="flex items-center gap-2">
+                                <Megaphone className="size-5 text-brand" />
+                                Neuerungen als Mitteilung
+                                <span className="ml-auto">
+                                    <Switch
+                                        checked={announcements.enabled}
+                                        onCheckedChange={(enabled) =>
+                                            router.post(
+                                                '/versionen/neuerungen',
+                                                { enabled },
+                                                { preserveScroll: true },
+                                            )
+                                        }
+                                        aria-label="Neuerungen als Mitteilung ein- oder ausschalten"
+                                    />
+                                </span>
+                            </CardTitle>
+                            <CardDescription>
+                                Bei einem freigegebenen Release erscheinen die
+                                Punkte «Für Mitarbeitende» einmal als Mitteilung
+                                «Neu im Intranet» – Punkte mit Recht nur für
+                                Personen mit diesem Recht.
+                            </CardDescription>
+                        </CardHeader>
+                    </Card>
+                )}
 
                 {changelog.map((release) => (
                     <Card key={release.version}>

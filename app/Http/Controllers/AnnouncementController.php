@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Data\Contracts\AnnouncementRepository;
 use App\Data\Contracts\UserRepository;
+use App\Support\ReleaseAnnouncements;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
@@ -26,7 +27,7 @@ class AnnouncementController extends Controller
             : $this->announcements->published();
 
         return Inertia::render('announcements/index', [
-            'announcements' => $this->withAuthors($items),
+            'announcements' => $this->withAuthors(ReleaseAnnouncements::filterForViewer($items)),
             'filters' => [
                 'q' => $request->string('q')->toString(),
                 'category' => $request->string('category')->toString(),
@@ -42,6 +43,9 @@ class AnnouncementController extends Controller
             strtotime((string) ($item['published_at'] ?? '')) > time() && Gate::denies('manage-content'),
             404,
         );
+        // Neuerungen einer Version: nur die Punkte, für die die Person das Recht hat
+        $item = ReleaseAnnouncements::forViewer($item);
+        abort_if($item === null, 404);
 
         return Inertia::render('announcements/show', [
             'announcement' => $this->withAuthors([$item])[0],
@@ -74,7 +78,8 @@ class AnnouncementController extends Controller
 
     public function update(Request $request, string $id): RedirectResponse
     {
-        $this->announcements->update($id, $this->validated($request));
+        // Bearbeitet: der Text gilt für alle (keine Auswahl der Punkte nach Recht mehr)
+        $this->announcements->update($id, $this->validated($request) + ['release_items' => null]);
         $this->toast('Mitteilung aktualisiert.');
 
         return redirect()->route('announcements.show', $id);
@@ -132,7 +137,7 @@ class AnnouncementController extends Controller
         $now = time();
 
         return array_map(fn (array $item): array => $item + [
-            'author_name' => $names[$item['author_id'] ?? ''] ?? null,
+            'author_name' => $names[$item['author_id'] ?? ''] ?? (is_string($item['author_label'] ?? null) ? $item['author_label'] : null),
             'scheduled' => strtotime((string) ($item['published_at'] ?? '')) > $now,
         ], $items);
     }

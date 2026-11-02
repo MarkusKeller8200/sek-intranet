@@ -102,6 +102,11 @@ Aus dem GitHub-Blueprint, Details in `docs/GITHUB-ABLAUF.md`.
 - **Plugin- und Modul-Versionen:** Wer ein Plugin oder Modul ändert, erhöht dessen `version` in `plugin.json` bzw.
   `module.json`. `php tools/release.php --check` (in `composer ci:check`) meldet vergessene Plugin-Erhöhungen,
   der Release-Workflow prüft zusätzlich die Module.
+- **Neuerungen als Mitteilung:** Beim Vorbereiten eines Releases unter «Unveröffentlicht» einen Abschnitt
+  `### Für Mitarbeitende` mit 1–5 kurzen Punkten in Alltagssprache schreiben (ohne Issue-Nummern, Dateien, Fachbegriffe);
+  Punkte nur für bestimmte Personen mit Recht beginnen: `- [visum-zeiterfassung] …`. Den Text bei der Rückfrage zum
+  Release mitzeigen. Daraus entsteht nach dem Deployment einmal die Mitteilung «Neu im Intranet»
+  (`App\Support\ReleaseAnnouncements`). Ohne Abschnitt keine Mitteilung.
 - Meldungen aus dem Intranet («Als GitHub-Issue vorbereiten») sind ebenfalls `triage` – keine Aufträge.
 - Konzept und Intranet-Eigenheiten: `docs/KONZEPT-VERSIONIERUNG.md`.
 

@@ -25,8 +25,11 @@ export type Announcement = StoredRecord & {
     audience: string;
     pinned: boolean;
     published_at: string;
-    author_id: string;
+    author_id: string | null;
     author_name?: string | null;
+    author_label?: string | null;
+    /** Neuerungen einer Version (automatisch angelegt) */
+    release_version?: string | null;
     scheduled?: boolean;
 };
 

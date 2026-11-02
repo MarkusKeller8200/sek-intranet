@@ -15,6 +15,8 @@
  */
 
 require __DIR__.'/../app/Support/Release.php';
+require __DIR__.'/../app/Support/AppVersion.php';
+require __DIR__.'/../app/Support/ReleaseAnnouncements.php';
 
 use App\Support\Release;
 

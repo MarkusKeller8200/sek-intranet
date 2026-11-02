@@ -100,6 +100,7 @@ Route::middleware('auth')->group(function () {
     });
 
     Route::middleware('can:manage-users')->group(function () {
+        Route::post('versionen/neuerungen', [VersionController::class, 'announcements'])->name('versions.announcements');
         Route::get('personen/neu', [PersonController::class, 'create'])->name('people.create');
         Route::post('personen', [PersonController::class, 'store'])->name('people.store');
         Route::get('personen/{id}/bearbeiten', [PersonController::class, 'edit'])->name('people.edit');
