@@ -34,7 +34,8 @@ type Props = {
 /** Eigene Zeiterfassung eines Monats: erfassen, Übersicht, einreichen, Monatsblatt als PDF. */
 export default function ZeiterfassungStart(props: Props) {
     const { monat, eintraege, status, summen, kategorien, person } = props;
-    const gesperrt = status.status === 'eingereicht' || status.status === 'visiert';
+    const gesperrt =
+        status.status === 'eingereicht' || status.status === 'visiert';
     const heute = new Date().toISOString().slice(0, 10);
     const form = useForm({
         datum: heute.startsWith(monat) ? heute : `${monat}-01`,
@@ -47,14 +48,22 @@ export default function ZeiterfassungStart(props: Props) {
         projekt: '',
         notiz: '',
     });
-    const liste = form.data.art === 'arbeit' ? kategorien.arbeit : kategorien.abwesenheit;
+    const liste =
+        form.data.art === 'arbeit' ? kategorien.arbeit : kategorien.abwesenheit;
 
     const submit = (e: FormEvent) => {
         e.preventDefault();
         form.post('/zeiterfassung', {
             preserveScroll: true,
             onSuccess: () =>
-                form.reset('beginn', 'ende', 'pause_min', 'stunden', 'projekt', 'notiz'),
+                form.reset(
+                    'beginn',
+                    'ende',
+                    'pause_min',
+                    'stunden',
+                    'projekt',
+                    'notiz',
+                ),
         });
     };
 
@@ -68,19 +77,31 @@ export default function ZeiterfassungStart(props: Props) {
                 />
                 <div className="flex flex-wrap items-center gap-3">
                     <MonatNavigation monat={monat} basis="/zeiterfassung" />
-                    <StatusBadge status={status.status} labels={kategorien.status} />
+                    <StatusBadge
+                        status={status.status}
+                        labels={kategorien.status}
+                    />
                     <span className="ml-auto flex flex-wrap gap-2">
                         <Button
                             variant="outline"
                             onClick={() =>
-                                druckeMonatsblatt({ person: person.name, monat, eintraege, summen, status, kategorien })
+                                druckeMonatsblatt({
+                                    person: person.name,
+                                    monat,
+                                    eintraege,
+                                    summen,
+                                    status,
+                                    kategorien,
+                                })
                             }
                         >
                             <Printer /> Monatsblatt (PDF)
                         </Button>
                         {props.darfVisum && (
                             <Button asChild variant="outline">
-                                <Link href={`/zeiterfassung/visum?monat=${monat}`}>
+                                <Link
+                                    href={`/zeiterfassung/visum?monat=${monat}`}
+                                >
                                     <ClipboardCheck /> Visum
                                 </Link>
                             </Button>
@@ -88,7 +109,11 @@ export default function ZeiterfassungStart(props: Props) {
                         <Button
                             disabled={gesperrt || eintraege.length === 0}
                             onClick={() =>
-                                router.post('/zeiterfassung/einreichen', { monat }, { preserveScroll: true })
+                                router.post(
+                                    '/zeiterfassung/einreichen',
+                                    { monat },
+                                    { preserveScroll: true },
+                                )
                             }
                         >
                             <Send /> Monat einreichen
@@ -108,10 +133,13 @@ export default function ZeiterfassungStart(props: Props) {
                     <Alert>
                         <Lock />
                         <AlertTitle>
-                            {status.status === 'visiert' ? 'Monat visiert' : 'Monat eingereicht'}
+                            {status.status === 'visiert'
+                                ? 'Monat visiert'
+                                : 'Monat eingereicht'}
                         </AlertTitle>
                         <AlertDescription>
-                            Einträge können nicht mehr geändert werden. Für Korrekturen gibt die Schulleitung den Monat zurück.
+                            Einträge können nicht mehr geändert werden. Für
+                            Korrekturen gibt die Schulleitung den Monat zurück.
                         </AlertDescription>
                     </Alert>
                 )}
@@ -121,17 +149,30 @@ export default function ZeiterfassungStart(props: Props) {
                         <CardHeader>
                             <CardTitle>Eintrag erfassen</CardTitle>
                             <CardDescription>
-                                Beginn und Ende (mit Pause) oder direkt die Stunden angeben.
+                                Beginn und Ende (mit Pause) oder direkt die
+                                Stunden angeben.
                             </CardDescription>
                         </CardHeader>
                         <CardContent>
-                            <form onSubmit={submit} className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-                                <FormField id="z-datum" label="Datum *" error={form.errors.datum}>
+                            <form
+                                onSubmit={submit}
+                                className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4"
+                            >
+                                <FormField
+                                    id="z-datum"
+                                    label="Datum *"
+                                    error={form.errors.datum}
+                                >
                                     <Input
                                         id="z-datum"
                                         type="date"
                                         value={form.data.datum}
-                                        onChange={(e) => form.setData('datum', e.target.value)}
+                                        onChange={(e) =>
+                                            form.setData(
+                                                'datum',
+                                                e.target.value,
+                                            )
+                                        }
                                     />
                                 </FormField>
                                 <FormField id="z-art" label="Art *">
@@ -139,23 +180,41 @@ export default function ZeiterfassungStart(props: Props) {
                                         id="z-art"
                                         value={form.data.art}
                                         onChange={(e) => {
-                                            const art = e.target.value as 'arbeit' | 'abwesenheit';
+                                            const art = e.target.value as
+                                                | 'arbeit'
+                                                | 'abwesenheit';
                                             form.setData((d) => ({
                                                 ...d,
                                                 art,
-                                                kategorie: Object.keys(art === 'arbeit' ? kategorien.arbeit : kategorien.abwesenheit)[0] ?? '',
+                                                kategorie:
+                                                    Object.keys(
+                                                        art === 'arbeit'
+                                                            ? kategorien.arbeit
+                                                            : kategorien.abwesenheit,
+                                                    )[0] ?? '',
                                             }));
                                         }}
                                     >
                                         <option value="arbeit">Arbeit</option>
-                                        <option value="abwesenheit">Abwesenheit</option>
+                                        <option value="abwesenheit">
+                                            Abwesenheit
+                                        </option>
                                     </NativeSelect>
                                 </FormField>
-                                <FormField id="z-kategorie" label="Kategorie *" error={form.errors.kategorie}>
+                                <FormField
+                                    id="z-kategorie"
+                                    label="Kategorie *"
+                                    error={form.errors.kategorie}
+                                >
                                     <NativeSelect
                                         id="z-kategorie"
                                         value={form.data.kategorie}
-                                        onChange={(e) => form.setData('kategorie', e.target.value)}
+                                        onChange={(e) =>
+                                            form.setData(
+                                                'kategorie',
+                                                e.target.value,
+                                            )
+                                        }
                                     >
                                         {Object.entries(liste).map(([k, l]) => (
                                             <option key={k} value={k}>
@@ -164,11 +223,20 @@ export default function ZeiterfassungStart(props: Props) {
                                         ))}
                                     </NativeSelect>
                                 </FormField>
-                                <FormField id="z-projekt" label="Projekt / Einsatz" error={form.errors.projekt}>
+                                <FormField
+                                    id="z-projekt"
+                                    label="Projekt / Einsatz"
+                                    error={form.errors.projekt}
+                                >
                                     <Input
                                         id="z-projekt"
                                         value={form.data.projekt}
-                                        onChange={(e) => form.setData('projekt', e.target.value)}
+                                        onChange={(e) =>
+                                            form.setData(
+                                                'projekt',
+                                                e.target.value,
+                                            )
+                                        }
                                     />
                                 </FormField>
                                 <FormField id="z-beginn" label="Beginn">
@@ -176,28 +244,52 @@ export default function ZeiterfassungStart(props: Props) {
                                         id="z-beginn"
                                         type="time"
                                         value={form.data.beginn}
-                                        onChange={(e) => form.setData('beginn', e.target.value)}
+                                        onChange={(e) =>
+                                            form.setData(
+                                                'beginn',
+                                                e.target.value,
+                                            )
+                                        }
                                     />
                                 </FormField>
-                                <FormField id="z-ende" label="Ende" error={form.errors.ende}>
+                                <FormField
+                                    id="z-ende"
+                                    label="Ende"
+                                    error={form.errors.ende}
+                                >
                                     <Input
                                         id="z-ende"
                                         type="time"
                                         value={form.data.ende}
-                                        onChange={(e) => form.setData('ende', e.target.value)}
+                                        onChange={(e) =>
+                                            form.setData('ende', e.target.value)
+                                        }
                                     />
                                 </FormField>
-                                <FormField id="z-pause" label="Pause (Minuten)" error={form.errors.pause_min}>
+                                <FormField
+                                    id="z-pause"
+                                    label="Pause (Minuten)"
+                                    error={form.errors.pause_min}
+                                >
                                     <Input
                                         id="z-pause"
                                         type="number"
                                         min={0}
                                         step={5}
                                         value={form.data.pause_min}
-                                        onChange={(e) => form.setData('pause_min', e.target.value)}
+                                        onChange={(e) =>
+                                            form.setData(
+                                                'pause_min',
+                                                e.target.value,
+                                            )
+                                        }
                                     />
                                 </FormField>
-                                <FormField id="z-stunden" label="oder Stunden" error={form.errors.stunden}>
+                                <FormField
+                                    id="z-stunden"
+                                    label="oder Stunden"
+                                    error={form.errors.stunden}
+                                >
                                     <Input
                                         id="z-stunden"
                                         type="number"
@@ -205,20 +297,38 @@ export default function ZeiterfassungStart(props: Props) {
                                         max={24}
                                         step={0.25}
                                         value={form.data.stunden}
-                                        onChange={(e) => form.setData('stunden', e.target.value)}
+                                        onChange={(e) =>
+                                            form.setData(
+                                                'stunden',
+                                                e.target.value,
+                                            )
+                                        }
                                     />
                                 </FormField>
                                 <div className="sm:col-span-2 lg:col-span-3">
-                                    <FormField id="z-notiz" label="Notiz" error={form.errors.notiz}>
+                                    <FormField
+                                        id="z-notiz"
+                                        label="Notiz"
+                                        error={form.errors.notiz}
+                                    >
                                         <Input
                                             id="z-notiz"
                                             value={form.data.notiz}
-                                            onChange={(e) => form.setData('notiz', e.target.value)}
+                                            onChange={(e) =>
+                                                form.setData(
+                                                    'notiz',
+                                                    e.target.value,
+                                                )
+                                            }
                                         />
                                     </FormField>
                                 </div>
                                 <div className="flex items-end">
-                                    <Button type="submit" disabled={form.processing} className="w-full">
+                                    <Button
+                                        type="submit"
+                                        disabled={form.processing}
+                                        className="w-full"
+                                    >
                                         Speichern
                                     </Button>
                                 </div>
@@ -240,9 +350,12 @@ export default function ZeiterfassungStart(props: Props) {
                                 gesperrt
                                     ? undefined
                                     : (e) =>
-                                          router.delete(`/zeiterfassung/eintraege/${e.id}`, {
-                                              preserveScroll: true,
-                                          })
+                                          router.delete(
+                                              `/zeiterfassung/eintraege/${e.id}`,
+                                              {
+                                                  preserveScroll: true,
+                                              },
+                                          )
                             }
                         />
                     </CardContent>

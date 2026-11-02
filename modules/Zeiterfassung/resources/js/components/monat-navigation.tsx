@@ -16,7 +16,12 @@ export default function MonatNavigation({
 
     return (
         <div className="flex items-center gap-2">
-            <Button asChild variant="outline" size="icon" aria-label="Vorheriger Monat">
+            <Button
+                asChild
+                variant="outline"
+                size="icon"
+                aria-label="Vorheriger Monat"
+            >
                 <Link href={url(verschiebeMonat(monat, -1))} preserveScroll>
                     <ChevronLeft />
                 </Link>
@@ -24,7 +29,12 @@ export default function MonatNavigation({
             <span className="min-w-40 text-center font-semibold">
                 {monatName(monat)}
             </span>
-            <Button asChild variant="outline" size="icon" aria-label="Nächster Monat">
+            <Button
+                asChild
+                variant="outline"
+                size="icon"
+                aria-label="Nächster Monat"
+            >
                 <Link href={url(verschiebeMonat(monat, 1))} preserveScroll>
                     <ChevronRight />
                 </Link>

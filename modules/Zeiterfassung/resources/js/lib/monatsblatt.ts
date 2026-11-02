@@ -29,7 +29,9 @@ export function druckeMonatsblatt(opts: {
     const { person, monat, eintraege, summen, status, kategorien } = opts;
     const zeilen = eintraege
         .map(
-            (e) => `<tr><td>${esc(new Date(e.datum).toLocaleDateString('de-CH'))}</td>
+            (
+                e,
+            ) => `<tr><td>${esc(new Date(e.datum).toLocaleDateString('de-CH'))}</td>
 <td>${e.art === 'abwesenheit' ? 'Abwesenheit' : 'Arbeit'}</td>
 <td>${esc(kategorieName(kategorien, e.kategorie))}</td>
 <td>${esc(e.beginn ?? '')}${e.ende ? `–${esc(e.ende)}` : ''}</td>

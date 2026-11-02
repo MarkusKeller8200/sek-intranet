@@ -5,12 +5,7 @@ import FormField from '@/components/form-field';
 import PageHeader from '@/components/page-header';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
-import {
-    Card,
-    CardContent,
-    CardHeader,
-    CardTitle,
-} from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
 import EintraegeTabelle from '../components/eintraege-tabelle';
 import MonatNavigation from '../components/monat-navigation';
@@ -45,12 +40,24 @@ export default function ZeiterfassungPerson(props: Props) {
         <>
             <Head title={`Zeiterfassung ${person.name}`} />
             <div className="flex max-w-5xl flex-1 flex-col gap-6 p-4 md:p-6">
-                <PageHeader title={person.name} description="Monatsblatt für das Visum" />
+                <PageHeader
+                    title={person.name}
+                    description="Monatsblatt für das Visum"
+                />
                 <div className="flex flex-wrap items-center gap-3">
-                    <MonatNavigation monat={monat} basis={`/zeiterfassung/visum/${person.id}`} />
-                    <StatusBadge status={status.status} labels={kategorien.status} />
+                    <MonatNavigation
+                        monat={monat}
+                        basis={`/zeiterfassung/visum/${person.id}`}
+                    />
+                    <StatusBadge
+                        status={status.status}
+                        labels={kategorien.status}
+                    />
                     {props.visiertVon && (
-                        <span className="text-sm text-muted-foreground" translate="no">
+                        <span
+                            className="text-sm text-muted-foreground"
+                            translate="no"
+                        >
                             {props.visiertVon}
                         </span>
                     )}
@@ -74,7 +81,11 @@ export default function ZeiterfassungPerson(props: Props) {
                         <Button
                             disabled={status.status !== 'eingereicht'}
                             onClick={() =>
-                                router.post(`/zeiterfassung/visum/${person.id}/visieren`, { monat }, { preserveScroll: true })
+                                router.post(
+                                    `/zeiterfassung/visum/${person.id}/visieren`,
+                                    { monat },
+                                    { preserveScroll: true },
+                                )
                             }
                         >
                             <CheckCircle2 /> Visieren
@@ -91,26 +102,44 @@ export default function ZeiterfassungPerson(props: Props) {
                 )}
                 <Card>
                     <CardContent>
-                        <EintraegeTabelle eintraege={eintraege} summen={summen} kategorien={kategorien} />
+                        <EintraegeTabelle
+                            eintraege={eintraege}
+                            summen={summen}
+                            kategorien={kategorien}
+                        />
                     </CardContent>
                 </Card>
-                {(status.status === 'eingereicht' || status.status === 'visiert') && (
+                {(status.status === 'eingereicht' ||
+                    status.status === 'visiert') && (
                     <Card>
                         <CardHeader>
                             <CardTitle>Zurück an die Person</CardTitle>
                         </CardHeader>
                         <CardContent>
                             <form onSubmit={zurueck} className="grid gap-3">
-                                <FormField id="z-bemerkung" label="Was soll korrigiert werden? *" error={form.errors.bemerkung}>
+                                <FormField
+                                    id="z-bemerkung"
+                                    label="Was soll korrigiert werden? *"
+                                    error={form.errors.bemerkung}
+                                >
                                     <Textarea
                                         id="z-bemerkung"
                                         rows={2}
                                         value={form.data.bemerkung}
-                                        onChange={(e) => form.setData('bemerkung', e.target.value)}
+                                        onChange={(e) =>
+                                            form.setData(
+                                                'bemerkung',
+                                                e.target.value,
+                                            )
+                                        }
                                     />
                                 </FormField>
                                 <div>
-                                    <Button type="submit" variant="outline" disabled={form.processing}>
+                                    <Button
+                                        type="submit"
+                                        variant="outline"
+                                        disabled={form.processing}
+                                    >
                                         <Undo2 /> Zurückgeben
                                     </Button>
                                 </div>

@@ -42,7 +42,9 @@ export default function EintraegeTabelle({
                             <TableHead>Art</TableHead>
                             <TableHead>Kategorie</TableHead>
                             <TableHead>Zeit</TableHead>
-                            <TableHead className="text-right">Stunden</TableHead>
+                            <TableHead className="text-right">
+                                Stunden
+                            </TableHead>
                             <TableHead>Projekt / Notiz</TableHead>
                             {onDelete && <TableHead className="w-10" />}
                         </TableRow>
@@ -54,18 +56,37 @@ export default function EintraegeTabelle({
                                     {formatDate(e.datum)}
                                 </TableCell>
                                 <TableCell>
-                                    {e.art === 'abwesenheit' ? 'Abwesenheit' : 'Arbeit'}
+                                    {e.art === 'abwesenheit'
+                                        ? 'Abwesenheit'
+                                        : 'Arbeit'}
                                 </TableCell>
-                                <TableCell>{kategorieName(kategorien, e.kategorie)}</TableCell>
-                                <TableCell className="whitespace-nowrap" translate="no">
-                                    {e.beginn ? `${e.beginn}–${e.ende ?? ''}` : '–'}
-                                    {e.pause_min ? ` (−${e.pause_min} min)` : ''}
+                                <TableCell>
+                                    {kategorieName(kategorien, e.kategorie)}
                                 </TableCell>
-                                <TableCell className="text-right tabular-nums" translate="no">
+                                <TableCell
+                                    className="whitespace-nowrap"
+                                    translate="no"
+                                >
+                                    {e.beginn
+                                        ? `${e.beginn}–${e.ende ?? ''}`
+                                        : '–'}
+                                    {e.pause_min
+                                        ? ` (−${e.pause_min} min)`
+                                        : ''}
+                                </TableCell>
+                                <TableCell
+                                    className="text-right tabular-nums"
+                                    translate="no"
+                                >
                                     {e.stunden.toFixed(2)}
                                 </TableCell>
-                                <TableCell className="text-muted-foreground" translate="no">
-                                    {[e.projekt, e.notiz].filter(Boolean).join(' · ')}
+                                <TableCell
+                                    className="text-muted-foreground"
+                                    translate="no"
+                                >
+                                    {[e.projekt, e.notiz]
+                                        .filter(Boolean)
+                                        .join(' · ')}
                                 </TableCell>
                                 {onDelete && (
                                     <TableCell>
@@ -86,7 +107,10 @@ export default function EintraegeTabelle({
             </div>
             <dl className="grid gap-x-6 gap-y-1 text-sm sm:grid-cols-2">
                 {Object.entries(summen.kategorien).map(([k, h]) => (
-                    <div key={k} className="flex justify-between gap-4 border-b py-1">
+                    <div
+                        key={k}
+                        className="flex justify-between gap-4 border-b py-1"
+                    >
                         <dt>{kategorieName(kategorien, k)}</dt>
                         <dd className="tabular-nums" translate="no">
                             {stunden(h)}
@@ -95,15 +119,21 @@ export default function EintraegeTabelle({
                 ))}
                 <div className="flex justify-between gap-4 py-1 font-semibold">
                     <dt>Arbeit</dt>
-                    <dd className="tabular-nums" translate="no">{stunden(summen.arbeit)}</dd>
+                    <dd className="tabular-nums" translate="no">
+                        {stunden(summen.arbeit)}
+                    </dd>
                 </div>
                 <div className="flex justify-between gap-4 py-1 font-semibold">
                     <dt>Abwesenheit</dt>
-                    <dd className="tabular-nums" translate="no">{stunden(summen.abwesenheit)}</dd>
+                    <dd className="tabular-nums" translate="no">
+                        {stunden(summen.abwesenheit)}
+                    </dd>
                 </div>
                 <div className="flex justify-between gap-4 py-1 font-semibold sm:col-span-2">
                     <dt>Total</dt>
-                    <dd className="tabular-nums" translate="no">{stunden(summen.total)}</dd>
+                    <dd className="tabular-nums" translate="no">
+                        {stunden(summen.total)}
+                    </dd>
                 </div>
             </dl>
         </div>

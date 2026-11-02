@@ -1,8 +1,5 @@
 {
-    "Zeiterfassung": [
-        "Time tracking",
-        "Ziiterfassig"
-    ],
+    "Zeiterfassung": ["Time tracking", "Ziiterfassig"],
     "Zeiterfassung – Visum": [
         "Time tracking – approval",
         "Ziiterfassig – Visum"
@@ -11,58 +8,22 @@
         "There are no entries for this month yet.",
         "För dä Monet gits no kei Iiträg."
     ],
-    "Stunden": [
-        "Hours",
-        "Stunde"
-    ],
-    "Projekt / Notiz": [
-        "Project / note",
-        "Projekt / Notiz"
-    ],
-    "Arbeit": [
-        "Work",
-        "Arbet"
-    ],
-    "Abwesenheit": [
-        "Absence",
-        "Abwäseheit"
-    ],
-    "Total": [
-        "Total",
-        "Total"
-    ],
-    "Eintrag löschen": [
-        "Delete entry",
-        "Iitrag lösche"
-    ],
-    "Vorheriger Monat": [
-        "Previous month",
-        "Vorige Monet"
-    ],
-    "Nächster Monat": [
-        "Next month",
-        "Nächscht Monet"
-    ],
-    "Monatsblatt (PDF)": [
-        "Monthly sheet (PDF)",
-        "Monetsblatt (PDF)"
-    ],
-    "Visieren": [
-        "Approve",
-        "Visiere"
-    ],
+    "Stunden": ["Hours", "Stunde"],
+    "Projekt / Notiz": ["Project / note", "Projekt / Notiz"],
+    "Arbeit": ["Work", "Arbet"],
+    "Abwesenheit": ["Absence", "Abwäseheit"],
+    "Total": ["Total", "Total"],
+    "Eintrag löschen": ["Delete entry", "Iitrag lösche"],
+    "Vorheriger Monat": ["Previous month", "Vorige Monet"],
+    "Nächster Monat": ["Next month", "Nächscht Monet"],
+    "Monatsblatt (PDF)": ["Monthly sheet (PDF)", "Monetsblatt (PDF)"],
+    "Visieren": ["Approve", "Visiere"],
     "Zurückgegeben mit Bemerkung": [
         "Returned with comment",
         "Zruggäh mit Bemerkig"
     ],
-    "Zurück an die Person": [
-        "Back to the person",
-        "Zrugg a d Person"
-    ],
-    "Zurückgeben": [
-        "Return",
-        "Zruggäh"
-    ],
+    "Zurück an die Person": ["Back to the person", "Zrugg a d Person"],
+    "Zurückgeben": ["Return", "Zruggäh"],
     "Monatsblatt für das Visum": [
         "Monthly sheet for approval",
         "Monetsblatt fürs Visum"
@@ -71,14 +32,8 @@
         "What needs to be corrected? *",
         "Was mues korrigiert werde? *"
     ],
-    "Visum": [
-        "Approval",
-        "Visum"
-    ],
-    "Monat einreichen": [
-        "Submit month",
-        "Monet iiräiche"
-    ],
+    "Visum": ["Approval", "Visum"],
+    "Monat einreichen": ["Submit month", "Monet iiräiche"],
     "Zurück von der Schulleitung": [
         "Returned by the school management",
         "Zrugg vo de Schuelleitig"
@@ -87,10 +42,7 @@
         "Entries can no longer be changed. For corrections, the school management returns the month.",
         "Iiträg chönd nüme gänderet werde. För Korrekture git d Schuelleitig de Monet zrugg."
     ],
-    "Eintrag erfassen": [
-        "Add entry",
-        "Iitrag erfasse"
-    ],
+    "Eintrag erfassen": ["Add entry", "Iitrag erfasse"],
     "Beginn und Ende (mit Pause) oder direkt die Stunden angeben.": [
         "Enter start and end (with break) or the hours directly.",
         "Aafang und Änd (mit Pause) oder diräkt d Stunde aagäh."
@@ -99,172 +51,61 @@
         "Record working time, activities, projects and absences. Submit at the end of the month – the school management approves.",
         "Arbetsziit, Tätigkeite, Projekt und Abwäseheite erfasse. Am Monetsänd iiräiche – d Schuelleitig visiert."
     ],
-    "Datum *": [
-        "Date *",
-        "Datum *"
-    ],
-    "Art *": [
-        "Type *",
-        "Art *"
-    ],
-    "Kategorie *": [
-        "Category *",
-        "Kategorie *"
-    ],
-    "Projekt / Einsatz": [
-        "Project / assignment",
-        "Projekt / Iisatz"
-    ],
-    "Pause (Minuten)": [
-        "Break (minutes)",
-        "Pause (Minute)"
-    ],
-    "oder Stunden": [
-        "or hours",
-        "oder Stunde"
-    ],
-    "Notiz": [
-        "Note",
-        "Notiz"
-    ],
-    "Monat visiert": [
-        "Month approved",
-        "Monet visiert"
-    ],
-    "Monat eingereicht": [
-        "Month submitted",
-        "Monet iigräicht"
-    ],
+    "Datum *": ["Date *", "Datum *"],
+    "Art *": ["Type *", "Art *"],
+    "Kategorie *": ["Category *", "Kategorie *"],
+    "Projekt / Einsatz": ["Project / assignment", "Projekt / Iisatz"],
+    "Pause (Minuten)": ["Break (minutes)", "Pause (Minute)"],
+    "oder Stunden": ["or hours", "oder Stunde"],
+    "Notiz": ["Note", "Notiz"],
+    "Monat visiert": ["Month approved", "Monet visiert"],
+    "Monat eingereicht": ["Month submitted", "Monet iigräicht"],
     "Export Lohnbuchhaltung (CSV)": [
         "Payroll export (CSV)",
         "Export Lohnbuechhaltig (CSV)"
     ],
-    "Alle Einträge (CSV)": [
-        "All entries (CSV)",
-        "Alli Iiträg (CSV)"
-    ],
+    "Alle Einträge (CSV)": ["All entries (CSV)", "Alli Iiträg (CSV)"],
     "In diesem Monat hat noch niemand Zeit erfasst.": [
         "Nobody has recorded time this month yet.",
         "I dem Monet hät no niemer Ziit erfasst."
     ],
-    "Einträge": [
-        "Entries",
-        "Iiträg"
-    ],
+    "Einträge": ["Entries", "Iiträg"],
     "Eingereichte Monate prüfen und visieren. Der Export für die Lohnbuchhaltung enthält standardmässig nur visierte Monate.": [
         "Check and approve submitted months. By default, the payroll export only contains approved months.",
         "Iigräichti Monet prüefe und visiere. De Export för d Lohnbuechhaltig hät standardmässig nur visierti Monet."
     ],
-    "{n} zu visieren": [
-        "{n} to approve",
-        "{n} z visiere"
-    ],
-    "Speichern": [
-        "Save",
-        "Speichere"
-    ],
-    "Beginn": [
-        "Start",
-        "Aafang"
-    ],
-    "Ende": [
-        "End",
-        "Änd"
-    ],
-    "Datum": [
-        "Date",
-        "Datum"
-    ],
-    "Kategorie": [
-        "Category",
-        "Kategorie"
-    ],
-    "Zeit": [
-        "Time",
-        "Ziit"
-    ],
-    "Person": [
-        "Person",
-        "Person"
-    ],
-    "Status": [
-        "Status",
-        "Status"
-    ],
-    "Unterricht": [
-        "Teaching",
-        "Unterricht"
-    ],
-    "Schülerinnen und Schüler": [
-        "Students",
-        "Schüelerinne und Schüeler"
-    ],
-    "Schule": [
-        "School",
-        "Schuel"
-    ],
-    "Zusammenarbeit": [
-        "Collaboration",
-        "Zämearbet"
-    ],
-    "Weiterbildung": [
-        "Further training",
-        "Wiiterbildig"
-    ],
-    "Verwaltung": [
-        "Administration",
-        "Verwaltig"
-    ],
-    "Hauswartung": [
-        "Caretaking",
-        "Huuswartig"
-    ],
-    "ICT-Support": [
-        "ICT support",
-        "ICT-Support"
-    ],
-    "Andere Tätigkeit": [
-        "Other activity",
-        "Anderi Tätigkeit"
-    ],
-    "Ferien": [
-        "Holidays",
-        "Ferie"
-    ],
-    "Krankheit / Unfall": [
-        "Illness / accident",
-        "Chrankheit / Unfall"
-    ],
+    "{n} zu visieren": ["{n} to approve", "{n} z visiere"],
+    "Speichern": ["Save", "Speichere"],
+    "Beginn": ["Start", "Aafang"],
+    "Ende": ["End", "Änd"],
+    "Datum": ["Date", "Datum"],
+    "Kategorie": ["Category", "Kategorie"],
+    "Zeit": ["Time", "Ziit"],
+    "Person": ["Person", "Person"],
+    "Status": ["Status", "Status"],
+    "Unterricht": ["Teaching", "Unterricht"],
+    "Schülerinnen und Schüler": ["Students", "Schüelerinne und Schüeler"],
+    "Schule": ["School", "Schuel"],
+    "Zusammenarbeit": ["Collaboration", "Zämearbet"],
+    "Weiterbildung": ["Further training", "Wiiterbildig"],
+    "Verwaltung": ["Administration", "Verwaltig"],
+    "Hauswartung": ["Caretaking", "Huuswartig"],
+    "ICT-Support": ["ICT support", "ICT-Support"],
+    "Andere Tätigkeit": ["Other activity", "Anderi Tätigkeit"],
+    "Ferien": ["Holidays", "Ferie"],
+    "Krankheit / Unfall": ["Illness / accident", "Chrankheit / Unfall"],
     "Weiterbildung (abwesend)": [
         "Further training (absent)",
         "Wiiterbildig (abwäsend)"
     ],
-    "Kompensation": [
-        "Compensation",
-        "Kompensation"
-    ],
+    "Kompensation": ["Compensation", "Kompensation"],
     "Militär / Zivildienst": [
         "Military / civilian service",
         "Militär / Zivildienscht"
     ],
-    "Andere Abwesenheit": [
-        "Other absence",
-        "Anderi Abwäseheit"
-    ],
-    "Offen": [
-        "Open",
-        "Offe"
-    ],
-    "Eingereicht": [
-        "Submitted",
-        "Iigräicht"
-    ],
-    "Visiert": [
-        "Approved",
-        "Visiert"
-    ],
-    "Zurück an Person": [
-        "Returned to person",
-        "Zrugg a Person"
-    ]
+    "Andere Abwesenheit": ["Other absence", "Anderi Abwäseheit"],
+    "Offen": ["Open", "Offe"],
+    "Eingereicht": ["Submitted", "Iigräicht"],
+    "Visiert": ["Approved", "Visiert"],
+    "Zurück an Person": ["Returned to person", "Zrugg a Person"]
 }

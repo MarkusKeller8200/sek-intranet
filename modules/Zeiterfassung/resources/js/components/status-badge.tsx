@@ -1,7 +1,10 @@
 import { Badge } from '@/components/ui/badge';
 import type { Status } from '../lib/types';
 
-const VARIANT: Record<Status['status'], 'default' | 'secondary' | 'outline' | 'destructive'> = {
+const VARIANT: Record<
+    Status['status'],
+    'default' | 'secondary' | 'outline' | 'destructive'
+> = {
     offen: 'outline',
     eingereicht: 'secondary',
     visiert: 'default',

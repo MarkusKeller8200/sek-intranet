@@ -46,18 +46,25 @@ export default function ZeiterfassungVisum({
                     description="Eingereichte Monate prüfen und visieren. Der Export für die Lohnbuchhaltung enthält standardmässig nur visierte Monate."
                 />
                 <div className="flex flex-wrap items-center gap-3">
-                    <MonatNavigation monat={monat} basis="/zeiterfassung/visum" />
+                    <MonatNavigation
+                        monat={monat}
+                        basis="/zeiterfassung/visum"
+                    />
                     <span className="text-sm text-muted-foreground">
                         {`${offen} zu visieren`}
                     </span>
                     <span className="ml-auto flex flex-wrap gap-2">
                         <Button asChild variant="outline">
-                            <a href={`/zeiterfassung/visum/export?monat=${monat}`}>
+                            <a
+                                href={`/zeiterfassung/visum/export?monat=${monat}`}
+                            >
                                 <Download /> Export Lohnbuchhaltung (CSV)
                             </a>
                         </Button>
                         <Button asChild variant="outline">
-                            <a href={`/zeiterfassung/visum/export?monat=${monat}&art=details&nur_visiert=0`}>
+                            <a
+                                href={`/zeiterfassung/visum/export?monat=${monat}&art=details&nur_visiert=0`}
+                            >
                                 <Download /> Alle Einträge (CSV)
                             </a>
                         </Button>
@@ -76,10 +83,18 @@ export default function ZeiterfassungVisum({
                                         <TableRow>
                                             <TableHead>Person</TableHead>
                                             <TableHead>Status</TableHead>
-                                            <TableHead className="text-right">Einträge</TableHead>
-                                            <TableHead className="text-right">Arbeit</TableHead>
-                                            <TableHead className="text-right">Abwesenheit</TableHead>
-                                            <TableHead className="text-right">Total</TableHead>
+                                            <TableHead className="text-right">
+                                                Einträge
+                                            </TableHead>
+                                            <TableHead className="text-right">
+                                                Arbeit
+                                            </TableHead>
+                                            <TableHead className="text-right">
+                                                Abwesenheit
+                                            </TableHead>
+                                            <TableHead className="text-right">
+                                                Total
+                                            </TableHead>
                                         </TableRow>
                                     </TableHeader>
                                     <TableBody>
@@ -95,16 +110,32 @@ export default function ZeiterfassungVisum({
                                                     </Link>
                                                 </TableCell>
                                                 <TableCell>
-                                                    <StatusBadge status={p.status} labels={status} />
+                                                    <StatusBadge
+                                                        status={p.status}
+                                                        labels={status}
+                                                    />
                                                 </TableCell>
-                                                <TableCell className="text-right tabular-nums">{p.eintraege}</TableCell>
-                                                <TableCell className="text-right tabular-nums" translate="no">
+                                                <TableCell className="text-right tabular-nums">
+                                                    {p.eintraege}
+                                                </TableCell>
+                                                <TableCell
+                                                    className="text-right tabular-nums"
+                                                    translate="no"
+                                                >
                                                     {stunden(p.summen.arbeit)}
                                                 </TableCell>
-                                                <TableCell className="text-right tabular-nums" translate="no">
-                                                    {stunden(p.summen.abwesenheit)}
+                                                <TableCell
+                                                    className="text-right tabular-nums"
+                                                    translate="no"
+                                                >
+                                                    {stunden(
+                                                        p.summen.abwesenheit,
+                                                    )}
                                                 </TableCell>
-                                                <TableCell className="text-right font-semibold tabular-nums" translate="no">
+                                                <TableCell
+                                                    className="text-right font-semibold tabular-nums"
+                                                    translate="no"
+                                                >
                                                     {stunden(p.summen.total)}
                                                 </TableCell>
                                             </TableRow>
