@@ -23,7 +23,7 @@
     </source>
     <php>
         <env name="APP_ENV" value="testing"/>
-        <env name="INTRANET_MODULES_PATH" value="tests/Fixtures/modules"/>
+        <env name="INTRANET_MODULES_PATH" value="modules,tests/Fixtures/modules"/>
         <env name="APP_MAINTENANCE_DRIVER" value="file"/>
         <env name="BCRYPT_ROUNDS" value="4"/>
         <env name="BROADCAST_CONNECTION" value="null"/>

@@ -11,5 +11,7 @@ parameters:
         - routes/
         - plugins/
         - modules/
+    excludePaths:
+        - modules/*/Tests/*
 
     level: 7

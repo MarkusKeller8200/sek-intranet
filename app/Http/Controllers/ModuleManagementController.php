@@ -31,7 +31,7 @@ class ModuleManagementController extends Controller
         return Inertia::render('module-management', [
             'modules' => $items,
             'errors' => $this->modules->errors(),
-            'violations' => ModuleArchitecture::violations($this->modules->path()),
+            'violations' => array_merge(...array_map(fn (string $p): array => ModuleArchitecture::violations($p), $this->modules->paths())),
             'path' => str_replace(base_path().DIRECTORY_SEPARATOR, '', $this->modules->path()),
         ]);
     }

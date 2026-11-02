@@ -63,7 +63,7 @@ class I18nCatalogTest extends TestCase
             $keys += $entries;
         }
         // Menüpunkte der Module stehen in deren eigenen Katalogen (modules/<Ordner>/resources/js/i18n)
-        foreach (glob(app(ModuleRegistry::class)->path().'/*/resources/js/i18n/*.json') ?: [] as $file) {
+        foreach (array_merge(...array_map(fn (string $p): array => glob($p.'/*/resources/js/i18n/*.json') ?: [], app(ModuleRegistry::class)->paths())) as $file) {
             $keys += (array) json_decode((string) file_get_contents($file), true);
         }
 

@@ -1,6 +1,8 @@
 import type { LucideIcon } from 'lucide-react';
 import {
     Apple,
+    Clock,
+    ClipboardCheck,
     Compass,
     PanelRight,
     Folders,
@@ -108,6 +110,8 @@ import {
  * Neue Module: Symbol hier eintragen, sonst erscheint ein Kreis.
  */
 const icons: Record<string, LucideIcon> = {
+    Clock,
+    ClipboardCheck,
     Compass,
     PanelRight,
     Folders,

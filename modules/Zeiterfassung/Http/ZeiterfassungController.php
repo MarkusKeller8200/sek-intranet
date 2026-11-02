@@ -1,0 +1,170 @@
+<?php
+
+namespace Modules\Zeiterfassung\Http;
+
+use App\Data\Contracts\UserRepository;
+use App\Http\Controllers\Controller;
+use App\Support\Notifications;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
+use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
+use Inertia\Inertia;
+use Inertia\Response;
+use InvalidArgumentException;
+use Modules\Zeiterfassung\Data\Contracts\EintragRepository;
+use Modules\Zeiterfassung\Data\Contracts\MonatRepository;
+use Modules\Zeiterfassung\Kategorien;
+use Modules\Zeiterfassung\Zeitkonto;
+
+/**
+ * Eigene Zeiterfassung: Einträge eines Monats erfassen, löschen und den Monat zum Visum einreichen.
+ */
+class ZeiterfassungController extends Controller
+{
+    public function __construct(
+        private readonly EintragRepository $eintraege,
+        private readonly MonatRepository $monate,
+        private readonly Notifications $notifications,
+        private readonly UserRepository $users,
+    ) {}
+
+    public function index(Request $request): Response
+    {
+        $person = self::person($request);
+        $monat = self::monatAus($request->query('monat'));
+        $liste = $this->eintraege->fuerPersonMonat($person, $monat);
+
+        return Inertia::render('Zeiterfassung::start', [
+            'monat' => $monat,
+            'eintraege' => $liste,
+            'status' => $this->monate->status($person, $monat),
+            'summen' => Zeitkonto::summen($liste),
+            'kategorien' => Kategorien::all(),
+            'person' => ['name' => $this->name($person)],
+            'darfVisum' => Gate::allows('visum-zeiterfassung'),
+        ]);
+    }
+
+    public function store(Request $request): RedirectResponse
+    {
+        $person = self::person($request);
+        $data = $request->validate([
+            'datum' => ['required', 'date_format:Y-m-d'],
+            'art' => ['required', Rule::in(['arbeit', 'abwesenheit'])],
+            'kategorie' => ['required', 'string'],
+            'beginn' => ['nullable', 'date_format:H:i'],
+            'ende' => ['nullable', 'date_format:H:i', 'required_with:beginn'],
+            'pause_min' => ['nullable', 'integer', 'min:0', 'max:480'],
+            'stunden' => ['nullable', 'numeric', 'min:0.25', 'max:24', 'required_without:beginn'],
+            'projekt' => ['nullable', 'string', 'max:120'],
+            'notiz' => ['nullable', 'string', 'max:500'],
+        ], [
+            'datum.required' => 'Bitte ein Datum wählen.',
+            'stunden.required_without' => 'Beginn und Ende oder die Anzahl Stunden angeben.',
+            'ende.required_with' => 'Bitte das Ende angeben.',
+        ]);
+
+        $liste = $data['art'] === 'arbeit' ? Kategorien::ARBEIT : Kategorien::ABWESENHEIT;
+        if (! array_key_exists($data['kategorie'], $liste)) {
+            throw ValidationException::withMessages(['kategorie' => 'Bitte eine passende Kategorie wählen.']);
+        }
+        $monat = substr($data['datum'], 0, 7);
+        $this->entsperrt($person, $monat);
+
+        $stunden = (float) ($data['stunden'] ?? 0);
+        if (! empty($data['beginn'])) {
+            try {
+                $stunden = Zeitkonto::stunden($data['beginn'], (string) $data['ende'], (int) ($data['pause_min'] ?? 0));
+            } catch (InvalidArgumentException $e) {
+                throw ValidationException::withMessages(['ende' => $e->getMessage()]);
+            }
+        }
+
+        $this->eintraege->create([
+            'person_id' => $person,
+            'datum' => $data['datum'],
+            'monat' => $monat,
+            'art' => $data['art'],
+            'kategorie' => $data['kategorie'],
+            'beginn' => $data['beginn'] ?? null,
+            'ende' => $data['ende'] ?? null,
+            'pause_min' => isset($data['pause_min']) ? (int) $data['pause_min'] : null,
+            'stunden' => $stunden,
+            'projekt' => isset($data['projekt']) ? trim($data['projekt']) : null,
+            'notiz' => isset($data['notiz']) ? trim($data['notiz']) : null,
+        ]);
+        $this->toast('Eintrag gespeichert ('.number_format($stunden, 2, '.', "'").' h).');
+
+        return redirect('/zeiterfassung?monat='.$monat);
+    }
+
+    public function destroy(Request $request, string $id): RedirectResponse
+    {
+        $person = self::person($request);
+        $eintrag = $this->eintraege->find($id);
+        abort_if($eintrag === null || ($eintrag['person_id'] ?? null) !== $person, 404);
+        $this->entsperrt($person, (string) $eintrag['monat']);
+        $this->eintraege->delete($id);
+        $this->toast('Eintrag gelöscht.');
+
+        return back();
+    }
+
+    public function einreichen(Request $request): RedirectResponse
+    {
+        $person = self::person($request);
+        $monat = self::monatAus((string) $request->input('monat'));
+        $this->entsperrt($person, $monat);
+        $liste = $this->eintraege->fuerPersonMonat($person, $monat);
+        if ($liste === []) {
+            $this->toast('Für diesen Monat gibt es noch keine Einträge.', 'error');
+
+            return back();
+        }
+        $summen = Zeitkonto::summen($liste);
+        $this->monate->setzen($person, $monat, [
+            'status' => 'eingereicht',
+            'stunden' => $summen['total'],
+            'eingereicht_at' => now()->toIso8601String(),
+            'bemerkung' => null,
+        ]);
+        $name = $this->name($person);
+        $this->notifications->toAbility('visum-zeiterfassung', 'zeit.monat_eingereicht', "Zeiterfassung {$monat}: {$name} hat eingereicht",
+            number_format($summen['total'], 2, '.', "'").' h – bitte visieren.', "/zeiterfassung/visum/{$person}?monat={$monat}", $person);
+        $this->toast('Monat eingereicht – die Schulleitung ist benachrichtigt.');
+
+        return back();
+    }
+
+    private function entsperrt(string $person, string $monat): void
+    {
+        $status = (string) ($this->monate->status($person, $monat)['status'] ?? 'offen');
+        if (Zeitkonto::gesperrt($status)) {
+            throw ValidationException::withMessages(['datum' => "Der Monat {$monat} ist ".($status === 'visiert' ? 'visiert' : 'eingereicht').' und kann nicht mehr geändert werden.']);
+        }
+    }
+
+    private function name(string $id): string
+    {
+        return (string) ($this->users->find($id)['name'] ?? '');
+    }
+
+    private static function person(Request $request): string
+    {
+        $id = $request->user()?->getAuthIdentifier();
+        abort_unless(is_string($id), 403);
+
+        return $id;
+    }
+
+    private static function monatAus(mixed $monat): string
+    {
+        try {
+            return Zeitkonto::monat(is_string($monat) ? $monat : null);
+        } catch (InvalidArgumentException) {
+            abort(404);
+        }
+    }
+}

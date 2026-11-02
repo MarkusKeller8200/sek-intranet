@@ -16,14 +16,11 @@ class ModulesServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->app->singleton(ModuleRegistry::class, function ($app): ModuleRegistry {
-            $path = (string) config('intranet.modules_path', 'modules');
-            $data = $app->make(JsonStore::class)->path();
+            // Mehrere Ordner mit Komma getrennt (Tests: modules,tests/Fixtures/modules)
+            $paths = array_values(array_filter(array_map('trim', explode(',', (string) config('intranet.modules_path', 'modules')))));
+            $paths = array_map(fn (string $p): string => str_starts_with($p, DIRECTORY_SEPARATOR) ? $p : base_path($p), $paths);
 
-            return new ModuleRegistry(
-                $app->make(JsonStore::class),
-                str_starts_with($path, DIRECTORY_SEPARATOR) ? $path : base_path($path),
-                $data,
-            );
+            return new ModuleRegistry($app->make(JsonStore::class), $paths, $app->make(JsonStore::class)->path());
         });
 
         $registry = $this->app->make(ModuleRegistry::class);

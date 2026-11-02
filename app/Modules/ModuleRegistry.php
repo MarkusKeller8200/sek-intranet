@@ -25,15 +25,26 @@ final class ModuleRegistry
 
     private bool $autoloader = false;
 
+    /**
+     * @param  list<string>  $paths  Modulordner (erster = modules/, in Tests zusätzlich tests/Fixtures/modules)
+     */
     public function __construct(
         private readonly JsonStore $core,
-        private readonly string $path,
+        private readonly array $paths,
         private readonly string $dataPath,
     ) {}
 
     public function path(): string
     {
-        return $this->path;
+        return $this->paths[0] ?? '';
+    }
+
+    /**
+     * @return list<string>
+     */
+    public function paths(): array
+    {
+        return $this->paths;
     }
 
     /**
@@ -52,7 +63,11 @@ final class ModuleRegistry
         $groups = array_map('strval', array_keys((array) config('intranet.modules', [])));
         $version = (string) config('intranet.version', '0.0.0');
 
-        foreach (glob($this->path.DIRECTORY_SEPARATOR.'*'.DIRECTORY_SEPARATOR.'module.json') ?: [] as $file) {
+        $files = [];
+        foreach ($this->paths as $path) {
+            $files = [...$files, ...(glob($path.DIRECTORY_SEPARATOR.'*'.DIRECTORY_SEPARATOR.'module.json') ?: [])];
+        }
+        foreach ($files as $file) {
             try {
                 $data = json_decode((string) file_get_contents($file), true);
                 if (! is_array($data)) {
@@ -160,14 +175,18 @@ final class ModuleRegistry
             return;
         }
         $this->autoloader = true;
-        $path = $this->path;
-        spl_autoload_register(function (string $class) use ($path): void {
+        $paths = $this->paths;
+        spl_autoload_register(function (string $class) use ($paths): void {
             if (! str_starts_with($class, 'Modules\\')) {
                 return;
             }
-            $file = $path.DIRECTORY_SEPARATOR.str_replace('\\', DIRECTORY_SEPARATOR, substr($class, 8)).'.php';
-            if (is_file($file)) {
-                require_once $file;
+            foreach ($paths as $path) {
+                $file = $path.DIRECTORY_SEPARATOR.str_replace('\\', DIRECTORY_SEPARATOR, substr($class, 8)).'.php';
+                if (is_file($file)) {
+                    require_once $file;
+
+                    return;
+                }
             }
         });
     }

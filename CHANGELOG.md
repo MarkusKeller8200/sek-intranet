@@ -16,6 +16,10 @@ laufend unter **Unveröffentlicht**. Ab 0.32.0 entsteht eine Version nur bei ein
   (`<data_path>/modules/<key>`). Neue Seite **Einstellungen → Module**: Module ein- und ausschalten (ohne Menü und
   Routen, Daten bleiben), Rechte, Sammlungen, SQL für eigenes Schema und DB-Benutzer. Generator
   `php artisan intranet:make-module`, SQL mit `intranet:module-sql`. «Datenstrukturen» zeigt die Sammlungen der Module.
+- **Modul Zeiterfassung (Pilot, #8):** Unter «Personen & Organisation» erfassen alle Mitarbeitenden Arbeitszeit
+  (Beginn/Ende/Pause oder Stunden), Tätigkeiten (Lehrpersonen nach Berufsauftrag), Projekte und Abwesenheiten (ohne
+  Grund). Monat einreichen → Monatsvisum der Schulleitung (visieren oder mit Bemerkung zurückgeben, mit
+  Benachrichtigungen), Export für die Lohnbuchhaltung (CSV) und Monatsblatt als PDF.
 - **Architekturprüfung:** Module dürfen weder Klassen oder Daten anderer Module noch Core-Daten am Repository vorbei
   verwenden; geprüft in `composer ci:check` und auf der Seite «Module».
 

@@ -23,6 +23,7 @@ final class SchemaInspector
         'url' => 'varchar(2048)',
         'bool' => 'boolean',
         'int' => 'bigint',
+        'decimal' => 'numeric(8,2)',
         'date' => 'date',
         'datetime' => 'timestamptz',
         'enum' => 'varchar(50) + CHECK',

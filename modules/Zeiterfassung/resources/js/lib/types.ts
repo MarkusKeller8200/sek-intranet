@@ -1,0 +1,59 @@
+export type Eintrag = {
+    id: string;
+    datum: string;
+    monat: string;
+    art: 'arbeit' | 'abwesenheit';
+    kategorie: string;
+    beginn?: string | null;
+    ende?: string | null;
+    pause_min?: number | null;
+    stunden: number;
+    projekt?: string | null;
+    notiz?: string | null;
+};
+
+export type Status = {
+    status: 'offen' | 'eingereicht' | 'visiert' | 'zurueck';
+    bemerkung?: string | null;
+    eingereicht_at?: string | null;
+    visiert_at?: string | null;
+};
+
+export type Summen = {
+    arbeit: number;
+    abwesenheit: number;
+    total: number;
+    kategorien: Record<string, number>;
+    projekte: Record<string, number>;
+};
+
+export type Kategorien = {
+    arbeit: Record<string, string>;
+    abwesenheit: Record<string, string>;
+    status: Record<string, string>;
+};
+
+/** «2026-11» → «November 2026» */
+export function monatName(monat: string): string {
+    const [y, m] = monat.split('-').map(Number);
+
+    return new Intl.DateTimeFormat('de-CH', {
+        month: 'long',
+        year: 'numeric',
+    }).format(new Date(y, m - 1, 1));
+}
+
+export function verschiebeMonat(monat: string, delta: number): string {
+    const [y, m] = monat.split('-').map(Number);
+    const d = new Date(y, m - 1 + delta, 1);
+
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+}
+
+export function stunden(h: number): string {
+    return `${h.toFixed(2)} h`;
+}
+
+export function kategorieName(k: Kategorien, key: string): string {
+    return k.arbeit[key] ?? k.abwesenheit[key] ?? key;
+}

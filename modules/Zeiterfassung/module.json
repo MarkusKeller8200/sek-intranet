@@ -1,0 +1,76 @@
+{
+    "key": "zeiterfassung",
+    "name": "Zeiterfassung",
+    "version": "0.1.0",
+    "core": ">=0.32.0",
+    "description": "Arbeitszeit, Tätigkeiten, Projekte und Abwesenheiten pro Monat erfassen; Monatsvisum durch die Schulleitung, Export für die Lohnbuchhaltung und Monatsblatt als PDF.",
+    "aktiv": true,
+    "datenklasse": "vertraulich",
+    "db_schema": "zeit",
+    "provider": "Modules\\Zeiterfassung\\ModuleServiceProvider",
+    "rechte": {
+        "use-zeiterfassung": {
+            "label": "Eigene Arbeitszeit erfassen",
+            "roles": ["admin", "schulleitung", "verwaltung", "ict", "redaktion", "lehrperson", "mitarbeitende"]
+        },
+        "visum-zeiterfassung": {
+            "label": "Zeiterfassung aller einsehen, Monate visieren, Export Lohnbuchhaltung",
+            "roles": ["admin", "schulleitung"]
+        }
+    },
+    "menu": {
+        "gruppe": "organisation",
+        "eintraege": {
+            "meine": {
+                "title": "Zeiterfassung",
+                "icon": "Clock",
+                "href": "/zeiterfassung",
+                "can": "use-zeiterfassung"
+            },
+            "visum": {
+                "title": "Zeiterfassung – Visum",
+                "icon": "ClipboardCheck",
+                "href": "/zeiterfassung/visum",
+                "can": "visum-zeiterfassung"
+            }
+        }
+    },
+    "sammlungen": {
+        "zeit_eintraege": {
+            "label": "Zeiterfassung: Einträge",
+            "description": "Ein Eintrag je Arbeitsblock oder Abwesenheit (Stunden). Abwesenheiten ohne Grund/Diagnose.",
+            "fields": {
+                "person_id": {"type": "ref", "references": "users", "required": true, "label": "Person"},
+                "datum": {"type": "date", "required": true, "label": "Datum"},
+                "monat": {"type": "string", "required": true, "label": "Monat (JJJJ-MM)"},
+                "art": {"type": "enum", "values": {"arbeit": "Arbeit", "abwesenheit": "Abwesenheit"}, "required": true, "label": "Art"},
+                "kategorie": {"type": "string", "required": true, "label": "Kategorie / Tätigkeit"},
+                "beginn": {"type": "string", "required": false, "label": "Beginn (HH:MM)"},
+                "ende": {"type": "string", "required": false, "label": "Ende (HH:MM)"},
+                "pause_min": {"type": "int", "required": false, "label": "Pause (Minuten)"},
+                "stunden": {"type": "decimal", "required": true, "label": "Stunden"},
+                "projekt": {"type": "string", "required": false, "label": "Projekt / Einsatz"},
+                "notiz": {"type": "text", "required": false, "label": "Notiz"}
+            }
+        },
+        "zeit_monate": {
+            "label": "Zeiterfassung: Monate",
+            "description": "Status je Person und Monat (id = Person:JJJJ-MM): offen, eingereicht, visiert, zurück.",
+            "fields": {
+                "person_id": {"type": "ref", "references": "users", "required": true, "label": "Person"},
+                "monat": {"type": "string", "required": true, "label": "Monat (JJJJ-MM)"},
+                "status": {"type": "enum", "values": {"offen": "Offen", "eingereicht": "Eingereicht", "visiert": "Visiert", "zurueck": "Zurück an Person"}, "required": true, "label": "Status"},
+                "stunden": {"type": "decimal", "required": false, "label": "Stunden total (beim Einreichen)"},
+                "eingereicht_at": {"type": "datetime", "required": false, "label": "Eingereicht am"},
+                "visiert_by": {"type": "ref", "references": "users", "required": false, "label": "Visiert von"},
+                "visiert_at": {"type": "datetime", "required": false, "label": "Visiert am"},
+                "bemerkung": {"type": "text", "required": false, "label": "Bemerkung Schulleitung"}
+            }
+        }
+    },
+    "ereignisse": {
+        "sendet": ["zeit.monat_eingereicht", "zeit.monat_visiert", "zeit.monat_zurueck"],
+        "empfaengt": []
+    },
+    "plugins": []
+}
