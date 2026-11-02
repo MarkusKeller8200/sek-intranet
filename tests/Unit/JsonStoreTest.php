@@ -24,7 +24,9 @@ class JsonStoreTest extends TestCase
             unlink($file);
         }
 
-        @rmdir($this->dir);
+        if (is_dir($this->dir)) {
+            rmdir($this->dir);
+        }
     }
 
     public function test_insert_find_update_delete(): void
