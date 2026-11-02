@@ -44,7 +44,7 @@ pr_profil = "solo"
 pr_pflicht = false                # direkte Pushes auf main (Deploy-Schleife)
 web_commit_signoff = "auto"
 secret_scanning = "auto"          # privat: kostenpflichtig, darum aus
-branch_schutz = true              # Rulesets; im privaten Repo ohne GitHub Pro/Team noch ohne Wirkung
+branch_schutz = false             # Rulesets: im privaten Repo nur mit GitHub Pro/Team möglich – bewusst aus (02.11.2026)
 pflicht_pruefungen = []
 lineare_historie = "auto"
 
