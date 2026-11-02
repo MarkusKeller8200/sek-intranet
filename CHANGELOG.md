@@ -32,6 +32,7 @@ laufend unter **Unveröffentlicht**. Ab 0.32.0 entsteht eine Version nur bei ein
   Markierungen, `.github/copilot-instructions.md`. Dependabot zusätzlich für Composer, npm und Docker (Label
   `abhaengigkeiten`, 5 Tage Wartezeit). Version setzen bleibt bei `php tools/release.php`.
 - **PHPUnit 13** (Entwicklung/Tests, #23); ein Test räumt seinen Ordner jetzt ohne Warnung auf.
+- **npm-Pakete** (#24): TypeScript 7, lucide-react 1.63 (Symbole), @tanstack/react-table 9, @types/node 26, Rollup 4.66.
 
 ### Behoben
 
