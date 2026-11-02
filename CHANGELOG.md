@@ -31,6 +31,7 @@ laufend unter **Unveröffentlicht**. Ab 0.32.0 entsteht eine Version nur bei ein
   `docs/GITHUB-ABLAUF.md`, Intranet-Eigenes in `docs/KONZEPT-VERSIONIERUNG.md`; Abschnitt in `AGENTS.md` mit
   Markierungen, `.github/copilot-instructions.md`. Dependabot zusätzlich für Composer, npm und Docker (Label
   `abhaengigkeiten`, 5 Tage Wartezeit). Version setzen bleibt bei `php tools/release.php`.
+- **PHPUnit 13** (Entwicklung/Tests, #23); ein Test räumt seinen Ordner jetzt ohne Warnung auf.
 
 ### Behoben
 
