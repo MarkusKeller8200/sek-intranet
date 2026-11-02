@@ -23,6 +23,15 @@ laufend unter **Unveröffentlicht**. Ab 0.32.0 entsteht eine Version nur bei ein
 - **Architekturprüfung:** Module dürfen weder Klassen oder Daten anderer Module noch Core-Daten am Repository vorbei
   verwenden; geprüft in `composer ci:check` und auf der Seite «Module».
 
+### Geändert
+
+- **GitHub-Ablauf aus dem Blueprint:** Konfiguration `.github/blueprint.toml`, Werkzeuge unter `.github/blueprint/`,
+  Workflows `release` (läuft bei jedem Push, legt Tag und Release an, sobald «deploy» grün ist – auch nach einer
+  nachgeschobenen Korrektur), `issue-milestone`, `milestone-admin` und neu `Blueprint anwenden`. Ablauf in
+  `docs/GITHUB-ABLAUF.md`, Intranet-Eigenes in `docs/KONZEPT-VERSIONIERUNG.md`; Abschnitt in `AGENTS.md` mit
+  Markierungen, `.github/copilot-instructions.md`. Dependabot zusätzlich für Composer, npm und Docker (Label
+  `abhaengigkeiten`, 5 Tage Wartezeit). Version setzen bleibt bei `php tools/release.php`.
+
 ### Behoben
 
 - **Module auf dem Server:** Mit zwischengespeicherter Konfiguration (`php artisan optimize`) wurde ein Modul als

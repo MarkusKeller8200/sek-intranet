@@ -17,10 +17,17 @@ import re
 import sys
 import urllib.error
 import urllib.parse
+import tomllib
 import urllib.request
+from pathlib import Path
+
+# Repository und Admin-Issue aus der Umgebung bzw. .github/blueprint.toml (GitHub-Blueprint)
+EXPECTED_REPO = os.environ.get("GITHUB_REPOSITORY", "")
 
 
-EXPECTED_REPO = "MarkusKeller8200/sek-intranet"
+def admin_issue_number() -> int:
+    with open(Path(__file__).resolve().parents[1] / "blueprint.toml", "rb") as fh:
+        return int(tomllib.load(fh).get("workflows", {}).get("admin_issue", 0))
 COMMAND_PATTERN = re.compile(r"^/milestone (list|create|close|reopen)(?: (.+))?$")
 
 
@@ -32,7 +39,7 @@ def api(method: str, endpoint: str, data: dict | None = None) -> object:
         "Accept": "application/vnd.github+json",
         "Authorization": "Bearer " + token,
         "Content-Type": "application/json",
-        "User-Agent": "SekIntranet-milestone-admin",
+        "User-Agent": "github-blueprint-milestone-admin",
         "X-GitHub-Api-Version": "2022-11-28",
     }
     req = urllib.request.Request(url, data=payload, headers=headers, method=method)
@@ -110,10 +117,12 @@ def main() -> int:
     repository = event.get("repository") or {}
     owner = repository.get("owner") or {}
     repo = repository.get("full_name") or ""
-    issue_number = int(os.environ["ADMIN_ISSUE_NUMBER"])
+    issue_number = admin_issue_number()
     # IMPORTANT: repeat the workflow-level permission checks before doing anything.
     if (
         event.get("action") != "created"
+        or not EXPECTED_REPO
+        or issue_number <= 0
         or repo != EXPECTED_REPO
         or os.environ.get("GITHUB_REPOSITORY") != EXPECTED_REPO
         or owner.get("login") != comment.get("user", {}).get("login")

@@ -1,0 +1,131 @@
+# Konfiguration des GitHub-Blueprints (https://github.com/MarkusKeller8200/my-github-blueprint, CHECKLISTE.md).
+# Nach dem Ändern: Actions → «Blueprint anwenden» → Run workflow (Probelauf zuerst) oder lokal
+#   python3 .github/blueprint/apply.py --probelauf
+# Repository-Einstellungen setzt nur ein lokaler Lauf mit eigenem Login (gh auth login).
+# Keine geheimen Werte in diese Datei.
+
+[projekt]
+name = "SekBülach Intranet"
+kurz = "Intranet"
+verantwortlich = "die Projektleitung"
+sicherheit_kontakt = "den Projektverantwortlichen (Eigentümer dieses Repositorys) direkt per E-Mail oder Teams-Nachricht kontaktieren"
+datenschutz = "(IDG Kanton Zürich) Keine echten Namen, Klassen, Telefonnummern oder Bildschirmfotos mit Personendaten anhängen. Das Intranet ist ein Prototyp mit erfundenen Testdaten – bitte nur diese verwenden."
+version_ort = "unter «Versionen» (Menü unten), z. B. 0.32.0 oder «0.31.0 · Developer Release (+3)»"
+pruefbefehl = "composer ci:check"
+sprache = "de-CH"
+pr_checkliste = [
+  "Nur erfundene Testdaten – keine echten Personendaten (IDG)",
+  "Neue Texte in allen Sprachen (`resources/js/i18n/*.json`), Daten mit `translate=\"no\"`",
+  "Neue Felder im Schema (`config/intranet.php` → `schema`), Oberfläche aus freigegebenen GUI-Bausteinen",
+]
+entwicklung = "Siehe README.md (lokal starten) und AGENTS.md (Konventionen)."
+sicherheit_grundsaetze = [
+  "Nur erfundene Testdaten; der Testserver steht nicht in der Schweiz und erhält keine echten Daten.",
+  "Zugangsdaten von Plugins werden verschlüsselt gespeichert und nie angezeigt oder protokolliert.",
+  "API nur mit Token (gespeichert als Hash), Rechte wie die Besitzerin bzw. der Besitzer.",
+]
+doku_url = "https://github.com/MarkusKeller8200/sek-intranet/tree/main/docs"
+doku_titel = "Konzepte und Dokumentation"
+doku_beschreibung = "Konzepte (Rollen, Plugins, Module, GUI-Prototypen, Themes, Benachrichtigungen) und Betrieb."
+
+[repository]
+sichtbarkeit = "privat"
+standard_branch = "main"
+beschreibung = "Intranet-Prototyp der Sekundarschule Bülach (Laravel, React, Inertia) – nur erfundene Testdaten"
+webseite = "https://intranet.sekbuelach.ch"
+themen = []
+vorlage = false
+issues = true
+projekte = true
+wiki = "auto"
+diskussionen = "auto"
+# solo: keine Merge-Commits, Squash + Rebase, Branch nach Merge löschen, «Update branch», Squash = PR-Titel/-Text
+pr_profil = "solo"
+pr_pflicht = false                # direkte Pushes auf main (Deploy-Schleife)
+web_commit_signoff = "auto"
+secret_scanning = "auto"          # privat: kostenpflichtig, darum aus
+branch_schutz = true              # Rulesets; im privaten Repo ohne GitHub Pro/Team noch ohne Wirkung
+pflicht_pruefungen = []
+lineare_historie = "auto"
+
+[sponsoring]
+# privates Repository: keine Unterstützungs-Links
+
+[social_preview]
+titel = ""
+untertitel = ""
+farbe = "#0b3d63"
+akzent = "#f2b705"
+
+[issues]
+bereiche = [
+  "Start / Mitteilungen / Termine", "Pinnwand / Umfragen", "Fachanwendungen (CMI, Escola, ASM, Jamf, LMVZ)",
+  "Wissen & Ablage", "Personen & Organisation", "Unterricht", "Räume & Geräte", "Verwaltung / Bestellungen",
+  "Fachstelle ICT", "Module", "Plugins", "GUI-Prototypen / Farbkonzept", "Benachrichtigungen",
+  "Anmeldung / Rechte / Rollen", "Einstellungen / Administration", "Browser-Erweiterung", "Deployment / Betrieb",
+  "anderes",
+]
+zusatzvorlagen = ["plugin", "gui"]
+standard_labels_entfernen = true
+zusatzlabels = [{ name = "barrierefreiheit", farbe = "5319e7", beschreibung = "Barrierefreiheit" }]
+
+[meilensteine]
+sammlungen = true
+erster_release = ""
+
+[versionierung]
+datei = "VERSION"
+startversion = "0.1.0"
+release_titel = "{kurz} {version}"
+release_nach = ["deploy"]
+plugin_manifeste = ["plugins/*/plugin.json", "modules/*/module.json"]
+# Version setzen/prüfen bleibt beim PHP-Werkzeug (läuft in composer ci:check, speist die Seite «Versionen»)
+release_befehl = "php tools/release.php X.Y.Z --commit"
+release_check_befehl = "php tools/release.php --check"
+nachtragen_datei = ".github/release-backfill.txt"
+
+[workflows]
+milestone_admin = true
+admin_issue = 1
+
+[actions]
+# Unverändert lassen (nicht Teil der Abstimmung): alle Actions erlaubt, Workflows pinnen trotzdem auf Commit-SHA
+erlaubte_actions = "alle"
+verifizierte_erlauben = true
+zusaetzlich_erlaubt = []
+sha_pinning = false
+aufbewahrung_tage = 90            # GitHub-Standard
+fork_freigabe = "all_external_contributors"
+oidc_claims = []
+
+[pages]
+aktiv = false
+ordner = "docs"
+
+[sicherheit]
+dependabot_warnungen = true
+dependabot_sicherheitsupdates = true
+code_scanning = "auto"
+private_meldungen = true
+
+[dependabot]
+oekosysteme = ["github-actions", "composer", "npm", "docker"]
+intervall = "weekly"
+cooldown_tage = 5
+
+[copilot]
+aktiv = false
+code_review = false
+
+[codespaces]
+devcontainer = false
+
+[secrets_einstellungen]
+platzhalter = false
+
+# Umgebung, Variablen und Secrets bestehen schon und werden hier nur dokumentiert (keine Änderung):
+# - Umgebung «production» (Workflow _deploy.yml)
+# - Variablen INTRANET_HOST, VPS_HOST
+# - Secrets VPS_SSH_KEY, VPS_KNOWN_HOSTS (ggf. VPS_HOST)
+[[umgebungen]]
+name = "production"

@@ -1,28 +1,25 @@
 name: release
 
-# Release anlegen (Ablauf aus TagStudio, docs/KONZEPT-VERSIONIERUNG.md):
-# - Der Projektverantwortliche gibt ein Release frei → `php tools/release.php 0.32.0 --commit` + Push.
-# - Nach grünem Deployment (Workflow «deploy») prüft dieser Workflow, ob es den Tag v<VERSION> schon gibt.
-#   Wenn nicht, legt er Tag v<VERSION> auf den ausgerollten Commit und das GitHub-Release «Intranet <VERSION>»
-#   mit dem Text aus dem CHANGELOG an. Vorabversionen (0.32.0-beta.1) werden als Pre-Release markiert.
-# - Alle anderen Deployments sind «Developer Release» (Commits nach dem Tag) – hier passiert dann nichts.
-# - Von Hand (Run workflow): dieselbe Prüfung für main, oder mit «nachtragen» einmalig die Tags und Releases
-#   aus .github/release-backfill.txt (v0.11.0–v0.31.0). Solange es noch keinen Versions-Tag gibt, legt der
-#   automatische Lauf nichts an (sonst bekäme v0.31.0 einen falschen Commit).
+# GitHub-Blueprint (docs/GITHUB-ABLAUF.md): Tag v<Version> und GitHub-Release anlegen, sobald main eine freigegebene
+# Version enthält (Versionsdatei + Abschnitt im CHANGELOG), für die es noch keinen Tag gibt – erst wenn die in
+# .github/blueprint.toml → release_nach genannten Workflows für diesen Commit grün sind. Läuft bei jedem Push:
+# so entsteht das Release auch, wenn erst ein nachgeschobener Commit (z. B. Formatkorrektur) grün wird.
+# Gibt es den Tag schon, endet der Lauf nach wenigen Sekunden (Developer Release).
+# Von Hand: Run workflow (z. B. nach einer Korrektur) oder mit «nachtragen» rückwirkende Tags aus der
+# konfigurierten Datei anlegen.
 on:
-  workflow_run:
-    workflows: [deploy]
-    types: [completed]
+  push:
     branches: [main]
   workflow_dispatch:
     inputs:
       nachtragen:
-        description: 'Fehlende Releases aus .github/release-backfill.txt nachtragen'
+        description: 'Rückwirkende Tags/Releases aus der Datei «nachtragen_datei» anlegen'
         type: boolean
         default: false
 
 permissions:
   contents: write
+  actions: read
 
 concurrency:
   group: release
@@ -30,69 +27,15 @@ concurrency:
 
 jobs:
   release:
-    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 60
     steps:
-      - name: Checkout code
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
           fetch-depth: 0
-          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
-
-      - name: Fehlende Releases nachtragen
-        # Tags auf alte Commits darf der GITHUB_TOKEN nicht anlegen (die alten Commits enthalten andere Workflow-Dateien
-        # → «Resource not accessible by integration»). Darum: Tags einmal lokal setzen und pushen (siehe
-        # docs/KONZEPT-VERSIONIERUNG.md), dieser Schritt legt danach nur die Releases zu den vorhandenen Tags an.
-        if: ${{ inputs.nachtragen }}
+      - name: Tag und Release
         env:
           GH_TOKEN: ${{ github.token }}
           GH_REPO: ${{ github.repository }}
-        run: |
-          set -euo pipefail
-          last="$(grep -v '^#' .github/release-backfill.txt | grep -v '^$' | tail -n1 | cut -d' ' -f1)"
-          missing=0
-          grep -v '^#' .github/release-backfill.txt | while read -r ver sha; do
-            [ -n "$ver" ] || continue
-            if gh release view "v$ver" >/dev/null 2>&1; then
-              echo "Release v$ver gibt es schon"; continue
-            fi
-            if ! gh api "repos/$GH_REPO/git/ref/tags/v$ver" --silent 2>/dev/null; then
-              echo "::warning title=Tag fehlt::v$ver – zuerst lokal setzen und pushen (docs/KONZEPT-VERSIONIERUNG.md)"; continue
-            fi
-            date="$(grep -m1 "^## \[$ver\]" CHANGELOG.md | sed 's/.*– //')"
-            php tools/release.php --notes "$ver" > notes.md
-            printf '\n\n---\n_Rückwirkend angelegt (Stand vom %s). Bis 0.31.0 wurde die Version bei jeder Änderung erhöht._\n' "$date" >> notes.md
-            latest=false
-            [ "$ver" = "$last" ] && latest=true
-            gh release create "v$ver" --verify-tag --title "Intranet $ver" --notes-file notes.md --latest="$latest"
-            echo "v$ver → Release angelegt"
-          done
-
-      - name: Tag und Release anlegen
-        if: ${{ !inputs.nachtragen }}
-        env:
-          GH_TOKEN: ${{ github.token }}
-          GH_REPO: ${{ github.repository }}
-          SHA: ${{ github.event.workflow_run.head_sha || github.sha }}
-        run: |
-          set -euo pipefail
-          ver="$(tr -d '[:space:]' < VERSION)"
-          if ! [[ "$ver" =~ ^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)(-[0-9A-Za-z.-]+)?$ ]]; then
-            echo "::error title=Ungültige Version::VERSION enthält «$ver»"; exit 1
-          fi
-          if gh api "repos/$GH_REPO/git/ref/tags/v$ver" --silent 2>/dev/null; then
-            echo "Tag v$ver gibt es schon – Developer Release, kein neues Release."
-            exit 0
-          fi
-          if [ -z "$(git tag -l 'v[0-9]*')" ]; then
-            echo "::notice title=Noch keine Versions-Tags::Zuerst von Hand «release» mit «nachtragen» starten."
-            exit 0
-          fi
-          php tools/release.php --check
-          php tools/release.php --notes "$ver" > notes.md
-          pre=()
-          [[ "$ver" == *-* ]] && pre=(--prerelease)
-          gh release create "v$ver" --target "$SHA" --title "Intranet $ver" --notes-file notes.md "${pre[@]}"
-          echo "::notice title=Release angelegt::Tag v$ver und Release «Intranet $ver» auf ${SHA::7}"
+        run: python3 .github/blueprint/release.py github-release --sha "$GITHUB_SHA" ${{ inputs.nachtragen && '--nachtragen' || '' }}

@@ -1,12 +1,10 @@
 # Meilensteine verwalten (GitHub Actions)
 
-Übernommen aus TagStudio. Der Workflow [milestone-admin.yml](../workflows/milestone-admin.yml) verwaltet Meilensteine
+Aus dem GitHub-Blueprint. Der Workflow [milestone-admin.yml](../workflows/milestone-admin.yml) verwaltet Meilensteine
 über Kommentare – praktisch, wenn ein Werkzeug (z. B. eine KI-Integration) Issues zuweisen, aber keine Meilensteine
 anlegen oder schliessen kann.
 
-**Steuerungs-Issue:** [#1 – Administration: Meilensteine](https://github.com/MarkusKeller8200/sek-intranet/issues/1)
-(bewusst geschlossen, Kommentare sind trotzdem möglich). Nur Kommentare des Repository-Eigentümers auf diesem einen
-Issue lösen Aktionen aus.
+**Steuerungs-Issue:** die Nummer steht in `.github/blueprint.toml` → `[workflows] admin_issue` (beim Anwenden des Blueprints angelegt und geschlossen; Kommentare sind trotzdem möglich). Nur Kommentare des Repository-Eigentümers auf diesem einen Issue lösen Aktionen aus.
 
 ## Erlaubte Befehle
 
@@ -30,4 +28,4 @@ geschlossene Meilensteine nicht nochmals geändert. Der Workflow verwendet nur `
 - Keine Aktion bei Kommentaren anderer Personen oder in anderen Issues.
 - Bei Änderung von Eigentümer, Issue-Nummer oder Berechtigungen Workflow und Skript prüfen.
 - Nach Änderungen zuerst `/milestone list` testen; bei fehlender Antwort
-  [Actions](https://github.com/MarkusKeller8200/sek-intranet/actions/workflows/milestone-admin.yml) kontrollieren.
+  Actions → milestone-admin kontrollieren.
