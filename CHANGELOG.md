@@ -23,6 +23,11 @@ laufend unter **Unveröffentlicht**. Ab 0.32.0 entsteht eine Version nur bei ein
 - **Architekturprüfung:** Module dürfen weder Klassen oder Daten anderer Module noch Core-Daten am Repository vorbei
   verwenden; geprüft in `composer ci:check` und auf der Seite «Module».
 
+### Behoben
+
+- **Module auf dem Server:** Mit zwischengespeicherter Konfiguration (`php artisan optimize`) wurde ein Modul als
+  ungültig verworfen – Menüpunkt sichtbar, Seite 404. Ausgeschaltete Module verschwinden jetzt auch aus dem Menü.
+
 ## [0.32.0] – 2026-11-01
 
 ### Neu

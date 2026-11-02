@@ -59,7 +59,9 @@ final class ModuleRegistry
         }
         $this->manifests = [];
         $this->errors = [];
-        $coreAbilities = (array) config('intranet.abilities', []);
+        // Nur Rechte des Core: eine zwischengespeicherte Konfiguration (php artisan optimize) enthält die
+        // Modulrechte schon – sonst würde das Modul als «Recht gibt es schon» abgelehnt.
+        $coreAbilities = self::withoutModuleEntries((array) config('intranet.abilities', []));
         $groups = array_map('strval', array_keys((array) config('intranet.modules', [])));
         $version = (string) config('intranet.version', '0.0.0');
 
@@ -196,8 +198,15 @@ final class ModuleRegistry
      */
     public function integrateConfig(): void
     {
-        $abilities = (array) config('intranet.abilities', []);
+        // Zuerst alle Einträge von Modulen entfernen (z. B. aus der zwischengespeicherten Konfiguration),
+        // dann nur die der eingeschalteten Module wieder einfügen – so verschwinden ausgeschaltete Module.
+        $abilities = self::withoutModuleEntries((array) config('intranet.abilities', []));
         $modules = (array) config('intranet.modules', []);
+        foreach ($modules as $groupKey => $group) {
+            if (is_array($group) && is_array($group['items'] ?? null)) {
+                $modules[$groupKey]['items'] = self::withoutModuleEntries($group['items']);
+            }
+        }
         foreach ($this->active() as $manifest) {
             foreach ($manifest->rights as $ability => $right) {
                 $abilities[$ability] = $right + ['module' => $manifest->key];
@@ -212,6 +221,15 @@ final class ModuleRegistry
             }
         }
         config(['intranet.abilities' => $abilities, 'intranet.modules' => $modules]);
+    }
+
+    /**
+     * @param  array<mixed>  $entries
+     * @return array<mixed>
+     */
+    private static function withoutModuleEntries(array $entries): array
+    {
+        return array_filter($entries, fn ($e): bool => ! (is_array($e) && isset($e['module'])));
     }
 
     /**
