@@ -34,10 +34,10 @@ Versionsnummer für einen bewusst freigegebenen Stand steht.
 ## 2. Versionen
 
 - Versionen folgen SemVer (MAJOR.MINOR.PATCH). Die Nummer steht nur in `VERSION`.
-  - PATCH: Fehlerbehebungen
-  - MINOR: neue Funktionen
-  - MAJOR: Umbrüche bzw. der erste produktive Stand (1.0.0)
-  - Vorabversionen haben einen Zusatz, z. B. 0.3.0-beta.1.
+    - PATCH: Fehlerbehebungen
+    - MINOR: neue Funktionen
+    - MAJOR: Umbrüche bzw. der erste produktive Stand (1.0.0)
+    - Vorabversionen haben einen Zusatz, z. B. 0.3.0-beta.1.
 - Änderungen kommen laufend in `CHANGELOG.md` unter «Unveröffentlicht» (Neu / Geändert / Behoben).
 - **`VERSION` ändert sich nur beim freigegebenen Release.** Stände dazwischen heissen
   «Developer Release», das sind Commits nach dem Tag `v<Version>`. `git describe --tags` zeigt den Abstand zum
@@ -52,11 +52,11 @@ eines Issues ist keine Release-Freigabe.
 1. Der Release-Meilenstein hat keine offenen Punkte mehr. Im Chat bzw. Issue kurz ankündigen, was hineinkommt.
 2. Nach der Bestätigung:
 
-   ```bash
-   php tools/release.php --check   # Version, CHANGELOG, Plugin-/Modul-Versionen
-   php tools/release.php 0.2.0 --commit
-   git push
-   ```
+    ```bash
+    php tools/release.php --check   # Version, CHANGELOG, Plugin-/Modul-Versionen
+    php tools/release.php 0.2.0 --commit
+    git push
+    ```
 
 3. Der Workflow **release** läuft bei jedem Push auf main. Gibt es für die Version schon einen Tag oder fehlt der
    Abschnitt im CHANGELOG, endet er nach wenigen Sekunden. Sonst wartet er, bis die konfigurierten Workflows für
@@ -98,9 +98,9 @@ https://github.com/<owner>/<repo>/issues/new?template=feature_request.yml&title=
 - Feld **Status**: Triage, Bereit, In Arbeit, Beta-Test, Erledigt. Die Werte entsprechen den Labels `triage`,
   `_1 bereit`, `_2 in Arbeit`, `_3 Beta-Test` und «geschlossen».
 - Ansichten:
-  - **Board** nach Status
-  - **Tabelle** gruppiert nach Meilenstein
-  - **Roadmap** nach Meilenstein-Datum
+    - **Board** nach Status
+    - **Tabelle** gruppiert nach Meilenstein
+    - **Roadmap** nach Meilenstein-Datum
 - Grössere Vorhaben als Haupt-Issue mit **Sub-Issues**. Jedes Teil-Issue hat eine eigene Testliste.
 
 ## 5. Umgebungen, Secrets und Zugänge
