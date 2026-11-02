@@ -9,6 +9,8 @@ laufend unter **Unveröffentlicht**. Ab 0.32.0 entsteht eine Version nur bei ein
 
 ## [Unveröffentlicht]
 
+## [0.33.0] – 2026-11-02
+
 ### Neu
 
 - **Module (#7, #10–#14):** Fachthemen als Module unter `modules/<Ordner>/` mit Manifest `module.json`, eigenen Rechten,
