@@ -74,7 +74,9 @@ walk(jsDir);
 // Module: modules/<Ordner>/resources/js (Seiten) und deren Kataloge
 const modulesDir = path.join(root, 'modules');
 const moduleCatalogDirs = [];
-for (const name of fs.existsSync(modulesDir) ? fs.readdirSync(modulesDir) : []) {
+for (const name of fs.existsSync(modulesDir)
+    ? fs.readdirSync(modulesDir)
+    : []) {
     const js = path.join(modulesDir, name, 'resources/js');
     if (fs.existsSync(js)) {
         walk(js);

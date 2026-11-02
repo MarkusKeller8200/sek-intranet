@@ -82,7 +82,9 @@ export default function ModuleManagement({
                 {errors.length > 0 && (
                     <Alert variant="destructive">
                         <AlertTriangle />
-                        <AlertTitle>Fehlerhafte Module (nicht geladen)</AlertTitle>
+                        <AlertTitle>
+                            Fehlerhafte Module (nicht geladen)
+                        </AlertTitle>
                         <AlertDescription>
                             <ul className="list-disc pl-5">
                                 {errors.map((e) => (
@@ -98,7 +100,9 @@ export default function ModuleManagement({
                 {violations.length > 0 && (
                     <Alert variant="destructive">
                         <ShieldAlert />
-                        <AlertTitle>Architekturprüfung: Zugriffe ausserhalb des Moduls</AlertTitle>
+                        <AlertTitle>
+                            Architekturprüfung: Zugriffe ausserhalb des Moduls
+                        </AlertTitle>
                         <AlertDescription>
                             <ul className="list-disc pl-5">
                                 {violations.map((v) => (
@@ -113,9 +117,8 @@ export default function ModuleManagement({
 
                 {modules.length === 0 ? (
                     <EmptyState icon={Boxes} title="Noch keine Module">
-                        Module liegen im Ordner {path}/ und werden mit
-                        «php artisan intranet:make-module Name --gruppe=…»
-                        angelegt.
+                        Module liegen im Ordner {path}/ und werden mit «php
+                        artisan intranet:make-module Name --gruppe=…» angelegt.
                     </EmptyState>
                 ) : (
                     modules.map((m) => (
@@ -126,20 +129,28 @@ export default function ModuleManagement({
                                     <span translate="no">{m.name}</span>
                                     <Badge variant="outline">{`v${m.version}`}</Badge>
                                     <Badge
-                                        variant={m.enabled ? 'default' : 'secondary'}
+                                        variant={
+                                            m.enabled ? 'default' : 'secondary'
+                                        }
                                     >
-                                        {m.enabled ? 'eingeschaltet' : 'ausgeschaltet'}
+                                        {m.enabled
+                                            ? 'eingeschaltet'
+                                            : 'ausgeschaltet'}
                                     </Badge>
                                     <span className="ml-auto flex items-center gap-2 text-sm font-normal">
                                         <Switch
                                             checked={m.enabled}
-                                            onCheckedChange={(v) => toggle(m.key, v)}
+                                            onCheckedChange={(v) =>
+                                                toggle(m.key, v)
+                                            }
                                             aria-label={`${m.name} ein- oder ausschalten`}
                                         />
                                     </span>
                                 </CardTitle>
                                 {m.description && (
-                                    <CardDescription>{m.description}</CardDescription>
+                                    <CardDescription>
+                                        {m.description}
+                                    </CardDescription>
                                 )}
                             </CardHeader>
                             <CardContent className="grid gap-4 text-sm">
@@ -151,26 +162,33 @@ export default function ModuleManagement({
                                         <code translate="no">{`Intranet ${m.core}`}</code>
                                     </Row>
                                     <Row label="Datenklasse">
-                                        {DATA_CLASSES[m.data_class] ?? m.data_class}
+                                        {DATA_CLASSES[m.data_class] ??
+                                            m.data_class}
                                     </Row>
                                     <Row label="Speicher">
                                         <code translate="no">{`${m.store} · Schema ${m.db_schema}`}</code>
                                     </Row>
                                     <Row label="Rechte">
                                         <ul className="grid gap-0.5">
-                                            {Object.entries(m.rights).map(([ability, r]) => (
-                                                <li key={ability}>
-                                                    <code translate="no">{ability}</code>
-                                                    {` – ${r.label} (${r.roles.join(', ')})`}
-                                                </li>
-                                            ))}
+                                            {Object.entries(m.rights).map(
+                                                ([ability, r]) => (
+                                                    <li key={ability}>
+                                                        <code translate="no">
+                                                            {ability}
+                                                        </code>
+                                                        {` – ${r.label} (${r.roles.join(', ')})`}
+                                                    </li>
+                                                ),
+                                            )}
                                         </ul>
                                     </Row>
                                     <Row label="Menü">
                                         <span translate="no">{`${m.menu_group}: ${m.menu.join(', ') || '–'}`}</span>
                                     </Row>
                                     <Row label="Sammlungen">
-                                        <code translate="no">{m.collections.join(', ') || '–'}</code>
+                                        <code translate="no">
+                                            {m.collections.join(', ') || '–'}
+                                        </code>
                                     </Row>
                                     <Row label="Ereignisse">
                                         <span translate="no">
@@ -179,15 +197,22 @@ export default function ModuleManagement({
                                     </Row>
                                     {m.plugins.length > 0 && (
                                         <Row label="Plugins">
-                                            <span translate="no">{m.plugins.join(', ')}</span>
+                                            <span translate="no">
+                                                {m.plugins.join(', ')}
+                                            </span>
                                         </Row>
                                     )}
                                 </dl>
                                 <details>
                                     <summary className="cursor-pointer text-muted-foreground">
-                                        SQL für eigenes Schema und DB-Benutzer (später PostgreSQL)
+                                        SQL für eigenes Schema und DB-Benutzer
+                                        (später PostgreSQL)
                                     </summary>
-                                    <CodeBlock code={m.sql} language="sql" className="mt-2" />
+                                    <CodeBlock
+                                        code={m.sql}
+                                        language="sql"
+                                        className="mt-2"
+                                    />
                                 </details>
                             </CardContent>
                         </Card>

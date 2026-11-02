@@ -81,21 +81,21 @@ Rechte. Die Daten bleiben erhalten.
 
 ### Manifest `module.json`
 
-| Feld | Bedeutung | Prüfung |
-|---|---|---|
-| `key` | Schlüssel, z. B. `zeiterfassung` | Kleinbuchstaben, Ziffern, Bindestrich; eindeutig |
-| `name`, `description` | Anzeige | Pflicht bzw. optional |
-| `version` | Version des Moduls (SemVer) | eigener CHANGELOG |
-| `core` | benötigte Intranet-Version, z. B. `>=0.33.0` | wird beim Laden verglichen |
-| `aktiv` | Vorgabe ein/aus | Übersteuerung in der Sammlung `module_states` |
-| `datenklasse` | `oeffentlich`, `intern`, `vertraulich`, `besonders` (IDG) | Pflicht |
-| `db_schema` | Schema bzw. Präfix der Sammlungen, z. B. `zeit` | alle Sammlungen beginnen mit `<db_schema>_` |
-| `provider` | ServiceProvider des Moduls | Namensraum `Modules\<Ordner>\` |
-| `rechte` | eigene Rechte mit `label` und `roles` | keine Überschneidung mit Core oder anderen Modulen |
-| `menu` | `gruppe` (Hauptmenü) und `eintraege` (`title`, `icon`, `href`, `can`) | Gruppe muss existieren, `href` beginnt mit `/<key>` |
-| `sammlungen` | Datenschema wie `config/intranet.php` → `schema` | erscheint unter «Datenstrukturen» mit Modulangabe |
-| `ereignisse` | `sendet` / `empfaengt`, z. B. `zeit.eintrag_erfasst` | Format `bereich.ereignis` |
-| `plugins` | benötigte Plugins | Anzeige |
+| Feld                  | Bedeutung                                                             | Prüfung                                             |
+| --------------------- | --------------------------------------------------------------------- | --------------------------------------------------- |
+| `key`                 | Schlüssel, z. B. `zeiterfassung`                                      | Kleinbuchstaben, Ziffern, Bindestrich; eindeutig    |
+| `name`, `description` | Anzeige                                                               | Pflicht bzw. optional                               |
+| `version`             | Version des Moduls (SemVer)                                           | eigener CHANGELOG                                   |
+| `core`                | benötigte Intranet-Version, z. B. `>=0.33.0`                          | wird beim Laden verglichen                          |
+| `aktiv`               | Vorgabe ein/aus                                                       | Übersteuerung in der Sammlung `module_states`       |
+| `datenklasse`         | `oeffentlich`, `intern`, `vertraulich`, `besonders` (IDG)             | Pflicht                                             |
+| `db_schema`           | Schema bzw. Präfix der Sammlungen, z. B. `zeit`                       | alle Sammlungen beginnen mit `<db_schema>_`         |
+| `provider`            | ServiceProvider des Moduls                                            | Namensraum `Modules\<Ordner>\`                      |
+| `rechte`              | eigene Rechte mit `label` und `roles`                                 | keine Überschneidung mit Core oder anderen Modulen  |
+| `menu`                | `gruppe` (Hauptmenü) und `eintraege` (`title`, `icon`, `href`, `can`) | Gruppe muss existieren, `href` beginnt mit `/<key>` |
+| `sammlungen`          | Datenschema wie `config/intranet.php` → `schema`                      | erscheint unter «Datenstrukturen» mit Modulangabe   |
+| `ereignisse`          | `sendet` / `empfaengt`, z. B. `zeit.eintrag_erfasst`                  | Format `bereich.ereignis`                           |
+| `plugins`             | benötigte Plugins                                                     | Anzeige                                             |
 
 ### Datenhaltung
 
