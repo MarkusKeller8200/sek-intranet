@@ -70,6 +70,7 @@ Projekt: SekBülach Intranet, Prototyp. Stack und Konventionen wie IDA.
   API/Plugin oder `embed`.
 
 <!-- blueprint:github-ablauf -->
+
 ## GitHub-Ablauf und Releases
 
 Aus dem GitHub-Blueprint, Details in `docs/GITHUB-ABLAUF.md`.
@@ -90,6 +91,7 @@ Aus dem GitHub-Blueprint, Details in `docs/GITHUB-ABLAUF.md`.
 - **Release abschliessen:** Hat der Release-Meilenstein keine offenen Punkte mehr, im Chat ankündigen, was
   hineinkommt, und nach Bestätigung das Release erstellen; danach Meilenstein schliessen.
 - Meilensteine per REST-API oder Kommentar `/milestone …` auf dem Admin-Issue (`.github/blueprint/MILESTONE-ADMIN.md`).
+
 <!-- /blueprint:github-ablauf -->
 
 ## Ergänzungen zum GitHub-Ablauf (Intranet)

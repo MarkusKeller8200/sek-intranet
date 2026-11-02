@@ -147,5 +147,5 @@ Erlaubt sind Core-Schnittstellen (`App\Data\Contracts`, `App\Support`), die GUI-
 
 - #15 Bestehende Bereiche schrittweise in Module verschieben
 
-Alle Issues tragen `triage` (Status-Labels siehe `docs/KONZEPT-VERSIONIERUNG.md`). Umgesetzt wird erst nach Freigabe mit `_1 bereit`; das neue Repository wird erst nach
+Alle Issues tragen `triage` (Status-Labels siehe `docs/GITHUB-ABLAUF.md`). Umgesetzt wird erst nach Freigabe mit `_1 bereit`; das neue Repository wird erst nach
 ausdrücklicher Bestätigung angelegt.
