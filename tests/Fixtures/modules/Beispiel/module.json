@@ -1,0 +1,53 @@
+{
+    "key": "beispiel",
+    "name": "Beispielmodul",
+    "version": "0.1.0",
+    "core": ">=0.32.0",
+    "description": "Beispielmodul – Modul im SekBülach Intranet.",
+    "aktiv": true,
+    "datenklasse": "intern",
+    "db_schema": "beispiel",
+    "provider": "Modules\\Beispiel\\ModuleServiceProvider",
+    "rechte": {
+        "use-beispiel": {
+            "label": "Beispielmodul verwenden",
+            "roles": [
+                "admin"
+            ]
+        }
+    },
+    "menu": {
+        "gruppe": "organisation",
+        "eintraege": {
+            "start": {
+                "title": "Beispielmodul",
+                "icon": "Boxes",
+                "href": "/beispiel",
+                "can": "use-beispiel"
+            }
+        }
+    },
+    "sammlungen": {
+        "beispiel_eintraege": {
+            "label": "Beispielmodul: Einträge",
+            "description": "Beispiel-Sammlung des Gerüsts – an das Fachthema anpassen.",
+            "fields": {
+                "titel": {
+                    "type": "string",
+                    "required": true,
+                    "label": "Titel"
+                },
+                "notiz": {
+                    "type": "text",
+                    "required": false,
+                    "label": "Notiz"
+                }
+            }
+        }
+    },
+    "ereignisse": {
+        "sendet": [],
+        "empfaengt": []
+    },
+    "plugins": []
+}

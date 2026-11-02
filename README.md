@@ -82,6 +82,13 @@ GUI-Prototypen, Themes, Benachrichtigungen).
   GitHub-Release entstehen nur bei einem freigegebenen Release (`php tools/release.php X.Y.Z --commit`) –
   siehe [docs/KONZEPT-VERSIONIERUNG.md](docs/KONZEPT-VERSIONIERUNG.md).
 
+## Module
+
+Fachthemen wie Zeiterfassung, Bestellungen oder Lizenzen entstehen als Module unter `modules/<Ordner>/`
+(`php artisan intranet:make-module Name --gruppe=…`). Jedes Modul hat eigene Rechte, ein eigenes Menü und eine eigene
+Datenhaltung; ein- und ausgeschaltet wird es unter Einstellungen → Module. Konzept und Regeln:
+[docs/KONZEPT-MODULE.md](docs/KONZEPT-MODULE.md).
+
 ## So funktioniert der Dateispeicher
 
 ```text

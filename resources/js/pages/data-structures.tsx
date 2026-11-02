@@ -168,6 +168,11 @@ export default function DataStructures({
                                     >
                                         {collection.name}
                                     </Badge>
+                                    {collection.module && (
+                                        <Badge variant="outline">
+                                            {`Modul ${collection.module}`}
+                                        </Badge>
+                                    )}
                                     <Badge variant="outline">
                                         {collection.count} Datensätze
                                     </Badge>

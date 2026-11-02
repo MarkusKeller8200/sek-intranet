@@ -138,6 +138,8 @@ export type SchemaCollection = {
     description: string | null;
     file: string;
     exists: boolean;
+    /** Name des Moduls, null = Core */
+    module?: string | null;
     count: number;
     fields: SchemaField[];
     unknown_fields: Record<string, number>;

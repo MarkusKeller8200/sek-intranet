@@ -41,6 +41,18 @@ export const CATALOGS: Record<string, Catalog> = {
     pages: pages as unknown as Catalog,
     people: people as unknown as Catalog,
     system: system as unknown as Catalog,
+    // Kataloge der Module: modules/<Ordner>/resources/js/i18n/*.json (docs/KONZEPT-MODULE.md)
+    ...Object.fromEntries(
+        Object.entries(
+            import.meta.glob('../../../modules/*/resources/js/i18n/*.json', {
+                eager: true,
+                import: 'default',
+            }) as Record<string, Catalog>,
+        ).map(([file, catalog]) => [
+            `modul:${file.split('/modules/')[1]?.split('/')[0] ?? file}:${file.split('/').pop()?.replace('.json', '') ?? ''}`,
+            catalog,
+        ]),
+    ),
 };
 
 const STORAGE_KEY = 'lang';

@@ -304,6 +304,9 @@ return [
     // Ordner für die JSON-Dateien, relativ zum Projektordner oder absolut.
     'data_path' => env('INTRANET_DATA_PATH', 'storage/app/data'),
 
+    // Module (Fachthemen mit eigener Datenhaltung, docs/KONZEPT-MODULE.md): modules/<Ordner>/module.json
+    'modules_path' => env('INTRANET_MODULES_PATH', 'modules'),
+
     // Ordner für hochgeladene Dokumente (Disk "local", also storage/app/private/...).
     'upload_directory' => 'intranet/documents',
 
@@ -796,6 +799,7 @@ return [
                 'einstellungen-fachanwendungen' => ['title' => 'Fachanwendungen', 'icon' => 'AppWindow', 'href' => '/einstellungen/fachanwendungen'],
                 'einstellungen-einbindungen' => ['title' => 'Weitere Einbindungen', 'icon' => 'Globe', 'href' => '/einstellungen/einbindungen'],
                 'browser-erweiterung' => ['title' => 'Browser-Erweiterung', 'icon' => 'Puzzle', 'href' => '/einstellungen/browser-erweiterung'],
+                'modulverwaltung' => ['title' => 'Module', 'icon' => 'Boxes', 'href' => '/einstellungen/module'],
             ],
         ],
         'prototyp' => [
@@ -1153,6 +1157,14 @@ return [
                 'versions' => ['type' => 'json', 'required' => true, 'label' => 'Versionen [{version, status, changes, created_at/by, review_at/by, released_at/by, log}]'],
                 'wishes' => ['type' => 'json', 'required' => false, 'label' => 'Verbesserungswünsche [{id, text, by, at, version}]'],
                 'rework' => ['type' => 'json', 'required' => false, 'label' => 'Überarbeitung nach Freigabe [{file, version, done_at, done_by}]'],
+            ],
+        ],
+        'module_states' => [
+            'label' => 'System: Module ein/aus',
+            'description' => 'Ein Datensatz je Modul (id = Schlüssel aus module.json). Ohne Datensatz gilt «aktiv» aus dem Manifest.',
+            'fields' => [
+                'enabled' => ['type' => 'bool', 'required' => true, 'label' => 'Eingeschaltet'],
+                'changed_by' => ['type' => 'ref', 'references' => 'users', 'required' => false, 'label' => 'Geändert von'],
             ],
         ],
         'module_settings' => [

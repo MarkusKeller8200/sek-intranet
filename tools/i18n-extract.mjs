@@ -71,6 +71,16 @@ const walk = (dir) => {
     }
 };
 walk(jsDir);
+// Module: modules/<Ordner>/resources/js (Seiten) und deren Kataloge
+const modulesDir = path.join(root, 'modules');
+const moduleCatalogDirs = [];
+for (const name of fs.existsSync(modulesDir) ? fs.readdirSync(modulesDir) : []) {
+    const js = path.join(modulesDir, name, 'resources/js');
+    if (fs.existsSync(js)) {
+        walk(js);
+        moduleCatalogDirs.push(path.join(js, 'i18n'));
+    }
+}
 
 // config/intranet.php: Titel, Beschreibungen, Funktionen, Bezeichnungen, Auswahlwerte
 const config = fs
@@ -98,14 +108,14 @@ for (const block of [
 }
 
 const catalog = {};
-for (const name of fs.existsSync(catalogDir)
-    ? fs.readdirSync(catalogDir)
-    : []) {
-    if (name.endsWith('.json') && name !== 'ignore.json')
-        Object.assign(
-            catalog,
-            JSON.parse(fs.readFileSync(path.join(catalogDir, name), 'utf8')),
-        );
+for (const dir of [catalogDir, ...moduleCatalogDirs]) {
+    for (const name of fs.existsSync(dir) ? fs.readdirSync(dir) : []) {
+        if (name.endsWith('.json') && name !== 'ignore.json')
+            Object.assign(
+                catalog,
+                JSON.parse(fs.readFileSync(path.join(dir, name), 'utf8')),
+            );
+    }
 }
 const ignore = fs.existsSync(path.join(catalogDir, 'ignore.json'))
     ? JSON.parse(fs.readFileSync(path.join(catalogDir, 'ignore.json'), 'utf8'))

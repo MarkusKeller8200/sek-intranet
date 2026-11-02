@@ -65,6 +65,8 @@ export default defineConfig({
             'resources/js/components/ui/*',
             'resources/js/routes/**',
             'resources/js/wayfinder/**',
+            // Testmodul (erzeugt mit intranet:make-module), nur für PHPUnit
+            'tests/Fixtures/**',
         ],
         options: {
             denyWarnings: true,
@@ -83,6 +85,7 @@ export default defineConfig({
             'composer.json',
             'resources/js/components/ui/*',
             'resources/views/mail/*',
+            'tests/Fixtures/**',
         ],
         sortTailwindcss: {
             functions: ['clsx', 'cn', 'cva'],

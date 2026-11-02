@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Modules\ModuleRegistry;
 use Tests\TestCase;
 
 /** Sprachkataloge (docs/KONZEPT-SPRACHEN.md): gültig, vollständig, gleiche Platzhalter. */
@@ -60,6 +61,10 @@ class I18nCatalogTest extends TestCase
         $keys = [];
         foreach ($this->catalogs() as $entries) {
             $keys += $entries;
+        }
+        // Menüpunkte der Module stehen in deren eigenen Katalogen (modules/<Ordner>/resources/js/i18n)
+        foreach (glob(app(ModuleRegistry::class)->path().'/*/resources/js/i18n/*.json') ?: [] as $file) {
+            $keys += (array) json_decode((string) file_get_contents($file), true);
         }
 
         // Wie im Browser: Zahlen werden zu {n}

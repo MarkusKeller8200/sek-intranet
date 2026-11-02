@@ -17,6 +17,7 @@ use App\Http\Controllers\GridViewController;
 use App\Http\Controllers\GuiPrototypeController;
 use App\Http\Controllers\McpConceptController;
 use App\Http\Controllers\ModuleController;
+use App\Http\Controllers\ModuleManagementController;
 use App\Http\Controllers\ModuleSettingsController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PersonController;
@@ -148,6 +149,8 @@ Route::middleware('auth')->group(function () {
         Route::delete('api-doku/tokens/{id}', [ApiDocsController::class, 'destroy'])->name('api-docs.tokens.destroy');
 
         // Plugins (Anbindung anderer Systeme per API)
+        Route::get('einstellungen/module', [ModuleManagementController::class, 'index'])->name('modules.manage');
+        Route::post('einstellungen/module/{key}', [ModuleManagementController::class, 'toggle'])->name('modules.toggle');
         Route::get('plugins', [PluginController::class, 'index'])->name('plugins.index');
         Route::post('plugins/verbindungen-testen', [PluginController::class, 'testAll'])->middleware('throttle:10,1')->name('plugins.test-all');
         Route::get('plugins/{id}', [PluginController::class, 'show'])->name('plugins.show');

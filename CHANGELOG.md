@@ -9,6 +9,16 @@ laufend unter **Unveröffentlicht**. Ab 0.32.0 entsteht eine Version nur bei ein
 
 ## [Unveröffentlicht]
 
+### Neu
+
+- **Module (#7, #10–#14):** Fachthemen als Module unter `modules/<Ordner>/` mit Manifest `module.json`, eigenen Rechten,
+  eigenem Menü, eigenen Seiten (`Ordner::seite`), Übersetzungen, Tests und eigenem Datenspeicher
+  (`<data_path>/modules/<key>`). Neue Seite **Einstellungen → Module**: Module ein- und ausschalten (ohne Menü und
+  Routen, Daten bleiben), Rechte, Sammlungen, SQL für eigenes Schema und DB-Benutzer. Generator
+  `php artisan intranet:make-module`, SQL mit `intranet:module-sql`. «Datenstrukturen» zeigt die Sammlungen der Module.
+- **Architekturprüfung:** Module dürfen weder Klassen oder Daten anderer Module noch Core-Daten am Repository vorbei
+  verwenden; geprüft in `composer ci:check` und auf der Seite «Module».
+
 ## [0.32.0] – 2026-11-01
 
 ### Neu

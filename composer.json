@@ -34,7 +34,8 @@
             "App\\": "app/",
             "Database\\Factories\\": "database/factories/",
             "Database\\Seeders\\": "database/seeders/",
-            "Plugins\\": "plugins/"
+            "Plugins\\": "plugins/",
+            "Modules\\": "modules/"
         }
     },
     "autoload-dev": {

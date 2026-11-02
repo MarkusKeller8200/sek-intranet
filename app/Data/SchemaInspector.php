@@ -3,6 +3,7 @@
 namespace App\Data;
 
 use App\Data\Store\JsonStore;
+use App\Modules\ModuleRegistry;
 
 /**
  * Vergleicht das in config/intranet.php beschriebene Schema mit den
@@ -29,7 +30,10 @@ final class SchemaInspector
         'json' => 'jsonb',
     ];
 
-    public function __construct(private readonly JsonStore $store) {}
+    public function __construct(
+        private readonly JsonStore $store,
+        private readonly ?ModuleRegistry $modules = null,
+    ) {}
 
     /**
      * @return list<array<string, mixed>>
@@ -40,8 +44,18 @@ final class SchemaInspector
         $schema = config('intranet.schema', []);
         $result = [];
 
+        // Sammlungen der Module: eigener Datenspeicher je Modul (<data_path>/modules/<key>)
+        $sources = array_fill_keys(array_keys($schema), [$this->store, null]);
+        foreach ($this->modules?->all() ?? [] as $manifest) {
+            foreach ($manifest->collections as $collection => $definition) {
+                $schema[$collection] = $definition;
+                $sources[$collection] = [$this->modules->store($manifest->key), $manifest->name];
+            }
+        }
+
         foreach ($schema as $collection => $definition) {
-            $records = $this->store->all($collection);
+            [$store, $module] = $sources[$collection];
+            $records = $store->all($collection);
             /** @var array<string, array<string, mixed>> $fields */
             $fields = $definition['fields'] ?? [];
             $known = array_merge(['id', 'created_at', 'updated_at'], array_keys($fields));
@@ -85,8 +99,9 @@ final class SchemaInspector
                 'name' => $collection,
                 'label' => $definition['label'] ?? $collection,
                 'description' => $definition['description'] ?? null,
-                'file' => $this->relative($this->store->filePath($collection)),
-                'exists' => $this->store->exists($collection),
+                'file' => $this->relative($store->filePath($collection)),
+                'exists' => $store->exists($collection),
+                'module' => $module,
                 'count' => count($records),
                 'fields' => $fieldRows,
                 'unknown_fields' => $unknown,

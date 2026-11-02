@@ -57,6 +57,69 @@ ein anderes Publikum und einen anderen Schutzbedarf als das Intranet.
     - Adresse: **rechtssammlung.sekbuelach.ch**.
     - Offen: verbindliche Fassung / Publikationsorgan.
 
+## Umsetzung (0.33.0)
+
+### Aufbau eines Moduls
+
+```
+modules/Zeiterfassung/
+  module.json                     Manifest (siehe unten)
+  ModuleServiceProvider.php       bindet die Repositories an den eigenen Speicher (erbt App\Modules\ModuleProvider)
+  routes.php                      Routen (nur geladen, wenn eingeschaltet; immer angemeldet)
+  Http/…Controller.php            Controller (Namensraum Modules\Zeiterfassung\…)
+  Data/Contracts/…Repository.php  Schnittstellen
+  Data/Json/Json…Repository.php   JSON-Umsetzung (erbt App\Data\Json\JsonRepository)
+  resources/js/pages/*.tsx        Seiten, Inertia-Name «Zeiterfassung::seite»
+  resources/js/i18n/*.json        Übersetzungen des Moduls
+  Tests/*Test.php                 Tests (laufen in composer ci:check mit)
+  CHANGELOG.md, README.md
+```
+
+Anlegen mit `php artisan intranet:make-module Zeiterfassung --gruppe=organisation [--titel=…] [--key=…] [--schema=…]`.
+Ein- und ausschalten unter **Einstellungen → Module**. Ausgeschaltet heisst: kein Menü, keine Routen (404), keine
+Rechte. Die Daten bleiben erhalten.
+
+### Manifest `module.json`
+
+| Feld | Bedeutung | Prüfung |
+|---|---|---|
+| `key` | Schlüssel, z. B. `zeiterfassung` | Kleinbuchstaben, Ziffern, Bindestrich; eindeutig |
+| `name`, `description` | Anzeige | Pflicht bzw. optional |
+| `version` | Version des Moduls (SemVer) | eigener CHANGELOG |
+| `core` | benötigte Intranet-Version, z. B. `>=0.33.0` | wird beim Laden verglichen |
+| `aktiv` | Vorgabe ein/aus | Übersteuerung in der Sammlung `module_states` |
+| `datenklasse` | `oeffentlich`, `intern`, `vertraulich`, `besonders` (IDG) | Pflicht |
+| `db_schema` | Schema bzw. Präfix der Sammlungen, z. B. `zeit` | alle Sammlungen beginnen mit `<db_schema>_` |
+| `provider` | ServiceProvider des Moduls | Namensraum `Modules\<Ordner>\` |
+| `rechte` | eigene Rechte mit `label` und `roles` | keine Überschneidung mit Core oder anderen Modulen |
+| `menu` | `gruppe` (Hauptmenü) und `eintraege` (`title`, `icon`, `href`, `can`) | Gruppe muss existieren, `href` beginnt mit `/<key>` |
+| `sammlungen` | Datenschema wie `config/intranet.php` → `schema` | erscheint unter «Datenstrukturen» mit Modulangabe |
+| `ereignisse` | `sendet` / `empfaengt`, z. B. `zeit.eintrag_erfasst` | Format `bereich.ereignis` |
+| `plugins` | benötigte Plugins | Anzeige |
+
+### Datenhaltung
+
+- Jedes Modul hat einen eigenen Datenordner: `<data_path>/modules/<key>/`. Den Core-Speicher und Ordner anderer Module
+  erreicht es nicht. `ModuleProvider::store()` liefert den eigenen Speicher.
+- Umschaltung pro Modul: `<KEY>_STORE` (z. B. `ZEITERFASSUNG_STORE=database`), sonst wie `INTRANET_STORE`.
+- Für PostgreSQL gibt es pro Modul ein eigenes Schema und einen eigenen DB-Benutzer, der nur dort schreiben darf.
+  `php artisan intranet:module-sql <key>` zeigt das SQL dazu; es steht auch auf der Seite «Module». Migrationen
+  kommen später nach `modules/<Ordner>/database/migrations`. Fremdschlüssel gehen nur auf Core-Stammdaten (UUID).
+  Core-Daten liest ein Modul nur über Schnittstellen bzw. Views.
+
+### Architekturprüfung
+
+`App\Modules\ModuleArchitecture` läuft als Test in `composer ci:check` und zeigt Verstösse auch auf der Seite
+«Module» an. Ein Modul darf:
+
+- keine Klassen eines anderen Moduls verwenden (`Modules\Anderes\…`) und nicht aus `modules/Anderes/…` importieren,
+- keine relativen Importe aus dem eigenen Ordner hinaus machen,
+- nicht auf JSON-Umsetzungen des Core, den Core-Speicher (`JsonStore`), `config('intranet.schema')` oder den
+  Datenordner zugreifen.
+
+Erlaubt sind Core-Schnittstellen (`App\Data\Contracts`, `App\Support`), die GUI-Bausteine (`@/components/…`) und
+`App\Data\Json\JsonRepository` als Grundklasse.
+
 ## Planung (Issues und Meilensteine)
 
 **Meilenstein «0.33.0 – Modulgerüst & Pilot Zeiterfassung»**

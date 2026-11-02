@@ -10,5 +10,6 @@ parameters:
         - database/
         - routes/
         - plugins/
+        - modules/
 
     level: 7

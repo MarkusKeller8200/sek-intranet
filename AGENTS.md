@@ -62,9 +62,12 @@ Projekt: SekBülach Intranet, Prototyp. Stack und Konventionen wie IDA.
 - Wird ein Schlüssel einer Auswahlliste umbenannt, Umstellung unter `renames` eintragen
   (`php artisan intranet:upgrade` stellt bestehende Daten beim Start um).
 
-- Module (`docs/KONZEPT-MODULE.md`): ein Intranet, ein Deployment. Neue Fachthemen als Modul (`modules/<Name>/`, sobald
-  das Gerüst steht) mit eigener Datenhaltung (eigenes Schema/DB-Benutzer), keine Zugriffe quer zwischen Modulen;
-  fremde Systeme nur als Plugin; eigenständige Projekte (z. B. Rechtssammlung) nur über API/Plugin oder `embed`.
+- Module (`docs/KONZEPT-MODULE.md`): ein Intranet, ein Deployment. Neue Fachthemen als Modul unter `modules/<Ordner>/`
+  (`php artisan intranet:make-module`), mit eigenen Rechten, eigenem Menü (module.json), eigenem Datenspeicher
+  (`ModuleProvider::store()`, Sammlungen mit Präfix `<db_schema>_`) und eigenen Tests. Keine Zugriffe auf Klassen
+  oder Daten anderer Module und nicht am Repository vorbei auf Core-Daten (Architekturprüfung in `ModulesTest`).
+  Seiten heissen `Ordner::seite`. Fremde Systeme nur als Plugin; eigenständige Projekte (z. B. Rechtssammlung) nur über
+  API/Plugin oder `embed`.
 
 ## GitHub-Ablauf und Releases
 
