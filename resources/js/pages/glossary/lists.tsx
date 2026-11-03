@@ -244,26 +244,23 @@ export default function GlossaryLists({
                                     }
                                 />
                             </FormField>
-                                                            <FormField
+                            <FormField
+                                id="gl-l"
+                                label="Label"
+                                hint="Kurz, erscheint in der Tabelle als Tag (leer: Abkürzung)"
+                                error={form.errors.label}
+                                className="sm:col-span-2"
+                            >
+                                <Input
                                     id="gl-l"
-                                    label="Label"
-                                    hint="Kurz, erscheint in der Tabelle als Tag (leer: Abkürzung)"
-                                    error={form.errors.label}
-                                    className="sm:col-span-2"
-                                >
-                                    <Input
-                                        id="gl-l"
-                                        maxLength={30}
-                                        className="max-w-60"
-                                        value={form.data.label}
-                                        onChange={(e) =>
-                                            form.setData(
-                                                'label',
-                                                e.target.value,
-                                            )
-                                        }
-                                    />
-                                </FormField>
+                                    maxLength={30}
+                                    className="max-w-60"
+                                    value={form.data.label}
+                                    onChange={(e) =>
+                                        form.setData('label', e.target.value)
+                                    }
+                                />
+                            </FormField>
                             <FormField
                                 id="gl-d"
                                 label="Beschreibung"

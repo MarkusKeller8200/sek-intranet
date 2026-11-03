@@ -39,10 +39,16 @@ function PinForm({ roles }: { roles: Record<string, PinRole> }) {
                         <Button
                             key={key}
                             type="button"
-                            variant={form.data.role === key ? 'default' : 'outline'}
+                            variant={
+                                form.data.role === key ? 'default' : 'outline'
+                            }
                             disabled={!r.set}
                             aria-pressed={form.data.role === key}
-                            title={r.set ? undefined : 'Für diese Rolle ist noch kein PIN gesetzt'}
+                            title={
+                                r.set
+                                    ? undefined
+                                    : 'Für diese Rolle ist noch kein PIN gesetzt'
+                            }
                             onClick={() => {
                                 form.setData('role', key);
                                 form.clearErrors();
@@ -66,7 +72,10 @@ function PinForm({ roles }: { roles: Record<string, PinRole> }) {
                         autoFocus
                         value={form.data.pin}
                         onChange={(e) =>
-                            form.setData('pin', e.target.value.replace(/\D/g, ''))
+                            form.setData(
+                                'pin',
+                                e.target.value.replace(/\D/g, ''),
+                            )
                         }
                     />
                     <InputError message={form.errors.pin ?? form.errors.role} />
@@ -141,7 +150,9 @@ export default function Login({
                     <div className="mb-2 flex items-center justify-between gap-2 text-sm">
                         <span>
                             Rolle:{' '}
-                            <span className="font-medium">{roles[role]?.label ?? role}</span>
+                            <span className="font-medium">
+                                {roles[role]?.label ?? role}
+                            </span>
                         </span>
                         <Button
                             variant="ghost"
@@ -149,7 +160,11 @@ export default function Login({
                             disabled={wechseln}
                             onClick={() => {
                                 setWechseln(true);
-                                router.post('/anmelden/rolle-wechseln', {}, { onFinish: () => setWechseln(false) });
+                                router.post(
+                                    '/anmelden/rolle-wechseln',
+                                    {},
+                                    { onFinish: () => setWechseln(false) },
+                                );
                             }}
                         >
                             Andere Rolle

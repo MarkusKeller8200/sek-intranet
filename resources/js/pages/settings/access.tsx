@@ -38,7 +38,11 @@ function PinSetzen({ rolle, onDone }: { rolle: string; onDone: () => void }) {
 
     return (
         <form onSubmit={submit} className="flex flex-wrap items-start gap-2">
-            <FormField id={`pin-${rolle}`} label="Neuer PIN" error={form.errors.pin}>
+            <FormField
+                id={`pin-${rolle}`}
+                label="Neuer PIN"
+                error={form.errors.pin}
+            >
                 <Input
                     id={`pin-${rolle}`}
                     type="password"
@@ -47,7 +51,9 @@ function PinSetzen({ rolle, onDone }: { rolle: string; onDone: () => void }) {
                     maxLength={8}
                     className="w-32"
                     value={form.data.pin}
-                    onChange={(e) => form.setData('pin', digits(e.target.value))}
+                    onChange={(e) =>
+                        form.setData('pin', digits(e.target.value))
+                    }
                 />
             </FormField>
             <FormField id={`pin2-${rolle}`} label="Wiederholen">
@@ -72,7 +78,12 @@ function PinSetzen({ rolle, onDone }: { rolle: string; onDone: () => void }) {
                 >
                     Speichern
                 </Button>
-                <Button type="button" size="sm" variant="ghost" onClick={onDone}>
+                <Button
+                    type="button"
+                    size="sm"
+                    variant="ghost"
+                    onClick={onDone}
+                >
                     Abbrechen
                 </Button>
             </div>
@@ -105,8 +116,9 @@ export default function AccessSettings({
                         <ShieldCheck />
                         <AlertTitle>PIN-Anmeldung aktiv</AlertTitle>
                         <AlertDescription>
-                            Das gemeinsame Passwort (Basic Auth) ist ausgeschaltet.
-                            Ohne PIN der Administration wäre es wieder aktiv.
+                            Das gemeinsame Passwort (Basic Auth) ist
+                            ausgeschaltet. Ohne PIN der Administration wäre es
+                            wieder aktiv.
                         </AlertDescription>
                     </Alert>
                 ) : (
@@ -128,30 +140,55 @@ export default function AccessSettings({
                                     <TableHead>Rolle</TableHead>
                                     <TableHead>PIN</TableHead>
                                     <TableHead>Geändert</TableHead>
-                                    <TableHead className="sr-only">Aktionen</TableHead>
+                                    <TableHead className="sr-only">
+                                        Aktionen
+                                    </TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
                                 {Object.entries(rollen).map(([key, r]) => (
                                     <TableRow key={key} className="align-top">
-                                        <TableCell className="font-medium">{r.label}</TableCell>
+                                        <TableCell className="font-medium">
+                                            {r.label}
+                                        </TableCell>
                                         <TableCell>
                                             {offen === key ? (
-                                                <PinSetzen rolle={key} onDone={() => setOffen(null)} />
+                                                <PinSetzen
+                                                    rolle={key}
+                                                    onDone={() =>
+                                                        setOffen(null)
+                                                    }
+                                                />
                                             ) : r.set ? (
-                                                <Badge variant="secondary">gesetzt</Badge>
+                                                <Badge variant="secondary">
+                                                    gesetzt
+                                                </Badge>
                                             ) : (
-                                                <Badge variant="outline">nicht gesetzt – keine Anmeldung</Badge>
+                                                <Badge variant="outline">
+                                                    nicht gesetzt – keine
+                                                    Anmeldung
+                                                </Badge>
                                             )}
                                         </TableCell>
                                         <TableCell className="text-muted-foreground">
-                                            {r.updated_at ? formatDateTime(r.updated_at) : '–'}
+                                            {r.updated_at
+                                                ? formatDateTime(r.updated_at)
+                                                : '–'}
                                         </TableCell>
                                         <TableCell>
                                             {offen !== key && (
                                                 <span className="flex justify-end gap-1">
-                                                    <Button size="sm" variant="outline" onClick={() => setOffen(key)}>
-                                                        <KeyRound /> {r.set ? 'Ändern' : 'Setzen'}
+                                                    <Button
+                                                        size="sm"
+                                                        variant="outline"
+                                                        onClick={() =>
+                                                            setOffen(key)
+                                                        }
+                                                    >
+                                                        <KeyRound />{' '}
+                                                        {r.set
+                                                            ? 'Ändern'
+                                                            : 'Setzen'}
                                                     </Button>
                                                     {r.set && (
                                                         <DeleteButton
