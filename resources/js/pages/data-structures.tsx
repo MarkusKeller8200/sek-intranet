@@ -331,14 +331,21 @@ export default function DataStructures({
                     <CardHeader>
                         <CardTitle className="flex flex-wrap items-center gap-2">
                             Kataloge im Code: Sprachkonzept
-                            <Badge variant="outline">Dateien, nicht in der Datenablage</Badge>
+                            <Badge variant="outline">
+                                Dateien, nicht in der Datenablage
+                            </Badge>
                         </CardTitle>
                         <CardDescription>
-                            Die Übersetzungen liegen als JSON-Dateien im Code und werden mit jedem Release ausgeliefert. Aufbau je
-                            Eintrag: Deutsch (Text, Schlüssel) → English (Text), Züritüütsch (Text). Später in PostgreSQL als eigene
+                            Die Übersetzungen liegen als JSON-Dateien im Code
+                            und werden mit jedem Release ausgeliefert. Aufbau je
+                            Eintrag: Deutsch (Text, Schlüssel) → English (Text),
+                            Züritüütsch (Text). Später in PostgreSQL als eigene
                             Tabelle.
                         </CardDescription>
-                        <Link href="/sprachkonzept" className="text-sm text-primary underline-offset-2 hover:underline">
+                        <Link
+                            href="/sprachkonzept"
+                            className="text-sm text-primary underline-offset-2 hover:underline"
+                        >
                             Zum Sprachkonzept
                         </Link>
                     </CardHeader>
@@ -348,24 +355,41 @@ export default function DataStructures({
                                 <TableRow>
                                     <TableHead>Katalog</TableHead>
                                     <TableHead>Datei</TableHead>
-                                    <TableHead className="text-right">Einträge</TableHead>
-                                    <TableHead className="text-right">English</TableHead>
-                                    <TableHead className="text-right">Züritüütsch</TableHead>
+                                    <TableHead className="text-right">
+                                        Einträge
+                                    </TableHead>
+                                    <TableHead className="text-right">
+                                        English
+                                    </TableHead>
+                                    <TableHead className="text-right">
+                                        Züritüütsch
+                                    </TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
                                 {catalogs.map((c) => (
                                     <TableRow key={c.file}>
-                                        <TableCell className="font-medium">{c.label}</TableCell>
-                                        <TableCell className="font-mono text-xs" translate="no">
+                                        <TableCell className="font-medium">
+                                            {c.label}
+                                        </TableCell>
+                                        <TableCell
+                                            className="font-mono text-xs"
+                                            translate="no"
+                                        >
                                             {c.file}
                                         </TableCell>
-                                        <TableCell className="text-right tabular-nums">{c.count}</TableCell>
                                         <TableCell className="text-right tabular-nums">
-                                            {c.kind === 'ignore' ? '–' : `${Math.round((c.translated.en / Math.max(1, c.count)) * 100)} %`}
+                                            {c.count}
                                         </TableCell>
                                         <TableCell className="text-right tabular-nums">
-                                            {c.kind === 'ignore' ? '–' : `${Math.round((c.translated.gsw / Math.max(1, c.count)) * 100)} %`}
+                                            {c.kind === 'ignore'
+                                                ? '–'
+                                                : `${Math.round((c.translated.en / Math.max(1, c.count)) * 100)} %`}
+                                        </TableCell>
+                                        <TableCell className="text-right tabular-nums">
+                                            {c.kind === 'ignore'
+                                                ? '–'
+                                                : `${Math.round((c.translated.gsw / Math.max(1, c.count)) * 100)} %`}
                                         </TableCell>
                                     </TableRow>
                                 ))}

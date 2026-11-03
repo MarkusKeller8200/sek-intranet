@@ -110,7 +110,9 @@ export type TagColors = { kategorien: Labels; herkunft: Labels };
 const tagStyle = (color: string | undefined) => {
     const c = color && isColorName(color) ? printPalette[color] : null;
 
-    return c ? ` style="background:${c.bg};border-color:${c.border};color:${c.text}"` : '';
+    return c
+        ? ` style="background:${c.bg};border-color:${c.border};color:${c.text}"`
+        : '';
 };
 
 const tags = (s: string, colors: Labels = {}) =>

@@ -90,7 +90,10 @@ export type ColorName = keyof typeof palette;
  * Druckfarben der Palette (Hintergrund, Rand, Text) für Ausgaben ohne Tailwind, z. B. PDF-Export des Glossars (#79).
  * Entsprechen den hellen Badge-Farben (…-50, …-200, …-800).
  */
-export const printPalette: Record<ColorName, { bg: string; border: string; text: string }> = {
+export const printPalette: Record<
+    ColorName,
+    { bg: string; border: string; text: string }
+> = {
     brand: { bg: '#e8f4fb', border: '#b3e0f3', text: '#0272ad' },
     slate: { bg: '#f1f5f9', border: '#e2e8f0', text: '#334155' },
     sky: { bg: '#f0f9ff', border: '#bae6fd', text: '#075985' },
