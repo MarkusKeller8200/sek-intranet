@@ -17,7 +17,8 @@ gehört zum **Core** (Module nutzen es über eine Core-Schnittstelle). Menü: «
 | 3 | Abkürzung eigene + Alias | frei |
 | 4 | Bezeichnung offiziell | gesperrt |
 | 5 | Bezeichnung eigene | wird im Intranet überall angezeigt, wo auf den Eintrag verwiesen wird; leer = offizielle |
-| 6 | Beschreibung | Text |
+| 6 | Kurzbeschreibung | ein Satz (max. 160 Zeichen) für den Tooltip |
+| 6a | Beschreibung | ausführlicher Text |
 | 7 | URL | Quelle, http(s) |
 | 8 | Notiz | Markdown; **gemeinsam für alle**, später je Mandant |
 | 9 | Herkunft | Mehrfachwerte aus der erweiterbaren Herkunftsliste (VSA, BI, Kanton, Bund, DSB, Gemeindeamt, Schule intern, gebräuchlich …) |
@@ -35,6 +36,23 @@ Herkunftsliste haben Abkürzung, Bezeichnung, Beschreibung, URL, Notiz (wie die 
   Verknüpfungen aus Modulen). Freitext wird nicht verändert. Welche Stellen eines Moduls verweisen, wird im Einzelfall
   bei der Überarbeitung des Moduls festgelegt.
 - Rollen/Fachbereiche (#52) und Personengruppen: Verknüpfung mit dem Glossar wird **später** entschieden.
+
+## Begriffe im Intranet erkennen (Tooltip)
+
+Wo im Intranet eine Abkürzung oder ein Begriff aus dem Glossar vorkommt, ist er **fein gepunktet unterstrichen**.
+Beim Darüberfahren (bzw. Fokus mit der Tastatur, Antippen auf dem Handy) zeigt ein Tooltip **Abkürzung, Bezeichnung
+und Kurzbeschreibung**; ein Link führt direkt zum Eintrag im Glossar.
+
+- **Im Code (Oberfläche):** Baustein «Begriff» (`<Term>`), z. B. `<Term id="vsa" />` oder `<Term match="SL">SL</Term>`.
+  Neuer GUI-Baustein in den GUI-Prototypen; Regel in `AGENTS.md`: Begriffe aus dem Glossar in Oberflächentexten mit
+  dem Baustein auszeichnen.
+- **Im Inhalt (Freitext):** Mitteilungen, Abläufe, Beschreibungen – Begriffe werden beim Anzeigen erkannt und
+  ausgezeichnet, der gespeicherte Text bleibt unverändert. Mehrdeutige Abkürzungen zeigen alle Bedeutungen.
+- **Farb- und Themenkonzept:** neue Tokens `--term-underline` (Farbe der Punkte) und `--term-underline-hover` in
+  `resources/css/app.css` (hell und dunkel), in `App\Support\Themes::GROUPS` und `lib/themes.ts`, damit Themes sie
+  übersteuern. Darstellung: `text-decoration: underline dotted` mit dünner Linie und Abstand, Kontrast AA; Tooltip
+  mit dem bestehenden Baustein (Hover-Karte).
+- Abschaltbar je Person (Einstellung «Begriffe hervorheben») und nicht in Eingabefeldern, Code-Blöcken und Links.
 
 ## Darstellung und Bearbeitung
 
