@@ -155,13 +155,19 @@ export function coerce<T>(column: GridColumn<T>, input: string): unknown {
             const options = column.options ?? {};
             const wanted = splitMulti(column, raw).map((v) => v.toLowerCase());
             const keys = Object.entries(options)
-                .filter(([key, label]) => wanted.includes(key.toLowerCase()) || wanted.includes(label.toLowerCase()))
+                .filter(
+                    ([key, label]) =>
+                        wanted.includes(key.toLowerCase()) ||
+                        wanted.includes(label.toLowerCase()),
+                )
                 .map(([key]) => key);
             if (keys.length < wanted.length) {
                 return undefined;
             }
 
-            return keys.length === 0 ? null : keys.join(`${column.separator ?? ';'} `);
+            return keys.length === 0
+                ? null
+                : keys.join(`${column.separator ?? ';'} `);
         }
         case 'date': {
             if (raw === '') {
@@ -337,7 +343,9 @@ export function matches<T>(
             const hit =
                 column.type === 'multi'
                     ? (filter.values ?? []).some((v) =>
-                          v === '' ? isEmpty : splitMulti(column, value).includes(v),
+                          v === ''
+                              ? isEmpty
+                              : splitMulti(column, value).includes(v),
                       )
                     : (filter.values ?? []).includes(raw);
 

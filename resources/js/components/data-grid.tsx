@@ -916,7 +916,11 @@ export default function DataGrid<T extends GridRow>({
                     column.type !== 'date'
                 ) {
                     startEdit(active, ' ');
-                } else if (column && isEditable(column) && column.type === 'multi') {
+                } else if (
+                    column &&
+                    isEditable(column) &&
+                    column.type === 'multi'
+                ) {
                     startEdit(active);
                 }
 
@@ -956,7 +960,8 @@ export default function DataGrid<T extends GridRow>({
         let widest =
             measure(column.title, 600) + 64 + (pinned.includes(id) ? 18 : 0);
         if (column.type !== 'bool') {
-            const extra = column.type === 'select' || column.type === 'multi' ? 44 : 28;
+            const extra =
+                column.type === 'select' || column.type === 'multi' ? 44 : 28;
             for (const row of filtered.slice(0, 2000)) {
                 widest = Math.max(
                     widest,
@@ -2105,7 +2110,9 @@ function MultiEditor<T>({
             .filter((key) => chosen.includes(key))
             .join(`${sep} `);
     const toggle = (key: string) =>
-        setChosen((c) => (c.includes(key) ? c.filter((k) => k !== key) : [...c, key]));
+        setChosen((c) =>
+            c.includes(key) ? c.filter((k) => k !== key) : [...c, key],
+        );
 
     useEffect(() => {
         list.current?.focus();
@@ -2124,7 +2131,11 @@ function MultiEditor<T>({
             onCommit(value(), e.shiftKey ? 'left' : 'right');
         } else if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
             e.preventDefault();
-            setFocus((f) => (f + (e.key === 'ArrowDown' ? 1 : -1) + options.length) % Math.max(1, options.length));
+            setFocus(
+                (f) =>
+                    (f + (e.key === 'ArrowDown' ? 1 : -1) + options.length) %
+                    Math.max(1, options.length),
+            );
         } else if (e.key === ' ') {
             e.preventDefault();
             const key = options[focus]?.[0];
@@ -2142,7 +2153,13 @@ function MultiEditor<T>({
             >
                 {value()}
             </span>
-            <Popover anchor={anchor} open onClose={() => onCommit(value())} onEscape={onCancel} width={260}>
+            <Popover
+                anchor={anchor}
+                open
+                onClose={() => onCommit(value())}
+                onEscape={onCancel}
+                width={260}
+            >
                 <div
                     ref={list}
                     tabIndex={0}
@@ -2175,10 +2192,19 @@ function MultiEditor<T>({
                         ))}
                     </div>
                     <div className="flex justify-between gap-2 border-t pt-2">
-                        <Button type="button" size="sm" variant="ghost" onClick={onCancel}>
+                        <Button
+                            type="button"
+                            size="sm"
+                            variant="ghost"
+                            onClick={onCancel}
+                        >
                             Abbrechen
                         </Button>
-                        <Button type="button" size="sm" onClick={() => onCommit(value(), 'down')}>
+                        <Button
+                            type="button"
+                            size="sm"
+                            onClick={() => onCommit(value(), 'down')}
+                        >
                             Übernehmen
                         </Button>
                     </div>

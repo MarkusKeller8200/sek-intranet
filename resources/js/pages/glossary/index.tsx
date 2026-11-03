@@ -151,7 +151,9 @@ export default function GlossaryIndex({
             }),
             text('kategorien', {
                 type: 'multi',
-                options: Object.fromEntries(Object.keys(tagFarben.kategorien).map((k) => [k, k])),
+                options: Object.fromEntries(
+                    Object.keys(tagFarben.kategorien).map((k) => [k, k]),
+                ),
                 separator: ';',
                 render: (r) => (
                     <GlossaryTags
@@ -175,7 +177,9 @@ export default function GlossaryIndex({
             text('notiz', { hidden: true }),
             text('herkunft', {
                 type: 'multi',
-                options: Object.fromEntries(Object.keys(tagFarben.herkunft).map((k) => [k, k])),
+                options: Object.fromEntries(
+                    Object.keys(tagFarben.herkunft).map((k) => [k, k]),
+                ),
                 separator: ';',
                 render: (r) => (
                     <GlossaryTags
