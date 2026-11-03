@@ -15,7 +15,8 @@ laufend unter **Unveröffentlicht**. Ab 0.32.0 entsteht eine Version nur bei ein
   Austritt und Mutationen von Mitarbeitenden – mit Verantwortung, Kommunikation, Dokumenten und Bemerkungen, druckbar.
 - [manage-users] Einstellungen → Module: Rechte der Module je Rolle ein- und ausschalten.
 - [view-glossary] Glossar (Menü Wissen): Abkürzungen und Begriffe der Volksschule – offiziell und wie wir sie
-  verwenden, nach Kategorie gruppiert, mit Suche und Export als Excel, PDF oder Markdown.
+  verwenden, nach Kategorie gruppiert, mit Suche und Export als Excel, PDF (kompakt A4 hoch oder voll A4 quer)
+  oder Markdown.
 
 ### Neu
 
@@ -26,6 +27,13 @@ laufend unter **Unveröffentlicht**. Ab 0.32.0 entsteht eine Version nur bei ein
   Notiz); Excel-Export, Vorlage und Import mit Vorschau (neu, geändert, Fehler – nie löschen); Knopf «Doppelte
   Abkürzungen oder Begriffe»: zusammenführen (Kategorien werden vereinigt) oder als mehrdeutig belassen. Die
   Tabelle (GUI-Baustein) kennt neu «Neue Zeile», eigene Knöpfe und weitere Exporte (`docs/GUI-KOMPONENTEN.md`).
+- **Glossar: Standardspalten, Herkunft-Label, PDF (#63–#65):** standardmässig nur Abkürzung, Kategorie,
+  Bezeichnung offiziell, Kurzbeschreibung und Herkunft; Liste «Herkunft» mit Feld «Label», das in der Tabelle als
+  Tag erscheint (mehrere Herkünfte = mehrere Tags, Eingabe auch über das Label); PDF «kompakt» (A4 hoch, eine Zeile
+  je Eintrag, «…») und «voll» (A4 quer, alle Felder).
+- **Tabelle (GUI-Baustein):** kein unnötiger horizontaler Scrollbalken mehr (Griff der letzten Spalte ragte über den
+  Rand); «Spalten einpassen» verkleinert breite Spalten auf die sichtbare Breite, Platz für den vertikalen
+  Scrollbalken ist reserviert.
 - **Modul «Abläufe Verwaltung» (#44–#48):** Verzeichnis der Abläufe (Checklisten-Vorlagen) mit Suche, Bereich und
   Status (Entwurf, gültig, archiviert); Phasen und Schritte mit Verantwortung, Kommunikation an, Dokumenten aus
   «Dokumente & Links», Bemerkungen, Frist zum Stichtag, «gilt für» (Personengruppen) und Gegenstück (z. B. Login

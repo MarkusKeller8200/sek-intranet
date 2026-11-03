@@ -32,7 +32,10 @@ class JsonGlossaryRepository extends JsonRepository implements GlossaryRepositor
         $items = $this->store->all($this->listCollection($list));
         usort($items, fn (array $a, array $b): int => (int) ($a['position'] ?? 0) <=> (int) ($b['position'] ?? 0));
 
-        return $items;
+        // Feld «Label» (#64): ältere Einträge erhalten das Label des Startinhalts bzw. die Abkürzung
+        $seed = $list === 'herkunft' ? array_column(GlossarySeed::herkunft(), 4, 0) : [];
+
+        return array_map(fn (array $i): array => $i + ['label' => $seed[(string) $i['id']] ?? (string) ($i['kuerzel'] ?? '')], $items);
     }
 
     public function saveListItem(string $list, ?string $id, array $attributes): array
@@ -65,8 +68,8 @@ class JsonGlossaryRepository extends JsonRepository implements GlossaryRepositor
             }
         }
         if (! $this->store->exists(self::LISTS['herkunft'])) {
-            foreach (GlossarySeed::herkunft() as $i => [$id, $kuerzel, $name, $url]) {
-                $this->store->insert(self::LISTS['herkunft'], ['id' => $id, 'kuerzel' => $kuerzel, 'bezeichnung' => $name, 'beschreibung' => '', 'url' => $url, 'notiz' => '', 'position' => $i + 1]);
+            foreach (GlossarySeed::herkunft() as $i => [$id, $kuerzel, $name, $url, $label]) {
+                $this->store->insert(self::LISTS['herkunft'], ['id' => $id, 'kuerzel' => $kuerzel, 'label' => $label, 'bezeichnung' => $name, 'beschreibung' => '', 'url' => $url, 'notiz' => '', 'position' => $i + 1]);
             }
         }
         if (! $this->store->exists($this->collection)) {

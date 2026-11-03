@@ -959,14 +959,39 @@ export default function DataGrid<T extends GridRow>({
         return Math.round(Math.min(480, Math.max(70, widest)));
     };
 
-    const autoFit = (ids: string[] = visibleIds) =>
+    /**
+     * Breiten nach Inhalt; beim Einpassen aller Spalten werden breite Spalten so weit verkleinert,
+     * dass die Tabelle in die sichtbare Breite (ohne vertikalen Scrollbalken) passt (#63).
+     */
+    const autoFit = (ids: string[] = visibleIds) => {
+        const fitted = Object.fromEntries(ids.map((id) => [id, fitWidth(id)]));
+        const available =
+            (gridRef.current?.clientWidth ?? 0) -
+            (selectable ? SELECT_W : 0) -
+            (rowActions ? ACTIONS_W : 0);
+        if (ids === visibleIds && available > 0) {
+            const total = ids.reduce((sum, id) => sum + fitted[id], 0);
+            const floor = 200;
+            const excess = ids.reduce(
+                (sum, id) => sum + Math.max(0, fitted[id] - floor),
+                0,
+            );
+            if (total > available && excess > 0) {
+                const cut = Math.min(1, (total - available) / excess);
+                for (const id of ids) {
+                    if (fitted[id] > floor) {
+                        fitted[id] = Math.floor(
+                            fitted[id] - (fitted[id] - floor) * cut,
+                        );
+                    }
+                }
+            }
+        }
         setState((current) => ({
             ...current,
-            sizing: {
-                ...current.sizing,
-                ...Object.fromEntries(ids.map((id) => [id, fitWidth(id)])),
-            },
+            sizing: { ...current.sizing, ...fitted },
         }));
+    };
 
     useEffect(() => {
         if (!autoSized.current && rows.length > 0) {
@@ -1489,7 +1514,7 @@ export default function DataGrid<T extends GridRow>({
                 onCopy={onCopy}
                 onCut={onCut}
                 onPaste={onPaste}
-                className="grid-scroll relative max-h-[calc(100vh-15rem)] min-h-64 overflow-auto rounded-lg border focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
+                className="grid-scroll relative max-h-[calc(100vh-15rem)] min-h-64 overflow-auto rounded-lg border [scrollbar-gutter:stable] focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
             >
                 <table
                     className="border-separate border-spacing-0 text-sm"
@@ -1620,7 +1645,18 @@ export default function DataGrid<T extends GridRow>({
                                                 startResize(id, e)
                                             }
                                             onDoubleClick={() => autoFit([id])}
-                                            className="absolute top-0 -right-1 z-10 h-full w-2 cursor-col-resize select-none hover:bg-brand/50"
+                                            // letzte Spalte: Griff innerhalb, sonst entsteht ein unnötiger horizontaler Scrollbalken (#63)
+                                            className={cn(
+                                                'absolute top-0 z-10 h-full w-2 cursor-col-resize select-none hover:bg-brand/50',
+                                                !rowActions &&
+                                                    id ===
+                                                        visibleIds[
+                                                            visibleIds.length -
+                                                                1
+                                                        ]
+                                                    ? 'right-0'
+                                                    : '-right-1',
+                                            )}
                                         />
                                     </th>
                                 );

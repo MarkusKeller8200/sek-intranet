@@ -88,7 +88,19 @@ class GlossaryTest extends TestCase
         $this->post('/glossar/listen/herkunft', ['kuerzel' => 'gema', 'bezeichnung' => 'doppelt'])->assertSessionHasErrors('kuerzel');
         $this->delete('/glossar/listen/herkunft/vsa')->assertRedirect();
         $this->assertNotNull(collect($this->repo()->listItems('herkunft'))->firstWhere('id', 'vsa'), 'verwendet → nicht gelöscht');
-        $this->get('/glossar/listen?liste=herkunft')->assertInertia(fn (Assert $page) => $page->where('liste', 'herkunft')->where('eintraege.0.verwendet', 141));
+        $this->get('/glossar/listen?liste=herkunft')->assertInertia(fn (Assert $page) => $page->where('liste', 'herkunft')->where('eintraege.0.verwendet', 141)->where('eintraege.0.label', 'VSA'));
+    }
+
+    public function test_origin_label_as_tag_in_table_and_for_input(): void
+    {
+        $this->signInAs('verwaltung');
+        $this->put('/glossar/listen/herkunft/kanton', ['kuerzel' => 'KT', 'label' => 'ZH', 'bezeichnung' => 'Kanton Zürich'])->assertRedirect();
+        $vsa = $this->entry('VSA');
+        $this->postJson('/glossar/zellen', ['changes' => [['id' => $vsa['id'], 'field' => 'herkunft', 'value' => 'VSA; ZH']]])
+            ->assertOk()->assertJsonPath('rows.0.herkunft', 'VSA; ZH');
+        $this->assertSame(['vsa', 'kanton'], $this->repo()->find($vsa['id'])['herkunft']);
+        $this->get('/glossar')->assertInertia(fn (Assert $page) => $page
+            ->where('rows', fn ($rows): bool => collect($rows)->firstWhere('id', $vsa['id'])['herkunft'] === 'VSA; ZH'));
     }
 
     public function test_duplicates_merge_and_keep_apart(): void

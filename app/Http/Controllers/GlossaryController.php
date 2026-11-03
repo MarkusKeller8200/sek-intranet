@@ -431,6 +431,7 @@ class GlossaryController extends Controller
     {
         $data = $request->validate([
             'kuerzel' => ['required', 'string', 'max:20'],
+            'label' => ['nullable', 'string', 'max:30'],
             'bezeichnung' => ['required', 'string', 'max:200'],
             'beschreibung' => ['nullable', 'string', 'max:2000'],
             'url' => ['nullable', 'url:http,https', 'max:500'],
@@ -442,6 +443,6 @@ class GlossaryController extends Controller
             }
         }
 
-        return array_map(fn ($v): string => trim((string) $v), $data + ['beschreibung' => '', 'url' => '', 'notiz' => '']);
+        return array_map(fn ($v): string => trim((string) $v), $data + ['label' => '', 'beschreibung' => '', 'url' => '', 'notiz' => '']);
     }
 }

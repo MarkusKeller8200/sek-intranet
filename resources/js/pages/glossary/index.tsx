@@ -61,6 +61,24 @@ async function download(ids: string[] | null, vorlage = false) {
     URL.revokeObjectURL(url);
 }
 
+/** Mehrfachwerte («a; b») als Tags. */
+function Tags({ value }: { value: string }) {
+    const items = value
+        .split(';')
+        .map((s) => s.trim())
+        .filter(Boolean);
+
+    return (
+        <span className="flex min-w-0 gap-1 overflow-hidden" translate="no">
+            {items.map((t) => (
+                <Badge key={t} variant="secondary" className="shrink-0">
+                    {t}
+                </Badge>
+            ))}
+        </span>
+    );
+}
+
 /** Glossar als bearbeitbare Tabelle (GUI-Baustein «Tabellen»), ganze Breite. */
 export default function GlossaryIndex({
     rows,
@@ -106,22 +124,32 @@ export default function GlossaryIndex({
                     </Link>
                 ),
             }),
-            text('kategorien', { separator: ';' }),
-            text('abk_offiziell', { editable: rechte.official }),
+            text('kategorien', {
+                separator: ';',
+                render: (r) => <Tags value={r.kategorien} />,
+            }),
+            text('abk_offiziell', { editable: rechte.official, hidden: true }),
             text('aliase_offiziell', {
                 editable: rechte.official,
                 hidden: true,
             }),
-            text('abk_eigen'),
+            text('abk_eigen', { hidden: true }),
             text('alias_eigen', { hidden: true }),
             text('bez_offiziell', { editable: rechte.official }),
-            text('bez_eigen'),
+            text('bez_eigen', { hidden: true }),
             text('kurzbeschreibung'),
             text('beschreibung', { hidden: true }),
             text('url', { hidden: true }),
             text('notiz', { hidden: true }),
-            text('herkunft', { separator: ';' }),
-            text('genutzt_in', { separator: ';', hidden: true }),
+            text('herkunft', {
+                separator: ';',
+                render: (r) => <Tags value={r.herkunft} />,
+            }),
+            text('genutzt_in', {
+                separator: ';',
+                hidden: true,
+                render: (r) => <Tags value={r.genutzt_in} />,
+            }),
             {
                 id: 'status',
                 title: felder.status ?? 'Status',
@@ -129,6 +157,7 @@ export default function GlossaryIndex({
                 options: status,
                 editable: rechte.edit,
                 required: true,
+                hidden: true,
             },
             text('suchbegriffe', { hidden: true }),
             text('gueltig_ab', { hidden: true }),
@@ -215,7 +244,7 @@ export default function GlossaryIndex({
                 <DataGrid
                     data={rows}
                     columns={columns}
-                    storageKey={`intranet.grid.glossary.${rechte.edit ? 'edit' : 'view'}`}
+                    storageKey={`intranet.grid.glossary.v2.${rechte.edit ? 'edit' : 'view'}`}
                     gridId="glossary"
                     views={views}
                     canShareViews={rechte.edit}
@@ -225,8 +254,14 @@ export default function GlossaryIndex({
                     onExport={(_format, ids) => void download(ids)}
                     extraExports={[
                         {
-                            label: 'PDF',
-                            run: (ids) => printGlossary(ausgewaehlt(ids)),
+                            label: 'PDF kompakt (A4 hoch)',
+                            run: (ids) =>
+                                printGlossary(ausgewaehlt(ids), 'kompakt'),
+                        },
+                        {
+                            label: 'PDF voll (A4 quer)',
+                            run: (ids) =>
+                                printGlossary(ausgewaehlt(ids), 'voll', status),
                         },
                         {
                             label: 'Markdown',

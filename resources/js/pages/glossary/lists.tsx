@@ -22,6 +22,7 @@ import { Textarea } from '@/components/ui/textarea';
 type Eintrag = {
     id: string;
     kuerzel: string;
+    label?: string;
     bezeichnung: string;
     beschreibung: string;
     url: string;
@@ -32,6 +33,7 @@ type Eintrag = {
 const LISTEN = { kategorien: 'Kategorien', herkunft: 'Herkunft' } as const;
 const leer = {
     kuerzel: '',
+    label: '',
     bezeichnung: '',
     beschreibung: '',
     url: '',
@@ -46,6 +48,7 @@ export default function GlossaryLists({
     liste: keyof typeof LISTEN;
     eintraege: Eintrag[];
 }) {
+    const mitLabel = liste === 'herkunft';
     const [bearbeiten, setBearbeiten] = useState<Eintrag | null>(null);
     const form = useForm({ ...leer });
     const waehlen = (e: Eintrag | null) => {
@@ -55,6 +58,7 @@ export default function GlossaryLists({
             e
                 ? {
                       kuerzel: e.kuerzel,
+                      label: e.label ?? '',
                       bezeichnung: e.bezeichnung,
                       beschreibung: e.beschreibung,
                       url: e.url,
@@ -110,6 +114,7 @@ export default function GlossaryLists({
                             <TableHeader>
                                 <TableRow>
                                     <TableHead>Abkürzung</TableHead>
+                                    {mitLabel && <TableHead>Label</TableHead>}
                                     <TableHead>Bezeichnung</TableHead>
                                     <TableHead>Beschreibung</TableHead>
                                     <TableHead>URL</TableHead>
@@ -129,6 +134,15 @@ export default function GlossaryLists({
                                         >
                                             {e.kuerzel}
                                         </TableCell>
+                                        {mitLabel && (
+                                            <TableCell>
+                                                {e.label && (
+                                                    <Badge variant="secondary" translate="no">
+                                                        {e.label}
+                                                    </Badge>
+                                                )}
+                                            </TableCell>
+                                        )}
                                         <TableCell
                                             className="whitespace-normal"
                                             translate="no"
@@ -230,6 +244,25 @@ export default function GlossaryLists({
                                     }
                                 />
                             </FormField>
+                            {mitLabel && (
+                                <FormField
+                                    id="gl-l"
+                                    label="Label"
+                                    hint="Kurz, erscheint in der Tabelle als Tag (leer: Abkürzung)"
+                                    error={form.errors.label}
+                                    className="sm:col-span-2"
+                                >
+                                    <Input
+                                        id="gl-l"
+                                        maxLength={30}
+                                        className="max-w-60"
+                                        value={form.data.label}
+                                        onChange={(e) =>
+                                            form.setData('label', e.target.value)
+                                        }
+                                    />
+                                </FormField>
+                            )}
                             <FormField
                                 id="gl-d"
                                 label="Beschreibung"

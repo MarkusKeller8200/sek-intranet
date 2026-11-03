@@ -62,6 +62,20 @@ final class Glossary
     }
 
     /**
+     * @return array<string, string> id → kurzes Label (Tag in der Tabelle), sonst Abkürzung
+     */
+    public function labels(string $list): array
+    {
+        $labels = [];
+        foreach ($this->glossary->listItems($list) as $item) {
+            $label = trim((string) ($item['label'] ?? ''));
+            $labels[(string) $item['id']] = $label !== '' ? $label : (string) ($item['kuerzel'] ?? $item['id']);
+        }
+
+        return $labels;
+    }
+
+    /**
      * Bereiche des Intranets für «Intern genutzt in»: Hauptmenü und Module.
      *
      * @return array<string, string> Schlüssel → Bezeichnung
@@ -113,7 +127,7 @@ final class Glossary
     public function rows(): array
     {
         $entries = $this->glossary->all();
-        $lists = ['kategorien' => $this->listOptions('kategorien'), 'herkunft' => $this->listOptions('herkunft'), 'genutzt_in' => $this->areaOptions()];
+        $lists = ['kategorien' => $this->listOptions('kategorien'), 'herkunft' => $this->labels('herkunft'), 'genutzt_in' => $this->areaOptions()];
         $count = [];
         foreach ($entries as $e) {
             foreach (self::abbreviations($e) as $a) {
@@ -279,7 +293,7 @@ final class Glossary
             $found = null;
             foreach ($list as $row) {
                 $label = mb_strtolower(trim((string) ($row['kuerzel'] ?? '').' – '.(string) ($row['bezeichnung'] ?? ''), ' –'));
-                if (in_array($needle, [mb_strtolower((string) $row['id']), mb_strtolower((string) ($row['kuerzel'] ?? '')), mb_strtolower((string) ($row['bezeichnung'] ?? '')), $label], true)) {
+                if (in_array($needle, [mb_strtolower((string) $row['id']), mb_strtolower((string) ($row['kuerzel'] ?? '')), mb_strtolower(trim((string) ($row['label'] ?? ''))), mb_strtolower((string) ($row['bezeichnung'] ?? '')), $label], true)) {
                     $found = (string) $row['id'];
                     break;
                 }

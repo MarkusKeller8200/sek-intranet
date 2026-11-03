@@ -31,19 +31,19 @@ final class GlossarySeed
     }
 
     /**
-     * @return list<array{0: string, 1: string, 2: string, 3: string}> id, Abkürzung, Bezeichnung, URL
+     * @return list<array{0: string, 1: string, 2: string, 3: string, 4: string}> id, Abkürzung, Bezeichnung, URL, Label
      */
     public static function herkunft(): array
     {
         return [
-            ['vsa', 'VSA', 'Volksschulamt des Kantons Zürich', self::VSA_URL],
-            ['bi', 'BI', 'Bildungsdirektion des Kantons Zürich', ''],
-            ['kanton', 'KT', 'Kanton Zürich', 'https://www.zh.ch'],
-            ['bund', 'CH', 'Bund', 'https://www.admin.ch'],
-            ['dsb', 'DSB', 'Datenschutzbeauftragte des Kantons Zürich', ''],
-            ['gemeinde', 'GEM', 'Gemeindeamt', ''],
-            ['schule', 'SCH', 'Schule intern', ''],
-            ['gebraeuchlich', 'GEB', 'gebräuchlich (nicht offiziell)', ''],
+            ['vsa', 'VSA', 'Volksschulamt des Kantons Zürich', self::VSA_URL, 'VSA'],
+            ['bi', 'BI', 'Bildungsdirektion des Kantons Zürich', '', 'BI'],
+            ['kanton', 'KT', 'Kanton Zürich', 'https://www.zh.ch', 'Kanton'],
+            ['bund', 'CH', 'Bund', 'https://www.admin.ch', 'Bund'],
+            ['dsb', 'DSB', 'Datenschutzbeauftragte des Kantons Zürich', '', 'DSB'],
+            ['gemeinde', 'GEM', 'Gemeindeamt', '', 'Gemeinde'],
+            ['schule', 'SCH', 'Schule intern', '', 'Schule'],
+            ['gebraeuchlich', 'GEB', 'gebräuchlich (nicht offiziell)', '', 'gebräuchlich'],
         ];
     }
 
