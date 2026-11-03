@@ -14,9 +14,18 @@ laufend unter **Unveröffentlicht**. Ab 0.32.0 entsteht eine Version nur bei ein
 - [view-ablaeufe] Abläufe Verwaltung (Menü Verwaltung): Verzeichnis wichtiger Abläufe als Checklisten, zuerst Eintritt,
   Austritt und Mutationen von Mitarbeitenden – mit Verantwortung, Kommunikation, Dokumenten und Bemerkungen, druckbar.
 - [manage-users] Einstellungen → Module: Rechte der Module je Rolle ein- und ausschalten.
+- [view-glossary] Glossar (Menü Wissen): Abkürzungen und Begriffe der Volksschule – offiziell und wie wir sie
+  verwenden, nach Kategorie gruppiert, mit Suche und Export als Excel, PDF oder Markdown.
 
 ### Neu
 
+- **Glossar (#53–#59, #62):** Kern-Funktion mit 141 Einträgen aus der VSA-Liste (Herkunft VSA, Doppelte nicht
+  zusammengeführt); Tabelle über die ganze Breite mit Bearbeiten direkt in der Zelle, «Neue Zeile» und
+  Einzeldatensatz; offizielle Felder gesperrt (Recht `edit-glossary-official`); Kurzbeschreibung für den späteren
+  Tooltip, Notiz in Markdown; Listen «Kategorien» und «Herkunft» (Abkürzung, Bezeichnung, Beschreibung, URL,
+  Notiz); Excel-Export, Vorlage und Import mit Vorschau (neu, geändert, Fehler – nie löschen); Knopf «Doppelte
+  Abkürzungen oder Begriffe»: zusammenführen (Kategorien werden vereinigt) oder als mehrdeutig belassen. Die
+  Tabelle (GUI-Baustein) kennt neu «Neue Zeile», eigene Knöpfe und weitere Exporte (`docs/GUI-KOMPONENTEN.md`).
 - **Modul «Abläufe Verwaltung» (#44–#48):** Verzeichnis der Abläufe (Checklisten-Vorlagen) mit Suche, Bereich und
   Status (Entwurf, gültig, archiviert); Phasen und Schritte mit Verantwortung, Kommunikation an, Dokumenten aus
   «Dokumente & Links», Bemerkungen, Frist zum Stichtag, «gilt für» (Personengruppen) und Gegenstück (z. B. Login

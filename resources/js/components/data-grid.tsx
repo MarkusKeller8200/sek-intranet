@@ -13,6 +13,7 @@ import {
     MoveHorizontal,
     Pin,
     PinOff,
+    Plus,
     Redo2,
     RotateCcw,
     Search,
@@ -138,6 +139,9 @@ export default function DataGrid<T extends GridRow>({
     onExport,
     searchPlaceholder = 'Suchen …',
     emptyText = 'Keine Einträge gefunden.',
+    onAddRow,
+    toolbar,
+    extraExports = [],
 }: {
     data: T[];
     columns: GridColumn<T>[];
@@ -163,6 +167,15 @@ export default function DataGrid<T extends GridRow>({
     ) => void;
     searchPlaceholder?: string;
     emptyText?: string;
+    /** «Neue Zeile»: legt einen Datensatz an und liefert dessen ID (die Zeile wird danach zum Bearbeiten gewählt). */
+    onAddRow?: () => Promise<string | null>;
+    /** Zusätzliche Knöpfe in der Werkzeugleiste */
+    toolbar?: ReactNode;
+    /** Weitere Formate im Menü «Export» (z. B. PDF, Markdown) – erhalten die sichtbaren Zeilen und Spalten */
+    extraExports?: {
+        label: string;
+        run: (ids: string[], columns: string[]) => void;
+    }[];
 }) {
     const byId = useMemo(
         () => new Map(columns.map((c) => [c.id as string, c])),
@@ -326,8 +339,20 @@ export default function DataGrid<T extends GridRow>({
         const column = byId.get(grouping) as GridColumn<T>;
         const groups = new Map<string, T[]>();
         for (const row of sorted) {
-            const key = display(column, row[column.id]);
-            groups.set(key, [...(groups.get(key) ?? []), row]);
+            const shown = display(column, row[column.id]);
+            const keys = column.separator
+                ? [
+                      ...new Set(
+                          shown
+                              .split(column.separator)
+                              .map((k) => k.trim())
+                              .filter((k) => k !== ''),
+                      ),
+                  ]
+                : [shown];
+            for (const key of keys.length > 0 ? keys : ['']) {
+                groups.set(key, [...(groups.get(key) ?? []), row]);
+            }
         }
         const keys = [...groups.keys()].sort((a, b) =>
             a === '' ? 1 : b === '' ? -1 : a.localeCompare(b, 'de-CH'),
@@ -421,6 +446,31 @@ export default function DataGrid<T extends GridRow>({
     }, [active, navRows.length, visibleCols.length]);
 
     const focusGrid = () => gridRef.current?.focus({ preventScroll: true });
+
+    // Neue Zeile: sobald sie in den Daten ist, erste bearbeitbare Zelle wählen
+    const [pendingRow, setPendingRow] = useState<string | null>(null);
+    useEffect(() => {
+        if (pendingRow === null) {
+            return;
+        }
+        const index = navRows.findIndex((r) => r.id === pendingRow);
+        if (index < 0) {
+            return;
+        }
+        const col = Math.max(
+            0,
+            visibleCols.findIndex((c) => c.editable === true),
+        );
+        setActive({ row: index, col });
+        setAnchor({ row: index, col });
+        setPendingRow(null);
+        requestAnimationFrame(() => {
+            gridRef.current
+                ?.querySelector(`[data-cell="${index}:${col}"]`)
+                ?.scrollIntoView({ block: 'center', inline: 'nearest' });
+            gridRef.current?.focus({ preventScroll: true });
+        });
+    }, [pendingRow, navRows, visibleCols]);
 
     const scrollToCell = (cell: Cell) => {
         requestAnimationFrame(() => {
@@ -1258,6 +1308,19 @@ export default function DataGrid<T extends GridRow>({
                                     sichtbare Zeilen ({sorted.length})
                                 </DropdownMenuItem>
                             ))}
+                            {extraExports.map((x) => (
+                                <DropdownMenuItem
+                                    key={x.label}
+                                    onSelect={() =>
+                                        x.run(
+                                            sorted.map((r) => r.id),
+                                            visibleIds,
+                                        )
+                                    }
+                                >
+                                    {`${x.label} – sichtbare Zeilen (${sorted.length})`}
+                                </DropdownMenuItem>
+                            ))}
                             {selectedRows.length > 0 &&
                                 (['xlsx', 'csv'] as const).map((format) => (
                                     <DropdownMenuItem
@@ -1281,6 +1344,24 @@ export default function DataGrid<T extends GridRow>({
                         </DropdownMenuContent>
                     </DropdownMenu>
                 )}
+
+                {canEdit && onAddRow && (
+                    <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() =>
+                            void onAddRow().then((id) => {
+                                if (id) {
+                                    patch({ search: '', filters: {} });
+                                    setPendingRow(id);
+                                }
+                            })
+                        }
+                    >
+                        <Plus /> Neue Zeile
+                    </Button>
+                )}
+                {toolbar}
 
                 {canEdit && onSaveCells && (
                     <div className="flex items-center">

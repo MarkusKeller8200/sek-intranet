@@ -275,6 +275,8 @@ Bearbeitbare Tabelle (Grundlage: Personen) mit Suche, Filtern, Sortierung, Spalt
 - Bearbeitbare Tabelle wie in Excel
 - Filter je Spalte, Sortierung, Spalten, Ansichten
 - Einfache Tabelle für kurze Listen
+- Optional: «Neue Zeile» (`onAddRow`), eigene Knöpfe in der Werkzeugleiste (`toolbar`), weitere Exporte
+  (`extraExports`, z. B. PDF/Markdown im Glossar), Gruppieren nach Mehrfachwerten (`separator` je Spalte)
 
 Code: `@/components/data-grid`, `@/components/ui/table`
 

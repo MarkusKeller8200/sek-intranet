@@ -7,10 +7,12 @@ use App\Auth\RepositoryUserProvider;
 use App\Data\Contracts\AnnouncementRepository;
 use App\Data\Contracts\DocumentRepository;
 use App\Data\Contracts\EventRepository;
+use App\Data\Contracts\GlossaryRepository;
 use App\Data\Contracts\UserRepository;
 use App\Data\Json\JsonAnnouncementRepository;
 use App\Data\Json\JsonDocumentRepository;
 use App\Data\Json\JsonEventRepository;
+use App\Data\Json\JsonGlossaryRepository;
 use App\Data\Json\JsonUserRepository;
 use App\Data\Store\JsonStore;
 use App\Plugins\PluginManager;
@@ -33,6 +35,7 @@ class IntranetServiceProvider extends ServiceProvider
             AnnouncementRepository::class => JsonAnnouncementRepository::class,
             EventRepository::class => JsonEventRepository::class,
             DocumentRepository::class => JsonDocumentRepository::class,
+            GlossaryRepository::class => JsonGlossaryRepository::class,
         ],
         // 'database' => [ UserRepository::class => DatabaseUserRepository::class, ... ],
     ];

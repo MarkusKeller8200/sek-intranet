@@ -13,6 +13,7 @@ use App\Http\Controllers\DeviceHandoutController;
 use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\EmbedController;
 use App\Http\Controllers\EventController;
+use App\Http\Controllers\GlossaryController;
 use App\Http\Controllers\GridViewController;
 use App\Http\Controllers\GuiPrototypeController;
 use App\Http\Controllers\McpConceptController;
@@ -165,6 +166,30 @@ Route::middleware('auth')->group(function () {
             Route::post('plugins/{id}/api', [PluginController::class, 'api'])->name('plugins.api');
             Route::post('plugins/{id}/zugriff', [PluginController::class, 'access'])->name('plugins.access');
         });
+    });
+    // Glossar (docs/KONZEPT-GLOSSAR.md)
+    Route::middleware('can:edit-glossary')->group(function () {
+        Route::get('glossar/neu', [GlossaryController::class, 'create'])->name('glossary.create');
+        Route::post('glossar', [GlossaryController::class, 'store'])->name('glossary.store');
+        Route::post('glossar/zeile', [GlossaryController::class, 'newRow'])->middleware('throttle:60,1')->name('glossary.row');
+        Route::post('glossar/zellen', [GlossaryController::class, 'cells'])->middleware('throttle:120,1')->name('glossary.cells');
+        Route::get('glossar/listen', [GlossaryController::class, 'lists'])->name('glossary.lists');
+        Route::post('glossar/listen/{list}', [GlossaryController::class, 'storeListItem'])->name('glossary.lists.store');
+        Route::put('glossar/listen/{list}/{id}', [GlossaryController::class, 'updateListItem'])->name('glossary.lists.update');
+        Route::delete('glossar/listen/{list}/{id}', [GlossaryController::class, 'destroyListItem'])->name('glossary.lists.destroy');
+        Route::get('glossar/doppelte', [GlossaryController::class, 'duplicates'])->name('glossary.duplicates');
+        Route::post('glossar/doppelte/zusammenfuehren', [GlossaryController::class, 'merge'])->name('glossary.merge');
+        Route::post('glossar/doppelte/belassen', [GlossaryController::class, 'keepApart'])->name('glossary.keep');
+        Route::post('glossar/import', [GlossaryController::class, 'importPreview'])->middleware('throttle:20,1')->name('glossary.import');
+        Route::post('glossar/import/{token}', [GlossaryController::class, 'importApply'])->name('glossary.import.apply');
+        Route::get('glossar/{id}/bearbeiten', [GlossaryController::class, 'edit'])->name('glossary.edit');
+        Route::put('glossar/{id}', [GlossaryController::class, 'update'])->name('glossary.update');
+        Route::delete('glossar/{id}', [GlossaryController::class, 'destroy'])->name('glossary.destroy');
+    });
+    Route::middleware('can:view-glossary')->group(function () {
+        Route::get('glossar', [GlossaryController::class, 'index'])->name('glossary.index');
+        Route::post('glossar/export', [GlossaryController::class, 'export'])->middleware('throttle:30,1')->name('glossary.export');
+        Route::get('glossar/{id}', [GlossaryController::class, 'show'])->name('glossary.show');
     });
     Route::get('versionen', VersionController::class)->name('versions');
     Route::get('version.json', [VersionController::class, 'current'])->name('versions.current');

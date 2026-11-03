@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Gate;
  */
 class GridViewController extends Controller
 {
-    private const GRIDS = ['people', 'students'];
+    private const GRIDS = ['people', 'students', 'glossary'];
 
     private const MAX_STATE_BYTES = 20000;
 

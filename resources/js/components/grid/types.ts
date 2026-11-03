@@ -14,6 +14,8 @@ export type GridColumn<T> = {
     render?: (row: T) => ReactNode;
     hidden?: boolean;
     className?: string;
+    /** Mehrfachwerte als Text (z. B. «A; B»): beim Gruppieren erscheint die Zeile in jeder Gruppe. */
+    separator?: string;
 };
 
 export type GridRow = { id: string };
