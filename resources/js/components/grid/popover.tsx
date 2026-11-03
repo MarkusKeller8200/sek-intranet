@@ -1,4 +1,10 @@
-import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
+import {
+    useCallback,
+    useEffect,
+    useLayoutEffect,
+    useRef,
+    useState,
+} from 'react';
 import type { ReactNode, RefObject } from 'react';
 import { createPortal } from 'react-dom';
 import { cn } from '@/lib/utils';
@@ -34,7 +40,11 @@ export default function Popover({
     resizable?: boolean;
 }) {
     const panel = useRef<HTMLDivElement>(null);
-    const [position, setPosition] = useState<{ top: number; left: number; maxHeight?: number }>({ top: -9999, left: 0 });
+    const [position, setPosition] = useState<{
+        top: number;
+        left: number;
+        maxHeight?: number;
+    }>({ top: -9999, left: 0 });
 
     const place = useCallback(() => {
         if (!anchor.current || !panel.current) {
@@ -43,14 +53,25 @@ export default function Popover({
         const rect = anchor.current.getBoundingClientRect();
         const h = panel.current.offsetHeight;
         const w = panel.current.offsetWidth;
-        const left = Math.min(Math.max(MARGIN, rect.left), window.innerWidth - w - MARGIN);
+        const left = Math.min(
+            Math.max(MARGIN, rect.left),
+            window.innerWidth - w - MARGIN,
+        );
         const below = window.innerHeight - rect.bottom - GAP - MARGIN;
         const above = rect.top - GAP - MARGIN;
         if (h <= below || below >= above) {
-            setPosition({ top: rect.bottom + GAP, left, maxHeight: h <= below ? undefined : below });
+            setPosition({
+                top: rect.bottom + GAP,
+                left,
+                maxHeight: h <= below ? undefined : below,
+            });
         } else {
             const fit = Math.min(h, above);
-            setPosition({ top: rect.top - GAP - fit, left, maxHeight: h <= above ? undefined : above });
+            setPosition({
+                top: rect.top - GAP - fit,
+                left,
+                maxHeight: h <= above ? undefined : above,
+            });
         }
     }, [anchor]);
 
@@ -77,7 +98,10 @@ export default function Popover({
         }
         const onDown = (e: MouseEvent) => {
             const target = e.target as Node;
-            if (!panel.current?.contains(target) && !anchor.current?.contains(target)) {
+            if (
+                !panel.current?.contains(target) &&
+                !anchor.current?.contains(target)
+            ) {
                 onClose();
             }
         };
@@ -107,7 +131,9 @@ export default function Popover({
             role="dialog"
             className={cn(
                 'fixed z-50 rounded-md border bg-popover p-3 text-sm text-popover-foreground shadow-md',
-                resizable ? 'flex resize flex-col overflow-hidden' : 'overflow-y-auto',
+                resizable
+                    ? 'flex resize flex-col overflow-hidden'
+                    : 'overflow-y-auto',
             )}
             style={{
                 top: position.top,

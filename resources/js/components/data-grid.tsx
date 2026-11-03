@@ -1607,8 +1607,14 @@ export default function DataGrid<T extends GridRow>({
                                             }
                                         }}
                                         onDragLeave={(e) => {
-                                            if (!e.currentTarget.contains(e.relatedTarget as Node | null)) {
-                                                setDropTarget((t) => (t === id ? null : t));
+                                            if (
+                                                !e.currentTarget.contains(
+                                                    e.relatedTarget as Node | null,
+                                                )
+                                            ) {
+                                                setDropTarget((t) =>
+                                                    t === id ? null : t,
+                                                );
                                             }
                                         }}
                                         onDrop={(e) => {
@@ -1626,7 +1632,9 @@ export default function DataGrid<T extends GridRow>({
                                             id === lastPinned &&
                                                 'border-r-2 border-r-brand/40',
                                             dragging === id && 'opacity-40',
-                                            dropTarget === id && dragging && 'bg-brand/10',
+                                            dropTarget === id &&
+                                                dragging &&
+                                                'bg-brand/10',
                                         )}
                                     >
                                         {dropTarget === id && dragging && (
@@ -1634,7 +1642,10 @@ export default function DataGrid<T extends GridRow>({
                                                 aria-hidden
                                                 className={cn(
                                                     'pointer-events-none absolute inset-y-0 z-20 w-1 rounded-full bg-brand',
-                                                    order.indexOf(dragging) < order.indexOf(id) ? '-right-0.5' : '-left-0.5',
+                                                    order.indexOf(dragging) <
+                                                        order.indexOf(id)
+                                                        ? '-right-0.5'
+                                                        : '-left-0.5',
                                                 )}
                                             />
                                         )}

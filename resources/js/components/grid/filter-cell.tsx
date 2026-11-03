@@ -91,7 +91,13 @@ export default function FilterCell<T>({
                 resizable
                 height={
                     draft.op === 'in' || draft.op === 'notIn'
-                        ? Math.min(420, 170 + (Object.keys(column.options ?? {}).length + 1) * 30)
+                        ? Math.min(
+                              420,
+                              170 +
+                                  (Object.keys(column.options ?? {}).length +
+                                      1) *
+                                      30,
+                          )
                         : undefined
                 }
             >
