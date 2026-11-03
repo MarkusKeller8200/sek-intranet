@@ -136,9 +136,7 @@ export const PDF_DEFAULT: PdfOptions = {
 type Labels = Record<string, string>;
 
 const byAbbreviation = (list: GlossaryRow[]) =>
-    [...list].sort((a, b) =>
-        sortKey(a).localeCompare(sortKey(b), 'de-CH'),
-    );
+    [...list].sort((a, b) => sortKey(a).localeCompare(sortKey(b), 'de-CH'));
 
 /** Gliedern nach Kategorie, Herkunft oder Status (Mehrfachwerte: in jeder ihrer Gruppen). */
 function groupRows(
@@ -196,13 +194,15 @@ function columns(o: PdfOptions, status: Labels): Column[] {
         title: 'Abkürzung',
         width: full ? 9 : 12,
         cell: (r) =>
-            abkHtml(r) + `${sup(r)}${full ? official(r.abk_eigen, r.abk_offiziell) + (aliases(r) ? `<br><small>Alias: ${esc(aliases(r))}</small>` : '') : ''}`,
+            abkHtml(r) +
+            `${sup(r)}${full ? official(r.abk_eigen, r.abk_offiziell) + (aliases(r) ? `<br><small>Alias: ${esc(aliases(r))}</small>` : '') : ''}`,
     });
     const bez = (full: boolean, url = false): Column => ({
         title: 'Bezeichnung',
         width: full ? 20 : 40,
         cell: (r) =>
-            bezHtml(r) + `${full ? official(r.bez_eigen, r.bez_offiziell) : ''}${url && r.url ? `<br><small class="url">${esc(r.url)}</small>` : ''}`,
+            bezHtml(r) +
+            `${full ? official(r.bez_eigen, r.bez_offiziell) : ''}${url && r.url ? `<br><small class="url">${esc(r.url)}</small>` : ''}`,
     });
     const kurz: Column = {
         title: 'Kurzbeschreibung',

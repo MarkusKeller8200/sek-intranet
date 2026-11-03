@@ -122,7 +122,13 @@ export default function GlossaryIndex({
                         href={`/glossar/${r.id}`}
                         className="inline-flex items-center gap-1 font-semibold text-primary underline-offset-2 hover:underline"
                     >
-                        <span translate="no" className={r.begriff ? 'italic' : undefined} title={r.begriff ? 'Begriff ohne Abkürzung' : undefined}>
+                        <span
+                            translate="no"
+                            className={r.begriff ? 'italic' : undefined}
+                            title={
+                                r.begriff ? 'Begriff ohne Abkürzung' : undefined
+                            }
+                        >
                             {r.anzeige || '(neu)'}
                             {r.mehrdeutig && <sup>{r.bedeutungen}</sup>}
                         </span>
