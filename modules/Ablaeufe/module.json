@@ -1,0 +1,78 @@
+{
+    "key": "ablaeufe",
+    "name": "Abläufe Verwaltung",
+    "version": "0.1.0",
+    "core": ">=0.33.0",
+    "description": "Verzeichnis wichtiger Abläufe als Checklisten-Vorlagen: Phasen, Schritte mit Verantwortung, Kommunikation, Dokumenten und Bemerkungen, Personengruppen. Beginn: Ein- und Austritt sowie Mutationen von Mitarbeitenden.",
+    "aktiv": true,
+    "datenklasse": "intern",
+    "db_schema": "wf",
+    "provider": "Modules\\Ablaeufe\\ModuleServiceProvider",
+    "rechte": {
+        "view-ablaeufe": {
+            "label": "Abläufe ansehen",
+            "roles": ["admin", "schulleitung", "verwaltung"]
+        },
+        "edit-ablaeufe": {
+            "label": "Abläufe und Personengruppen bearbeiten",
+            "roles": ["admin", "schulleitung", "verwaltung"]
+        }
+    },
+    "menu": {
+        "gruppe": "verwaltung",
+        "eintraege": {
+            "ablaeufe-verwaltung": {
+                "title": "Abläufe Verwaltung",
+                "icon": "Workflow",
+                "href": "/ablaeufe",
+                "can": "view-ablaeufe"
+            }
+        }
+    },
+    "sammlungen": {
+        "wf_ablaeufe": {
+            "label": "Abläufe: Vorlagen",
+            "description": "Ein Ablauf (Checklisten-Vorlage) mit Phasen und Schritten. Schritte als Liste: Phase, Text, Verantwortung, Kommunikation an, Dokumente, Bemerkung, Frist, gilt für, Gegenstück.",
+            "fields": {
+                "titel": { "type": "string", "required": true, "label": "Titel" },
+                "bereich": {
+                    "type": "enum",
+                    "values": {
+                        "personal": "Personal",
+                        "schueler": "Schülerinnen und Schüler",
+                        "schulbetrieb": "Schulbetrieb",
+                        "anderes": "Anderes"
+                    },
+                    "required": true,
+                    "label": "Bereich"
+                },
+                "beschreibung": { "type": "text", "required": false, "label": "Beschreibung" },
+                "verantwortlich": { "type": "string", "required": false, "label": "Verantwortlich für den Ablauf" },
+                "status": {
+                    "type": "enum",
+                    "values": { "entwurf": "Entwurf", "gueltig": "Gültig", "archiviert": "Archiviert" },
+                    "required": true,
+                    "label": "Status"
+                },
+                "gueltig_ab": { "type": "date", "required": false, "label": "Gültig ab" },
+                "phasen": { "type": "json", "required": true, "label": "Phasen (Schlüssel, Titel)" },
+                "schritte": { "type": "json", "required": true, "label": "Schritte" },
+                "geaendert_von": { "type": "ref", "references": "users", "required": false, "label": "Zuletzt geändert von" }
+            }
+        },
+        "wf_gruppen": {
+            "label": "Abläufe: Personengruppen",
+            "description": "Gruppen für «gilt für» bei Schritten (z. B. Lehrpersonen, Vikare, Schulsozialarbeit), mit Bemerkung.",
+            "fields": {
+                "name": { "type": "string", "required": true, "label": "Name" },
+                "bemerkung": { "type": "text", "required": false, "label": "Bemerkung" },
+                "position": { "type": "int", "required": true, "label": "Reihenfolge" }
+            }
+        }
+    },
+    "ereignisse": {
+        "sendet": [],
+        "empfaengt": []
+    },
+    "plugins": []
+}

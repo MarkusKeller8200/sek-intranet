@@ -9,12 +9,29 @@ laufend unter **Unveröffentlicht**. Ab 0.32.0 entsteht eine Version nur bei ein
 
 ## [Unveröffentlicht]
 
+### Für Mitarbeitende
+
+- [view-ablaeufe] Abläufe Verwaltung (Menü Verwaltung): Verzeichnis wichtiger Abläufe als Checklisten, zuerst Eintritt,
+  Austritt und Mutationen von Mitarbeitenden – mit Verantwortung, Kommunikation, Dokumenten und Bemerkungen, druckbar.
+- [manage-users] Einstellungen → Module: Rechte der Module je Rolle ein- und ausschalten.
+
 ### Neu
 
+- **Modul «Abläufe Verwaltung» (#44–#48):** Verzeichnis der Abläufe (Checklisten-Vorlagen) mit Suche, Bereich und
+  Status (Entwurf, gültig, archiviert); Phasen und Schritte mit Verantwortung, Kommunikation an, Dokumenten aus
+  «Dokumente & Links», Bemerkungen, Frist zum Stichtag, «gilt für» (Personengruppen) und Gegenstück (z. B. Login
+  erstellen ↔ sperren); Reihenfolge per Ziehen oder Pfeilen; Druck/PDF. Personengruppen mit Bemerkungen. Startinhalt:
+  Ablauf «Mitarbeitende: Eintritt, Austritt, Mutation» aus der Excel-Vorlage (Entwurf).
+- **Rechte der Module je Rolle (#45):** Unter Einstellungen → Module legt die Administration fest, welche Rollen ein
+  Modulrecht haben (z. B. «Abläufe ansehen»); Vorgabe aus `module.json`, Übersteuerung in `module_rights`.
 - **Neuerungen als Mitteilung (#26):** Bei einem freigegebenen Release erscheinen die Punkte «Für Mitarbeitende» aus
   dem CHANGELOG einmal als Mitteilung «Neu im Intranet: Version X.Y» (Kategorie neu «Neuerungen», Autor «Intranet»).
   Punkte mit Recht (`- [recht] …`) sehen nur Personen mit diesem Recht. Gelöschte Mitteilungen kommen nicht wieder;
   bearbeitete gelten für alle. Ein/aus für die Administration auf der Seite «Versionen».
+
+### Geändert
+
+- **Menü Verwaltung:** «Workflows» (SharePoint-Seite «Leitung und Verwaltung») ist durch «Abläufe Verwaltung» ersetzt.
 
 ## [0.33.0] – 2026-11-02
 

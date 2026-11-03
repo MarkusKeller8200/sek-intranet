@@ -1,10 +1,12 @@
 import { Head, router } from '@inertiajs/react';
+import { useState } from 'react';
 import { AlertTriangle, Boxes, ShieldAlert } from 'lucide-react';
 import type { ReactNode } from 'react';
 import EmptyState from '@/components/empty-state';
 import PageHeader from '@/components/page-header';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import {
     Card,
     CardContent,
@@ -12,6 +14,7 @@ import {
     CardHeader,
     CardTitle,
 } from '@/components/ui/card';
+import { Checkbox } from '@/components/ui/checkbox';
 import { CodeBlock } from '@/components/ui/code-block';
 import { Switch } from '@/components/ui/switch';
 
@@ -24,7 +27,10 @@ type ModuleInfo = {
     description: string;
     data_class: string;
     db_schema: string;
-    rights: Record<string, { label: string; roles: string[] }>;
+    rights: Record<
+        string,
+        { label: string; roles: string[]; default_roles: string[] }
+    >;
     menu_group: string;
     menu: string[];
     collections: string[];
@@ -42,6 +48,82 @@ const DATA_CLASSES: Record<string, string> = {
     besonders: 'besonders schützenswert',
 };
 
+/** Rollen eines Modulrechts ein- und ausschalten (z. B. «Abläufe ansehen» je Rolle). */
+function RightRoles({
+    moduleKey,
+    ability,
+    label,
+    roles,
+    defaultRoles,
+    allRoles,
+}: {
+    moduleKey: string;
+    ability: string;
+    label: string;
+    roles: string[];
+    defaultRoles: string[];
+    allRoles: Record<string, string>;
+}) {
+    const [chosen, setChosen] = useState(roles);
+    const changed = [...chosen].sort().join() !== [...roles].sort().join();
+    const isDefault = [...roles].sort().join() === [...defaultRoles].sort().join();
+    const save = (next: string[]) =>
+        router.post(
+            `/einstellungen/module/${moduleKey}/rechte/${ability}`,
+            { roles: next },
+            { preserveScroll: true },
+        );
+
+    return (
+        <fieldset className="grid gap-1.5 rounded-md border p-2">
+            <legend className="px-1 text-sm">
+                <code translate="no">{ability}</code>
+                {` – ${label}`}
+                {!isDefault && (
+                    <Badge variant="secondary" className="ml-2">
+                        angepasst
+                    </Badge>
+                )}
+            </legend>
+            <div className="flex flex-wrap gap-x-4 gap-y-1.5">
+                {Object.entries(allRoles).map(([role, roleLabel]) => (
+                    <label key={role} className="flex items-center gap-1.5 text-sm">
+                        <Checkbox
+                            checked={chosen.includes(role)}
+                            onCheckedChange={(on: boolean | 'indeterminate') =>
+                                setChosen(
+                                    on === true
+                                        ? [...chosen, role]
+                                        : chosen.filter((r) => r !== role),
+                                )
+                            }
+                        />
+                        {roleLabel}
+                    </label>
+                ))}
+            </div>
+            <div className="flex flex-wrap gap-2">
+                <Button type="button" size="sm" disabled={!changed} onClick={() => save(chosen)}>
+                    Rollen speichern
+                </Button>
+                {!isDefault && (
+                    <Button
+                        type="button"
+                        size="sm"
+                        variant="outline"
+                        onClick={() => {
+                            setChosen(defaultRoles);
+                            save(defaultRoles);
+                        }}
+                    >
+                        Vorgabe des Moduls
+                    </Button>
+                )}
+            </div>
+        </fieldset>
+    );
+}
+
 function Row({ label, children }: { label: string; children: ReactNode }) {
     return (
         <div className="grid gap-1 sm:grid-cols-[10rem_1fr]">
@@ -57,11 +139,13 @@ export default function ModuleManagement({
     errors,
     violations,
     path,
+    roles,
 }: {
     modules: ModuleInfo[];
     errors: string[];
     violations: string[];
     path: string;
+    roles: Record<string, string>;
 }) {
     const toggle = (key: string, enabled: boolean) =>
         router.post(
@@ -168,19 +252,22 @@ export default function ModuleManagement({
                                     <Row label="Speicher">
                                         <code translate="no">{`${m.store} · Schema ${m.db_schema}`}</code>
                                     </Row>
-                                    <Row label="Rechte">
-                                        <ul className="grid gap-0.5">
+                                    <Row label="Rechte je Rolle">
+                                        <div className="grid gap-2">
                                             {Object.entries(m.rights).map(
                                                 ([ability, r]) => (
-                                                    <li key={ability}>
-                                                        <code translate="no">
-                                                            {ability}
-                                                        </code>
-                                                        {` – ${r.label} (${r.roles.join(', ')})`}
-                                                    </li>
+                                                    <RightRoles
+                                                        key={`${ability}:${r.roles.join()}`}
+                                                        moduleKey={m.key}
+                                                        ability={ability}
+                                                        label={r.label}
+                                                        roles={r.roles}
+                                                        defaultRoles={r.default_roles}
+                                                        allRoles={roles}
+                                                    />
                                                 ),
                                             )}
-                                        </ul>
+                                        </div>
                                     </Row>
                                     <Row label="Menü">
                                         <span translate="no">{`${m.menu_group}: ${m.menu.join(', ') || '–'}`}</span>

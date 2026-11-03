@@ -700,13 +700,6 @@ return [
             'color' => 'emerald',
             'icon' => 'Landmark',
             'items' => [
-                'workflows' => [
-                    'title' => 'Workflows',
-                    'can' => 'use-verwaltung',
-                    'icon' => 'Workflow',
-                    'description' => 'SharePoint-Seite «Leitung und Verwaltung» mit Abläufen und Formularen.',
-                    'embed' => ['url' => 'https://sekbuelach.sharepoint.com/sites/LeitungundVerwaltung', 'open' => 'both'],
-                ],
                 'tickets' => [
                     'title' => 'Tickets',
                     'icon' => 'Ticket',
@@ -1168,6 +1161,15 @@ return [
             'description' => 'Ein Datensatz je Modul (id = Schlüssel aus module.json). Ohne Datensatz gilt «aktiv» aus dem Manifest.',
             'fields' => [
                 'enabled' => ['type' => 'bool', 'required' => true, 'label' => 'Eingeschaltet'],
+                'changed_by' => ['type' => 'ref', 'references' => 'users', 'required' => false, 'label' => 'Geändert von'],
+            ],
+        ],
+        'module_rights' => [
+            'label' => 'System: Rechte der Module je Rolle',
+            'description' => 'Übersteuerte Rollen eines Modulrechts (id = Recht), gesetzt unter Einstellungen → Module. Ohne Datensatz gelten die Rollen aus module.json.',
+            'fields' => [
+                'module' => ['type' => 'string', 'required' => true, 'label' => 'Modul'],
+                'roles' => ['type' => 'json', 'required' => true, 'label' => 'Rollen'],
                 'changed_by' => ['type' => 'ref', 'references' => 'users', 'required' => false, 'label' => 'Geändert von'],
             ],
         ],

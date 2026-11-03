@@ -3,6 +3,7 @@
 namespace App\Modules;
 
 use App\Data\Store\JsonStore;
+use App\Support\Roles;
 use InvalidArgumentException;
 
 /**
@@ -13,6 +14,9 @@ use InvalidArgumentException;
 final class ModuleRegistry
 {
     public const STATE_COLLECTION = 'module_states';
+
+    /** Übersteuerte Rollen je Modulrecht (id = Recht), gesetzt unter Einstellungen → Module. */
+    public const RIGHTS_COLLECTION = 'module_rights';
 
     /** @var array<string, ModuleManifest>|null */
     private ?array $manifests = null;
@@ -145,6 +149,55 @@ final class ModuleRegistry
         }
     }
 
+    /**
+     * Rollen eines Modulrechts: übersteuert unter Einstellungen → Module, sonst wie im Manifest.
+     *
+     * @param  list<string>  $default
+     * @return list<string>
+     */
+    public function rightRoles(string $ability, array $default): array
+    {
+        $record = $this->core->find(self::RIGHTS_COLLECTION, $ability);
+        if ($record === null || ! is_array($record['roles'] ?? null)) {
+            return $default;
+        }
+
+        return array_values(array_intersect(array_map('strval', $record['roles']), array_map('strval', array_keys(Roles::all()))));
+    }
+
+    /**
+     * Rollen eines Modulrechts festlegen. Gleich wie im Manifest = Übersteuerung entfernen.
+     *
+     * @param  list<string>  $roles
+     */
+    public function setRightRoles(string $key, string $ability, array $roles, ?string $by): void
+    {
+        $manifest = $this->find($key) ?? throw new InvalidArgumentException("Modul «{$key}» gibt es nicht.");
+        if (! isset($manifest->rights[$ability])) {
+            throw new InvalidArgumentException("Recht «{$ability}» gehört nicht zum Modul {$manifest->name}.");
+        }
+        $known = array_map('strval', array_keys(Roles::all()));
+        $roles = array_values(array_unique(array_filter($roles, fn (string $r): bool => in_array($r, $known, true))));
+        $default = $manifest->rights[$ability]['roles'];
+        $exists = $this->core->find(self::RIGHTS_COLLECTION, $ability) !== null;
+
+        $same = $roles;
+        sort($same);
+        $sortedDefault = $default;
+        sort($sortedDefault);
+        if ($same === $sortedDefault) {
+            if ($exists) {
+                $this->core->delete(self::RIGHTS_COLLECTION, $ability);
+            }
+
+            return;
+        }
+        $attributes = ['module' => $key, 'roles' => $roles, 'changed_by' => $by];
+        $exists
+            ? $this->core->update(self::RIGHTS_COLLECTION, $ability, $attributes)
+            : $this->core->insert(self::RIGHTS_COLLECTION, ['id' => $ability] + $attributes);
+    }
+
     /** Eigener Datenspeicher des Moduls (<data_path>/modules/<key>). */
     public function store(string $key): JsonStore
     {
@@ -209,7 +262,7 @@ final class ModuleRegistry
         }
         foreach ($this->active() as $manifest) {
             foreach ($manifest->rights as $ability => $right) {
-                $abilities[$ability] = $right + ['module' => $manifest->key];
+                $abilities[$ability] = ['roles' => $this->rightRoles($ability, $right['roles'])] + $right + ['module' => $manifest->key];
             }
             $group = $manifest->menu['gruppe'];
             if ($group !== '' && isset($modules[$group]) && is_array($modules[$group])) {

@@ -88,8 +88,7 @@ class ModulesTest extends TestCase
             $this->assertArrayNotHasKey('use-beispiel', (array) config('intranet.abilities'));
             $this->get('/einstellungen/module')->assertInertia(fn (Assert $page) => $page
                 ->component('module-management')
-                ->where('modules.0.key', 'beispiel')
-                ->where('modules.0.enabled', false));
+                ->where('modules', fn ($mods): bool => collect($mods)->firstWhere('key', 'beispiel')['enabled'] === false));
         } finally {
             app(ModuleRegistry::class)->setEnabled('beispiel', true, null);
         }
@@ -102,11 +101,15 @@ class ModulesTest extends TestCase
 
         $this->signInAs('admin');
         $this->get('/einstellungen/module')->assertOk()->assertInertia(fn (Assert $page) => $page
-            ->where('modules.0.name', 'Beispielmodul')
-            ->where('modules.0.rights.use-beispiel.roles', ['admin'])
+            ->where('modules', function ($mods): bool {
+                $m = collect($mods)->firstWhere('key', 'beispiel');
+
+                return $m['name'] === 'Beispielmodul'
+                    && $m['rights']['use-beispiel']['roles'] === ['admin']
+                    && str_contains((string) $m['sql'], 'CREATE SCHEMA IF NOT EXISTS beispiel');
+            })
             ->where('errors', [])
-            ->where('violations', [])
-            ->where('modules.0.sql', fn ($sql): bool => str_contains((string) $sql, 'CREATE SCHEMA IF NOT EXISTS beispiel')));
+            ->where('violations', []));
     }
 
     public function test_manifest_validation(): void

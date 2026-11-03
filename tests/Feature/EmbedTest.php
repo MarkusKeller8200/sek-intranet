@@ -24,14 +24,12 @@ class EmbedTest extends TestCase
             }));
     }
 
-    public function test_workflows_for_administration_staff(): void
+    public function test_sharepoint_workflows_replaced_by_module(): void
     {
+        // Die SharePoint-Seite «Workflows» ist durch das Modul «Abläufe Verwaltung» ersetzt (#45)
         Http::fake();
-        $this->signInAs('lehrperson');
-        $this->get('/einbindung/workflows')->assertNotFound();
-
         $this->signInAs('verwaltung');
-        $this->get('/einbindung/workflows')->assertOk();
+        $this->get('/einbindung/workflows')->assertNotFound();
     }
 
     public function test_blocked_page_is_offered_in_new_tab(): void

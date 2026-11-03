@@ -152,6 +152,7 @@ Route::middleware('auth')->group(function () {
         // Plugins (Anbindung anderer Systeme per API)
         Route::get('einstellungen/module', [ModuleManagementController::class, 'index'])->name('modules.manage');
         Route::post('einstellungen/module/{key}', [ModuleManagementController::class, 'toggle'])->name('modules.toggle');
+        Route::post('einstellungen/module/{key}/rechte/{ability}', [ModuleManagementController::class, 'rights'])->name('modules.rights');
         Route::get('plugins', [PluginController::class, 'index'])->name('plugins.index');
         Route::post('plugins/verbindungen-testen', [PluginController::class, 'testAll'])->middleware('throttle:10,1')->name('plugins.test-all');
         Route::get('plugins/{id}', [PluginController::class, 'show'])->name('plugins.show');

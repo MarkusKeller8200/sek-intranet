@@ -75,6 +75,10 @@ modules/Zeiterfassung/
   CHANGELOG.md, README.md
 ```
 
+**Rechte je Rolle:** Die Rollen eines Modulrechts kommen aus `module.json`. Unter **Einstellungen → Module** kann die
+Administration sie je Recht ein- und ausschalten (Sammlung `module_rights`, id = Recht; gleich wie die Vorgabe =
+Übersteuerung entfernt). Beispiel: «Abläufe ansehen» zusätzlich für Lehrpersonen.
+
 Anlegen mit `php artisan intranet:make-module Zeiterfassung --gruppe=organisation [--titel=…] [--key=…] [--schema=…]`.
 Ein- und ausschalten unter **Einstellungen → Module**. Ausgeschaltet heisst: kein Menü, keine Routen (404), keine
 Rechte. Die Daten bleiben erhalten.
