@@ -23,6 +23,9 @@ laufend unter **Unveröffentlicht**. Ab 0.32.0 entsteht eine Version nur bei ein
 
 ### Neu
 
+- **Tabelle: Kontextmenü (#78):** Rechtsklick (oder Menütaste, Umschalt+F10) auf Zelle oder Spaltenkopf mit
+  Funktionen für Zelle, Zeile, Tabelle und Spalte; im Glossar zusätzlich Einzelansicht, Bearbeiten und Löschen.
+  Sprachkonzept: bei zu wenig Platz erscheinen die Sprachen als DE, EN, ZH.
 - **Tabelle und Kalender (#77):** farbiger Einrastpunkt beim Spalten-Ziehen; Dropdowns und Kalender erscheinen
   oberhalb, wenn unten kein Platz ist; Auswahllisten mit Ziehecke rechts unten; Kalender mit Monatsauswahl und
   senkrechtem Jahres-Spinner.

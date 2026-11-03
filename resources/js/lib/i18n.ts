@@ -15,6 +15,7 @@ import pages from '@/i18n/pages.json';
 import people from '@/i18n/people.json';
 import system from '@/i18n/system.json';
 
+/** «short»: Abkürzung, wenn für die Bezeichnung der Platz nicht reicht (FitLabel, #78). */
 export const LANGUAGES = {
     'de-CH': { label: 'Deutsch', native: 'Deutsch', short: 'DE' },
     en: { label: 'Englisch', native: 'English', short: 'EN' },

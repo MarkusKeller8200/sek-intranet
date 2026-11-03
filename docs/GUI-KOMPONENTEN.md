@@ -283,6 +283,9 @@ Bearbeitbare Tabelle (Grundlage: Personen) mit Suche, Filtern, Sortierung, Spalt
   Sortieren in bis zu drei Stufen (Knopf «Sortieren» oder Umschalt+Klick im Spaltenkopf)
 - Spalten ziehen mit farbigem Einrastpunkt; Dropdowns und Kalender erscheinen oberhalb, wenn unten kein Platz ist;
   Auswahllisten mit Ziehecke rechts unten; Kalender mit Monatsauswahl (Klick auf den Monat) und Jahres-Spinner
+- Kontextmenü (Rechtsklick, Menütaste, Umschalt+F10) für Zelle, Zeile, Tabelle und Spaltenkopf; eigene
+  Zeilen-Einträge mit `rowMenu` (z. B. Öffnen, Löschen)
+- `@/components/fit-label`: Bezeichnung, die bei zu wenig Platz auf die Abkürzung umschaltet (z. B. Sprachen)
 
 Code: `@/components/data-grid`, `@/components/ui/table`
 

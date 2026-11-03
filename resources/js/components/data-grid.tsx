@@ -20,7 +20,8 @@ import {
     Undo2,
     X,
 } from 'lucide-react';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import type {
     ClipboardEvent,
     CSSProperties,
@@ -142,6 +143,7 @@ export default function DataGrid<T extends GridRow>({
     selectable = true,
     bulkActions,
     rowActions,
+    rowMenu,
     rowClassName,
     onExport,
     searchPlaceholder = 'Suchen …',
@@ -166,6 +168,8 @@ export default function DataGrid<T extends GridRow>({
     selectable?: boolean;
     bulkActions?: (selected: T[], clear: () => void) => ReactNode;
     rowActions?: (row: T) => ReactNode;
+    /** Zusätzliche Einträge im Kontextmenü einer Zeile (z. B. Öffnen, Löschen) */
+    rowMenu?: (row: T) => GridMenuItem[];
     rowClassName?: (row: T) => string;
     onExport?: (
         format: 'csv' | 'xlsx',
@@ -223,6 +227,8 @@ export default function DataGrid<T extends GridRow>({
         'idle',
     );
     const [dragging, setDragging] = useState<string | null>(null);
+    // Kontextmenü (#78): Zelle/Zeile/Tabelle oder Spaltenkopf
+    const [menu, setMenu] = useState<{ x: number; y: number; kind: 'cell' | 'header'; row: number; col: number } | null>(null);
     // Einrastpunkt beim Spalten-Ziehen (#77): Zielspalte, die Spalte landet links oder rechts davon
     const [dropTarget, setDropTarget] = useState<string | null>(null);
     const undoStack = useRef<CellChange<T>[][]>([]);
@@ -634,7 +640,12 @@ export default function DataGrid<T extends GridRow>({
             return;
         }
         e.preventDefault();
-        const table = parseTsv(e.clipboardData.getData('text/plain'));
+        pasteText(e.clipboardData.getData('text/plain'));
+    };
+
+    /** Text (Tabulator/Zeilen wie aus Excel) in den markierten Bereich einfügen. */
+    const pasteText = (raw: string) => {
+        const table = parseTsv(raw);
         if (table.length === 0 || !range) {
             return;
         }
@@ -901,6 +912,18 @@ export default function DataGrid<T extends GridRow>({
                 setAnchor(active);
 
                 return;
+            case 'ContextMenu':
+            case 'F10': {
+                if (e.key === 'F10' && !e.shiftKey) {
+                    return;
+                }
+                e.preventDefault();
+                const el = gridRef.current?.querySelector<HTMLElement>(`[data-cell="${active.row}:${active.col}"]`);
+                const r = el?.getBoundingClientRect();
+                setMenu({ x: (r?.left ?? 0) + 12, y: (r?.bottom ?? 0) - 4, kind: 'cell', row: active.row, col: active.col });
+
+                return;
+            }
             case 'Delete':
             case 'Backspace':
                 e.preventDefault();
@@ -1113,6 +1136,95 @@ export default function DataGrid<T extends GridRow>({
     };
 
     const filtersActive = filters.length > 0 || search !== '';
+
+    // ---------- Kontextmenü (#78) ----------
+    const copyText = (value: string, what: string) =>
+        void navigator.clipboard
+            ?.writeText(value)
+            .then(() => toast.success(`${what} kopiert.`))
+            .catch(() => toast.error('Kopieren nicht möglich (Zwischenablage gesperrt).'));
+    const menuItems = (): GridMenuItem[] => {
+        if (!menu) {
+            return [];
+        }
+        const column = visibleCols[menu.col];
+        if (!column) {
+            return [];
+        }
+        const id = column.id as string;
+        const rule = sorting.find((s) => s.id === id);
+        const sortTo = (desc: boolean, add = false): SortRule[] =>
+            add ? [...sorting.filter((s) => s.id !== id).slice(0, MAX_SORT - 1), { id, desc }] : [{ id, desc }];
+        const canGroup = groupable.some((g) => g.id === column.id);
+        const columnItems: GridMenuItem[] = [
+            { heading: `Spalte «${column.title}»` },
+            { label: 'Aufsteigend sortieren', icon: <ArrowUp />, onSelect: () => patch({ sorting: sortTo(false) }) },
+            { label: 'Absteigend sortieren', icon: <ArrowDown />, onSelect: () => patch({ sorting: sortTo(true) }) },
+            { label: 'Als weitere Sortierstufe', icon: <ArrowUpDown />, disabled: !!rule || sorting.length >= MAX_SORT, onSelect: () => patch({ sorting: sortTo(false, true) }) },
+            { label: 'Sortierung dieser Spalte entfernen', disabled: !rule, onSelect: () => patch({ sorting: sorting.filter((s) => s.id !== id) }) },
+            { separator: true },
+            grouping === id
+                ? { label: 'Gruppierung aufheben', icon: <Layers />, onSelect: () => patch({ grouping: null }) }
+                : { label: 'Nach dieser Spalte gruppieren', icon: <Layers />, disabled: !canGroup, onSelect: () => { setCollapsed(new Set()); patch({ grouping: id }); } },
+            { label: pinned.includes(id) ? 'Fixierung lösen' : 'Spalte fixieren', icon: pinned.includes(id) ? <PinOff /> : <Pin />, onSelect: () => togglePin(id) },
+            { label: 'Nach links', disabled: menu.col === 0, onSelect: () => shiftColumn(id, -1) },
+            { label: 'Nach rechts', disabled: menu.col === visibleCols.length - 1, onSelect: () => shiftColumn(id, 1) },
+            { label: 'Breite automatisch', icon: <MoveHorizontal />, onSelect: () => autoFit([id]) },
+            { label: 'Spalte ausblenden', icon: <Columns3 />, disabled: visibleCols.length === 1, onSelect: () => patch({ visibility: { ...visibility, [id]: false } }) },
+            { label: 'Filter dieser Spalte entfernen', icon: <X />, disabled: !isActive(state.filters?.[id]), onSelect: () => setFilter(id, undefined) },
+        ];
+        if (menu.kind === 'header') {
+            return columnItems;
+        }
+        const row = navRows[menu.row];
+        if (!row) {
+            return columnItems;
+        }
+        const value = row[column.id];
+        const shown = display(column, value);
+        const short = shown.length > 24 ? `${shown.slice(0, 24)}…` : shown;
+        const raw = text(value);
+        const values = column.type === 'multi' ? splitMulti(column, value) : [raw];
+        const choice = column.type === 'select' || column.type === 'multi';
+        const editable = isEditable(column);
+
+        return [
+            { heading: rangeSize > 1 ? `${rangeSize} Zellen` : 'Zelle' },
+            { label: rangeSize > 1 ? 'Markierung kopieren' : 'Kopieren', shortcut: 'Ctrl+C', onSelect: () => copyText(toTsv(rangeCells().map((line) => line.map((x) => display(x.column, x.row[x.column.id])))), rangeSize > 1 ? `${rangeSize} Zellen` : 'Zelle') },
+            {
+                label: 'Einfügen',
+                shortcut: 'Ctrl+V',
+                disabled: !canEdit,
+                onSelect: () =>
+                    void navigator.clipboard
+                        ?.readText()
+                        .then(pasteText)
+                        .catch(() => toast.error('Einfügen über das Menü nicht möglich – bitte Ctrl+V verwenden.')),
+            },
+            { label: 'Bearbeiten', shortcut: 'Enter', disabled: !editable || column.type === 'bool', onSelect: () => startEdit({ row: menu.row, col: menu.col }) },
+            { label: rangeSize > 1 ? 'Markierung leeren' : 'Leeren', shortcut: 'Entf', disabled: !editable || column.required === true, onSelect: () => void clearRange() },
+            { separator: true },
+            {
+                label: shown === '' ? 'Nur leere anzeigen' : `Nur «${short}» anzeigen`,
+                onSelect: () => setFilter(id, shown === '' ? { op: 'empty' } : choice ? { op: 'in', values } : column.type === 'date' ? { op: 'equals', value: raw } : { op: 'equals', value: shown }),
+            },
+            { label: shown === '' ? 'Leere ausblenden' : `«${short}» ausblenden`, disabled: !choice && shown !== '', onSelect: () => setFilter(id, shown === '' ? { op: 'notEmpty' } : { op: 'notIn', values }) },
+            { separator: true },
+            { heading: 'Zeile' },
+            ...(selectable ? [{ label: selected.has(row.id) ? 'Zeile abwählen' : 'Zeile auswählen', shortcut: 'Umschalt+Leer', icon: <ListChecks />, onSelect: () => toggleRow(row.id) }] : []),
+            { label: 'Zeile kopieren', onSelect: () => copyText(toTsv([visibleCols.map((col) => display(col, row[col.id]))]), 'Zeile') },
+            ...(rowMenu ? rowMenu(row) : []),
+            { separator: true },
+            { heading: 'Tabelle' },
+            ...(selectable ? [{ label: 'Alle sichtbaren auswählen', onSelect: () => selectVisible(true) }] : []),
+            { label: 'Filter und Suche löschen', icon: <X />, disabled: !filtersActive, onSelect: () => patch({ filters: {}, search: '' }) },
+            { label: 'Sortierung entfernen', disabled: sorting.length === 0, onSelect: () => patch({ sorting: [] }) },
+            { label: 'Spaltenbreiten automatisch', icon: <MoveHorizontal />, onSelect: () => autoFit() },
+            { label: 'Ansicht zurücksetzen', icon: <RotateCcw />, onSelect: resetView },
+            { separator: true },
+            ...columnItems,
+        ];
+    };
     const totalWidth =
         (selectable ? SELECT_W : 0) +
         visibleIds.reduce((sum, id) => sum + width(id), 0) +
@@ -1535,6 +1647,18 @@ export default function DataGrid<T extends GridRow>({
                 </div>
             )}
 
+            {menu && (
+                <GridMenu
+                    x={menu.x}
+                    y={menu.y}
+                    items={menuItems()}
+                    onClose={() => {
+                        setMenu(null);
+                        requestAnimationFrame(focusGrid);
+                    }}
+                />
+            )}
+
             {/* Tabelle: eigener Scrollbereich, Kopfzeile und fixierte Spalten bleiben stehen */}
             <div
                 ref={gridRef}
@@ -1598,6 +1722,10 @@ export default function DataGrid<T extends GridRow>({
                                     <th
                                         key={id}
                                         style={stickyStyle(id)}
+                                        onContextMenu={(e) => {
+                                            e.preventDefault();
+                                            setMenu({ x: e.clientX, y: e.clientY, kind: 'header', row: -1, col: visibleIds.indexOf(id) });
+                                        }}
                                         onDragOver={(e) => {
                                             if (dragging && dragging !== id) {
                                                 e.preventDefault();
@@ -1870,12 +1998,25 @@ export default function DataGrid<T extends GridRow>({
                                                     isActiveCell || highlighted
                                                 }
                                                 style={stickyStyle(id)}
+                                                onContextMenu={(e) => {
+                                                    if (isEditing) {
+                                                        return;
+                                                    }
+                                                    e.preventDefault();
+                                                    if (!inRange(index, c)) {
+                                                        setAnchor({ row: index, col: c });
+                                                        setActive({ row: index, col: c });
+                                                    }
+                                                    setMenu({ x: e.clientX, y: e.clientY, kind: 'cell', row: index, col: c });
+                                                }}
                                                 onMouseDown={(e) => {
                                                     if (
                                                         isEditing ||
                                                         isEditableTarget(
                                                             e.target,
-                                                        )
+                                                        ) ||
+                                                        // Rechtsklick in der Markierung behält sie (Kontextmenü)
+                                                        (e.button === 2 && inRange(index, c))
                                                     ) {
                                                         return;
                                                     }
@@ -2505,5 +2646,128 @@ function SortMenu<T>({
                 </div>
             </Popover>
         </>
+    );
+}
+
+/** Eintrag im Kontextmenü der Tabelle (#78). */
+export type GridMenuItem = {
+    label?: string;
+    heading?: string;
+    separator?: boolean;
+    icon?: ReactNode;
+    shortcut?: string;
+    disabled?: boolean;
+    destructive?: boolean;
+    onSelect?: () => void;
+};
+
+/**
+ * Kontextmenü der Tabelle (Rechtsklick, Menütaste oder Umschalt+F10): Pfeiltasten wählen, Enter führt aus,
+ * Esc schliesst. Passt es nicht nach unten bzw. rechts, öffnet es nach oben bzw. links.
+ */
+function GridMenu({ x, y, items, onClose }: { x: number; y: number; items: GridMenuItem[]; onClose: () => void }) {
+    const panel = useRef<HTMLDivElement>(null);
+    const [pos, setPos] = useState({ left: x, top: y, maxHeight: 0 });
+
+    useLayoutEffect(() => {
+        const el = panel.current;
+        if (!el) {
+            return;
+        }
+        const w = el.offsetWidth;
+        const h = el.scrollHeight;
+        const left = x + w > window.innerWidth - 8 ? Math.max(8, x - w) : x;
+        const below = window.innerHeight - y - 8;
+        const top = h <= below ? y : Math.max(8, y - h > 8 ? y - h : window.innerHeight - h - 8);
+        setPos({ left, top, maxHeight: window.innerHeight - 16 });
+        el.querySelector<HTMLButtonElement>('[role=menuitem]:not(:disabled)')?.focus({ preventScroll: true });
+    }, [x, y]);
+
+    useEffect(() => {
+        const onDown = (e: MouseEvent) => {
+            if (!panel.current?.contains(e.target as Node)) {
+                onClose();
+            }
+        };
+        const onScroll = (e: Event) => {
+            if (!panel.current?.contains(e.target as Node)) {
+                onClose();
+            }
+        };
+        document.addEventListener('mousedown', onDown);
+        window.addEventListener('scroll', onScroll, true);
+        window.addEventListener('resize', onClose);
+
+        return () => {
+            document.removeEventListener('mousedown', onDown);
+            window.removeEventListener('scroll', onScroll, true);
+            window.removeEventListener('resize', onClose);
+        };
+    }, [onClose]);
+
+    const onKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
+        e.stopPropagation();
+        const buttons = Array.from(panel.current?.querySelectorAll<HTMLButtonElement>('[role=menuitem]:not(:disabled)') ?? []);
+        const i = buttons.indexOf(document.activeElement as HTMLButtonElement);
+        if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+            e.preventDefault();
+            buttons[(i + (e.key === 'ArrowDown' ? 1 : -1) + buttons.length) % buttons.length]?.focus();
+        } else if (e.key === 'Home' || e.key === 'End') {
+            e.preventDefault();
+            buttons[e.key === 'Home' ? 0 : buttons.length - 1]?.focus();
+        } else if (e.key === 'Escape' || e.key === 'Tab') {
+            e.preventDefault();
+            onClose();
+        }
+    };
+
+    // Doppelte und abschliessende Trennlinien entfernen
+    const clean = items.filter((item, i) => !item.separator || (i > 0 && i < items.length - 1 && !items[i - 1].separator));
+
+    return createPortal(
+        <div
+            ref={panel}
+            role="menu"
+            aria-label="Kontextmenü"
+            onKeyDown={onKeyDown}
+            onContextMenu={(e) => e.preventDefault()}
+            className="fixed z-50 min-w-60 overflow-y-auto rounded-md border bg-popover p-1 text-sm text-popover-foreground shadow-md"
+            style={{ left: pos.left, top: pos.top, maxHeight: pos.maxHeight || undefined }}
+        >
+            {clean.map((item, i) => {
+                if (item.separator) {
+                    return <div key={i} role="separator" className="my-1 h-px bg-border" />;
+                }
+                if (item.heading) {
+                    return (
+                        <div key={i} className="px-2 pt-1.5 pb-0.5 text-xs font-medium text-muted-foreground">
+                            {item.heading}
+                        </div>
+                    );
+                }
+
+                return (
+                    <button
+                        key={i}
+                        type="button"
+                        role="menuitem"
+                        disabled={item.disabled}
+                        onClick={() => {
+                            onClose();
+                            item.onSelect?.();
+                        }}
+                        className={cn(
+                            'flex w-full items-center gap-2 rounded-sm px-2 py-1.5 text-left outline-none hover:bg-accent focus-visible:bg-accent disabled:pointer-events-none disabled:opacity-40 [&_svg]:size-4 [&_svg]:shrink-0',
+                            item.destructive && 'text-destructive',
+                        )}
+                    >
+                        <span className="flex w-4 justify-center text-muted-foreground">{item.icon}</span>
+                        <span className="flex-1 truncate">{item.label}</span>
+                        {item.shortcut && <span className="text-xs text-muted-foreground">{item.shortcut}</span>}
+                    </button>
+                );
+            })}
+        </div>,
+        document.body,
     );
 }

@@ -1,6 +1,7 @@
 import { Head } from '@inertiajs/react';
 import { useState } from 'react';
 import LanguagePicker, { useLanguage } from '@/components/language-picker';
+import FitLabel from '@/components/fit-label';
 import PageHeader from '@/components/page-header';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -117,7 +118,15 @@ export default function LanguageConcept() {
                         </CardDescription>
                     </CardHeader>
                     <CardContent className="overflow-x-auto">
-                        <table className="w-full text-sm">
+                        {/* Feste Spaltenbreiten: reicht der Platz nicht, erscheint die Abkürzung (#78) */}
+                        <table className="w-full table-fixed text-sm">
+                            <colgroup>
+                                <col className="w-[22%]" />
+                                <col className="w-[14%]" />
+                                <col className="w-[16%]" />
+                                <col className="w-[14%]" />
+                                <col />
+                            </colgroup>
                             <thead className="text-left text-muted-foreground">
                                 <tr className="border-b">
                                     <th className="py-2 pr-4 font-medium">
@@ -155,28 +164,25 @@ export default function LanguageConcept() {
                                             className="border-b align-top last:border-0"
                                         >
                                             <td className="py-2 pr-4 font-medium">
-                                                <span translate="no">
-                                                    {
-                                                        LANGUAGES[row.language]
-                                                            .native
-                                                    }
+                                                <span className="flex min-w-0 items-center gap-2" translate="no">
+                                                    <FitLabel
+                                                        label={LANGUAGES[row.language].native}
+                                                        short={LANGUAGES[row.language].short}
+                                                    />
+                                                    {row.language === language && (
+                                                        <Badge variant="outline" className="shrink-0" translate="yes">
+                                                            aktiv
+                                                        </Badge>
+                                                    )}
                                                 </span>
-                                                {row.language === language && (
-                                                    <Badge
-                                                        variant="outline"
-                                                        className="ml-2"
-                                                    >
-                                                        aktiv
-                                                    </Badge>
-                                                )}
                                             </td>
                                             <td className="py-2 pr-4">
-                                                <code translate="no">
+                                                <code translate="no" className="break-all">
                                                     {row.code}
                                                 </code>
                                             </td>
                                             <td className="py-2 pr-4">
-                                                <code translate="no">
+                                                <code translate="no" className="break-all">
                                                     {row.html}
                                                 </code>
                                             </td>
@@ -199,17 +205,17 @@ export default function LanguageConcept() {
                         <CardTitle>Beispiele aus den Katalogen</CardTitle>
                     </CardHeader>
                     <CardContent className="overflow-x-auto">
-                        <table className="w-full text-sm" translate="no">
+                        <table className="w-full table-fixed text-sm" translate="no">
                             <thead className="text-left text-muted-foreground">
                                 <tr className="border-b">
                                     <th className="py-2 pr-4 font-medium">
-                                        Deutsch
+                                        <FitLabel label={LANGUAGES['de-CH'].native} short={LANGUAGES['de-CH'].short} />
                                     </th>
                                     <th className="py-2 pr-4 font-medium">
-                                        English
+                                        <FitLabel label={LANGUAGES.en.native} short={LANGUAGES.en.short} />
                                     </th>
                                     <th className="py-2 font-medium">
-                                        Züritüütsch
+                                        <FitLabel label={LANGUAGES['gsw-u-sd-chzh'].native} short={LANGUAGES['gsw-u-sd-chzh'].short} />
                                     </th>
                                 </tr>
                             </thead>
