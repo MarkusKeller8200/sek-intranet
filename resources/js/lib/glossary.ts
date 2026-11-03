@@ -189,7 +189,28 @@ const aliases = (r: GlossaryRow) =>
     [r.aliase_offiziell, r.alias_eigen].filter(Boolean).join('; ');
 
 /** Spalten je Umfang; die Spalte der Gruppierung entfällt. */
+/** Link nur für http(s)-Adressen (keine javascript:- oder data:-Ziele). */
+const anchor = (href: string, text: string) =>
+    /^https?:\/\//i.test(href) ? `<a href="${esc(href)}">${text}</a>` : '';
+
+/** Links eines Eintrags: URL, dann Links aus Notiz und Beschreibung (Markdown), ohne Doppelte. */
+function rowLinks(r: GlossaryRow): string[] {
+    const found = [r.url, ...[...`${r.notiz}\n${r.beschreibung}`.matchAll(/\]\((https?:\/\/[^\s)]+)\)/gi)].map((m) => m[1])];
+
+    return [...new Set(found.filter((u) => /^https?:\/\//i.test(u)))];
+}
+
 function columns(o: PdfOptions, status: Labels): Column[] {
+    // Schmale Spalte «Link»: je Zeile 1, 2, 3 …, der Link liegt dahinter (#73)
+    const link: Column = {
+        title: 'Link',
+        width: 4.5,
+        cell: (r) =>
+            rowLinks(r)
+                .map((u, i) => anchor(u, String(i + 1)))
+                .join(' '),
+        cls: 'link',
+    };
     const abk = (full: boolean): Column => ({
         title: 'Abkürzung',
         width: full ? 9 : 12,
@@ -197,12 +218,12 @@ function columns(o: PdfOptions, status: Labels): Column[] {
             abkHtml(r) +
             `${sup(r)}${full ? official(r.abk_eigen, r.abk_offiziell) + (aliases(r) ? `<br><small>Alias: ${esc(aliases(r))}</small>` : '') : ''}`,
     });
-    const bez = (full: boolean, url = false): Column => ({
+    const bez = (full: boolean): Column => ({
         title: 'Bezeichnung',
         width: full ? 20 : 40,
         cell: (r) =>
             bezHtml(r) +
-            `${full ? official(r.bez_eigen, r.bez_offiziell) : ''}${url && r.url ? `<br><small class="url">${esc(r.url)}</small>` : ''}`,
+            (full ? official(r.bez_eigen, r.bez_offiziell) : ''),
     });
     const kurz: Column = {
         title: 'Kurzbeschreibung',
@@ -242,7 +263,7 @@ function columns(o: PdfOptions, status: Labels): Column[] {
         );
 
     if (o.umfang === 'kompakt') {
-        return without([abk(false), bez(false), kurz, kat, her]);
+        return without([abk(false), bez(false), kurz, kat, her, link]);
     }
     if (o.umfang === 'erweitert') {
         return without([
@@ -256,12 +277,13 @@ function columns(o: PdfOptions, status: Labels): Column[] {
             },
             kat,
             her,
+            link,
         ]);
     }
 
     return without([
         abk(true),
-        bez(true, true),
+        bez(true),
         kurz,
         { title: 'Beschreibung', width: 16, cell: (r) => esc(r.beschreibung) },
         kat,
@@ -269,6 +291,7 @@ function columns(o: PdfOptions, status: Labels): Column[] {
         { title: 'Genutzt in', width: 9, cell: (r) => tags(r.genutzt_in) },
         sta,
         { title: 'Notiz', width: 12, cell: (r) => esc(r.notiz), cls: 'pre' },
+        link,
     ]);
 }
 
@@ -325,7 +348,7 @@ export function printGlossary(
     const html = `<!doctype html><html lang="de-CH"><head><meta charset="utf-8"><title>Glossar (${UMFANG[options.umfang]})</title>
 <style>@page{size:A4 ${page};margin:12mm}*{box-sizing:border-box}body{font:9pt/1.35 system-ui,sans-serif;margin:24px;color:#111}h1{font-size:15pt;margin:0 0 2px}h2{font-size:11pt;margin:14px 0 4px;break-after:avoid}h2 small{font-weight:normal;color:#666}
 table{border-collapse:collapse;width:100%;table-layout:fixed}th,td{border-bottom:1px solid #ccc;padding:2px 5px;text-align:left;vertical-align:top}th{background:#f2f4f6;font-size:8pt}
-.compact td{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:8.5pt}
+.compact td{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:8.5pt}td a{color:#1d4f91;font-weight:600;text-decoration:none}td.link,th:last-child{text-align:center}
 .full td{font-size:8pt;overflow-wrap:anywhere}.full .pre{white-space:pre-wrap}
 small{color:#555}.url{color:#1d4f91}.tag{display:inline-block;border:1px solid #bbb;border-radius:3px;padding:0 4px;margin:0 2px 1px 0;font-size:7.5pt;line-height:1.4;background:#f6f7f8}
 ${options.umbruch === 'gruppe' ? 'section+section{break-before:page}' : ''}

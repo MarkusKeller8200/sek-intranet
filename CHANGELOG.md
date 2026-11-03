@@ -23,6 +23,9 @@ laufend unter **Unveröffentlicht**. Ab 0.32.0 entsteht eine Version nur bei ein
 
 ### Neu
 
+- **Glossar: PDF mit Spalte «Link» (#73):** schmale Spalte, je Zeile nummeriert ab 1 (URL, dann Links aus Notiz
+  und Beschreibung), der Link liegt hinter der Nummer (nur http/https); im vollständigen Umfang ersetzt sie die
+  ausgeschriebene URL.
 - **Glossar: Begriffe ohne Abkürzung (#72):** Tabelle zeigt den Begriff kursiv und sortiert danach; PDF und Markdown
   mit «–» als Abkürzung.
 - **Glossar: Mehrfachauswahl (#71):** Checkbox je Zeile, «Auswahl löschen» mit Rückfrage (Recht `edit-glossary`),
