@@ -3,10 +3,15 @@ import { cn } from '@/lib/utils';
 /** Vermerk unter dem Logo: wer das Intranet entwickelt (Freizeitprojekt für die Sek Bülach). */
 export default function AppCredit({ className }: { className?: string }) {
     return (
-        <p className={cn('text-right text-[11px] leading-snug text-muted-foreground', className)}>
+        <p
+            className={cn(
+                'text-right text-[11px] leading-snug text-muted-foreground',
+                className,
+            )}
+        >
             <span className="block">
                 Entwickelt von{' '}
-                <span translate="no" className="whitespace-nowrap font-medium">
+                <span translate="no" className="font-medium whitespace-nowrap">
                     Markus Keller
                 </span>
             </span>
