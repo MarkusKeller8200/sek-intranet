@@ -85,6 +85,24 @@ export const palette = {
 } as const;
 
 export type ColorName = keyof typeof palette;
+
+/**
+ * Druckfarben der Palette (Hintergrund, Rand, Text) für Ausgaben ohne Tailwind, z. B. PDF-Export des Glossars (#79).
+ * Entsprechen den hellen Badge-Farben (…-50, …-200, …-800).
+ */
+export const printPalette: Record<ColorName, { bg: string; border: string; text: string }> = {
+    brand: { bg: '#e8f4fb', border: '#b3e0f3', text: '#0272ad' },
+    slate: { bg: '#f1f5f9', border: '#e2e8f0', text: '#334155' },
+    sky: { bg: '#f0f9ff', border: '#bae6fd', text: '#075985' },
+    cyan: { bg: '#ecfeff', border: '#a5f3fc', text: '#155e75' },
+    teal: { bg: '#f0fdfa', border: '#99f6e4', text: '#115e59' },
+    emerald: { bg: '#ecfdf5', border: '#a7f3d0', text: '#065f46' },
+    amber: { bg: '#fffbeb', border: '#fde68a', text: '#92400e' },
+    orange: { bg: '#fff7ed', border: '#fed7aa', text: '#9a3412' },
+    rose: { bg: '#fff1f2', border: '#fecdd3', text: '#9f1239' },
+    violet: { bg: '#f5f3ff', border: '#ddd6fe', text: '#5b21b6' },
+    indigo: { bg: '#eef2ff', border: '#c7d2fe', text: '#3730a3' },
+};
 export type ColorClasses = (typeof palette)[ColorName];
 
 /** Auswahllisten mit Farben (Namen wie in den geteilten options). */

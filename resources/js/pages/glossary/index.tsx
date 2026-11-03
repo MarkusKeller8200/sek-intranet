@@ -457,6 +457,7 @@ export default function GlossaryIndex({
                             options,
                             status,
                             kategorienNamen,
+                            tagFarben,
                         )
                     }
                 />

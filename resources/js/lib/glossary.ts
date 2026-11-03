@@ -1,4 +1,5 @@
 // i18n: Export-Texte (Druck, Markdown) bleiben Deutsch
+import { isColorName, printPalette } from '@/lib/colors';
 export type GlossaryRow = {
     id: string;
     kategorien: string;
@@ -103,12 +104,21 @@ function byCategory(rows: GlossaryRow[]): [string, GlossaryRow[]][] {
         ]);
 }
 
-const tags = (s: string) =>
+/** Farben der Labels je Liste (Label → Palettenname), wie in der Tabelle (#79). */
+export type TagColors = { kategorien: Labels; herkunft: Labels };
+
+const tagStyle = (color: string | undefined) => {
+    const c = color && isColorName(color) ? printPalette[color] : null;
+
+    return c ? ` style="background:${c.bg};border-color:${c.border};color:${c.text}"` : '';
+};
+
+const tags = (s: string, colors: Labels = {}) =>
     s
         .split(';')
         .map((t) => t.trim())
         .filter(Boolean)
-        .map((t) => `<span class="tag">${esc(t)}</span>`)
+        .map((t) => `<span class="tag"${tagStyle(colors[t])}>${esc(t)}</span>`)
         .join(' ');
 
 const official = (own: string, off: string) =>
@@ -207,7 +217,7 @@ function rowLinks(r: GlossaryRow): string[] {
     return [...new Set(found.filter((u) => /^https?:\/\//i.test(u)))];
 }
 
-function columns(o: PdfOptions, status: Labels): Column[] {
+function columns(o: PdfOptions, status: Labels, colors: TagColors): Column[] {
     // Schmale Spalte «Link»: je Zeile 1, 2, 3 …, der Link liegt dahinter (#73)
     const link: Column = {
         title: 'Link',
@@ -239,12 +249,12 @@ function columns(o: PdfOptions, status: Labels): Column[] {
     const kat: Column = {
         title: 'Kategorie',
         width: 11,
-        cell: (r) => tags(r.kategorien),
+        cell: (r) => tags(r.kategorien, colors.kategorien),
     };
     const her: Column = {
         title: 'Herkunft',
         width: 10,
-        cell: (r) => tags(r.herkunft),
+        cell: (r) => tags(r.herkunft, colors.herkunft),
     };
     const sta: Column = {
         title: 'Status',
@@ -333,9 +343,10 @@ export function printGlossary(
     options: PdfOptions = PDF_DEFAULT,
     status: Labels = {},
     names: Labels = {},
+    colors: TagColors = { kategorien: {}, herkunft: {} },
 ) {
     const compact = options.umfang === 'kompakt';
-    const cols = columns(options, status);
+    const cols = columns(options, status, colors);
     const body = groupRows(rows, options.gruppe, names, status)
         .map(
             ([title, list]) =>
@@ -356,7 +367,7 @@ export function printGlossary(
 table{border-collapse:collapse;width:100%;table-layout:fixed}th,td{border-bottom:1px solid #ccc;padding:2px 5px;text-align:left;vertical-align:top}th{background:#f2f4f6;font-size:8pt}
 .compact td{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:8.5pt}td a{color:#1d4f91;font-weight:600;text-decoration:none}td.link,th:last-child{text-align:center}
 .full td{font-size:8pt;overflow-wrap:anywhere}.full .pre{white-space:pre-wrap}
-small{color:#555}.url{color:#1d4f91}.tag{display:inline-block;border:1px solid #bbb;border-radius:3px;padding:0 4px;margin:0 2px 1px 0;font-size:7.5pt;line-height:1.4;background:#f6f7f8}
+small{color:#555}.url{color:#1d4f91}.tag{-webkit-print-color-adjust:exact;print-color-adjust:exact;display:inline-block;border:1px solid #bbb;border-radius:3px;padding:0 4px;margin:0 2px 1px 0;font-size:7.5pt;line-height:1.4;background:#f6f7f8}
 ${options.umbruch === 'gruppe' ? 'section+section{break-before:page}' : ''}
 p.meta{margin:0 0 6px;color:#555}@media print{body{margin:0}tr{break-inside:avoid}th{-webkit-print-color-adjust:exact;print-color-adjust:exact}}</style></head><body>
 <h1>Glossar</h1><p class="meta">${meta}${rows.some((r) => r.bedeutungen > 1) ? ' · hochgestellte Zahl = Anzahl verschiedener Bedeutungen der Abkürzung' : ''}</p>${body}

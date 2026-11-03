@@ -23,6 +23,8 @@ laufend unter **Unveröffentlicht**. Ab 0.32.0 entsteht eine Version nur bei ein
 
 ### Neu
 
+- **Glossar-PDF und Datenstrukturen (#79):** Labels im PDF in den Farben der Tabelle; «Datenstrukturen» zeigt neu
+  auch die Sprachkataloge im Code (Sprachkonzept) mit Anzahl Einträgen und Übersetzungsstand.
 - **Tabelle: Kontextmenü (#78):** Rechtsklick (oder Menütaste, Umschalt+F10) auf Zelle oder Spaltenkopf mit
   Funktionen für Zelle, Zeile, Tabelle und Spalte; im Glossar zusätzlich Einzelansicht, Bearbeiten und Löschen.
   Sprachkonzept: bei zu wenig Platz erscheinen die Sprachen als DE, EN, ZH.
