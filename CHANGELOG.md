@@ -23,6 +23,8 @@ laufend unter **Unveröffentlicht**. Ab 0.32.0 entsteht eine Version nur bei ein
 
 ### Neu
 
+- **Tabelle: Sortierung in 3 Stufen, Kalender, farbige Auswahl (#76):** Knopf «Sortieren» mit Stufe 1–3 (Spalte und
+  Richtung), Kalender beim Bearbeiten von Datumszellen (Leeren, Heute), farbige Labels auch in Auswahlliste und Filter.
 - **Tabelle: Spaltentyp Mehrfachauswahl (#75):** Filter mit Mehrfachauswahl («enthält eine von», «enthält keine
   von») und Bearbeiten in der Zelle mit Häkchen-Liste; im Glossar für Kategorie und Herkunft.
 - **Glossar: farbige Labels (#74):** Kategorien und Herkunft erscheinen in der Tabelle als farbige Labels (nur Werte

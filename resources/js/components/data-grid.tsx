@@ -30,6 +30,7 @@ import type {
 } from 'react';
 import { toast } from 'sonner';
 import FilterCell from '@/components/grid/filter-cell';
+import OptionLabel from '@/components/grid/option-label';
 import Popover from '@/components/grid/popover';
 import type {
     CellChange,
@@ -54,6 +55,7 @@ import {
 } from '@/components/grid/utils';
 import ViewsMenu from '@/components/grid/views-menu';
 import { Button } from '@/components/ui/button';
+import { Calendar, isoDate } from '@/components/ui/calendar';
 import { Checkbox } from '@/components/ui/checkbox';
 import {
     DropdownMenu,
@@ -87,6 +89,9 @@ export { formatDate, text } from '@/components/grid/utils';
 const SELECT_W = 40;
 const ACTIONS_W = 104;
 const DEFAULT_W = 160;
+
+/** Sortierstufen (1, 2, 3). */
+const MAX_SORT = 3;
 
 type Cell = { row: number; col: number };
 
@@ -1070,8 +1075,9 @@ export default function DataGrid<T extends GridRow>({
         const existing = sorting.find((s) => s.id === id);
         let next: SortRule[];
         if (!existing) {
+            // Höchstens drei Stufen (#76): eine vierte ersetzt die letzte
             next = multi
-                ? [...sorting, { id, desc: false }]
+                ? [...sorting.slice(0, MAX_SORT - 1), { id, desc: false }]
                 : [{ id, desc: false }];
         } else if (!existing.desc) {
             next = sorting.map((s) => (s.id === id ? { id, desc: true } : s));
@@ -1289,6 +1295,12 @@ export default function DataGrid<T extends GridRow>({
                         </DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>
+
+                <SortMenu
+                    columns={columns.filter((c) => byId.has(c.id))}
+                    sorting={sorting}
+                    onChange={(next) => patch({ sorting: next })}
+                />
 
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
@@ -2026,6 +2038,20 @@ function CellEditor<T>({
         );
     }
 
+    if (column.type === 'date') {
+        return (
+            <DateEditor
+                column={column}
+                initial={initial}
+                onCommit={(v, move) => commit(move, v)}
+                onCancel={() => {
+                    done.current = true;
+                    onCancel();
+                }}
+            />
+        );
+    }
+
     if (column.type === 'select') {
         return (
             <select
@@ -2055,13 +2081,11 @@ function CellEditor<T>({
             autoFocus
             className={cls}
             type={
-                column.type === 'date'
-                    ? 'date'
-                    : column.type === 'email'
-                      ? 'email'
-                      : column.type === 'tel'
-                        ? 'tel'
-                        : 'text'
+                column.type === 'email'
+                    ? 'email'
+                    : column.type === 'tel'
+                      ? 'tel'
+                      : 'text'
             }
             value={value}
             onChange={(e) => setValue(e.target.value)}
@@ -2072,7 +2096,7 @@ function CellEditor<T>({
                 if (initial.length === 1) {
                     const end = e.currentTarget.value.length;
                     e.currentTarget.setSelectionRange?.(end, end);
-                } else if (column.type !== 'date') {
+                } else {
                     e.currentTarget.select();
                 }
             }}
@@ -2187,7 +2211,7 @@ function MultiEditor<T>({
                                     checked={chosen.includes(key)}
                                     onChange={() => toggle(key)}
                                 />
-                                <span translate="no">{label}</span>
+                                <OptionLabel label={label} color={column.colors?.[key]} />
                             </label>
                         ))}
                     </div>
@@ -2206,6 +2230,156 @@ function MultiEditor<T>({
                             onClick={() => onCommit(value(), 'down')}
                         >
                             Übernehmen
+                        </Button>
+                    </div>
+                </div>
+            </Popover>
+        </>
+    );
+}
+
+/**
+ * Editor für Datumszellen (#76): Kalender unter der Zelle, oben das Datum zum Eintippen (TT.MM.JJJJ).
+ * Im Kalender wählen Pfeiltasten den Tag, Bild auf/ab den Monat, Enter oder Klick übernimmt, Esc bricht ab.
+ */
+function DateEditor<T>({
+    column,
+    initial,
+    onCommit,
+    onCancel,
+}: {
+    column: GridColumn<T>;
+    initial: string;
+    onCommit: (value: string, move?: 'down' | 'right' | 'left') => void;
+    onCancel: () => void;
+}) {
+    const iso = /^\d{4}-\d{2}-\d{2}$/.test(initial) ? initial : '';
+    const [typed, setTyped] = useState(iso ? display(column, iso) : initial);
+    const anchor = useRef<HTMLInputElement>(null);
+    const stop = (e: KeyboardEvent<HTMLElement>) => e.stopPropagation();
+
+    return (
+        <>
+            <input
+                ref={anchor}
+                className="absolute inset-0 h-full w-full border-0 bg-background px-2 text-sm outline-2 -outline-offset-2 outline-primary"
+                value={typed}
+                placeholder="TT.MM.JJJJ"
+                aria-label={column.title}
+                onChange={(e) => setTyped(e.target.value)}
+                onKeyDown={(e) => {
+                    e.stopPropagation();
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        onCommit(typed, 'down');
+                    } else if (e.key === 'Tab') {
+                        e.preventDefault();
+                        onCommit(typed, e.shiftKey ? 'left' : 'right');
+                    } else if (e.key === 'Escape') {
+                        e.preventDefault();
+                        onCancel();
+                    }
+                }}
+            />
+            <Popover anchor={anchor} open onClose={() => onCommit(typed)} onEscape={onCancel} width={264}>
+                <div className="grid gap-2" onKeyDown={stop}>
+                    <Calendar value={iso} onChange={(v) => onCommit(v, 'down')} />
+                    <div className="flex justify-between gap-2 border-t pt-2">
+                        {!column.required ? (
+                            <Button type="button" size="sm" variant="ghost" onClick={() => onCommit('', 'down')}>
+                                Leeren
+                            </Button>
+                        ) : (
+                            <span />
+                        )}
+                        <Button type="button" size="sm" variant="outline" onClick={() => onCommit(isoDate(new Date()), 'down')}>
+                            Heute
+                        </Button>
+                    </div>
+                </div>
+            </Popover>
+        </>
+    );
+}
+
+/** Sortierung in bis zu drei Stufen (#76): Spalte und Richtung je Stufe. */
+function SortMenu<T>({
+    columns,
+    sorting,
+    onChange,
+}: {
+    columns: GridColumn<T>[];
+    sorting: SortRule[];
+    onChange: (next: SortRule[]) => void;
+}) {
+    const [open, setOpen] = useState(false);
+    const anchor = useRef<HTMLButtonElement>(null);
+    const field = 'h-8 rounded-md border border-input bg-background px-2 text-sm';
+    const setLevel = (level: number, rule: SortRule | null) => {
+        const next = [...sorting];
+        if (rule === null) {
+            next.splice(level);
+        } else {
+            next[level] = rule;
+        }
+        // Keine Spalte doppelt, keine Lücken
+        onChange(next.filter((r, i) => r && next.findIndex((x) => x?.id === r.id) === i).slice(0, MAX_SORT));
+    };
+
+    return (
+        <>
+            <Button ref={anchor} variant="outline" size="sm" onClick={() => setOpen((v) => !v)} aria-expanded={open}>
+                <ArrowUpDown /> {sorting.length > 0 ? `Sortiert (${sorting.length})` : 'Sortieren'}
+                <ChevronDown className="opacity-60" />
+            </Button>
+            <Popover anchor={anchor} open={open} onClose={() => setOpen(false)} width={380}>
+                <div className="grid gap-2">
+                    <div className="font-medium">Sortieren</div>
+                    {Array.from({ length: MAX_SORT }, (_, level) => {
+                        const rule = sorting[level];
+                        const disabled = level > sorting.length;
+
+                        return (
+                            <div key={level} className="grid grid-cols-[1.5rem_minmax(0,1fr)_8rem] items-center gap-2">
+                                <span className="text-sm text-muted-foreground tabular-nums">{level + 1}.</span>
+                                <select
+                                    className={field}
+                                    disabled={disabled}
+                                    value={rule?.id ?? ''}
+                                    aria-label={`Stufe ${level + 1}: Spalte`}
+                                    onChange={(e) =>
+                                        setLevel(level, e.target.value === '' ? null : { id: e.target.value, desc: rule?.desc ?? false })
+                                    }
+                                >
+                                    <option value="">–</option>
+                                    {columns
+                                        .filter((c) => c.id === rule?.id || !sorting.some((s) => s.id === c.id))
+                                        .map((c) => (
+                                            <option key={c.id} value={c.id}>
+                                                {c.title}
+                                            </option>
+                                        ))}
+                                </select>
+                                <select
+                                    className={field}
+                                    disabled={!rule}
+                                    value={rule?.desc ? 'desc' : 'asc'}
+                                    aria-label={`Stufe ${level + 1}: Richtung`}
+                                    onChange={(e) => rule && setLevel(level, { id: rule.id, desc: e.target.value === 'desc' })}
+                                >
+                                    <option value="asc">aufsteigend</option>
+                                    <option value="desc">absteigend</option>
+                                </select>
+                            </div>
+                        );
+                    })}
+                    <p className="text-xs text-muted-foreground">Auch im Spaltenkopf: Klick sortiert, Umschalt+Klick fügt eine Stufe hinzu.</p>
+                    <div className="flex justify-between gap-2 pt-1">
+                        <Button type="button" size="sm" variant="ghost" disabled={sorting.length === 0} onClick={() => onChange([])}>
+                            Sortierung entfernen
+                        </Button>
+                        <Button type="button" size="sm" onClick={() => setOpen(false)}>
+                            Fertig
                         </Button>
                     </div>
                 </div>

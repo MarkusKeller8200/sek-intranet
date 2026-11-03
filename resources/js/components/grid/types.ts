@@ -7,6 +7,8 @@ export type GridColumn<T> = {
     type?: 'text' | 'email' | 'tel' | 'select' | 'multi' | 'bool' | 'date';
     /** «select»: Schlüssel → Bezeichnung; «multi»: erlaubte Werte (Schlüssel = gespeicherter Text) */
     options?: Record<string, string>;
+    /** «select»/«multi»: Farbe je Wert aus der Palette des Farbkonzepts (farbige Labels in Liste und Filter) */
+    colors?: Record<string, string>;
     editable?: boolean;
     /** Leer lassen nicht erlaubt (Entf überspringt die Spalte) */
     required?: boolean;

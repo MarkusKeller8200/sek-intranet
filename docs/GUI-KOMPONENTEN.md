@@ -279,6 +279,8 @@ Bearbeitbare Tabelle (Grundlage: Personen) mit Suche, Filtern, Sortierung, Spalt
   (`extraExports`, z. B. PDF/Markdown im Glossar), Gruppieren nach Mehrfachwerten (`separator` je Spalte)
 - Spaltentyp `multi` (Mehrfachauswahl, z. B. Kategorie im Glossar): Filter «enthält eine/keine von», Bearbeiten in
   der Zelle mit Häkchen-Liste (Pfeile, Leertaste, Enter übernimmt, Esc bricht ab); Wert als Text «A; B»
+- Farbige Werte (`colors` je Spalte) auch in Auswahlliste und Filter; Datumszellen mit Kalender (Leeren, Heute);
+  Sortieren in bis zu drei Stufen (Knopf «Sortieren» oder Umschalt+Klick im Spaltenkopf)
 
 Code: `@/components/data-grid`, `@/components/ui/table`
 

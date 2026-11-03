@@ -154,6 +154,7 @@ export default function GlossaryIndex({
                 options: Object.fromEntries(
                     Object.keys(tagFarben.kategorien).map((k) => [k, k]),
                 ),
+                colors: tagFarben.kategorien,
                 separator: ';',
                 render: (r) => (
                     <GlossaryTags
@@ -180,6 +181,7 @@ export default function GlossaryIndex({
                 options: Object.fromEntries(
                     Object.keys(tagFarben.herkunft).map((k) => [k, k]),
                 ),
+                colors: tagFarben.herkunft,
                 separator: ';',
                 render: (r) => (
                     <GlossaryTags
@@ -203,8 +205,8 @@ export default function GlossaryIndex({
                 hidden: true,
             },
             text('suchbegriffe', { hidden: true }),
-            text('gueltig_ab', { hidden: true }),
-            text('gueltig_bis', { hidden: true }),
+            text('gueltig_ab', { type: 'date', hidden: true }),
+            text('gueltig_bis', { type: 'date', hidden: true }),
         ];
     }, [felder, rechte, status, tagFarben]);
 

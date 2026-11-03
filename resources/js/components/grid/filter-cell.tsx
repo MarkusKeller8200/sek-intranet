@@ -2,6 +2,7 @@ import { Filter, X } from 'lucide-react';
 import { useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+import OptionLabel from './option-label';
 import Popover from './popover';
 import type { FilterOp, GridColumn, GridFilter } from './types';
 import { describe, isActive, opLabel, OPS, VALUELESS } from './utils';
@@ -135,7 +136,7 @@ export default function FilterCell<T>({
                                                 })
                                             }
                                         />
-                                        {label}
+                                        <OptionLabel label={label} color={column.colors?.[key]} />
                                     </label>
                                 );
                             })}
