@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AccessPinController;
 use App\Http\Controllers\AnnouncementController;
 use App\Http\Controllers\ApiDocsController;
 use App\Http\Controllers\ApiRecorderController;
@@ -29,10 +30,12 @@ use App\Http\Controllers\ThemeController;
 use App\Http\Controllers\VersionController;
 use Illuminate\Support\Facades\Route;
 
-// Anmeldung (Prototyp: Demo-Auswahl; später OIDC Entra ID / Edulog)
+// Anmeldung (Prototyp: Rolle + PIN, dann Demo-Auswahl; später OIDC Entra ID / Edulog)
 Route::middleware('guest')->group(function () {
     Route::get('anmelden', [AuthController::class, 'show'])->name('login');
     Route::post('anmelden', [AuthController::class, 'store'])->name('login.store');
+    Route::post('anmelden/pin', [AuthController::class, 'unlock'])->middleware('throttle:30,1')->name('login.pin');
+    Route::post('anmelden/rolle-wechseln', [AuthController::class, 'reset'])->name('login.reset');
 });
 
 Route::post('abmelden', [AuthController::class, 'destroy'])->middleware('auth')->name('logout');
@@ -151,6 +154,9 @@ Route::middleware('auth')->group(function () {
         Route::delete('api-doku/tokens/{id}', [ApiDocsController::class, 'destroy'])->name('api-docs.tokens.destroy');
 
         // Plugins (Anbindung anderer Systeme per API)
+        Route::get('einstellungen/zugang', [AccessPinController::class, 'index'])->name('access.index');
+        Route::put('einstellungen/zugang/{role}', [AccessPinController::class, 'update'])->middleware('throttle:20,1')->name('access.update');
+        Route::delete('einstellungen/zugang/{role}', [AccessPinController::class, 'destroy'])->name('access.destroy');
         Route::get('einstellungen/module', [ModuleManagementController::class, 'index'])->name('modules.manage');
         Route::post('einstellungen/module/{key}', [ModuleManagementController::class, 'toggle'])->name('modules.toggle');
         Route::post('einstellungen/module/{key}/rechte/{ability}', [ModuleManagementController::class, 'rights'])->name('modules.rights');

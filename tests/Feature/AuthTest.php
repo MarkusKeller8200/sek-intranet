@@ -20,7 +20,7 @@ class AuthTest extends TestCase
             ->assertInertia(fn (Assert $page) => $page
                 ->component('auth/login')
                 ->where('demoLogin', true)
-                ->has('users', 7));
+                ->has('users', 10));
     }
 
     public function test_demo_user_can_sign_in_and_out(): void

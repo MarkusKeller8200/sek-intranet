@@ -11,6 +11,9 @@ laufend unter **Unveröffentlicht**. Ab 0.32.0 entsteht eine Version nur bei ein
 
 ### Für Mitarbeitende
 
+- Anmeldung neu mit Rolle und 8-stelligem PIN statt gemeinsamem Passwort; neue Rollen Schüler:in, Eltern und
+  Externe (vorerst nur Kommunikation und Wissen & Ablage).
+- [manage-users] Einstellungen → Zugang (PIN): PIN je Rolle setzen, ändern oder entfernen.
 - [view-ablaeufe] Abläufe Verwaltung (Menü Verwaltung): Verzeichnis wichtiger Abläufe als Checklisten, zuerst Eintritt,
   Austritt und Mutationen von Mitarbeitenden – mit Verantwortung, Kommunikation, Dokumenten und Bemerkungen, druckbar.
 - [manage-users] Einstellungen → Module: Rechte der Module je Rolle ein- und ausschalten.
@@ -20,6 +23,16 @@ laufend unter **Unveröffentlicht**. Ab 0.32.0 entsteht eine Version nur bei ein
 
 ### Neu
 
+- **Zugang mit PIN je Rolle (#69):** Rolle wählen, 8-stelligen PIN eingeben, danach Demo-Person der Rolle wählen
+  (Administrator: alle). PINs nur als Hash (`access_pins`), höchstens 5 Fehlversuche pro Minute und 20 pro Stunde je
+  Adresse, im Log nur Rolle und Adresse. Das gemeinsame Passwort (Basic Auth) entfällt, sobald der PIN
+  «Administrator» gesetzt ist. Neue Rollen Schüler:in, Eltern und Externe; diese sehen und öffnen nur die
+  Menügruppen aus `restricted_roles` (vorerst Kommunikation und Wissen & Ablage).
+- **Beispieldaten (#68):** Demo-Konten Schüler:in, Eltern und Externe; Glossar einmalig mit Kurzbeschreibungen,
+  mehreren Herkünften und Kategorien, eigener Bezeichnung und Markdown-Notiz (nur leere Felder).
+- **Glossar (#66, #67):** Kategorien mit kurzem Label als Tags (Überschriften in PDF/Markdown mit vollem Namen);
+  hochgestellte Zahl in PDF, Markdown und Tabelle = Anzahl verschiedener Bedeutungen einer Abkürzung – gleiche
+  Bezeichnung in anderer Kategorie zählt nicht als Mehrfachbedeutung.
 - **Glossar (#53–#59, #62):** Kern-Funktion mit 141 Einträgen aus der VSA-Liste (Herkunft VSA, Doppelte nicht
   zusammengeführt); Tabelle über die ganze Breite mit Bearbeiten direkt in der Zelle, «Neue Zeile» und
   Einzeldatensatz; offizielle Felder gesperrt (Recht `edit-glossary-official`); Kurzbeschreibung für den späteren

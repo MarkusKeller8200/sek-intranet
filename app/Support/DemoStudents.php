@@ -80,6 +80,39 @@ final class DemoStudents
         return count(self::records());
     }
 
+    /**
+     * Erfundene Demo-Personen für die Anmeldung mit den Rollen Schüler:in, Eltern und Externe (#68, #69).
+     *
+     * @return list<array<string, mixed>>
+     */
+    public static function roleAccounts(): array
+    {
+        return [
+            ['first_name' => 'Sina', 'last_name' => 'Muster', 'name' => 'Sina Muster', 'email' => 'sina.muster@'.self::DOMAIN, 'person_type' => 'schueler', 'role' => 'schueler', 'school' => 'mettmenriet', 'class_name' => 'M_A1a', 'function' => 'Schüler:in M_A1a (Demo-Konto)', 'active' => true],
+            ['first_name' => 'Peter', 'last_name' => 'Muster', 'name' => 'Peter Muster', 'email' => 'peter.muster@eltern.example', 'person_type' => 'eltern', 'role' => 'eltern', 'school' => 'mettmenriet', 'function' => 'Vater von Sina Muster (Demo-Konto)', 'active' => true],
+            ['first_name' => 'Xenia', 'last_name' => 'Beispiel', 'name' => 'Xenia Beispiel', 'email' => 'xenia.beispiel@extern.example', 'person_type' => 'extern', 'role' => 'extern', 'school' => 'verwaltung', 'function' => 'Externe Fachperson, z. B. Logopädie (Demo-Konto)', 'active' => true],
+        ];
+    }
+
+    /** Demo-Konten der neuen Rollen ergänzen (nur in Demo-Daten, je E-Mail einmal). */
+    public static function addRoleAccounts(JsonStore $store): int
+    {
+        $users = $store->all('users');
+        if (! collect($users)->contains(fn (array $u): bool => ($u['email'] ?? null) === self::MARKER)) {
+            return 0;
+        }
+        $emails = array_column($users, 'email');
+        $added = 0;
+        foreach (self::roleAccounts() as $record) {
+            if (! in_array($record['email'], $emails, true)) {
+                $store->insert('users', $record);
+                $added++;
+            }
+        }
+
+        return $added;
+    }
+
     /** Beispiel-Einträge Datenherkunft, wenn noch keine vorhanden sind. */
     public static function addDemoLinks(JsonStore $store): int
     {

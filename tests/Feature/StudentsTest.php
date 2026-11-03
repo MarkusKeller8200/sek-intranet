@@ -29,7 +29,7 @@ class StudentsTest extends TestCase
         $this->get('/schueler')->assertOk()->assertInertia(fn (Assert $page) => $page
             ->component('people/index')
             ->where('scope.type', 'schueler')
-            ->has('people', 12)
+            ->has('people', 13)
             ->where('people', fn ($people): bool => collect($people)->every(fn ($p): bool => $p['person_type'] === 'schueler')));
     }
 
@@ -147,13 +147,13 @@ class StudentsTest extends TestCase
 
         $this->get('/geraeteausgabe')->assertInertia(fn (Assert $page) => $page
             ->where('classes', fn ($classes): bool => collect($classes)->pluck('name')->all() === ['H_A1a', 'H_A2a', 'M_A1a', 'M_B1b', 'M_C3a']
-                && collect($classes)->firstWhere('name', 'M_A1a')['count'] === 3
+                && collect($classes)->firstWhere('name', 'M_A1a')['count'] === 4
                 && collect($classes)->firstWhere('name', 'M_A1a')['year'] === 1
                 && collect($classes)->firstWhere('name', 'M_A1a')['teacher'] === 'Eva Fiktiv'));
 
         $response = $this->getJson('/geraeteausgabe/schueler?klassen[]=M_A1a&klassen[]=H_A1a')->assertOk();
         $data = collect($response->json('data'));
-        $this->assertCount(5, $data);
+        $this->assertCount(6, $data);
         $this->assertSame(['H_A1a', 'M_A1a'], $data->pluck('klasse')->unique()->values()->all());
         $this->assertSame('lina.aebi@edu.sekbuelach.example', $data->firstWhere('vorname', 'Lina')['benutzer']);
         $this->assertSame('Eva Fiktiv', $data->firstWhere('vorname', 'Lina')['lehrperson']);
@@ -179,11 +179,11 @@ class StudentsTest extends TestCase
 
         $all = collect($store->all('users'));
         $this->assertSame('lehrperson', $all->firstWhere('email', 'daniel.probe@sekbuelach.example')['person_type']);
-        $this->assertCount(12, $all->where('person_type', 'schueler'));
+        $this->assertCount(13, $all->where('person_type', 'schueler'));
         $this->assertNotEmpty($store->all(PersonLinks::COLLECTION));
 
         // Idempotent
         Artisan::call('intranet:upgrade');
-        $this->assertCount(12, collect($store->all('users'))->where('person_type', 'schueler'));
+        $this->assertCount(13, collect($store->all('users'))->where('person_type', 'schueler'));
     }
 }

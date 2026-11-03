@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Support\RolePins;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -11,6 +12,8 @@ use Symfony\Component\HttpFoundation\Response;
  *
  * Aktiv, sobald INTRANET_ACCESS_PASSWORD gesetzt ist. Benutzername beliebig
  * (bzw. INTRANET_ACCESS_USER, falls gesetzt). Ersetzt später durch OIDC.
+ *
+ * Entfällt, sobald die PIN-Anmeldung aktiv ist (PIN der Administration gesetzt, #69).
  */
 class RequireSitePassword
 {
@@ -18,7 +21,7 @@ class RequireSitePassword
     {
         $password = (string) config('intranet.access.password', '');
 
-        if ($password === '' || $request->is('up')) {
+        if ($password === '' || $request->is('up') || app(RolePins::class)->active()) {
             return $next($request);
         }
 

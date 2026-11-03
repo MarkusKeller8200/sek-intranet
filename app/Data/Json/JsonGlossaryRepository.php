@@ -32,8 +32,8 @@ class JsonGlossaryRepository extends JsonRepository implements GlossaryRepositor
         $items = $this->store->all($this->listCollection($list));
         usort($items, fn (array $a, array $b): int => (int) ($a['position'] ?? 0) <=> (int) ($b['position'] ?? 0));
 
-        // Feld «Label» (#64): ältere Einträge erhalten das Label des Startinhalts bzw. die Abkürzung
-        $seed = $list === 'herkunft' ? array_column(GlossarySeed::herkunft(), 4, 0) : [];
+        // Feld «Label» (#64, #66): ältere Einträge erhalten das Label des Startinhalts bzw. die Abkürzung
+        $seed = array_column($list === 'herkunft' ? GlossarySeed::herkunft() : GlossarySeed::kategorien(), 4, 0);
 
         return array_map(fn (array $i): array => $i + ['label' => $seed[(string) $i['id']] ?? (string) ($i['kuerzel'] ?? '')], $items);
     }
@@ -63,8 +63,8 @@ class JsonGlossaryRepository extends JsonRepository implements GlossaryRepositor
     private function seed(): void
     {
         if (! $this->store->exists(self::LISTS['kategorien'])) {
-            foreach (GlossarySeed::kategorien() as $i => [$id, $kuerzel, $name, $desc]) {
-                $this->store->insert(self::LISTS['kategorien'], ['id' => $id, 'kuerzel' => $kuerzel, 'bezeichnung' => $name, 'beschreibung' => $desc, 'url' => '', 'notiz' => '', 'position' => $i + 1]);
+            foreach (GlossarySeed::kategorien() as $i => [$id, $kuerzel, $name, $desc, $label]) {
+                $this->store->insert(self::LISTS['kategorien'], ['id' => $id, 'kuerzel' => $kuerzel, 'label' => $label, 'bezeichnung' => $name, 'beschreibung' => $desc, 'url' => '', 'notiz' => '', 'position' => $i + 1]);
             }
         }
         if (! $this->store->exists(self::LISTS['herkunft'])) {

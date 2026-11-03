@@ -143,5 +143,6 @@ Wenn Funktionen und Datenstrukturen stabil sind:
 ## Offene Punkte
 
 - Kategorien und Rollen in `config/intranet.php` sind Vorschläge und können angepasst werden.
-- Zugriffsschutz vorerst über ein gemeinsames Passwort (`INTRANET_ACCESS_PASSWORD`), später OIDC.
+- Zugriffsschutz im Prototyp: Rolle + 8-stelliger PIN (Einstellungen → Zugang, nur als Hash gespeichert). Bis der
+  PIN «Administrator» gesetzt ist, gilt das gemeinsame Passwort (`INTRANET_ACCESS_PASSWORD`). Später OIDC.
 - Keine Volltextsuche über alle Bereiche; Benachrichtigungen nur im Intranet (noch keine E-Mail/Push).

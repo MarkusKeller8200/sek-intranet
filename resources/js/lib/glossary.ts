@@ -19,6 +19,8 @@ export type GlossaryRow = {
     gueltig_ab: string;
     gueltig_bis: string;
     mehrdeutig: boolean;
+    /** Anzahl verschiedener Bedeutungen der Abkürzung (gleiche Bezeichnung zählt einmal) */
+    bedeutungen: number;
     anzeige: string;
 };
 
@@ -55,6 +57,15 @@ const esc = (s: string) =>
         .replace(/</g, '&lt;')
         .replace(/>/g, '&gt;')
         .replace(/"/g, '&quot;');
+
+/** Hochgestellte Zahl bei Mehrfachbedeutung (#67). */
+const sup = (r: GlossaryRow) =>
+    r.bedeutungen > 1 ? `<sup>${r.bedeutungen}</sup>` : '';
+const SUPERSCRIPT = '⁰¹²³⁴⁵⁶⁷⁸⁹';
+const supText = (r: GlossaryRow) =>
+    r.bedeutungen > 1
+        ? [...String(r.bedeutungen)].map((d) => SUPERSCRIPT[Number(d)]).join('')
+        : '';
 
 /** Nach Kategorie gliedern (Einträge mit mehreren Kategorien erscheinen mehrfach). */
 function byCategory(rows: GlossaryRow[]): [string, GlossaryRow[]][] {
@@ -97,7 +108,7 @@ function compactTable(list: GlossaryRow[]): string {
     return `<table class="compact"><colgroup><col style="width:12%"><col style="width:44%"><col style="width:32%"><col style="width:12%"></colgroup><thead><tr><th>Abkürzung</th><th>Bezeichnung</th><th>Kurzbeschreibung</th><th>Herkunft</th></tr></thead><tbody>${list
         .map(
             (r) =>
-                `<tr><td><b>${esc(abbreviation(r))}</b></td><td title="${esc(designation(r))}">${esc(designation(r))}</td><td title="${esc(r.kurzbeschreibung)}">${esc(r.kurzbeschreibung)}</td><td>${tags(r.herkunft)}</td></tr>`,
+                `<tr><td><b>${esc(abbreviation(r))}</b>${sup(r)}</td><td title="${esc(designation(r))}">${esc(designation(r))}</td><td title="${esc(r.kurzbeschreibung)}">${esc(r.kurzbeschreibung)}</td><td>${tags(r.herkunft)}</td></tr>`,
         )
         .join('')}</tbody></table>`;
 }
@@ -121,7 +132,7 @@ function fullTable(
                 .filter(Boolean)
                 .join('; ');
 
-            return `<tr><td><b>${esc(abbreviation(r))}</b>${official(r.abk_eigen, r.abk_offiziell)}${aliases ? `<br><small>Alias: ${esc(aliases)}</small>` : ''}</td><td>${esc(designation(r))}${official(r.bez_eigen, r.bez_offiziell)}${r.url ? `<br><small class="url">${esc(r.url)}</small>` : ''}</td><td>${esc(r.kurzbeschreibung)}</td><td>${esc(r.beschreibung)}</td><td>${tags(r.herkunft)}</td><td>${tags(r.genutzt_in)}</td><td>${esc(status[r.status] ?? r.status)}${validity(r) ? `<br><small>${validity(r)}</small>` : ''}</td><td class="pre">${esc(r.notiz)}</td></tr>`;
+            return `<tr><td><b>${esc(abbreviation(r))}</b>${sup(r)}${official(r.abk_eigen, r.abk_offiziell)}${aliases ? `<br><small>Alias: ${esc(aliases)}</small>` : ''}</td><td>${esc(designation(r))}${official(r.bez_eigen, r.bez_offiziell)}${r.url ? `<br><small class="url">${esc(r.url)}</small>` : ''}</td><td>${esc(r.kurzbeschreibung)}</td><td>${esc(r.beschreibung)}</td><td>${tags(r.herkunft)}</td><td>${tags(r.genutzt_in)}</td><td>${esc(status[r.status] ?? r.status)}${validity(r) ? `<br><small>${validity(r)}</small>` : ''}</td><td class="pre">${esc(r.notiz)}</td></tr>`;
         })
         .join('')}</tbody></table>`;
 }
@@ -134,11 +145,12 @@ export function printGlossary(
     rows: GlossaryRow[],
     mode: 'kompakt' | 'voll' = 'kompakt',
     status: Record<string, string> = {},
+    names: Record<string, string> = {},
 ) {
     const body = byCategory(rows)
         .map(
             ([cat, list]) =>
-                `<section><h2>${esc(cat)} <small>(${list.length})</small></h2>${mode === 'kompakt' ? compactTable(list) : fullTable(list, status)}</section>`,
+                `<section><h2>${esc(names[cat] || cat)} <small>(${list.length})</small></h2>${mode === 'kompakt' ? compactTable(list) : fullTable(list, status)}</section>`,
         )
         .join('');
     const page = mode === 'kompakt' ? 'portrait' : 'landscape';
@@ -149,7 +161,7 @@ table{border-collapse:collapse;width:100%;table-layout:fixed}th,td{border-bottom
 .full td{font-size:8pt;overflow-wrap:anywhere}.full .pre{white-space:pre-wrap}
 small{color:#555}.url{color:#1d4f91}.tag{display:inline-block;border:1px solid #bbb;border-radius:3px;padding:0 4px;margin:0 2px 1px 0;font-size:7.5pt;line-height:1.4;background:#f6f7f8}
 p.meta{margin:0 0 6px;color:#555}@media print{body{margin:0}tr{break-inside:avoid}th{-webkit-print-color-adjust:exact;print-color-adjust:exact}}</style></head><body>
-<h1>Glossar</h1><p class="meta">${rows.length} Einträge · ${mode === 'kompakt' ? 'kompakt' : 'alle Felder'} · Stand ${new Date().toLocaleDateString('de-CH')}</p>${body}
+<h1>Glossar</h1><p class="meta">${rows.length} Einträge · ${mode === 'kompakt' ? 'kompakt' : 'alle Felder'} · Stand ${new Date().toLocaleDateString('de-CH')}${rows.some((r) => r.bedeutungen > 1) ? ' · hochgestellte Zahl = Anzahl verschiedener Bedeutungen der Abkürzung' : ''}</p>${body}
 <script>window.onload=()=>window.print()</script></body></html>`;
     const w = window.open('', '_blank');
     if (!w) {
@@ -165,7 +177,10 @@ p.meta{margin:0 0 6px;color:#555}@media print{body{margin:0}tr{break-inside:avoi
 const mdCell = (s: string) => s.replace(/\|/g, '\\|').replace(/\r?\n/g, ' ');
 
 /** Markdown-Datei herunterladen (Abschnitte je Kategorie). */
-export function downloadMarkdown(rows: GlossaryRow[]) {
+export function downloadMarkdown(
+    rows: GlossaryRow[],
+    names: Record<string, string> = {},
+) {
     const parts = [
         `# Glossar`,
         '',
@@ -174,7 +189,7 @@ export function downloadMarkdown(rows: GlossaryRow[]) {
     ];
     for (const [cat, list] of byCategory(rows)) {
         parts.push(
-            `## ${cat}`,
+            `## ${names[cat] || cat}`,
             '',
             '| Abkürzung | Bezeichnung | Kurzbeschreibung | Herkunft |',
             '| --- | --- | --- | --- |',
@@ -184,7 +199,7 @@ export function downloadMarkdown(rows: GlossaryRow[]) {
                 ? `[${mdCell(designation(r))}](${r.url})`
                 : mdCell(designation(r));
             parts.push(
-                `| **${mdCell(abbreviation(r))}** | ${name} | ${mdCell(r.kurzbeschreibung)} | ${mdCell(r.herkunft)} |`,
+                `| **${mdCell(abbreviation(r))}**${supText(r)} | ${name} | ${mdCell(r.kurzbeschreibung)} | ${mdCell(r.herkunft)} |`,
             );
         }
         parts.push('');

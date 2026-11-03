@@ -12,21 +12,21 @@ final class GlossarySeed
     public const VSA_URL = 'https://www.zh.ch/de/bildung/schulen/volksschule.html';
 
     /**
-     * @return list<array{0: string, 1: string, 2: string, 3: string}> id, Abkürzung, Bezeichnung, Beschreibung
+     * @return list<array{0: string, 1: string, 2: string, 3: string, 4: string}> id, Abkürzung, Bezeichnung, Beschreibung, Label
      */
     public static function kategorien(): array
     {
         return [
-            ['beh', 'BEH', 'Behörden & Schulorganisation', 'Bildungsdirektion, Behörden und Schulorganisation'],
-            ['unt', 'UNT', 'Unterricht & Fachbereiche', 'Unterricht, Lehrplan und Fachbereiche'],
-            ['sop', 'SOP', 'Sonderpädagogik', 'Sonderpädagogik und besondere Förderung'],
-            ['per', 'PER', 'Personal', 'Schulpersonal, Berufsauftrag und Personalführung'],
-            ['qua', 'QUA', 'Schulqualität', 'Schulqualität und Schulentwicklung'],
-            ['rec', 'REC', 'Recht', 'Rechtliche Grundlagen und Erlasse'],
-            ['kis', 'KIS', 'Kindesschutz & Fachstellen', 'Schulsozialarbeit, Kindesschutz und Fachstellen'],
-            ['ver', 'VER', 'Verbände', 'Verbände und Berufsorganisationen'],
-            ['sta', 'STA', 'Statistik & Stufen', 'Bildungsstatistik, Schulstufen und Übergänge'],
-            ['dsi', 'DSI', 'Datenschutz & ICT', 'Datenschutz, Informationssicherheit und ICT'],
+            ['beh', 'BEH', 'Behörden & Schulorganisation', 'Bildungsdirektion, Behörden und Schulorganisation', 'Behörden'],
+            ['unt', 'UNT', 'Unterricht & Fachbereiche', 'Unterricht, Lehrplan und Fachbereiche', 'Unterricht'],
+            ['sop', 'SOP', 'Sonderpädagogik', 'Sonderpädagogik und besondere Förderung', 'Sonderpädagogik'],
+            ['per', 'PER', 'Personal', 'Schulpersonal, Berufsauftrag und Personalführung', 'Personal'],
+            ['qua', 'QUA', 'Schulqualität', 'Schulqualität und Schulentwicklung', 'Qualität'],
+            ['rec', 'REC', 'Recht', 'Rechtliche Grundlagen und Erlasse', 'Recht'],
+            ['kis', 'KIS', 'Kindesschutz & Fachstellen', 'Schulsozialarbeit, Kindesschutz und Fachstellen', 'Kindesschutz'],
+            ['ver', 'VER', 'Verbände', 'Verbände und Berufsorganisationen', 'Verbände'],
+            ['sta', 'STA', 'Statistik & Stufen', 'Bildungsstatistik, Schulstufen und Übergänge', 'Statistik'],
+            ['dsi', 'DSI', 'Datenschutz & ICT', 'Datenschutz, Informationssicherheit und ICT', 'Datenschutz'],
         ];
     }
 

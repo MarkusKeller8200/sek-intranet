@@ -30,6 +30,7 @@ final class PersonTypes
         return match ($role) {
             'lehrperson', 'ict' => 'lehrperson',
             'schulleitung' => 'schulleitung',
+            'schueler', 'eltern', 'extern' => $role,
             default => 'mitarbeitende',
         };
     }

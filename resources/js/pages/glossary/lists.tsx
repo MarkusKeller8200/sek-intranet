@@ -48,7 +48,6 @@ export default function GlossaryLists({
     liste: keyof typeof LISTEN;
     eintraege: Eintrag[];
 }) {
-    const mitLabel = liste === 'herkunft';
     const [bearbeiten, setBearbeiten] = useState<Eintrag | null>(null);
     const form = useForm({ ...leer });
     const waehlen = (e: Eintrag | null) => {
@@ -114,7 +113,7 @@ export default function GlossaryLists({
                             <TableHeader>
                                 <TableRow>
                                     <TableHead>Abkürzung</TableHead>
-                                    {mitLabel && <TableHead>Label</TableHead>}
+                                    <TableHead>Label</TableHead>
                                     <TableHead>Bezeichnung</TableHead>
                                     <TableHead>Beschreibung</TableHead>
                                     <TableHead>URL</TableHead>
@@ -134,18 +133,16 @@ export default function GlossaryLists({
                                         >
                                             {e.kuerzel}
                                         </TableCell>
-                                        {mitLabel && (
-                                            <TableCell>
-                                                {e.label && (
-                                                    <Badge
-                                                        variant="secondary"
-                                                        translate="no"
-                                                    >
-                                                        {e.label}
-                                                    </Badge>
-                                                )}
-                                            </TableCell>
-                                        )}
+                                        <TableCell>
+                                            {e.label && (
+                                                <Badge
+                                                    variant="secondary"
+                                                    translate="no"
+                                                >
+                                                    {e.label}
+                                                </Badge>
+                                            )}
+                                        </TableCell>
                                         <TableCell
                                             className="whitespace-normal"
                                             translate="no"
@@ -247,8 +244,7 @@ export default function GlossaryLists({
                                     }
                                 />
                             </FormField>
-                            {mitLabel && (
-                                <FormField
+                                                            <FormField
                                     id="gl-l"
                                     label="Label"
                                     hint="Kurz, erscheint in der Tabelle als Tag (leer: Abkürzung)"
@@ -268,7 +264,6 @@ export default function GlossaryLists({
                                         }
                                     />
                                 </FormField>
-                            )}
                             <FormField
                                 id="gl-d"
                                 label="Beschreibung"

@@ -76,6 +76,20 @@ final class Glossary
     }
 
     /**
+     * @return array<string, string> Label → voller Name (Überschriften in PDF und Markdown)
+     */
+    public function labelNames(string $list): array
+    {
+        $labels = $this->labels($list);
+        $names = [];
+        foreach ($this->glossary->listItems($list) as $item) {
+            $names[$labels[(string) $item['id']]] = (string) ($item['bezeichnung'] ?? '');
+        }
+
+        return $names;
+    }
+
+    /**
      * Bereiche des Intranets für «Intern genutzt in»: Hauptmenü und Module.
      *
      * @return array<string, string> Schlüssel → Bezeichnung
@@ -127,11 +141,14 @@ final class Glossary
     public function rows(): array
     {
         $entries = $this->glossary->all();
-        $lists = ['kategorien' => $this->listOptions('kategorien'), 'herkunft' => $this->labels('herkunft'), 'genutzt_in' => $this->areaOptions()];
-        $count = [];
+        $lists = ['kategorien' => $this->labels('kategorien'), 'herkunft' => $this->labels('herkunft'), 'genutzt_in' => $this->areaOptions()];
+        // Mehrfachbedeutung (#67): nur verschiedene Bezeichnungen zählen; gleiche Bezeichnung in anderer
+        // Kategorie ist kein echtes Duplikat
+        $meanings = [];
         foreach ($entries as $e) {
+            $name = mb_strtolower(self::displayName($e));
             foreach (self::abbreviations($e) as $a) {
-                $count[$a] = ($count[$a] ?? 0) + 1;
+                $meanings[$a][$name] = true;
             }
         }
         $rows = [];
@@ -140,7 +157,8 @@ final class Glossary
             foreach (array_keys(self::FIELDS) as $field) {
                 $row[$field] = $this->cellText($field, $e[$field] ?? null, $lists);
             }
-            $row['mehrdeutig'] = array_filter(self::abbreviations($e), fn (string $a): bool => ($count[$a] ?? 0) > 1) !== [];
+            $row['bedeutungen'] = max(1, ...array_map(fn (string $a): int => count($meanings[$a] ?? []), self::abbreviations($e) ?: ['']));
+            $row['mehrdeutig'] = $row['bedeutungen'] > 1;
             $row['anzeige'] = self::shortName($e);
             $rows[] = $row;
         }

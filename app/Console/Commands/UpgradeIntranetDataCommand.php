@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\Data\Store\JsonStore;
 use App\Support\DemoStudents;
+use App\Support\GlossaryExamples;
 use App\Support\PersonFields;
 use App\Support\PersonLinks;
 use App\Support\PersonTypes;
@@ -81,6 +82,12 @@ class UpgradeIntranetDataCommand extends Command
 
         // Prototyp: erfundene Schüler:innen und Eltern, Beispiel-Datenherkunft
         $total += DemoStudents::addIfMissing($store);
+        $total += DemoStudents::addRoleAccounts($store);
+        // Beispieldaten Glossar (#68), einmalig
+        $examples = app(GlossaryExamples::class)->apply();
+        if ($examples > 0) {
+            $this->components->info("Glossar: {$examples} Beispiel-Einträge ergänzt.");
+        }
         $total += DemoStudents::addDemoLinks($store);
 
         // Neuerungen des freigegebenen Releases einmal als Mitteilung (CHANGELOG «Für Mitarbeitende»)

@@ -349,7 +349,29 @@ return [
         'redaktion' => 'Redaktion',
         'lehrperson' => 'Lehrperson',
         'mitarbeitende' => 'Mitarbeitende',
+        'schueler' => 'Schüler:in',
+        'eltern' => 'Eltern',
+        'extern' => 'Externe',
         'kein-zugang' => 'Kein Zugang',
+    ],
+
+    // Anmeldung mit PIN je Rolle (Prototyp, #69; später OIDC). Reihenfolge = Anzeige auf der Anmeldeseite.
+    // Die PINs selbst stehen nur als Hash in den Daten (access_pins), gesetzt unter Einstellungen → Zugang.
+    'pin_roles' => [
+        'admin' => 'Administrator',
+        'verwaltung' => 'Verwaltung',
+        'schulleitung' => 'Schulleitung',
+        'lehrperson' => 'Lehrperson',
+        'schueler' => 'Schüler:in',
+        'eltern' => 'Eltern',
+        'extern' => 'Externe',
+    ],
+
+    // Rollen, die nur bestimmte Menügruppen sehen und öffnen dürfen (Schlüssel aus «modules»).
+    'restricted_roles' => [
+        'extern' => ['kommunikation', 'wissen'],
+        'schueler' => ['kommunikation', 'wissen'],
+        'eltern' => ['kommunikation', 'wissen'],
     ],
 
     // Systeme für Datenherkunft und Synchronisation (Personen → Datenherkunft). Liste erweiterbar.
@@ -375,7 +397,7 @@ return [
         'extern' => 'Externe Fachperson',
     ],
     // Diese Arten können sich anmelden (Personal); alle anderen haben keinen Zugang zum Intranet
-    'login_person_types' => ['lehrperson', 'schulleitung', 'mitarbeitende', 'behoerde'],
+    'login_person_types' => ['lehrperson', 'schulleitung', 'mitarbeitende', 'behoerde', 'schueler', 'eltern', 'extern'],
     // Diese Arten sehen nur Personen mit dem Recht «view-students»
     'protected_person_types' => ['schueler', 'eltern'],
 
@@ -388,6 +410,9 @@ return [
         'redaktion' => 'Pflegt Mitteilungen, Termine und Dokumente für alle.',
         'lehrperson' => 'Unterrichtet: Unterricht, Bestellungen für Klasse und Zimmer, Inhalte lesen.',
         'mitarbeitende' => 'Weitere Mitarbeitende (Hausdienst, Betreuung, Assistenz): Inhalte lesen.',
+        'schueler' => 'Schüler:in (Prototyp): vorerst nur Kommunikation und Wissen & Ablage.',
+        'eltern' => 'Eltern (Prototyp): vorerst nur Kommunikation und Wissen & Ablage.',
+        'extern' => 'Externe Fachperson (Prototyp): nur Kommunikation und Wissen & Ablage.',
         'kein-zugang' => 'Ohne Anmeldung im Intranet, z. B. Schüler:innen und Eltern (nur als Kontakt erfasst).',
     ],
 
@@ -399,7 +424,7 @@ return [
         'use-verwaltung' => ['label' => 'Verwaltung (Workflows)', 'roles' => ['admin', 'schulleitung', 'verwaltung']],
         'use-unterricht' => ['label' => 'Unterricht (Klassen, Stundenpläne, Absenzen)', 'roles' => ['admin', 'schulleitung', 'lehrperson', 'ict']],
         'order' => ['label' => 'Bestellen (Ausrüstung, Lehrmittel, Anträge)', 'roles' => ['admin', 'schulleitung', 'verwaltung', 'ict', 'lehrperson']],
-        'view-glossary' => ['label' => 'Glossar ansehen', 'roles' => ['admin', 'schulleitung', 'verwaltung', 'ict', 'redaktion', 'lehrperson', 'mitarbeitende']],
+        'view-glossary' => ['label' => 'Glossar ansehen', 'roles' => ['admin', 'schulleitung', 'verwaltung', 'ict', 'redaktion', 'lehrperson', 'mitarbeitende', 'schueler', 'eltern', 'extern']],
         'edit-glossary' => ['label' => 'Glossar pflegen (eigene Abkürzungen und Bezeichnungen, Listen, Import)', 'roles' => ['admin', 'schulleitung', 'verwaltung']],
         'edit-glossary-official' => ['label' => 'Offizielle Begriffe im Glossar ändern', 'roles' => ['admin']],
         'view-students' => ['label' => 'Schüler:innen und Eltern sehen', 'roles' => ['admin', 'schulleitung', 'verwaltung', 'ict', 'lehrperson']],
@@ -798,6 +823,7 @@ return [
                 'einstellungen-einbindungen' => ['title' => 'Weitere Einbindungen', 'icon' => 'Globe', 'href' => '/einstellungen/einbindungen'],
                 'browser-erweiterung' => ['title' => 'Browser-Erweiterung', 'icon' => 'Puzzle', 'href' => '/einstellungen/browser-erweiterung'],
                 'modulverwaltung' => ['title' => 'Module', 'icon' => 'Boxes', 'href' => '/einstellungen/module'],
+                'zugang' => ['title' => 'Zugang (PIN)', 'icon' => 'KeyRound', 'href' => '/einstellungen/zugang'],
             ],
         ],
         'prototyp' => [
@@ -906,6 +932,9 @@ return [
             'redaktion' => 'indigo',
             'lehrperson' => 'amber',
             'mitarbeitende' => 'slate',
+            'schueler' => 'sky',
+            'eltern' => 'orange',
+            'extern' => 'brand',
             'kein-zugang' => 'teal',
         ],
         'gui_statuses' => [
@@ -1310,6 +1339,14 @@ return [
             'description' => 'Für welche Version die Mitteilung «Neu im Intranet» schon angelegt wurde (id = Version).',
             'fields' => [
                 'announcement_id' => ['type' => 'ref', 'references' => 'announcements', 'required' => true, 'label' => 'Mitteilung'],
+            ],
+        ],
+        'access_pins' => [
+            'label' => 'System: PIN je Rolle',
+            'description' => 'Anmeldung im Prototyp (id = Rolle). Nur der Hash des PINs, nie der PIN selbst.',
+            'fields' => [
+                'hash' => ['type' => 'string', 'required' => true, 'label' => 'Hash des PINs'],
+                'updated_by' => ['type' => 'ref', 'references' => 'users', 'required' => false, 'label' => 'Gesetzt von'],
             ],
         ],
         'app_settings' => [

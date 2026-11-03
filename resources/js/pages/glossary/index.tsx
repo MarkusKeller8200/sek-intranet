@@ -18,6 +18,7 @@ import { postJson } from '@/lib/http';
 type Props = {
     rows: GlossaryRow[];
     kategorien: Record<string, string>;
+    kategorienNamen: Record<string, string>;
     herkunft: Record<string, string>;
     bereiche: Record<string, string>;
     status: Record<string, string>;
@@ -82,6 +83,7 @@ function Tags({ value }: { value: string }) {
 /** Glossar als bearbeitbare Tabelle (GUI-Baustein «Tabellen»), ganze Breite. */
 export default function GlossaryIndex({
     rows,
+    kategorienNamen,
     status,
     felder,
     views,
@@ -112,11 +114,14 @@ export default function GlossaryIndex({
                         href={`/glossar/${r.id}`}
                         className="inline-flex items-center gap-1 font-semibold text-primary underline-offset-2 hover:underline"
                     >
-                        <span translate="no">{r.anzeige || '(neu)'}</span>
+                        <span translate="no">
+                            {r.anzeige || '(neu)'}
+                            {r.mehrdeutig && <sup>{r.bedeutungen}</sup>}
+                        </span>
                         {r.mehrdeutig && (
                             <Badge
                                 variant="outline"
-                                title="Diese Abkürzung hat mehrere Bedeutungen"
+                                title="Diese Abkürzung hat mehrere verschiedene Bedeutungen"
                             >
                                 mehrdeutig
                             </Badge>
@@ -256,16 +261,30 @@ export default function GlossaryIndex({
                         {
                             label: 'PDF kompakt (A4 hoch)',
                             run: (ids) =>
-                                printGlossary(ausgewaehlt(ids), 'kompakt'),
+                                printGlossary(
+                                    ausgewaehlt(ids),
+                                    'kompakt',
+                                    status,
+                                    kategorienNamen,
+                                ),
                         },
                         {
                             label: 'PDF voll (A4 quer)',
                             run: (ids) =>
-                                printGlossary(ausgewaehlt(ids), 'voll', status),
+                                printGlossary(
+                                    ausgewaehlt(ids),
+                                    'voll',
+                                    status,
+                                    kategorienNamen,
+                                ),
                         },
                         {
                             label: 'Markdown',
-                            run: (ids) => downloadMarkdown(ausgewaehlt(ids)),
+                            run: (ids) =>
+                                downloadMarkdown(
+                                    ausgewaehlt(ids),
+                                    kategorienNamen,
+                                ),
                         },
                     ]}
                     selectable={false}

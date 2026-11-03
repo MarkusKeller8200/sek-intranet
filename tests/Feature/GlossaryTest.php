@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Data\Contracts\GlossaryRepository;
 use App\Support\Glossary;
+use App\Support\GlossaryExamples;
 use App\Support\SpreadsheetWriter;
 use Illuminate\Http\UploadedFile;
 use Inertia\Testing\AssertableInertia as Assert;
@@ -54,7 +55,7 @@ class GlossaryTest extends TestCase
             ['id' => $vsa['id'], 'field' => 'bez_eigen', 'value' => 'Volksschulamt Zürich'],
             ['id' => $vsa['id'], 'field' => 'kategorien', 'value' => 'BEH; Recht'],
             ['id' => $vsa['id'], 'field' => 'status', 'value' => 'aktuell'],
-        ]])->assertOk()->assertJsonPath('rows.0.kategorien', 'BEH – Behörden & Schulorganisation; REC – Recht');
+        ]])->assertOk()->assertJsonPath('rows.0.kategorien', 'Behörden; Recht');
         $this->assertSame(['beh', 'rec'], $this->repo()->find($vsa['id'])['kategorien']);
 
         // offizielle Felder gesperrt, unbekannte Herkunft abgewiesen, alles oder nichts
@@ -67,6 +68,33 @@ class GlossaryTest extends TestCase
 
         $this->signInAs('admin');
         $this->postJson('/glossar/zellen', ['changes' => [['id' => $vsa['id'], 'field' => 'bez_offiziell', 'value' => 'Volksschulamt']]])->assertOk();
+    }
+
+    public function test_multiple_meanings_only_with_different_designation(): void
+    {
+        $this->signInAs('lehrperson');
+        $this->get('/glossar')->assertInertia(fn (Assert $page) => $page
+            ->where('kategorienNamen.Recht', 'Recht')
+            ->where('kategorienNamen.Behörden', 'Behörden & Schulorganisation')
+            ->where('rows', function ($rows): bool {
+                $by = collect($rows)->groupBy('anzeige');
+
+                return $by['SHP']->every(fn ($r): bool => $r['bedeutungen'] === 3 && $r['mehrdeutig'] === true)
+                    && $by['LP']->every(fn ($r): bool => $r['bedeutungen'] === 1 && $r['mehrdeutig'] === false)
+                    && $by['VSA'][0]['kategorien'] === 'Behörden';
+            }));
+    }
+
+    public function test_examples_fill_only_empty_fields_once(): void
+    {
+        $vsa = $this->entry('VSA');
+        $this->repo()->update($vsa['id'], ['kurzbeschreibung' => 'Eigene']);
+        $changed = app(GlossaryExamples::class)->apply();
+        $this->assertGreaterThan(20, $changed);
+        $this->assertSame('Eigene', $this->repo()->find($vsa['id'])['kurzbeschreibung']);
+        $this->assertSame(['vsa', 'bund'], $this->entry('BFS')['herkunft']);
+        $this->assertSame(['dsi', 'unt'], $this->entry('BYOD')['kategorien']);
+        $this->assertSame(0, app(GlossaryExamples::class)->apply(), 'nur einmal');
     }
 
     public function test_new_row_and_single_record(): void

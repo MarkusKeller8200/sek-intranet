@@ -11,16 +11,16 @@ class PersonTest extends TestCase
 {
     public function test_staff_see_active_people_admin_sees_all(): void
     {
-        // Ohne Recht «view-students»: nur Personal (7 aktive)
+        // Ohne Recht «view-students»: nur Personal (7 aktive) und die Demo-Externe
         $this->signInAs('redaktion');
-        $this->get('/personen')->assertInertia(fn (Assert $page) => $page->component('people/index')->has('people', 7));
+        $this->get('/personen')->assertInertia(fn (Assert $page) => $page->component('people/index')->has('people', 8));
 
         // Lehrpersonen sehen zusätzlich die erfundenen Schüler:innen (12) und Eltern (2)
         $this->signInAs('lehrperson');
-        $this->get('/personen')->assertInertia(fn (Assert $page) => $page->has('people', 21));
+        $this->get('/personen')->assertInertia(fn (Assert $page) => $page->has('people', 24));
 
         $this->signInAs('admin');
-        $this->get('/personen')->assertInertia(fn (Assert $page) => $page->has('people', 22));
+        $this->get('/personen')->assertInertia(fn (Assert $page) => $page->has('people', 25));
     }
 
     public function test_only_admin_manages_people(): void

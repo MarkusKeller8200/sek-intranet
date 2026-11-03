@@ -2,6 +2,7 @@
 
 namespace App\Support;
 
+use App\Auth\IntranetUser;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Support\Facades\Gate;
 
@@ -23,8 +24,9 @@ class ModuleNavigation
     {
         $groups = [];
 
+        $restricted = self::restrictedGroups($user);
         foreach ($this->config() as $groupKey => $group) {
-            if (! $this->allowed($group, $user)) {
+            if (! $this->allowed($group, $user) || ($restricted !== null && ! in_array((string) $groupKey, $restricted, true))) {
                 continue;
             }
 
@@ -74,6 +76,38 @@ class ModuleNavigation
         }
 
         return $groups;
+    }
+
+    /**
+     * Freigegebene Menügruppen einer eingeschränkten Rolle (z. B. Externe, #69); null = keine Einschränkung.
+     *
+     * @return list<string>|null
+     */
+    public static function restrictedGroups(?Authenticatable $user): ?array
+    {
+        $role = $user instanceof IntranetUser ? $user->role() : null;
+        $groups = $role !== null ? (config('intranet.restricted_roles')[$role] ?? null) : null;
+
+        return is_array($groups) ? array_values(array_map('strval', $groups)) : null;
+    }
+
+    /**
+     * Pfade (ohne führenden Schrägstrich), die eine eingeschränkte Rolle öffnen darf: alle Menüpunkte
+     * der freigegebenen Gruppen samt Unterseiten.
+     *
+     * @param  list<string>  $groups
+     * @return list<string>
+     */
+    public function allowedPaths(array $groups): array
+    {
+        $paths = [];
+        foreach ($this->flat() as $entry) {
+            if (in_array($entry['groupKey'], $groups, true)) {
+                $paths[] = ltrim($this->item($entry['key'], $entry['module'])['href'], '/');
+            }
+        }
+
+        return array_values(array_unique(array_filter($paths)));
     }
 
     /**

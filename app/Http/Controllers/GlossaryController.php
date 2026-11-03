@@ -40,6 +40,7 @@ class GlossaryController extends Controller
         return Inertia::render('glossary/index', [
             'rows' => $this->service->rows(),
             'kategorien' => $this->service->listOptions('kategorien'),
+            'kategorienNamen' => $this->service->labelNames('kategorien'),
             'herkunft' => $this->service->listOptions('herkunft'),
             'bereiche' => $this->service->areaOptions(),
             'status' => Glossary::STATUS,

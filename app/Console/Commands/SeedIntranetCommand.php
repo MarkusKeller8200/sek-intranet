@@ -64,6 +64,7 @@ class SeedIntranetCommand extends Command
         // Erfundene Schüler:innen, Eltern und Beispiel-Datenherkunft
         $store->replace(PersonLinks::COLLECTION, []);
         DemoStudents::addIfMissing($store);
+        DemoStudents::addRoleAccounts($store);
         DemoStudents::addDemoLinks($store);
 
         $store->replace('announcements', [
