@@ -94,7 +94,11 @@ export default function GlossaryIndex({
 }: Props) {
     const datei = useRef<HTMLInputElement>(null);
     const [pdfIds, setPdfIds] = useState<string[] | null>(null);
-    const [loeschen, setLoeschen] = useState<{ ids: string[]; names: string[]; clear: () => void } | null>(null);
+    const [loeschen, setLoeschen] = useState<{
+        ids: string[];
+        names: string[];
+        clear: () => void;
+    } | null>(null);
     const byId = useMemo(() => new Map(rows.map((r) => [r.id, r])), [rows]);
 
     const columns = useMemo<GridColumn<GlossaryRow>[]>(() => {
@@ -285,7 +289,16 @@ export default function GlossaryIndex({
                                       variant="destructive"
                                       size="sm"
                                       onClick={() =>
-                                          setLoeschen({ ids: selected.map((r) => r.id), names: selected.map((r) => r.anzeige || r.bez_offiziell || r.bez_eigen), clear })
+                                          setLoeschen({
+                                              ids: selected.map((r) => r.id),
+                                              names: selected.map(
+                                                  (r) =>
+                                                      r.anzeige ||
+                                                      r.bez_offiziell ||
+                                                      r.bez_eigen,
+                                              ),
+                                              clear,
+                                          })
                                       }
                                   >
                                       <Trash2 /> Auswahl löschen
@@ -349,7 +362,14 @@ export default function GlossaryIndex({
                         if (!auswahl) {
                             return;
                         }
-                        router.post('/glossar/auswahl-loeschen', { ids: auswahl.ids }, { preserveScroll: true, onSuccess: () => auswahl.clear() });
+                        router.post(
+                            '/glossar/auswahl-loeschen',
+                            { ids: auswahl.ids },
+                            {
+                                preserveScroll: true,
+                                onSuccess: () => auswahl.clear(),
+                            },
+                        );
                         setLoeschen(null);
                     }}
                 />
