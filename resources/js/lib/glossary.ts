@@ -195,7 +195,14 @@ const anchor = (href: string, text: string) =>
 
 /** Links eines Eintrags: URL, dann Links aus Notiz und Beschreibung (Markdown), ohne Doppelte. */
 function rowLinks(r: GlossaryRow): string[] {
-    const found = [r.url, ...[...`${r.notiz}\n${r.beschreibung}`.matchAll(/\]\((https?:\/\/[^\s)]+)\)/gi)].map((m) => m[1])];
+    const found = [
+        r.url,
+        ...[
+            ...`${r.notiz}\n${r.beschreibung}`.matchAll(
+                /\]\((https?:\/\/[^\s)]+)\)/gi,
+            ),
+        ].map((m) => m[1]),
+    ];
 
     return [...new Set(found.filter((u) => /^https?:\/\//i.test(u)))];
 }
@@ -222,8 +229,7 @@ function columns(o: PdfOptions, status: Labels): Column[] {
         title: 'Bezeichnung',
         width: full ? 20 : 40,
         cell: (r) =>
-            bezHtml(r) +
-            (full ? official(r.bez_eigen, r.bez_offiziell) : ''),
+            bezHtml(r) + (full ? official(r.bez_eigen, r.bez_offiziell) : ''),
     });
     const kurz: Column = {
         title: 'Kurzbeschreibung',
