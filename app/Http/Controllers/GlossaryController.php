@@ -123,6 +123,24 @@ class GlossaryController extends Controller
         return redirect('/glossar');
     }
 
+    /** Mehrere Einträge auf einmal löschen (Auswahl in der Tabelle, #71). */
+    public function destroyMany(Request $request): RedirectResponse
+    {
+        $data = $request->validate(['ids' => ['required', 'array', 'min:1', 'max:1000'], 'ids.*' => ['string']]);
+        $deleted = 0;
+        foreach (array_unique($data['ids']) as $id) {
+            $before = $this->glossary->find((string) $id);
+            if ($before !== null) {
+                $this->glossary->delete((string) $id);
+                $this->audit->record('glossar', $before, null, 'Glossar (Auswahl gelöscht)', $request->user());
+                $deleted++;
+            }
+        }
+        $this->toast($deleted === 1 ? '1 Eintrag gelöscht.' : "{$deleted} Einträge gelöscht.");
+
+        return redirect('/glossar');
+    }
+
     /** Neue Zeile direkt in der Tabelle (JSON). */
     public function newRow(Request $request): JsonResponse
     {

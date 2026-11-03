@@ -1,5 +1,5 @@
 import { Head, Link, router } from '@inertiajs/react';
-import { Copy, FileUp, ListTree, Plus } from 'lucide-react';
+import { Copy, FileUp, ListTree, Plus, Trash2 } from 'lucide-react';
 import { useMemo, useRef, useState } from 'react';
 import { toast } from 'sonner';
 import DataGrid from '@/components/data-grid';
@@ -10,6 +10,7 @@ import type {
     SavedView,
 } from '@/components/grid/types';
 import PageHeader from '@/components/page-header';
+import { AlertDialog } from '@/components/ui/alert-dialog';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import type { GlossaryRow } from '@/lib/glossary';
@@ -93,6 +94,7 @@ export default function GlossaryIndex({
 }: Props) {
     const datei = useRef<HTMLInputElement>(null);
     const [pdfIds, setPdfIds] = useState<string[] | null>(null);
+    const [loeschen, setLoeschen] = useState<{ ids: string[]; names: string[]; clear: () => void } | null>(null);
     const byId = useMemo(() => new Map(rows.map((r) => [r.id, r])), [rows]);
 
     const columns = useMemo<GridColumn<GlossaryRow>[]>(() => {
@@ -275,7 +277,22 @@ export default function GlossaryIndex({
                                 ),
                         },
                     ]}
-                    selectable={false}
+                    selectable={rechte.edit}
+                    bulkActions={
+                        rechte.edit
+                            ? (selected, clear) => (
+                                  <Button
+                                      variant="destructive"
+                                      size="sm"
+                                      onClick={() =>
+                                          setLoeschen({ ids: selected.map((r) => r.id), names: selected.map((r) => r.anzeige || r.bez_offiziell || r.bez_eigen), clear })
+                                      }
+                                  >
+                                      <Trash2 /> Auswahl löschen
+                                  </Button>
+                              )
+                            : undefined
+                    }
                     searchPlaceholder="Abkürzung, Bezeichnung, Suchbegriff …"
                     emptyText="Keine Einträge gefunden."
                     rowClassName={(r) =>
@@ -319,6 +336,22 @@ export default function GlossaryIndex({
                             </>
                         )
                     }
+                />
+                <AlertDialog
+                    open={loeschen !== null}
+                    onOpenChange={(open) => !open && setLoeschen(null)}
+                    title={`${loeschen?.ids.length ?? 0} Einträge löschen?`}
+                    description={`${(loeschen?.names ?? []).slice(0, 8).join(', ')}${(loeschen?.names.length ?? 0) > 8 ? ' …' : ''}. Im Änderungsverlauf bleibt jede Löschung nachvollziehbar.`}
+                    confirmLabel="Löschen"
+                    destructive
+                    onConfirm={() => {
+                        const auswahl = loeschen;
+                        if (!auswahl) {
+                            return;
+                        }
+                        router.post('/glossar/auswahl-loeschen', { ids: auswahl.ids }, { preserveScroll: true, onSuccess: () => auswahl.clear() });
+                        setLoeschen(null);
+                    }}
                 />
                 <GlossaryPdfDialog
                     count={pdfIds?.length ?? 0}

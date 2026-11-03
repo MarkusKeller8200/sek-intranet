@@ -23,6 +23,8 @@ laufend unter **Unveröffentlicht**. Ab 0.32.0 entsteht eine Version nur bei ein
 
 ### Neu
 
+- **Glossar: Mehrfachauswahl (#71):** Checkbox je Zeile, «Auswahl löschen» mit Rückfrage (Recht `edit-glossary`),
+  jede Löschung im Änderungsverlauf.
 - **Glossar: Dialog für den PDF-Export (#70):** Format (A4 hoch/quer), Umfang (kompakt, erweitert, vollständig),
   Gruppierung (keine, Kategorie, Herkunft, Status) und Seitenumbruch bei Gruppe; die letzte Wahl bleibt im Browser.
 - **Zugang mit PIN je Rolle (#69):** Rolle wählen, 8-stelligen PIN eingeben, danach Demo-Person der Rolle wählen

@@ -97,6 +97,19 @@ class GlossaryTest extends TestCase
         $this->assertSame(0, app(GlossaryExamples::class)->apply(), 'nur einmal');
     }
 
+    public function test_delete_selection_with_right_only(): void
+    {
+        $ids = collect($this->repo()->all())->where('abk_offiziell', 'SHP')->pluck('id')->values()->all();
+        $this->signInAs('lehrperson');
+        $this->post('/glossar/auswahl-loeschen', ['ids' => $ids])->assertForbidden();
+
+        $this->signInAs('verwaltung');
+        $this->post('/glossar/auswahl-loeschen', ['ids' => [...$ids, 'gibt-es-nicht']])->assertRedirect('/glossar');
+        $this->assertSame(0, collect($this->repo()->all())->where('abk_offiziell', 'SHP')->count());
+        $this->assertCount(138, $this->repo()->all());
+        $this->post('/glossar/auswahl-loeschen', ['ids' => []])->assertSessionHasErrors('ids');
+    }
+
     public function test_new_row_and_single_record(): void
     {
         $this->signInAs('schulleitung');

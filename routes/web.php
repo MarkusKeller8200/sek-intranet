@@ -190,6 +190,7 @@ Route::middleware('auth')->group(function () {
         Route::post('glossar/import/{token}', [GlossaryController::class, 'importApply'])->name('glossary.import.apply');
         Route::get('glossar/{id}/bearbeiten', [GlossaryController::class, 'edit'])->name('glossary.edit');
         Route::put('glossar/{id}', [GlossaryController::class, 'update'])->name('glossary.update');
+        Route::post('glossar/auswahl-loeschen', [GlossaryController::class, 'destroyMany'])->name('glossary.destroy-many');
         Route::delete('glossar/{id}', [GlossaryController::class, 'destroy'])->name('glossary.destroy');
     });
     Route::middleware('can:view-glossary')->group(function () {
