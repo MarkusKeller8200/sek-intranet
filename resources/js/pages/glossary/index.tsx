@@ -263,7 +263,8 @@ export default function GlossaryIndex({
                         {
                             label: 'PDF …',
                             // erst nach dem Schliessen des Menüs öffnen (Fokus)
-                            run: (ids) => window.setTimeout(() => setPdfIds(ids), 0),
+                            run: (ids) =>
+                                window.setTimeout(() => setPdfIds(ids), 0),
                         },
                         {
                             label: 'Markdown',

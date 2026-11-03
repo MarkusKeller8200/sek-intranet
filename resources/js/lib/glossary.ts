@@ -159,16 +159,18 @@ function groupRows(
         .map(([k, list]) => [k, byAbbreviation(list)]);
 }
 
-type Column = { title: string; width: number; cell: (r: GlossaryRow) => string; cls?: string };
+type Column = {
+    title: string;
+    width: number;
+    cell: (r: GlossaryRow) => string;
+    cls?: string;
+};
 
 const aliases = (r: GlossaryRow) =>
     [r.aliase_offiziell, r.alias_eigen].filter(Boolean).join('; ');
 
 /** Spalten je Umfang; die Spalte der Gruppierung entfällt. */
-function columns(
-    o: PdfOptions,
-    status: Labels,
-): Column[] {
+function columns(o: PdfOptions, status: Labels): Column[] {
     const abk = (full: boolean): Column => ({
         title: 'Abkürzung',
         width: full ? 9 : 12,
@@ -181,14 +183,29 @@ function columns(
         cell: (r) =>
             `${esc(designation(r))}${full ? official(r.bez_eigen, r.bez_offiziell) : ''}${url && r.url ? `<br><small class="url">${esc(r.url)}</small>` : ''}`,
     });
-    const kurz: Column = { title: 'Kurzbeschreibung', width: 26, cell: (r) => esc(r.kurzbeschreibung) };
-    const kat: Column = { title: 'Kategorie', width: 11, cell: (r) => tags(r.kategorien) };
-    const her: Column = { title: 'Herkunft', width: 10, cell: (r) => tags(r.herkunft) };
+    const kurz: Column = {
+        title: 'Kurzbeschreibung',
+        width: 26,
+        cell: (r) => esc(r.kurzbeschreibung),
+    };
+    const kat: Column = {
+        title: 'Kategorie',
+        width: 11,
+        cell: (r) => tags(r.kategorien),
+    };
+    const her: Column = {
+        title: 'Herkunft',
+        width: 10,
+        cell: (r) => tags(r.herkunft),
+    };
     const sta: Column = {
         title: 'Status',
         width: 8,
         cell: (r) => {
-            const v = [r.gueltig_ab && `ab ${esc(r.gueltig_ab)}`, r.gueltig_bis && `bis ${esc(r.gueltig_bis)}`]
+            const v = [
+                r.gueltig_ab && `ab ${esc(r.gueltig_ab)}`,
+                r.gueltig_bis && `bis ${esc(r.gueltig_bis)}`,
+            ]
                 .filter(Boolean)
                 .join('<br>');
 
@@ -211,7 +228,11 @@ function columns(
             abk(true),
             bez(true),
             kurz,
-            { title: 'Beschreibung', width: 24, cell: (r) => esc(r.beschreibung) },
+            {
+                title: 'Beschreibung',
+                width: 24,
+                cell: (r) => esc(r.beschreibung),
+            },
             kat,
             her,
         ]);
@@ -241,8 +262,17 @@ function table(list: GlossaryRow[], cols: Column[], compact: boolean): string {
         .join('')}</tbody></table>`;
 }
 
-const UMFANG = { kompakt: 'kompakt', erweitert: 'erweitert', vollstaendig: 'vollständig' } as const;
-const GRUPPE = { keine: '', kategorie: 'nach Kategorie', herkunft: 'nach Herkunft', status: 'nach Status' } as const;
+const UMFANG = {
+    kompakt: 'kompakt',
+    erweitert: 'erweitert',
+    vollstaendig: 'vollständig',
+} as const;
+const GRUPPE = {
+    keine: '',
+    kategorie: 'nach Kategorie',
+    herkunft: 'nach Herkunft',
+    status: 'nach Status',
+} as const;
 
 /**
  * Druckansicht (im Druckdialog «Als PDF speichern») mit Format, Umfang, Gruppierung und Seitenumbruch (#70).
@@ -295,10 +325,7 @@ p.meta{margin:0 0 6px;color:#555}@media print{body{margin:0}tr{break-inside:avoi
 const mdCell = (s: string) => s.replace(/\|/g, '\\|').replace(/\r?\n/g, ' ');
 
 /** Markdown-Datei herunterladen (Abschnitte je Kategorie). */
-export function downloadMarkdown(
-    rows: GlossaryRow[],
-    names: Labels = {},
-) {
+export function downloadMarkdown(rows: GlossaryRow[], names: Labels = {}) {
     const parts = [
         `# Glossar`,
         '',
