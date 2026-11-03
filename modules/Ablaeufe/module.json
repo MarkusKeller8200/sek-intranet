@@ -11,27 +11,15 @@
     "rechte": {
         "view-ablaeufe": {
             "label": "Abläufe ansehen",
-            "roles": [
-                "admin",
-                "schulleitung",
-                "verwaltung"
-            ]
+            "roles": ["admin", "schulleitung", "verwaltung"]
         },
         "edit-ablaeufe": {
             "label": "Abläufe und Personengruppen bearbeiten",
-            "roles": [
-                "admin",
-                "schulleitung",
-                "verwaltung"
-            ]
+            "roles": ["admin", "schulleitung", "verwaltung"]
         },
         "config-ablaeufe": {
             "label": "Einstellungen der Abläufe verwalten (Orte, Fachbereiche, Rollen, Zeitlich, Mitwirkung)",
-            "roles": [
-                "admin",
-                "schulleitung",
-                "verwaltung"
-            ]
+            "roles": ["admin", "schulleitung", "verwaltung"]
         }
     },
     "menu": {

@@ -96,7 +96,10 @@ export default function AblaeufeEinstellungen({
             typ: e?.typ ?? 'schulhaus',
             parent_id: e?.parent_id ?? '',
         });
-        formular.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        formular.current?.scrollIntoView({
+            behavior: 'smooth',
+            block: 'nearest',
+        });
     };
     const submit = (ev: FormEvent) => {
         ev.preventDefault();
@@ -107,7 +110,10 @@ export default function AblaeufeEinstellungen({
         }));
         const fertig = { preserveScroll: true, onSuccess: () => waehlen(null) };
         if (bearbeiten) {
-            form.put(`/ablaeufe/einstellungen/${aktiv}/${bearbeiten.id}`, fertig);
+            form.put(
+                `/ablaeufe/einstellungen/${aktiv}/${bearbeiten.id}`,
+                fertig,
+            );
         } else {
             form.post(`/ablaeufe/einstellungen/${aktiv}`, fertig);
         }
@@ -149,7 +155,9 @@ export default function AblaeufeEinstellungen({
                                 preserveScroll
                             >
                                 {l.titel}
-                                <Badge variant="secondary">{anzahl[key] ?? 0}</Badge>
+                                <Badge variant="secondary">
+                                    {anzahl[key] ?? 0}
+                                </Badge>
                             </Link>
                         </Button>
                     ))}
@@ -178,32 +186,55 @@ export default function AblaeufeEinstellungen({
                                     <TableHead>Beschreibung</TableHead>
                                     <TableHead>URL</TableHead>
                                     <TableHead>Notiz</TableHead>
-                                    <TableHead className="sr-only">Aktionen</TableHead>
+                                    <TableHead className="sr-only">
+                                        Aktionen
+                                    </TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
                                 {eintraege.map((e, i) => (
                                     <TableRow key={e.id} className="align-top">
-                                        <TableCell className="font-mono font-medium" translate="no">
+                                        <TableCell
+                                            className="font-mono font-medium"
+                                            translate="no"
+                                        >
                                             {e.kuerzel}
                                         </TableCell>
-                                        <TableCell className="whitespace-normal" translate="no">
+                                        <TableCell
+                                            className="whitespace-normal"
+                                            translate="no"
+                                        >
                                             {e.bezeichnung}
                                         </TableCell>
                                         {aktiv === 'rollen' && (
-                                            <TableCell className="whitespace-normal" translate="no">
-                                                {name(fachbereiche, e.fachbereich_id)}
+                                            <TableCell
+                                                className="whitespace-normal"
+                                                translate="no"
+                                            >
+                                                {name(
+                                                    fachbereiche,
+                                                    e.fachbereich_id,
+                                                )}
                                             </TableCell>
                                         )}
                                         {aktiv === 'orte' && (
                                             <>
-                                                <TableCell>{ortTypen[e.typ ?? ''] ?? e.typ}</TableCell>
-                                                <TableCell className="whitespace-normal" translate="no">
+                                                <TableCell>
+                                                    {ortTypen[e.typ ?? ''] ??
+                                                        e.typ}
+                                                </TableCell>
+                                                <TableCell
+                                                    className="whitespace-normal"
+                                                    translate="no"
+                                                >
                                                     {name(orte, e.parent_id)}
                                                 </TableCell>
                                             </>
                                         )}
-                                        <TableCell className="max-w-xs whitespace-normal" translate="no">
+                                        <TableCell
+                                            className="max-w-xs whitespace-normal"
+                                            translate="no"
+                                        >
                                             {e.beschreibung}
                                         </TableCell>
                                         <TableCell>
@@ -214,11 +245,15 @@ export default function AblaeufeEinstellungen({
                                                     rel="noopener noreferrer"
                                                     className="inline-flex items-center gap-1 text-primary underline-offset-2 hover:underline"
                                                 >
-                                                    Öffnen <ExternalLink className="size-3.5" />
+                                                    Öffnen{' '}
+                                                    <ExternalLink className="size-3.5" />
                                                 </a>
                                             )}
                                         </TableCell>
-                                        <TableCell className="max-w-xs whitespace-normal text-muted-foreground" translate="no">
+                                        <TableCell
+                                            className="max-w-xs whitespace-normal text-muted-foreground"
+                                            translate="no"
+                                        >
                                             {e.notiz}
                                         </TableCell>
                                         <TableCell>
@@ -229,7 +264,9 @@ export default function AblaeufeEinstellungen({
                                                     size="icon"
                                                     disabled={i === 0}
                                                     aria-label={`${e.bezeichnung} nach oben`}
-                                                    onClick={() => verschieben(i, i - 1)}
+                                                    onClick={() =>
+                                                        verschieben(i, i - 1)
+                                                    }
                                                 >
                                                     <ArrowUp />
                                                 </Button>
@@ -237,9 +274,14 @@ export default function AblaeufeEinstellungen({
                                                     type="button"
                                                     variant="ghost"
                                                     size="icon"
-                                                    disabled={i === eintraege.length - 1}
+                                                    disabled={
+                                                        i ===
+                                                        eintraege.length - 1
+                                                    }
                                                     aria-label={`${e.bezeichnung} nach unten`}
-                                                    onClick={() => verschieben(i, i + 1)}
+                                                    onClick={() =>
+                                                        verschieben(i, i + 1)
+                                                    }
                                                 >
                                                     <ArrowDown />
                                                 </Button>
@@ -276,20 +318,41 @@ export default function AblaeufeEinstellungen({
                             </CardTitle>
                         </CardHeader>
                         <CardContent>
-                            <form onSubmit={submit} className="grid gap-4 sm:grid-cols-[10rem_1fr]">
-                                <FormField id="l-kuerzel" label="Abkürzung *" error={form.errors.kuerzel}>
+                            <form
+                                onSubmit={submit}
+                                className="grid gap-4 sm:grid-cols-[10rem_1fr]"
+                            >
+                                <FormField
+                                    id="l-kuerzel"
+                                    label="Abkürzung *"
+                                    error={form.errors.kuerzel}
+                                >
                                     <Input
                                         id="l-kuerzel"
                                         value={form.data.kuerzel}
                                         maxLength={20}
-                                        onChange={(e) => form.setData('kuerzel', e.target.value)}
+                                        onChange={(e) =>
+                                            form.setData(
+                                                'kuerzel',
+                                                e.target.value,
+                                            )
+                                        }
                                     />
                                 </FormField>
-                                <FormField id="l-bezeichnung" label="Bezeichnung *" error={form.errors.bezeichnung}>
+                                <FormField
+                                    id="l-bezeichnung"
+                                    label="Bezeichnung *"
+                                    error={form.errors.bezeichnung}
+                                >
                                     <Input
                                         id="l-bezeichnung"
                                         value={form.data.bezeichnung}
-                                        onChange={(e) => form.setData('bezeichnung', e.target.value)}
+                                        onChange={(e) =>
+                                            form.setData(
+                                                'bezeichnung',
+                                                e.target.value,
+                                            )
+                                        }
                                     />
                                 </FormField>
                                 {aktiv === 'rollen' && (
@@ -302,7 +365,12 @@ export default function AblaeufeEinstellungen({
                                         <NativeSelect
                                             id="l-fachbereich"
                                             value={form.data.fachbereich_id}
-                                            onChange={(e) => form.setData('fachbereich_id', e.target.value)}
+                                            onChange={(e) =>
+                                                form.setData(
+                                                    'fachbereich_id',
+                                                    e.target.value,
+                                                )
+                                            }
                                         >
                                             <option value="">Keiner</option>
                                             {fachbereiche.map((f) => (
@@ -315,30 +383,60 @@ export default function AblaeufeEinstellungen({
                                 )}
                                 {aktiv === 'orte' && (
                                     <>
-                                        <FormField id="l-typ" label="Typ *" error={form.errors.typ}>
+                                        <FormField
+                                            id="l-typ"
+                                            label="Typ *"
+                                            error={form.errors.typ}
+                                        >
                                             <NativeSelect
                                                 id="l-typ"
                                                 value={form.data.typ}
-                                                onChange={(e) => form.setData('typ', e.target.value)}
+                                                onChange={(e) =>
+                                                    form.setData(
+                                                        'typ',
+                                                        e.target.value,
+                                                    )
+                                                }
                                             >
-                                                {Object.entries(ortTypen).map(([k, l]) => (
-                                                    <option key={k} value={k}>
-                                                        {l}
-                                                    </option>
-                                                ))}
+                                                {Object.entries(ortTypen).map(
+                                                    ([k, l]) => (
+                                                        <option
+                                                            key={k}
+                                                            value={k}
+                                                        >
+                                                            {l}
+                                                        </option>
+                                                    ),
+                                                )}
                                             </NativeSelect>
                                         </FormField>
-                                        <FormField id="l-parent" label="Übergeordneter Ort" error={form.errors.parent_id}>
+                                        <FormField
+                                            id="l-parent"
+                                            label="Übergeordneter Ort"
+                                            error={form.errors.parent_id}
+                                        >
                                             <NativeSelect
                                                 id="l-parent"
                                                 value={form.data.parent_id}
-                                                onChange={(e) => form.setData('parent_id', e.target.value)}
+                                                onChange={(e) =>
+                                                    form.setData(
+                                                        'parent_id',
+                                                        e.target.value,
+                                                    )
+                                                }
                                             >
                                                 <option value="">Keiner</option>
                                                 {orte
-                                                    .filter((o) => o.id !== bearbeiten?.id)
+                                                    .filter(
+                                                        (o) =>
+                                                            o.id !==
+                                                            bearbeiten?.id,
+                                                    )
                                                     .map((o) => (
-                                                        <option key={o.id} value={o.id}>
+                                                        <option
+                                                            key={o.id}
+                                                            value={o.id}
+                                                        >
                                                             {o.label}
                                                         </option>
                                                     ))}
@@ -356,7 +454,12 @@ export default function AblaeufeEinstellungen({
                                         id="l-beschreibung"
                                         rows={2}
                                         value={form.data.beschreibung}
-                                        onChange={(e) => form.setData('beschreibung', e.target.value)}
+                                        onChange={(e) =>
+                                            form.setData(
+                                                'beschreibung',
+                                                e.target.value,
+                                            )
+                                        }
                                     />
                                 </FormField>
                                 <FormField
@@ -371,7 +474,9 @@ export default function AblaeufeEinstellungen({
                                         type="url"
                                         placeholder="https://"
                                         value={form.data.url}
-                                        onChange={(e) => form.setData('url', e.target.value)}
+                                        onChange={(e) =>
+                                            form.setData('url', e.target.value)
+                                        }
                                     />
                                 </FormField>
                                 <FormField
@@ -384,11 +489,19 @@ export default function AblaeufeEinstellungen({
                                         id="l-notiz"
                                         rows={2}
                                         value={form.data.notiz}
-                                        onChange={(e) => form.setData('notiz', e.target.value)}
+                                        onChange={(e) =>
+                                            form.setData(
+                                                'notiz',
+                                                e.target.value,
+                                            )
+                                        }
                                     />
                                 </FormField>
                                 <div className="flex flex-wrap gap-2 sm:col-span-2">
-                                    <Button type="submit" disabled={form.processing}>
+                                    <Button
+                                        type="submit"
+                                        disabled={form.processing}
+                                    >
                                         {bearbeiten ? (
                                             'Speichern'
                                         ) : (
@@ -398,7 +511,11 @@ export default function AblaeufeEinstellungen({
                                         )}
                                     </Button>
                                     {bearbeiten && (
-                                        <Button type="button" variant="outline" onClick={() => waehlen(null)}>
+                                        <Button
+                                            type="button"
+                                            variant="outline"
+                                            onClick={() => waehlen(null)}
+                                        >
                                             Abbrechen
                                         </Button>
                                     )}

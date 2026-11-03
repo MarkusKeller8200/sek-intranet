@@ -1,56 +1,26 @@
 {
-    "Abläufe Verwaltung": [
-        "Administrative procedures",
-        "Abläuf Verwaltig"
-    ],
-    "Angaben": [
-        "Details",
-        "Aagabe"
-    ],
+    "Abläufe Verwaltung": ["Administrative procedures", "Abläuf Verwaltig"],
+    "Angaben": ["Details", "Aagabe"],
     "Zum Beispiel Onboarding, Offboarding, Mutation. Eine Phase entfernen löscht auch ihre Schritte.": [
         "For example onboarding, offboarding, change. Removing a phase also deletes its steps.",
         "Zum Bispiil Onboarding, Offboarding, Mutation. E Phase entferne löscht au iri Schritt."
     ],
-    "Phase hinzufügen": [
-        "Add phase",
-        "Phase hinzuefüege"
-    ],
-    "Schritte": [
-        "Steps",
-        "Schritt"
-    ],
+    "Phase hinzufügen": ["Add phase", "Phase hinzuefüege"],
+    "Schritte": ["Steps", "Schritt"],
     "Reihenfolge per Ziehen am Griff oder mit den Pfeilen. Schritt anklicken zum Bearbeiten.": [
         "Reorder by dragging the handle or with the arrows. Click a step to edit it.",
         "Reihefolg per Zieh am Griff oder mit de Pfiil. Schritt aaklicke zum Bearbeite."
     ],
-    "Schritt hinzufügen": [
-        "Add step",
-        "Schritt hinzuefüege"
-    ],
-    "Keines": [
-        "None",
-        "Keis"
-    ],
-    "Schritt entfernen": [
-        "Remove step",
-        "Schritt entferne"
-    ],
+    "Schritt hinzufügen": ["Add step", "Schritt hinzuefüege"],
+    "Keines": ["None", "Keis"],
+    "Schritt entfernen": ["Remove step", "Schritt entferne"],
     "Checkliste als Vorlage: Phasen (z. B. Eintritt, Austritt) und Schritte mit Verantwortung, Kommunikation, Dokumenten und Bemerkungen.": [
         "Checklist template: phases (e.g. joining, leaving) and steps with responsibility, communication, documents and remarks.",
         "Checklischte als Vorlag: Phase (z. B. Iitritt, Uustritt) und Schritt mit Verantwortig, Kommunikation, Dokumänt und Bemerkige."
     ],
-    "Titel *": [
-        "Title *",
-        "Titel *"
-    ],
-    "Bereich *": [
-        "Area *",
-        "Bereich *"
-    ],
-    "Status *": [
-        "Status *",
-        "Status *"
-    ],
+    "Titel *": ["Title *", "Titel *"],
+    "Bereich *": ["Area *", "Bereich *"],
+    "Status *": ["Status *", "Status *"],
     "Nur «Gültig» sehen alle mit Recht «Abläufe ansehen».": [
         "Only «Valid» is visible to everyone with the permission «View procedures».",
         "Nur «Gültig» gsehnd alli mit em Rächt «Abläuf aaluege»."
@@ -59,34 +29,16 @@
         "Responsible for the procedure",
         "Verantwortlich für de Ablauf"
     ],
-    "Gültig ab": [
-        "Valid from",
-        "Gültig ab"
-    ],
-    "Phase wählen": [
-        "Choose phase",
-        "Phase wähle"
-    ],
-    "Schritt *": [
-        "Step *",
-        "Schritt *"
-    ],
-    "Verantwortung": [
-        "Responsibility",
-        "Verantwortig"
-    ],
-    "Kommunikation an": [
-        "Communication to",
-        "Kommunikation a"
-    ],
+    "Gültig ab": ["Valid from", "Gültig ab"],
+    "Phase wählen": ["Choose phase", "Phase wähle"],
+    "Schritt *": ["Step *", "Schritt *"],
+    "Verantwortung": ["Responsibility", "Verantwortig"],
+    "Kommunikation an": ["Communication to", "Kommunikation a"],
     "Aus «Dokumente & Links»": [
         "From «Documents & links»",
         "Us «Dokumänt & Links»"
     ],
-    "Gilt für": [
-        "Applies to",
-        "Gilt für"
-    ],
+    "Gilt für": ["Applies to", "Gilt für"],
     "Leer = für alle Personengruppen": [
         "Empty = for all groups of people",
         "Läär = für alli Persone-Gruppe"
@@ -95,42 +47,21 @@
         "Deadline (days to key date)",
         "Frischt (Täg zum Stichtag)"
     ],
-    "Gegenstück": [
-        "Counterpart",
-        "Gägestück"
-    ],
+    "Gegenstück": ["Counterpart", "Gägestück"],
     "z. B. «Login erstellen» ↔ «Login sperren»": [
         "e.g. «Create login» ↔ «Block login»",
         "z. B. «Login erstelle» ↔ «Login sperre»"
     ],
-    "Neue Phase": [
-        "New phase",
-        "Neui Phase"
-    ],
-    "Ablauf bearbeiten": [
-        "Edit procedure",
-        "Ablauf bearbeite"
-    ],
-    "Neuer Ablauf": [
-        "New procedure",
-        "Neue Ablauf"
-    ],
-    "Gruppen": [
-        "Groups",
-        "Gruppe"
-    ],
+    "Neue Phase": ["New phase", "Neui Phase"],
+    "Ablauf bearbeiten": ["Edit procedure", "Ablauf bearbeite"],
+    "Neuer Ablauf": ["New procedure", "Neue Ablauf"],
+    "Gruppen": ["Groups", "Gruppe"],
     "Reihenfolge per Ziehen am Griff oder mit den Pfeilen.": [
         "Reorder by dragging the handle or with the arrows.",
         "Reihefolg per Zieh am Griff oder mit de Pfiil."
     ],
-    "Hinzufügen": [
-        "Add",
-        "Hinzuefüege"
-    ],
-    "Personengruppen": [
-        "Groups of people",
-        "Persone-Gruppe"
-    ],
+    "Hinzufügen": ["Add", "Hinzuefüege"],
+    "Personengruppen": ["Groups of people", "Persone-Gruppe"],
     "Gruppen für «gilt für» bei Schritten, z. B. Lehrpersonen oder Vikare. Bemerkungen helfen beim Festlegen der Berechtigungen.": [
         "Groups for «applies to» on steps, e.g. teachers or substitutes. Remarks help when defining permissions.",
         "Gruppe für «gilt für» bi Schritt, z. B. Lehrpersone oder Vikar. Bemerkige hälfed bim Feschtlegge vo de Berächtigunge."
@@ -139,34 +70,16 @@
         "The group is also removed from all steps («applies to»).",
         "D Gruppe wird au us allne Schritt entfernt («gilt für»)."
     ],
-    "Gruppe bearbeiten": [
-        "Edit group",
-        "Gruppe bearbeite"
-    ],
-    "Neue Gruppe": [
-        "New group",
-        "Neui Gruppe"
-    ],
-    "Alle Bereiche": [
-        "All areas",
-        "Alli Bereich"
-    ],
-    "Alle Status": [
-        "All statuses",
-        "Alli Status"
-    ],
+    "Gruppe bearbeiten": ["Edit group", "Gruppe bearbeite"],
+    "Neue Gruppe": ["New group", "Neui Gruppe"],
+    "Alle Bereiche": ["All areas", "Alli Bereich"],
+    "Alle Status": ["All statuses", "Alli Status"],
     "Verzeichnis wichtiger Abläufe als Checklisten: Schritte mit Verantwortung, Kommunikation, Dokumenten und Bemerkungen.": [
         "Directory of important procedures as checklists: steps with responsibility, communication, documents and remarks.",
         "Verzeichnis vo wichtige Abläuf als Checklischte: Schritt mit Verantwortig, Kommunikation, Dokumänt und Bemerkige."
     ],
-    "Abläufe durchsuchen": [
-        "Search procedures",
-        "Abläuf dursueche"
-    ],
-    "Keine Abläufe gefunden": [
-        "No procedures found",
-        "Kei Abläuf gfunde"
-    ],
+    "Abläufe durchsuchen": ["Search procedures", "Abläuf dursueche"],
+    "Keine Abläufe gefunden": ["No procedures found", "Kei Abläuf gfunde"],
     "Mit «Neuer Ablauf» eine Checkliste erfassen.": [
         "Use «New procedure» to create a checklist.",
         "Mit «Neue Ablauf» e Checklischte erfasse."
@@ -175,42 +88,18 @@
         "No valid procedures have been published yet.",
         "Es sind no kei gültigi Abläuf veröffentlicht."
     ],
-    "Drucken (PDF)": [
-        "Print (PDF)",
-        "Drucke (PDF)"
-    ],
-    "Nr.": [
-        "No.",
-        "Nr."
-    ],
-    "Schritt": [
-        "Step",
-        "Schritt"
-    ],
-    "Ablauf löschen?": [
-        "Delete procedure?",
-        "Ablauf lösche?"
-    ],
+    "Drucken (PDF)": ["Print (PDF)", "Drucke (PDF)"],
+    "Nr.": ["No.", "Nr."],
+    "Schritt": ["Step", "Schritt"],
+    "Ablauf löschen?": ["Delete procedure?", "Ablauf lösche?"],
     "Der Ablauf mit allen Schritten wird endgültig gelöscht. Statt löschen kann er auch archiviert werden.": [
         "The procedure and all its steps will be deleted permanently. Instead of deleting, it can also be archived.",
         "De Ablauf mit allne Schritt wird endgültig glöscht. Statt lösche cha mer en au archiviere."
     ],
-    "Abkürzung": [
-        "Abbreviation",
-        "Abchürzig"
-    ],
-    "Fachbereich": [
-        "Department",
-        "Fachbereich"
-    ],
-    "Übergeordnet": [
-        "Parent",
-        "Übergordnet"
-    ],
-    "Keiner": [
-        "None",
-        "Keine"
-    ],
+    "Abkürzung": ["Abbreviation", "Abchürzig"],
+    "Fachbereich": ["Department", "Fachbereich"],
+    "Übergeordnet": ["Parent", "Übergordnet"],
+    "Keiner": ["None", "Keine"],
     "Einstellungen der Abläufe": [
         "Procedure settings",
         "Iistellige vo de Abläuf"
@@ -219,48 +108,18 @@
         "Extendable tables for the procedures. Each entry has an abbreviation, name, description, URL and note.",
         "Erwiiterbari Tabelle für d Abläuf. Jede Iitrag hät Abchürzig, Bezeichnig, Beschriibig, URL und Notiz."
     ],
-    "Tabelle wählen": [
-        "Choose table",
-        "Tabelle wähle"
-    ],
-    "Abkürzung *": [
-        "Abbreviation *",
-        "Abchürzig *"
-    ],
-    "Bezeichnung *": [
-        "Name *",
-        "Bezeichnig *"
-    ],
-    "Typ *": [
-        "Type *",
-        "Typ *"
-    ],
-    "Übergeordneter Ort": [
-        "Parent location",
-        "Übergordnete Ort"
-    ],
+    "Tabelle wählen": ["Choose table", "Tabelle wähle"],
+    "Abkürzung *": ["Abbreviation *", "Abchürzig *"],
+    "Bezeichnung *": ["Name *", "Bezeichnig *"],
+    "Typ *": ["Type *", "Typ *"],
+    "Übergeordneter Ort": ["Parent location", "Übergordnete Ort"],
     "z. B. Link auf eine Weisung, ein Formular oder eine Seite": [
         "e.g. link to a directive, a form or a page",
         "z. B. Link uf e Wiisig, es Formular oder e Siite"
     ],
-    "Orte": [
-        "Locations",
-        "Ort"
-    ],
-    "Fachbereiche": [
-        "Departments",
-        "Fachbereich"
-    ],
-    "Rollen": [
-        "Roles",
-        "Rolle"
-    ],
-    "Zeitlich": [
-        "Timing",
-        "Ziitlich"
-    ],
-    "Mitwirkung": [
-        "Involvement",
-        "Mitwirkig"
-    ]
+    "Orte": ["Locations", "Ort"],
+    "Fachbereiche": ["Departments", "Fachbereich"],
+    "Rollen": ["Roles", "Rolle"],
+    "Zeitlich": ["Timing", "Ziitlich"],
+    "Mitwirkung": ["Involvement", "Mitwirkig"]
 }
