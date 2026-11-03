@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import Popover from './popover';
 import type { FilterOp, GridColumn, GridFilter } from './types';
-import { describe, isActive, OP_LABELS, OPS, VALUELESS } from './utils';
+import { describe, isActive, opLabel, OPS, VALUELESS } from './utils';
 
 const field =
     'h-8 w-full rounded-md border border-input bg-background px-2 text-sm';
@@ -96,7 +96,7 @@ export default function FilterCell<T>({
                     >
                         {ops.map((op) => (
                             <option key={op} value={op}>
-                                {OP_LABELS[op]}
+                                {opLabel(column, op)}
                             </option>
                         ))}
                     </select>

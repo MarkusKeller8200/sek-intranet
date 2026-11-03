@@ -12,10 +12,13 @@ export default function Popover({
     onClose,
     children,
     width = 280,
+    onEscape,
 }: {
     anchor: RefObject<HTMLElement | null>;
     open: boolean;
     onClose: () => void;
+    /** Esc anders als Klick daneben behandeln (z. B. Abbrechen statt Übernehmen) */
+    onEscape?: () => void;
     children: ReactNode;
     width?: number;
 }) {
@@ -50,7 +53,7 @@ export default function Popover({
         const onKey = (e: KeyboardEvent) => {
             if (e.key === 'Escape') {
                 e.stopPropagation();
-                onClose();
+                (onEscape ?? onClose)();
                 anchor.current?.focus();
             }
         };
@@ -61,7 +64,7 @@ export default function Popover({
             document.removeEventListener('mousedown', onDown);
             document.removeEventListener('keydown', onKey, true);
         };
-    }, [open, onClose, anchor]);
+    }, [open, onClose, onEscape, anchor]);
 
     if (!open || typeof document === 'undefined') {
         return null;

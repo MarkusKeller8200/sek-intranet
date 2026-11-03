@@ -4,8 +4,8 @@ import type { ReactNode } from 'react';
 export type GridColumn<T> = {
     id: keyof T & string;
     title: string;
-    type?: 'text' | 'email' | 'tel' | 'select' | 'bool' | 'date';
-    /** Nur «select»: Schlüssel → Bezeichnung */
+    type?: 'text' | 'email' | 'tel' | 'select' | 'multi' | 'bool' | 'date';
+    /** «select»: Schlüssel → Bezeichnung; «multi»: erlaubte Werte (Schlüssel = gespeicherter Text) */
     options?: Record<string, string>;
     editable?: boolean;
     /** Leer lassen nicht erlaubt (Entf überspringt die Spalte) */
@@ -14,7 +14,7 @@ export type GridColumn<T> = {
     render?: (row: T) => ReactNode;
     hidden?: boolean;
     className?: string;
-    /** Mehrfachwerte als Text (z. B. «A; B»): beim Gruppieren erscheint die Zeile in jeder Gruppe. */
+    /** Mehrfachwerte als Text (z. B. «A; B»): beim Gruppieren erscheint die Zeile in jeder Gruppe; bei «multi» Trennzeichen (Standard «;»). */
     separator?: string;
 };
 

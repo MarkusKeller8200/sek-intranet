@@ -23,6 +23,8 @@ laufend unter **Unveröffentlicht**. Ab 0.32.0 entsteht eine Version nur bei ein
 
 ### Neu
 
+- **Tabelle: Spaltentyp Mehrfachauswahl (#75):** Filter mit Mehrfachauswahl («enthält eine von», «enthält keine
+  von») und Bearbeiten in der Zelle mit Häkchen-Liste; im Glossar für Kategorie und Herkunft.
 - **Glossar: farbige Labels (#74):** Kategorien und Herkunft erscheinen in der Tabelle als farbige Labels (nur Werte
   aus den Listen); Farbe je Eintrag unter «Kategorien & Herkunft» wählbar; neuer Abschnitt im Farbkonzept.
 - **Glossar: PDF mit Spalte «Link» (#73):** schmale Spalte, je Zeile nummeriert ab 1 (URL, dann Links aus Notiz

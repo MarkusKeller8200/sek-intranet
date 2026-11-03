@@ -14,6 +14,14 @@ export function text(value: unknown): string {
     return '';
 }
 
+/** Werte einer Mehrfachauswahl («A; B» → ['A', 'B']). */
+export function splitMulti<T>(column: GridColumn<T>, value: unknown): string[] {
+    return text(value)
+        .split(column.separator ?? ';')
+        .map((v) => v.trim())
+        .filter(Boolean);
+}
+
 /** JJJJ-MM-TT → TT.MM.JJJJ */
 export function formatDate(value: unknown): string {
     const raw = text(value);
@@ -142,6 +150,19 @@ export function coerce<T>(column: GridColumn<T>, input: string): unknown {
 
             return byLabel ? byLabel[0] : undefined;
         }
+        case 'multi': {
+            // Nur erlaubte Werte (Schlüssel oder Bezeichnung), Reihenfolge der Auswahlliste
+            const options = column.options ?? {};
+            const wanted = splitMulti(column, raw).map((v) => v.toLowerCase());
+            const keys = Object.entries(options)
+                .filter(([key, label]) => wanted.includes(key.toLowerCase()) || wanted.includes(label.toLowerCase()))
+                .map(([key]) => key);
+            if (keys.length < wanted.length) {
+                return undefined;
+            }
+
+            return keys.length === 0 ? null : keys.join(`${column.separator ?? ';'} `);
+        }
         case 'date': {
             if (raw === '') {
                 return null;
@@ -168,6 +189,7 @@ export const OPS: Record<
     email: ['contains', 'starts', 'ends', 'equals', 'empty', 'notEmpty'],
     tel: ['contains', 'starts', 'ends', 'equals', 'empty', 'notEmpty'],
     select: ['in', 'notIn', 'empty', 'notEmpty'],
+    multi: ['in', 'notIn', 'empty', 'notEmpty'],
     bool: ['yes', 'no', 'empty'],
     date: [
         'equals',
@@ -204,6 +226,15 @@ export const OP_LABELS: Record<FilterOp, string> = {
     lastMonth: 'letzter Monat',
     thisYear: 'dieses Jahr',
 };
+
+/** Bezeichnung einer Bedingung (bei Mehrfachauswahl «enthält eine von»). */
+export function opLabel<T>(column: GridColumn<T>, op: FilterOp): string {
+    if (column.type === 'multi' && (op === 'in' || op === 'notIn')) {
+        return op === 'in' ? 'enthält eine von' : 'enthält keine von';
+    }
+
+    return OP_LABELS[op];
+}
 
 /** Ops ohne Eingabewert */
 export const VALUELESS: FilterOp[] = [
@@ -301,9 +332,17 @@ export function matches<T>(
                 ? raw === filter.value
                 : shown === wanted;
         case 'in':
-            return (filter.values ?? []).includes(raw);
-        case 'notIn':
-            return !(filter.values ?? []).includes(raw);
+        case 'notIn': {
+            // Mehrfachauswahl: enthält eine (bzw. keine) der gewählten Werte; «» = leer
+            const hit =
+                column.type === 'multi'
+                    ? (filter.values ?? []).some((v) =>
+                          v === '' ? isEmpty : splitMulti(column, value).includes(v),
+                      )
+                    : (filter.values ?? []).includes(raw);
+
+            return filter.op === 'in' ? hit : !hit;
+        }
         case 'yes':
             return value === true;
         case 'no':
@@ -330,7 +369,7 @@ export function matches<T>(
 
 /** Kurzbeschreibung eines Filters für die Filterzeile. */
 export function describe<T>(column: GridColumn<T>, filter: GridFilter): string {
-    const label = OP_LABELS[filter.op];
+    const label = opLabel(column, filter.op);
     if (VALUELESS.includes(filter.op)) {
         return label;
     }

@@ -277,6 +277,8 @@ Bearbeitbare Tabelle (Grundlage: Personen) mit Suche, Filtern, Sortierung, Spalt
 - Einfache Tabelle für kurze Listen
 - Optional: «Neue Zeile» (`onAddRow`), eigene Knöpfe in der Werkzeugleiste (`toolbar`), weitere Exporte
   (`extraExports`, z. B. PDF/Markdown im Glossar), Gruppieren nach Mehrfachwerten (`separator` je Spalte)
+- Spaltentyp `multi` (Mehrfachauswahl, z. B. Kategorie im Glossar): Filter «enthält eine/keine von», Bearbeiten in
+  der Zelle mit Häkchen-Liste (Pfeile, Leertaste, Enter übernimmt, Esc bricht ab); Wert als Text «A; B»
 
 Code: `@/components/data-grid`, `@/components/ui/table`
 
