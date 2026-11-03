@@ -34,7 +34,11 @@
             "label": "Abläufe: Vorlagen",
             "description": "Ein Ablauf (Checklisten-Vorlage) mit Phasen und Schritten. Schritte als Liste: Phase, Text, Verantwortung, Kommunikation an, Dokumente, Bemerkung, Frist, gilt für, Gegenstück.",
             "fields": {
-                "titel": { "type": "string", "required": true, "label": "Titel" },
+                "titel": {
+                    "type": "string",
+                    "required": true,
+                    "label": "Titel"
+                },
                 "bereich": {
                     "type": "enum",
                     "values": {
@@ -46,18 +50,47 @@
                     "required": true,
                     "label": "Bereich"
                 },
-                "beschreibung": { "type": "text", "required": false, "label": "Beschreibung" },
-                "verantwortlich": { "type": "string", "required": false, "label": "Verantwortlich für den Ablauf" },
+                "beschreibung": {
+                    "type": "text",
+                    "required": false,
+                    "label": "Beschreibung"
+                },
+                "verantwortlich": {
+                    "type": "string",
+                    "required": false,
+                    "label": "Verantwortlich für den Ablauf"
+                },
                 "status": {
                     "type": "enum",
-                    "values": { "entwurf": "Entwurf", "gueltig": "Gültig", "archiviert": "Archiviert" },
+                    "values": {
+                        "entwurf": "Entwurf",
+                        "gueltig": "Gültig",
+                        "archiviert": "Archiviert"
+                    },
                     "required": true,
                     "label": "Status"
                 },
-                "gueltig_ab": { "type": "date", "required": false, "label": "Gültig ab" },
-                "phasen": { "type": "json", "required": true, "label": "Phasen (Schlüssel, Titel)" },
-                "schritte": { "type": "json", "required": true, "label": "Schritte" },
-                "geaendert_von": { "type": "ref", "references": "users", "required": false, "label": "Zuletzt geändert von" }
+                "gueltig_ab": {
+                    "type": "date",
+                    "required": false,
+                    "label": "Gültig ab"
+                },
+                "phasen": {
+                    "type": "json",
+                    "required": true,
+                    "label": "Phasen (Schlüssel, Titel)"
+                },
+                "schritte": {
+                    "type": "json",
+                    "required": true,
+                    "label": "Schritte"
+                },
+                "geaendert_von": {
+                    "type": "ref",
+                    "references": "users",
+                    "required": false,
+                    "label": "Zuletzt geändert von"
+                }
             }
         },
         "wf_gruppen": {
@@ -65,8 +98,16 @@
             "description": "Gruppen für «gilt für» bei Schritten (z. B. Lehrpersonen, Vikare, Schulsozialarbeit), mit Bemerkung.",
             "fields": {
                 "name": { "type": "string", "required": true, "label": "Name" },
-                "bemerkung": { "type": "text", "required": false, "label": "Bemerkung" },
-                "position": { "type": "int", "required": true, "label": "Reihenfolge" }
+                "bemerkung": {
+                    "type": "text",
+                    "required": false,
+                    "label": "Bemerkung"
+                },
+                "position": {
+                    "type": "int",
+                    "required": true,
+                    "label": "Reihenfolge"
+                }
             }
         }
     },

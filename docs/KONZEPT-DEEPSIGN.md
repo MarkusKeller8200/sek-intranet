@@ -33,21 +33,21 @@ DeepSign (api.sign.deepbox.swiss)
 
 ## Was die API kann
 
-| Schritt | DeepSign-API | Im Intranet |
-| --- | --- | --- |
-| Anmelden | OAuth Token, `grant_type=password` mit Service-Benutzer und Partner-Client (`deepcloud.swiss/auth/realms/sso/…/token`) | Zugangsdaten verschlüsselt, Token zwischenspeichern |
-| Dokument hochladen | `POST /documents/file` (PDF, DOCX, XLSX bis 40 MB) mit `initiatorAliasName`, `signatureMode`, `jurisdiction`, `sendMail`, `comment`, Callback | PDF vom Modul |
-| Unterzeichnende | `POST /documents/{id}/signees` (`email`, `signOrder`, `comment`), Position über `autographPosition` oder Text-Muster im PDF (`scanPredefined`) | Personen aus dem Intranet (E-Mail), Reihenfolge vom Modul |
-| Beobachtende | `POST /documents/{id}/observers` | z. B. Personalabteilung |
-| Starten | `PUT /documents/{id}/start` | nach Vorschau |
-| Status | `GET /documents/{id}` (`draft`, `in-progress`, `signed`, `withdrawn`, `rejected`), `GET /overview`; Abfragen sonst höchstens alle 15 Minuten | Status je Auftrag und Person |
-| Rückmeldung | Webhook `signee-completed`, `document-completed` mit HMAC-SHA-256 (`X-DeepSign-Signature-256`, eigenes `callbackSecret` je Dokument). **Keine Wiederholung** bei Fehler | Endpunkt im Intranet + regelmässige Abfrage als Rückfall |
-| Herunterladen | `documentUrl` aus den Details (gültig ca. 1 Minute, ohne Authorization-Header) | sofort nach Abschluss abholen und ablegen |
-| Erinnern | `POST /documents/{id}/signees/{signeeId}/resend-invitation` | Knopf «Erinnerung senden» |
-| Zurückziehen / Löschen | `PUT /documents/{id}/withdraw`, `DELETE /documents/{id}` (nur Entwurf oder zurückgezogen) | mit Rückfrage |
-| Bearbeiten in DeepSign | `POST /documents/{id}/document-access-url` (5 Minuten gültig, ohne Login, volle Kontrolle) | nur für die Administration |
-| Signaturstufen | `timestamp` (einfach, Standard), `advanced` (fortgeschritten, 2FA), `qualified` (qualifiziert); `zertes` oder `eidas` | Vorgabe je Dokumentart |
-| Firmensiegel, Hash-Signatur, DeepID | vorhanden | vorerst nicht |
+| Schritt                             | DeepSign-API                                                                                                                                                            | Im Intranet                                               |
+| ----------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------- |
+| Anmelden                            | OAuth Token, `grant_type=password` mit Service-Benutzer und Partner-Client (`deepcloud.swiss/auth/realms/sso/…/token`)                                                  | Zugangsdaten verschlüsselt, Token zwischenspeichern       |
+| Dokument hochladen                  | `POST /documents/file` (PDF, DOCX, XLSX bis 40 MB) mit `initiatorAliasName`, `signatureMode`, `jurisdiction`, `sendMail`, `comment`, Callback                           | PDF vom Modul                                             |
+| Unterzeichnende                     | `POST /documents/{id}/signees` (`email`, `signOrder`, `comment`), Position über `autographPosition` oder Text-Muster im PDF (`scanPredefined`)                          | Personen aus dem Intranet (E-Mail), Reihenfolge vom Modul |
+| Beobachtende                        | `POST /documents/{id}/observers`                                                                                                                                        | z. B. Personalabteilung                                   |
+| Starten                             | `PUT /documents/{id}/start`                                                                                                                                             | nach Vorschau                                             |
+| Status                              | `GET /documents/{id}` (`draft`, `in-progress`, `signed`, `withdrawn`, `rejected`), `GET /overview`; Abfragen sonst höchstens alle 15 Minuten                            | Status je Auftrag und Person                              |
+| Rückmeldung                         | Webhook `signee-completed`, `document-completed` mit HMAC-SHA-256 (`X-DeepSign-Signature-256`, eigenes `callbackSecret` je Dokument). **Keine Wiederholung** bei Fehler | Endpunkt im Intranet + regelmässige Abfrage als Rückfall  |
+| Herunterladen                       | `documentUrl` aus den Details (gültig ca. 1 Minute, ohne Authorization-Header)                                                                                          | sofort nach Abschluss abholen und ablegen                 |
+| Erinnern                            | `POST /documents/{id}/signees/{signeeId}/resend-invitation`                                                                                                             | Knopf «Erinnerung senden»                                 |
+| Zurückziehen / Löschen              | `PUT /documents/{id}/withdraw`, `DELETE /documents/{id}` (nur Entwurf oder zurückgezogen)                                                                               | mit Rückfrage                                             |
+| Bearbeiten in DeepSign              | `POST /documents/{id}/document-access-url` (5 Minuten gültig, ohne Login, volle Kontrolle)                                                                              | nur für die Administration                                |
+| Signaturstufen                      | `timestamp` (einfach, Standard), `advanced` (fortgeschritten, 2FA), `qualified` (qualifiziert); `zertes` oder `eidas`                                                   | Vorgabe je Dokumentart                                    |
+| Firmensiegel, Hash-Signatur, DeepID | vorhanden                                                                                                                                                               | vorerst nicht                                             |
 
 ## Wichtige Eigenheiten
 

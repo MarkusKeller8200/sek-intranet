@@ -64,14 +64,19 @@ export default function AblaufForm({
     const [aktiv, setAktiv] = useState(data.phasen[0]?.key ?? '');
     const [gewaehlt, setGewaehlt] = useState<string | null>(null);
     const phase = data.phasen.find((p) => p.key === aktiv) ?? data.phasen[0];
-    const schritteDerPhase = data.schritte.filter((s) => s.phase === phase?.key);
+    const schritteDerPhase = data.schritte.filter(
+        (s) => s.phase === phase?.key,
+    );
     const schritt = data.schritte.find((s) => s.id === gewaehlt) ?? null;
     const fehler = form.errors as Record<string, string | undefined>;
     const editor = useRef<HTMLDivElement>(null);
     // Gewählten Schritt zeigen (der Editor steht unter der Liste)
     useEffect(() => {
         if (gewaehlt !== null) {
-            editor.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            editor.current?.scrollIntoView({
+                behavior: 'smooth',
+                block: 'nearest',
+            });
         }
     }, [gewaehlt]);
 
@@ -82,7 +87,9 @@ export default function AblaufForm({
         form.setData(
             'schritte',
             ordnen(
-                data.schritte.map((s) => (s.id === id ? { ...s, ...felder } : s)),
+                data.schritte.map((s) =>
+                    s.id === id ? { ...s, ...felder } : s,
+                ),
             ),
         );
 
@@ -99,7 +106,8 @@ export default function AblaufForm({
             schritte: d.schritte
                 .filter((s) => s.phase !== key)
                 .map((s) =>
-                    d.schritte.find((x) => x.id === s.gegenstueck)?.phase === key
+                    d.schritte.find((x) => x.id === s.gegenstueck)?.phase ===
+                    key
                         ? { ...s, gegenstueck: null }
                         : s,
                 ),
@@ -131,7 +139,9 @@ export default function AblaufForm({
             'schritte',
             data.schritte
                 .filter((s) => s.id !== id)
-                .map((s) => (s.gegenstueck === id ? { ...s, gegenstueck: null } : s)),
+                .map((s) =>
+                    s.gegenstueck === id ? { ...s, gegenstueck: null } : s,
+                ),
         );
         setGewaehlt(null);
     };
@@ -171,14 +181,22 @@ export default function AblaufForm({
                             <Input
                                 id="a-titel"
                                 value={data.titel}
-                                onChange={(e) => form.setData('titel', e.target.value)}
+                                onChange={(e) =>
+                                    form.setData('titel', e.target.value)
+                                }
                             />
                         </FormField>
-                        <FormField id="a-bereich" label="Bereich *" error={form.errors.bereich}>
+                        <FormField
+                            id="a-bereich"
+                            label="Bereich *"
+                            error={form.errors.bereich}
+                        >
                             <NativeSelect
                                 id="a-bereich"
                                 value={data.bereich}
-                                onChange={(e) => form.setData('bereich', e.target.value)}
+                                onChange={(e) =>
+                                    form.setData('bereich', e.target.value)
+                                }
                             >
                                 {Object.entries(bereiche).map(([k, l]) => (
                                     <option key={k} value={k}>
@@ -196,7 +214,9 @@ export default function AblaufForm({
                             <NativeSelect
                                 id="a-status"
                                 value={data.status}
-                                onChange={(e) => form.setData('status', e.target.value)}
+                                onChange={(e) =>
+                                    form.setData('status', e.target.value)
+                                }
                             >
                                 {Object.entries(status).map(([k, l]) => (
                                     <option key={k} value={k}>
@@ -213,15 +233,26 @@ export default function AblaufForm({
                             <Input
                                 id="a-verantwortlich"
                                 value={data.verantwortlich}
-                                onChange={(e) => form.setData('verantwortlich', e.target.value)}
+                                onChange={(e) =>
+                                    form.setData(
+                                        'verantwortlich',
+                                        e.target.value,
+                                    )
+                                }
                             />
                         </FormField>
-                        <FormField id="a-gueltig" label="Gültig ab" error={form.errors.gueltig_ab}>
+                        <FormField
+                            id="a-gueltig"
+                            label="Gültig ab"
+                            error={form.errors.gueltig_ab}
+                        >
                             <Input
                                 id="a-gueltig"
                                 type="date"
                                 value={data.gueltig_ab}
-                                onChange={(e) => form.setData('gueltig_ab', e.target.value)}
+                                onChange={(e) =>
+                                    form.setData('gueltig_ab', e.target.value)
+                                }
                             />
                         </FormField>
                         <FormField
@@ -234,7 +265,9 @@ export default function AblaufForm({
                                 id="a-beschreibung"
                                 rows={3}
                                 value={data.beschreibung}
-                                onChange={(e) => form.setData('beschreibung', e.target.value)}
+                                onChange={(e) =>
+                                    form.setData('beschreibung', e.target.value)
+                                }
                             />
                         </FormField>
                     </CardContent>
@@ -244,12 +277,16 @@ export default function AblaufForm({
                     <CardHeader>
                         <CardTitle>Phasen</CardTitle>
                         <CardDescription>
-                            Zum Beispiel Onboarding, Offboarding, Mutation. Eine Phase entfernen löscht auch ihre Schritte.
+                            Zum Beispiel Onboarding, Offboarding, Mutation. Eine
+                            Phase entfernen löscht auch ihre Schritte.
                         </CardDescription>
                     </CardHeader>
                     <CardContent className="grid gap-2">
                         {data.phasen.map((p, i) => (
-                            <div key={p.key} className="flex items-center gap-2">
+                            <div
+                                key={p.key}
+                                className="flex items-center gap-2"
+                            >
                                 <Input
                                     aria-label={`Titel der Phase ${i + 1}`}
                                     value={p.titel}
@@ -257,7 +294,12 @@ export default function AblaufForm({
                                         form.setData(
                                             'phasen',
                                             data.phasen.map((x) =>
-                                                x.key === p.key ? { ...x, titel: e.target.value } : x,
+                                                x.key === p.key
+                                                    ? {
+                                                          ...x,
+                                                          titel: e.target.value,
+                                                      }
+                                                    : x,
                                             ),
                                         )
                                     }
@@ -279,7 +321,11 @@ export default function AblaufForm({
                         ))}
                         <InputError message={fehler.phasen} />
                         <div>
-                            <Button type="button" variant="outline" onClick={phaseHinzufuegen}>
+                            <Button
+                                type="button"
+                                variant="outline"
+                                onClick={phaseHinzufuegen}
+                            >
                                 <Plus /> Phase hinzufügen
                             </Button>
                         </div>
@@ -290,16 +336,25 @@ export default function AblaufForm({
                     <CardHeader>
                         <CardTitle>Schritte</CardTitle>
                         <CardDescription>
-                            Reihenfolge per Ziehen am Griff oder mit den Pfeilen. Schritt anklicken zum Bearbeiten.
+                            Reihenfolge per Ziehen am Griff oder mit den
+                            Pfeilen. Schritt anklicken zum Bearbeiten.
                         </CardDescription>
                     </CardHeader>
                     <CardContent className="grid gap-4">
-                        <div className="flex flex-wrap gap-2" role="group" aria-label="Phase wählen">
+                        <div
+                            className="flex flex-wrap gap-2"
+                            role="group"
+                            aria-label="Phase wählen"
+                        >
                             {data.phasen.map((p) => (
                                 <Button
                                     key={p.key}
                                     type="button"
-                                    variant={p.key === phase?.key ? 'default' : 'outline'}
+                                    variant={
+                                        p.key === phase?.key
+                                            ? 'default'
+                                            : 'outline'
+                                    }
                                     aria-pressed={p.key === phase?.key}
                                     onClick={() => {
                                         setAktiv(p.key);
@@ -323,14 +378,26 @@ export default function AblaufForm({
                                         data.phasen.flatMap((p) =>
                                             p.key === phase?.key
                                                 ? items
-                                                      .map((i) => data.schritte.find((s) => s.id === i.id))
-                                                      .filter((s): s is Schritt => s !== undefined)
-                                                : data.schritte.filter((s) => s.phase === p.key),
+                                                      .map((i) =>
+                                                          data.schritte.find(
+                                                              (s) =>
+                                                                  s.id === i.id,
+                                                          ),
+                                                      )
+                                                      .filter(
+                                                          (s): s is Schritt =>
+                                                              s !== undefined,
+                                                      )
+                                                : data.schritte.filter(
+                                                      (s) => s.phase === p.key,
+                                                  ),
                                         ),
                                     )
                                 }
                                 render={(item) => {
-                                    const s = data.schritte.find((x) => x.id === item.id);
+                                    const s = data.schritte.find(
+                                        (x) => x.id === item.id,
+                                    );
 
                                     return (
                                         <button
@@ -339,9 +406,14 @@ export default function AblaufForm({
                                             aria-pressed={gewaehlt === item.id}
                                             onClick={() => setGewaehlt(item.id)}
                                         >
-                                            <span translate="no">{item.label}</span>
+                                            <span translate="no">
+                                                {item.label}
+                                            </span>
                                             {s?.verantwortung && (
-                                                <span className="text-muted-foreground" translate="no">
+                                                <span
+                                                    className="text-muted-foreground"
+                                                    translate="no"
+                                                >
                                                     {` · ${s.verantwortung}`}
                                                 </span>
                                             )}
@@ -351,7 +423,11 @@ export default function AblaufForm({
                             />
                         )}
                         <div>
-                            <Button type="button" variant="outline" onClick={schrittHinzufuegen}>
+                            <Button
+                                type="button"
+                                variant="outline"
+                                onClick={schrittHinzufuegen}
+                            >
                                 <Plus /> Schritt hinzufügen
                             </Button>
                         </div>
@@ -364,25 +440,47 @@ export default function AblaufForm({
                                 <p className="font-medium sm:col-span-2">
                                     {`Schritt ${nummer(data.schritte, schritt)} bearbeiten`}
                                 </p>
-                                <FormField id="s-text" label="Schritt *" className="sm:col-span-2">
+                                <FormField
+                                    id="s-text"
+                                    label="Schritt *"
+                                    className="sm:col-span-2"
+                                >
                                     <Input
                                         id="s-text"
                                         value={schritt.text}
-                                        onChange={(e) => setzeSchritt(schritt.id, { text: e.target.value })}
+                                        onChange={(e) =>
+                                            setzeSchritt(schritt.id, {
+                                                text: e.target.value,
+                                            })
+                                        }
                                     />
                                 </FormField>
-                                <FormField id="s-verantwortung" label="Verantwortung">
+                                <FormField
+                                    id="s-verantwortung"
+                                    label="Verantwortung"
+                                >
                                     <Input
                                         id="s-verantwortung"
                                         value={schritt.verantwortung}
-                                        onChange={(e) => setzeSchritt(schritt.id, { verantwortung: e.target.value })}
+                                        onChange={(e) =>
+                                            setzeSchritt(schritt.id, {
+                                                verantwortung: e.target.value,
+                                            })
+                                        }
                                     />
                                 </FormField>
-                                <FormField id="s-kommunikation" label="Kommunikation an">
+                                <FormField
+                                    id="s-kommunikation"
+                                    label="Kommunikation an"
+                                >
                                     <Input
                                         id="s-kommunikation"
                                         value={schritt.kommunikation}
-                                        onChange={(e) => setzeSchritt(schritt.id, { kommunikation: e.target.value })}
+                                        onChange={(e) =>
+                                            setzeSchritt(schritt.id, {
+                                                kommunikation: e.target.value,
+                                            })
+                                        }
                                     />
                                 </FormField>
                                 <FormField
@@ -393,8 +491,15 @@ export default function AblaufForm({
                                     <MultiSelect
                                         id="s-dokumente"
                                         values={schritt.dokumente}
-                                        onChange={(v) => setzeSchritt(schritt.id, { dokumente: v })}
-                                        options={dokumente.map((d) => ({ value: d.id, label: d.title }))}
+                                        onChange={(v) =>
+                                            setzeSchritt(schritt.id, {
+                                                dokumente: v,
+                                            })
+                                        }
+                                        options={dokumente.map((d) => ({
+                                            value: d.id,
+                                            label: d.title,
+                                        }))}
                                         placeholder="Keine"
                                     />
                                 </FormField>
@@ -406,8 +511,15 @@ export default function AblaufForm({
                                     <MultiSelect
                                         id="s-gruppen"
                                         values={schritt.gilt_fuer}
-                                        onChange={(v) => setzeSchritt(schritt.id, { gilt_fuer: v })}
-                                        options={gruppen.map((g) => ({ value: g.id, label: g.name }))}
+                                        onChange={(v) =>
+                                            setzeSchritt(schritt.id, {
+                                                gilt_fuer: v,
+                                            })
+                                        }
+                                        options={gruppen.map((g) => ({
+                                            value: g.id,
+                                            label: g.name,
+                                        }))}
                                         placeholder="Alle"
                                     />
                                 </FormField>
@@ -428,7 +540,12 @@ export default function AblaufForm({
                                         value={schritt.frist_tage ?? ''}
                                         onChange={(e) =>
                                             setzeSchritt(schritt.id, {
-                                                frist_tage: e.target.value === '' ? null : Number(e.target.value),
+                                                frist_tage:
+                                                    e.target.value === ''
+                                                        ? null
+                                                        : Number(
+                                                              e.target.value,
+                                                          ),
                                             })
                                         }
                                     />
@@ -442,18 +559,33 @@ export default function AblaufForm({
                                         id="s-gegen"
                                         value={schritt.gegenstueck ?? ''}
                                         onChange={(e) =>
-                                            setzeSchritt(schritt.id, { gegenstueck: e.target.value || null })
+                                            setzeSchritt(schritt.id, {
+                                                gegenstueck:
+                                                    e.target.value || null,
+                                            })
                                         }
                                     >
                                         <option value="">Keines</option>
                                         {data.phasen
-                                            .filter((p) => p.key !== schritt.phase)
+                                            .filter(
+                                                (p) => p.key !== schritt.phase,
+                                            )
                                             .map((p) => (
-                                                <optgroup key={p.key} label={p.titel}>
+                                                <optgroup
+                                                    key={p.key}
+                                                    label={p.titel}
+                                                >
                                                     {data.schritte
-                                                        .filter((s) => s.phase === p.key)
+                                                        .filter(
+                                                            (s) =>
+                                                                s.phase ===
+                                                                p.key,
+                                                        )
                                                         .map((s) => (
-                                                            <option key={s.id} value={s.id}>
+                                                            <option
+                                                                key={s.id}
+                                                                value={s.id}
+                                                            >
                                                                 {`${nummer(data.schritte, s)}. ${s.text}`}
                                                             </option>
                                                         ))}
@@ -466,7 +598,10 @@ export default function AblaufForm({
                                         id="s-phase"
                                         value={schritt.phase}
                                         onChange={(e) => {
-                                            setzeSchritt(schritt.id, { phase: e.target.value, gegenstueck: null });
+                                            setzeSchritt(schritt.id, {
+                                                phase: e.target.value,
+                                                gegenstueck: null,
+                                            });
                                             setAktiv(e.target.value);
                                         }}
                                     >
@@ -477,19 +612,37 @@ export default function AblaufForm({
                                         ))}
                                     </NativeSelect>
                                 </FormField>
-                                <FormField id="s-bemerkung" label="Bemerkungen" className="sm:col-span-2">
+                                <FormField
+                                    id="s-bemerkung"
+                                    label="Bemerkungen"
+                                    className="sm:col-span-2"
+                                >
                                     <Textarea
                                         id="s-bemerkung"
                                         rows={2}
                                         value={schritt.bemerkung}
-                                        onChange={(e) => setzeSchritt(schritt.id, { bemerkung: e.target.value })}
+                                        onChange={(e) =>
+                                            setzeSchritt(schritt.id, {
+                                                bemerkung: e.target.value,
+                                            })
+                                        }
                                     />
                                 </FormField>
                                 <div className="flex flex-wrap gap-2 sm:col-span-2">
-                                    <Button type="button" variant="outline" onClick={() => setGewaehlt(null)}>
+                                    <Button
+                                        type="button"
+                                        variant="outline"
+                                        onClick={() => setGewaehlt(null)}
+                                    >
                                         Fertig
                                     </Button>
-                                    <Button type="button" variant="outline" onClick={() => schrittEntfernen(schritt.id)}>
+                                    <Button
+                                        type="button"
+                                        variant="outline"
+                                        onClick={() =>
+                                            schrittEntfernen(schritt.id)
+                                        }
+                                    >
                                         <Trash2 /> Schritt entfernen
                                     </Button>
                                 </div>
@@ -503,7 +656,13 @@ export default function AblaufForm({
                         <Save /> Speichern
                     </Button>
                     <Button asChild variant="outline">
-                        <Link href={ablauf ? `/ablaeufe/${ablauf.id}` : '/ablaeufe'}>Abbrechen</Link>
+                        <Link
+                            href={
+                                ablauf ? `/ablaeufe/${ablauf.id}` : '/ablaeufe'
+                            }
+                        >
+                            Abbrechen
+                        </Link>
                     </Button>
                 </div>
             </form>

@@ -18,7 +18,12 @@ import { Input } from '@/components/ui/input';
 import { SortableList } from '@/components/ui/sortable-list';
 import { Textarea } from '@/components/ui/textarea';
 
-type Gruppe = { id: string; name: string; bemerkung: string; verwendet: number };
+type Gruppe = {
+    id: string;
+    name: string;
+    bemerkung: string;
+    verwendet: number;
+};
 
 /** Personengruppen für «gilt für» bei Schritten. */
 export default function AblaeufeGruppen({ gruppen }: { gruppen: Gruppe[] }) {
@@ -53,12 +58,16 @@ export default function AblaeufeGruppen({ gruppen }: { gruppen: Gruppe[] }) {
                     <CardHeader>
                         <CardTitle>Gruppen</CardTitle>
                         <CardDescription>
-                            Reihenfolge per Ziehen am Griff oder mit den Pfeilen.
+                            Reihenfolge per Ziehen am Griff oder mit den
+                            Pfeilen.
                         </CardDescription>
                     </CardHeader>
                     <CardContent>
                         <SortableList
-                            items={gruppen.map((g) => ({ id: g.id, label: g.name }))}
+                            items={gruppen.map((g) => ({
+                                id: g.id,
+                                label: g.name,
+                            }))}
                             onChange={(items) =>
                                 router.post(
                                     '/ablaeufe/gruppen/reihenfolge',
@@ -74,14 +83,20 @@ export default function AblaeufeGruppen({ gruppen }: { gruppen: Gruppe[] }) {
 
                                 return (
                                     <span className="flex flex-1 flex-wrap items-center gap-2">
-                                        <span className="font-medium" translate="no">
+                                        <span
+                                            className="font-medium"
+                                            translate="no"
+                                        >
                                             {g.name}
                                         </span>
                                         {g.verwendet > 0 && (
                                             <Badge variant="outline">{`${g.verwendet} Schritte`}</Badge>
                                         )}
                                         {g.bemerkung && (
-                                            <span className="basis-full text-xs text-muted-foreground" translate="no">
+                                            <span
+                                                className="basis-full text-xs text-muted-foreground"
+                                                translate="no"
+                                            >
                                                 {g.bemerkung}
                                             </span>
                                         )}
@@ -116,23 +131,41 @@ export default function AblaeufeGruppen({ gruppen }: { gruppen: Gruppe[] }) {
                     </CardHeader>
                     <CardContent>
                         <form onSubmit={submit} className="grid gap-4">
-                            <FormField id="g-name" label="Name *" error={form.errors.name}>
+                            <FormField
+                                id="g-name"
+                                label="Name *"
+                                error={form.errors.name}
+                            >
                                 <Input
                                     id="g-name"
                                     value={form.data.name}
-                                    onChange={(e) => form.setData('name', e.target.value)}
+                                    onChange={(e) =>
+                                        form.setData('name', e.target.value)
+                                    }
                                 />
                             </FormField>
-                            <FormField id="g-bemerkung" label="Bemerkung" error={form.errors.bemerkung}>
+                            <FormField
+                                id="g-bemerkung"
+                                label="Bemerkung"
+                                error={form.errors.bemerkung}
+                            >
                                 <Textarea
                                     id="g-bemerkung"
                                     rows={2}
                                     value={form.data.bemerkung}
-                                    onChange={(e) => form.setData('bemerkung', e.target.value)}
+                                    onChange={(e) =>
+                                        form.setData(
+                                            'bemerkung',
+                                            e.target.value,
+                                        )
+                                    }
                                 />
                             </FormField>
                             <div className="flex flex-wrap gap-2">
-                                <Button type="submit" disabled={form.processing}>
+                                <Button
+                                    type="submit"
+                                    disabled={form.processing}
+                                >
                                     {bearbeiten ? (
                                         'Speichern'
                                     ) : (
@@ -142,7 +175,11 @@ export default function AblaeufeGruppen({ gruppen }: { gruppen: Gruppe[] }) {
                                     )}
                                 </Button>
                                 {bearbeiten && (
-                                    <Button type="button" variant="outline" onClick={() => waehlen(null)}>
+                                    <Button
+                                        type="button"
+                                        variant="outline"
+                                        onClick={() => waehlen(null)}
+                                    >
                                         Abbrechen
                                     </Button>
                                 )}

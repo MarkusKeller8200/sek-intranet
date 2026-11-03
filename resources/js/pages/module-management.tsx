@@ -66,7 +66,8 @@ function RightRoles({
 }) {
     const [chosen, setChosen] = useState(roles);
     const changed = [...chosen].sort().join() !== [...roles].sort().join();
-    const isDefault = [...roles].sort().join() === [...defaultRoles].sort().join();
+    const isDefault =
+        [...roles].sort().join() === [...defaultRoles].sort().join();
     const save = (next: string[]) =>
         router.post(
             `/einstellungen/module/${moduleKey}/rechte/${ability}`,
@@ -87,7 +88,10 @@ function RightRoles({
             </legend>
             <div className="flex flex-wrap gap-x-4 gap-y-1.5">
                 {Object.entries(allRoles).map(([role, roleLabel]) => (
-                    <label key={role} className="flex items-center gap-1.5 text-sm">
+                    <label
+                        key={role}
+                        className="flex items-center gap-1.5 text-sm"
+                    >
                         <Checkbox
                             checked={chosen.includes(role)}
                             onCheckedChange={(on: boolean | 'indeterminate') =>
@@ -103,7 +107,12 @@ function RightRoles({
                 ))}
             </div>
             <div className="flex flex-wrap gap-2">
-                <Button type="button" size="sm" disabled={!changed} onClick={() => save(chosen)}>
+                <Button
+                    type="button"
+                    size="sm"
+                    disabled={!changed}
+                    onClick={() => save(chosen)}
+                >
                     Rollen speichern
                 </Button>
                 {!isDefault && (
@@ -262,7 +271,9 @@ export default function ModuleManagement({
                                                         ability={ability}
                                                         label={r.label}
                                                         roles={r.roles}
-                                                        defaultRoles={r.default_roles}
+                                                        defaultRoles={
+                                                            r.default_roles
+                                                        }
                                                         allRoles={roles}
                                                     />
                                                 ),

@@ -105,7 +105,9 @@ export default function AblaufShow({
                         {darfBearbeiten && (
                             <>
                                 <Button asChild>
-                                    <Link href={`/ablaeufe/${ablauf.id}/bearbeiten`}>
+                                    <Link
+                                        href={`/ablaeufe/${ablauf.id}/bearbeiten`}
+                                    >
                                         <Pencil /> Bearbeiten
                                     </Link>
                                 </Button>
@@ -140,7 +142,9 @@ export default function AblaufShow({
                                             </TableHead>
                                             <TableHead>Schritt</TableHead>
                                             <TableHead>Verantwortung</TableHead>
-                                            <TableHead>Kommunikation an</TableHead>
+                                            <TableHead>
+                                                Kommunikation an
+                                            </TableHead>
                                             <TableHead>Dokumente</TableHead>
                                             <TableHead>Bemerkungen</TableHead>
                                         </TableRow>
@@ -152,7 +156,10 @@ export default function AblaufShow({
                                             );
 
                                             return (
-                                                <TableRow key={s.id} className="align-top">
+                                                <TableRow
+                                                    key={s.id}
+                                                    className="align-top"
+                                                >
                                                     <TableCell className="text-right tabular-nums">
                                                         {i + 1}
                                                     </TableCell>
@@ -160,15 +167,25 @@ export default function AblaufShow({
                                                         <span translate="no">
                                                             {s.text}
                                                         </span>
-                                                        {s.gilt_fuer.length > 0 && (
+                                                        {s.gilt_fuer.length >
+                                                            0 && (
                                                             <span className="mt-1 flex flex-wrap gap-1">
-                                                                {s.gilt_fuer.map((g) => (
-                                                                    <Badge key={g} variant="secondary">
-                                                                        <span translate="no">
-                                                                            {gruppe(g)}
-                                                                        </span>
-                                                                    </Badge>
-                                                                ))}
+                                                                {s.gilt_fuer.map(
+                                                                    (g) => (
+                                                                        <Badge
+                                                                            key={
+                                                                                g
+                                                                            }
+                                                                            variant="secondary"
+                                                                        >
+                                                                            <span translate="no">
+                                                                                {gruppe(
+                                                                                    g,
+                                                                                )}
+                                                                            </span>
+                                                                        </Badge>
+                                                                    ),
+                                                                )}
                                                             </span>
                                                         )}
                                                         {gegen && (
@@ -180,41 +197,67 @@ export default function AblaufShow({
                                                             </span>
                                                         )}
                                                     </TableCell>
-                                                    <TableCell className="whitespace-normal" translate="no">
+                                                    <TableCell
+                                                        className="whitespace-normal"
+                                                        translate="no"
+                                                    >
                                                         {s.verantwortung}
                                                     </TableCell>
-                                                    <TableCell className="whitespace-normal" translate="no">
+                                                    <TableCell
+                                                        className="whitespace-normal"
+                                                        translate="no"
+                                                    >
                                                         {s.kommunikation}
                                                     </TableCell>
                                                     <TableCell className="whitespace-normal">
                                                         <span className="grid gap-1">
-                                                            {s.dokumente.map((id) => {
-                                                                const d = dokument(id);
+                                                            {s.dokumente.map(
+                                                                (id) => {
+                                                                    const d =
+                                                                        dokument(
+                                                                            id,
+                                                                        );
 
-                                                                return d ? (
-                                                                    <a
-                                                                        key={id}
-                                                                        href={d.href}
-                                                                        target="_blank"
-                                                                        rel="noopener noreferrer"
-                                                                        className="inline-flex items-center gap-1 text-primary underline-offset-2 hover:underline"
-                                                                    >
-                                                                        <FileText className="size-3.5" />
-                                                                        <span translate="no">
-                                                                            {d.title}
-                                                                        </span>
-                                                                    </a>
-                                                                ) : null;
-                                                            })}
+                                                                    return d ? (
+                                                                        <a
+                                                                            key={
+                                                                                id
+                                                                            }
+                                                                            href={
+                                                                                d.href
+                                                                            }
+                                                                            target="_blank"
+                                                                            rel="noopener noreferrer"
+                                                                            className="inline-flex items-center gap-1 text-primary underline-offset-2 hover:underline"
+                                                                        >
+                                                                            <FileText className="size-3.5" />
+                                                                            <span translate="no">
+                                                                                {
+                                                                                    d.title
+                                                                                }
+                                                                            </span>
+                                                                        </a>
+                                                                    ) : null;
+                                                                },
+                                                            )}
                                                         </span>
                                                     </TableCell>
                                                     <TableCell className="max-w-xs whitespace-normal">
-                                                        {s.frist_tage !== null && (
-                                                            <Badge variant="outline" className="mb-1">
-                                                                {fristText(s.frist_tage)}
+                                                        {s.frist_tage !==
+                                                            null && (
+                                                            <Badge
+                                                                variant="outline"
+                                                                className="mb-1"
+                                                            >
+                                                                {fristText(
+                                                                    s.frist_tage,
+                                                                )}
                                                             </Badge>
                                                         )}
-                                                        <span className="block" translate="no">
+                                                        <span
+                                                            className="block"
+                                                            translate="no"
+                                                        >
                                                             {s.bemerkung}
                                                         </span>
                                                     </TableCell>

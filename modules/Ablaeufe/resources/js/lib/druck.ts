@@ -24,13 +24,14 @@ export function druckeAblauf(
             const zeilen = ablauf.schritte
                 .filter((s) => s.phase === p.key)
                 .map(
-                    (s, i) => `<tr><td class="r">${i + 1}</td><td><span class="box"></span> ${esc(s.text)}${
-                        s.gilt_fuer.length
-                            ? `<br><small>gilt für: ${esc(s.gilt_fuer.map(gruppe).join(', '))}</small>`
-                            : ''
-                    }</td><td>${esc(s.verantwortung)}</td><td>${esc(s.kommunikation)}</td><td>${esc(
-                        s.dokumente.map(dokument).join(', '),
-                    )}</td><td>${esc([fristText(s.frist_tage), s.bemerkung].filter(Boolean).join(' · '))}</td></tr>`,
+                    (s, i) =>
+                        `<tr><td class="r">${i + 1}</td><td><span class="box"></span> ${esc(s.text)}${
+                            s.gilt_fuer.length
+                                ? `<br><small>gilt für: ${esc(s.gilt_fuer.map(gruppe).join(', '))}</small>`
+                                : ''
+                        }</td><td>${esc(s.verantwortung)}</td><td>${esc(s.kommunikation)}</td><td>${esc(
+                            s.dokumente.map(dokument).join(', '),
+                        )}</td><td>${esc([fristText(s.frist_tage), s.bemerkung].filter(Boolean).join(' · '))}</td></tr>`,
                 )
                 .join('');
 
