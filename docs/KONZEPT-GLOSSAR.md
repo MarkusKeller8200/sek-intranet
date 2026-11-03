@@ -88,7 +88,11 @@ und Kurzbeschreibung**; ein Link führt direkt zum Eintrag im Glossar.
 
 ## Startinhalt
 
+Quelle der Liste: **Volksschulamt (VSA)**, https://www.zh.ch/de/bildung/schulen/volksschule.html (Recherche vom
+03.11.2026). Alle Einträge erhalten die Herkunft **VSA** mit dieser URL; die Herkunftsliste enthält «VSA –
+Volksschulamt des Kantons Zürich» mit derselben URL.
+
 10 Kategorien und alle Zeilen der Recherche als einzelne Einträge (rund 140, **ohne Zusammenführen**); das Bereinigen
-der Doppelten folgt danach mit dem Knopf «Doppelte Abkürzungen oder Begriffe». Als «gebräuchlich» markierte
-Kurzformen (SV, KLP, QM, QS, QE …) erhalten Herkunft «gebräuchlich» und Status «zu prüfen»; ICT-Begriffe werden als
-fachliche Ergänzung gekennzeichnet. Herkunft und URL je Kategorie gemäss Quellenangabe der Recherche.
+der Doppelten folgt danach mit dem Knopf «Doppelte Abkürzungen oder Begriffe» (#62). Was die Recherche selbst als
+gebräuchliche Kurzform (SV, KLP, QM, QS, QE …) oder als fachliche Ergänzung (ICT-Begriffe) kennzeichnet, erhält
+zusätzlich den Status «zu prüfen», damit es beim Bereinigen auffällt.
