@@ -4,11 +4,24 @@ import { isColorName, palette } from '@/lib/colors';
 import { cn } from '@/lib/utils';
 
 /** Ein farbiges Label einer Glossar-Liste (Kategorie, Herkunft) in der Farbe aus dem Farbkonzept (#74). */
-export function GlossaryTag({ label, color, title }: { label: string; color: string; title?: string }) {
+export function GlossaryTag({
+    label,
+    color,
+    title,
+}: {
+    label: string;
+    color: string;
+    title?: string;
+}) {
     const name: ColorName = isColorName(color) ? color : 'slate';
 
     return (
-        <Badge variant="outline" className={cn('shrink-0', palette[name].badge)} title={title} translate="no">
+        <Badge
+            variant="outline"
+            className={cn('shrink-0', palette[name].badge)}
+            title={title}
+            translate="no"
+        >
             {label}
         </Badge>
     );
@@ -18,7 +31,13 @@ export function GlossaryTag({ label, color, title }: { label: string; color: str
  * Zell-Renderer: Mehrfachwerte («a; b») als farbige Labels.
  * Angezeigt werden nur Werte, die es in der Liste gibt (Label → Farbe).
  */
-export default function GlossaryTags({ value, colors }: { value: string; colors: Record<string, string> }) {
+export default function GlossaryTags({
+    value,
+    colors,
+}: {
+    value: string;
+    colors: Record<string, string>;
+}) {
     const items = value
         .split(';')
         .map((s) => s.trim())

@@ -22,7 +22,10 @@ type Props = {
     rows: GlossaryRow[];
     kategorien: Record<string, string>;
     kategorienNamen: Record<string, string>;
-    tagFarben: { kategorien: Record<string, string>; herkunft: Record<string, string> };
+    tagFarben: {
+        kategorien: Record<string, string>;
+        herkunft: Record<string, string>;
+    };
     herkunft: Record<string, string>;
     bereiche: Record<string, string>;
     status: Record<string, string>;
@@ -149,7 +152,10 @@ export default function GlossaryIndex({
             text('kategorien', {
                 separator: ';',
                 render: (r) => (
-                    <GlossaryTags value={r.kategorien} colors={tagFarben.kategorien} />
+                    <GlossaryTags
+                        value={r.kategorien}
+                        colors={tagFarben.kategorien}
+                    />
                 ),
             }),
             text('abk_offiziell', { editable: rechte.official, hidden: true }),
@@ -168,7 +174,10 @@ export default function GlossaryIndex({
             text('herkunft', {
                 separator: ';',
                 render: (r) => (
-                    <GlossaryTags value={r.herkunft} colors={tagFarben.herkunft} />
+                    <GlossaryTags
+                        value={r.herkunft}
+                        colors={tagFarben.herkunft}
+                    />
                 ),
             }),
             text('genutzt_in', {

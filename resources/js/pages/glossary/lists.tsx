@@ -277,25 +277,36 @@ export default function GlossaryLists({
                                     aria-label="Farbe"
                                     className="flex flex-wrap gap-2"
                                 >
-                                    {(Object.keys(palette) as ColorName[]).map((c) => (
-                                        <button
-                                            key={c}
-                                            type="button"
-                                            role="radio"
-                                            aria-checked={form.data.farbe === c}
-                                            aria-label={c}
-                                            onClick={() => form.setData('farbe', c)}
-                                            className={cn(
-                                                'rounded-md p-0.5 ring-offset-2 focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none',
-                                                form.data.farbe === c && 'ring-2 ring-primary',
-                                            )}
-                                        >
-                                            <GlossaryTag
-                                                label={form.data.label || form.data.kuerzel || 'Beispiel'}
-                                                color={c}
-                                            />
-                                        </button>
-                                    ))}
+                                    {(Object.keys(palette) as ColorName[]).map(
+                                        (c) => (
+                                            <button
+                                                key={c}
+                                                type="button"
+                                                role="radio"
+                                                aria-checked={
+                                                    form.data.farbe === c
+                                                }
+                                                aria-label={c}
+                                                onClick={() =>
+                                                    form.setData('farbe', c)
+                                                }
+                                                className={cn(
+                                                    'rounded-md p-0.5 ring-offset-2 focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none',
+                                                    form.data.farbe === c &&
+                                                        'ring-2 ring-primary',
+                                                )}
+                                            >
+                                                <GlossaryTag
+                                                    label={
+                                                        form.data.label ||
+                                                        form.data.kuerzel ||
+                                                        'Beispiel'
+                                                    }
+                                                    color={c}
+                                                />
+                                            </button>
+                                        ),
+                                    )}
                                 </div>
                             </FormField>
                             <FormField

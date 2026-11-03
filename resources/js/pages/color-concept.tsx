@@ -110,7 +110,10 @@ export default function ColorConcept({
     themes: ThemeData[];
     defaults: ThemeDefaults;
     presets: Record<string, { name: string; description: string }>;
-    glossarTags?: Record<'kategorien' | 'herkunft', { label: string; bezeichnung: string; farbe: string }[]>;
+    glossarTags?: Record<
+        'kategorien' | 'herkunft',
+        { label: string; bezeichnung: string; farbe: string }[]
+    >;
 }) {
     const options = useOptions();
     const { navigation } = usePage().props;
@@ -257,7 +260,8 @@ export default function ColorConcept({
                     <CardHeader>
                         <CardTitle>Glossar: Kategorien und Herkunft</CardTitle>
                         <CardDescription>
-                            Farbige Labels in der Glossar-Tabelle. Farbe je Eintrag unter Glossar → Kategorien & Herkunft.
+                            Farbige Labels in der Glossar-Tabelle. Farbe je
+                            Eintrag unter Glossar → Kategorien & Herkunft.
                         </CardDescription>
                     </CardHeader>
                     <CardContent className="grid gap-5">
@@ -268,10 +272,17 @@ export default function ColorConcept({
                             ] as const
                         ).map(([key, title]) => (
                             <div key={key} className="grid gap-2">
-                                <span className="text-sm font-medium">{title}</span>
+                                <span className="text-sm font-medium">
+                                    {title}
+                                </span>
                                 <div className="flex flex-wrap gap-2">
                                     {glossarTags[key].map((t) => (
-                                        <GlossaryTag key={t.label} label={t.label} color={t.farbe} title={t.bezeichnung} />
+                                        <GlossaryTag
+                                            key={t.label}
+                                            label={t.label}
+                                            color={t.farbe}
+                                            title={t.bezeichnung}
+                                        />
                                     ))}
                                 </div>
                             </div>
