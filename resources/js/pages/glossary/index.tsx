@@ -75,7 +75,7 @@ export default function GlossaryIndex({
 
     const columns = useMemo<GridColumn<GlossaryRow>[]>(() => {
         const text = (
-            id: keyof GlossaryRow & string,
+            id: keyof GlossaryRow,
             opts: Partial<GridColumn<GlossaryRow>> = {},
         ): GridColumn<GlossaryRow> => ({
             id,
