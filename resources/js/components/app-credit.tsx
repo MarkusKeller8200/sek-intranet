@@ -1,21 +1,13 @@
 import { cn } from '@/lib/utils';
 
-/** Vermerk unter dem Logo: wer das Intranet entwickelt (Freizeitprojekt für die Sek Bülach). */
+/** Vermerk unter dem Logo: wer das Intranet entwickelt (in Eigeninitiative für die SekBülach). */
 export default function AppCredit({ className }: { className?: string }) {
     return (
-        <p
-            className={cn(
-                'text-right text-[11px] leading-snug text-muted-foreground',
-                className,
-            )}
-        >
-            <span className="block">
-                Entwickelt von{' '}
-                <span translate="no" className="font-medium whitespace-nowrap">
-                    Markus Keller
-                </span>
+        <p className={cn('text-right leading-snug', className)}>
+            <span className="block text-xs font-semibold text-foreground" translate="no">
+                Developed by Markus Keller ®
             </span>
-            <span className="block">in der Freizeit für die Sek Bülach</span>
+            <span className="block text-[11px] text-muted-foreground">In Eigeninitiative für die SekBülach</span>
         </p>
     );
 }
