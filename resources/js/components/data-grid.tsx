@@ -1514,7 +1514,7 @@ export default function DataGrid<T extends GridRow>({
                 onCopy={onCopy}
                 onCut={onCut}
                 onPaste={onPaste}
-                className="grid-scroll relative max-h-[calc(100vh-15rem)] min-h-64 overflow-auto rounded-lg border [scrollbar-gutter:stable] focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
+                className="grid-scroll relative max-h-[calc(100vh-15rem)] min-h-64 [scrollbar-gutter:stable] overflow-auto rounded-lg border focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
             >
                 <table
                     className="border-separate border-spacing-0 text-sm"

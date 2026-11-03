@@ -137,7 +137,10 @@ export default function GlossaryLists({
                                         {mitLabel && (
                                             <TableCell>
                                                 {e.label && (
-                                                    <Badge variant="secondary" translate="no">
+                                                    <Badge
+                                                        variant="secondary"
+                                                        translate="no"
+                                                    >
                                                         {e.label}
                                                     </Badge>
                                                 )}
@@ -258,7 +261,10 @@ export default function GlossaryLists({
                                         className="max-w-60"
                                         value={form.data.label}
                                         onChange={(e) =>
-                                            form.setData('label', e.target.value)
+                                            form.setData(
+                                                'label',
+                                                e.target.value,
+                                            )
                                         }
                                     />
                                 </FormField>

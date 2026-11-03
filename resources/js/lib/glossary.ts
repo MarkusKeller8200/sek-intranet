@@ -88,7 +88,9 @@ const tags = (s: string) =>
         .join(' ');
 
 const official = (own: string, off: string) =>
-    own && off && own !== off ? `<br><small>offiziell: ${esc(off)}</small>` : '';
+    own && off && own !== off
+        ? `<br><small>offiziell: ${esc(off)}</small>`
+        : '';
 
 /** Kompakt (A4 hoch): je Eintrag eine Zeile, Kurzbeschreibung mit «…» abgeschnitten. */
 function compactTable(list: GlossaryRow[]): string {
@@ -101,15 +103,23 @@ function compactTable(list: GlossaryRow[]): string {
 }
 
 /** Voll (A4 quer): alle sinnvollen Felder, nichts abgeschnitten. */
-function fullTable(list: GlossaryRow[], status: Record<string, string>): string {
+function fullTable(
+    list: GlossaryRow[],
+    status: Record<string, string>,
+): string {
     const validity = (r: GlossaryRow) =>
-        [r.gueltig_ab && `ab ${esc(r.gueltig_ab)}`, r.gueltig_bis && `bis ${esc(r.gueltig_bis)}`]
+        [
+            r.gueltig_ab && `ab ${esc(r.gueltig_ab)}`,
+            r.gueltig_bis && `bis ${esc(r.gueltig_bis)}`,
+        ]
             .filter(Boolean)
             .join('<br>');
 
     return `<table class="full"><colgroup><col style="width:9%"><col style="width:20%"><col style="width:16%"><col style="width:18%"><col style="width:8%"><col style="width:9%"><col style="width:7%"><col style="width:13%"></colgroup><thead><tr><th>Abkürzung</th><th>Bezeichnung</th><th>Kurzbeschreibung</th><th>Beschreibung</th><th>Herkunft</th><th>Genutzt in</th><th>Status</th><th>Notiz</th></tr></thead><tbody>${list
         .map((r) => {
-            const aliases = [r.aliase_offiziell, r.alias_eigen].filter(Boolean).join('; ');
+            const aliases = [r.aliase_offiziell, r.alias_eigen]
+                .filter(Boolean)
+                .join('; ');
 
             return `<tr><td><b>${esc(abbreviation(r))}</b>${official(r.abk_eigen, r.abk_offiziell)}${aliases ? `<br><small>Alias: ${esc(aliases)}</small>` : ''}</td><td>${esc(designation(r))}${official(r.bez_eigen, r.bez_offiziell)}${r.url ? `<br><small class="url">${esc(r.url)}</small>` : ''}</td><td>${esc(r.kurzbeschreibung)}</td><td>${esc(r.beschreibung)}</td><td>${tags(r.herkunft)}</td><td>${tags(r.genutzt_in)}</td><td>${esc(status[r.status] ?? r.status)}${validity(r) ? `<br><small>${validity(r)}</small>` : ''}</td><td class="pre">${esc(r.notiz)}</td></tr>`;
         })
