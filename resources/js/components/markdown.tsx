@@ -22,20 +22,35 @@ function inline(text: string, keyBase: string): ReactNode[] {
             out.push(<strong key={key}>{t.slice(2, -2)}</strong>);
         } else if (t.startsWith('`')) {
             out.push(
-                <code key={key} className="rounded bg-muted px-1 font-mono text-xs">
+                <code
+                    key={key}
+                    className="rounded bg-muted px-1 font-mono text-xs"
+                >
                     {t.slice(1, -1)}
                 </code>,
             );
         } else if (t.startsWith('[')) {
             const label = t.slice(1, t.indexOf(']'));
             out.push(
-                <a key={key} href={m[2]} target="_blank" rel="noopener noreferrer" className="text-primary underline underline-offset-2">
+                <a
+                    key={key}
+                    href={m[2]}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-primary underline underline-offset-2"
+                >
                     {label}
                 </a>,
             );
         } else if (t.startsWith('http')) {
             out.push(
-                <a key={key} href={t} target="_blank" rel="noopener noreferrer" className="text-primary underline underline-offset-2">
+                <a
+                    key={key}
+                    href={t}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-primary underline underline-offset-2"
+                >
                     {t}
                 </a>,
             );
@@ -53,7 +68,13 @@ function inline(text: string, keyBase: string): ReactNode[] {
 
 type Liste = { ordered: boolean; items: string[] };
 
-export default function Markdown({ text, className }: { text: string; className?: string }) {
+export default function Markdown({
+    text,
+    className,
+}: {
+    text: string;
+    className?: string;
+}) {
     const blocks: ReactNode[] = [];
     const lines = text.replace(/\r\n?/g, '\n').split('\n');
     let para: string[] = [];
@@ -66,12 +87,18 @@ export default function Markdown({ text, className }: { text: string; className?
         }
         if (list) {
             const k = `l${blocks.length}`;
-            const items = list.items.map((it, i) => <li key={i}>{inline(it, `${k}-${i}`)}</li>);
+            const items = list.items.map((it, i) => (
+                <li key={i}>{inline(it, `${k}-${i}`)}</li>
+            ));
             blocks.push(
                 list.ordered ? (
-                    <ol key={k} className="list-decimal pl-5">{items}</ol>
+                    <ol key={k} className="list-decimal pl-5">
+                        {items}
+                    </ol>
                 ) : (
-                    <ul key={k} className="list-disc pl-5">{items}</ul>
+                    <ul key={k} className="list-disc pl-5">
+                        {items}
+                    </ul>
                 ),
             );
             list = null;
@@ -85,7 +112,8 @@ export default function Markdown({ text, className }: { text: string; className?
         } else if (h) {
             flush();
             const k = `h${blocks.length}`;
-            const cls = h[1].length === 1 ? 'text-lg font-semibold' : 'font-semibold';
+            const cls =
+                h[1].length === 1 ? 'text-lg font-semibold' : 'font-semibold';
             blocks.push(
                 <p key={k} className={cls}>
                     {inline(h[2], k)}
@@ -113,5 +141,9 @@ export default function Markdown({ text, className }: { text: string; className?
     }
     flush();
 
-    return <div className={cn('grid gap-2 text-sm leading-relaxed', className)}>{blocks}</div>;
+    return (
+        <div className={cn('grid gap-2 text-sm leading-relaxed', className)}>
+            {blocks}
+        </div>
+    );
 }

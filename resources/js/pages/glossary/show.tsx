@@ -11,7 +11,12 @@ import { formatDateTime } from '@/lib/format';
 import type { GlossaryEntry } from '@/lib/glossary';
 import { abbreviation, designation } from '@/lib/glossary';
 
-type Herkunft = { id: string; kuerzel: string; bezeichnung: string; url?: string };
+type Herkunft = {
+    id: string;
+    kuerzel: string;
+    bezeichnung: string;
+    url?: string;
+};
 
 function Row({ label, children }: { label: string; children: ReactNode }) {
     return (
@@ -57,7 +62,11 @@ export default function GlossaryShow({
                                         <Pencil /> Bearbeiten
                                     </Link>
                                 </Button>
-                                <DeleteButton url={`/glossar/${e.id}`} title="Eintrag löschen?" size="default" />
+                                <DeleteButton
+                                    url={`/glossar/${e.id}`}
+                                    title="Eintrag löschen?"
+                                    size="default"
+                                />
                             </>
                         )
                     }
@@ -68,7 +77,11 @@ export default function GlossaryShow({
                             {kategorien[k] ?? k}
                         </Badge>
                     ))}
-                    <Badge variant={e.status === 'aktuell' ? 'secondary' : 'default'}>
+                    <Badge
+                        variant={
+                            e.status === 'aktuell' ? 'secondary' : 'default'
+                        }
+                    >
                         {status[e.status] ?? e.status}
                     </Badge>
                 </div>
@@ -77,21 +90,31 @@ export default function GlossaryShow({
                     <Card>
                         <CardHeader>
                             <CardTitle className="flex items-center gap-2">
-                                <Lock className="size-4 text-muted-foreground" /> Offiziell
+                                <Lock className="size-4 text-muted-foreground" />{' '}
+                                Offiziell
                             </CardTitle>
                         </CardHeader>
                         <CardContent>
                             <dl className="grid gap-2 text-sm">
                                 <Row label="Abkürzung">
-                                    <span className="font-semibold" translate="no">{e.abk_offiziell || '–'}</span>
+                                    <span
+                                        className="font-semibold"
+                                        translate="no"
+                                    >
+                                        {e.abk_offiziell || '–'}
+                                    </span>
                                 </Row>
                                 {e.aliase_offiziell.length > 0 && (
                                     <Row label="Aliase">
-                                        <span translate="no">{e.aliase_offiziell.join(', ')}</span>
+                                        <span translate="no">
+                                            {e.aliase_offiziell.join(', ')}
+                                        </span>
                                     </Row>
                                 )}
                                 <Row label="Bezeichnung">
-                                    <span translate="no">{e.bez_offiziell || '–'}</span>
+                                    <span translate="no">
+                                        {e.bez_offiziell || '–'}
+                                    </span>
                                 </Row>
                             </dl>
                         </CardContent>
@@ -103,15 +126,24 @@ export default function GlossaryShow({
                         <CardContent>
                             <dl className="grid gap-2 text-sm">
                                 <Row label="Abkürzung">
-                                    <span className="font-semibold" translate="no">{e.abk_eigen || '–'}</span>
+                                    <span
+                                        className="font-semibold"
+                                        translate="no"
+                                    >
+                                        {e.abk_eigen || '–'}
+                                    </span>
                                 </Row>
                                 {e.alias_eigen && (
                                     <Row label="Alias">
-                                        <span translate="no">{e.alias_eigen}</span>
+                                        <span translate="no">
+                                            {e.alias_eigen}
+                                        </span>
                                     </Row>
                                 )}
                                 <Row label="Bezeichnung">
-                                    <span translate="no">{e.bez_eigen || '–'}</span>
+                                    <span translate="no">
+                                        {e.bez_eigen || '–'}
+                                    </span>
                                 </Row>
                             </dl>
                         </CardContent>
@@ -123,28 +155,48 @@ export default function GlossaryShow({
                         <dl className="grid gap-3 text-sm">
                             {e.beschreibung && (
                                 <Row label="Beschreibung">
-                                    <span className="whitespace-pre-line" translate="no">{e.beschreibung}</span>
+                                    <span
+                                        className="whitespace-pre-line"
+                                        translate="no"
+                                    >
+                                        {e.beschreibung}
+                                    </span>
                                 </Row>
                             )}
                             {e.url && (
                                 <Row label="URL">
-                                    <a href={e.url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-primary underline-offset-2 hover:underline">
-                                        {e.url} <ExternalLink className="size-3.5" />
+                                    <a
+                                        href={e.url}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="inline-flex items-center gap-1 text-primary underline-offset-2 hover:underline"
+                                    >
+                                        {e.url}{' '}
+                                        <ExternalLink className="size-3.5" />
                                     </a>
                                 </Row>
                             )}
                             <Row label="Herkunft">
                                 <span className="flex flex-wrap gap-1">
                                     {e.herkunft.map((id) => {
-                                        const h = herkunft.find((x) => x.id === id);
+                                        const h = herkunft.find(
+                                            (x) => x.id === id,
+                                        );
 
                                         return h?.url ? (
-                                            <a key={id} href={h.url} target="_blank" rel="noopener noreferrer">
+                                            <a
+                                                key={id}
+                                                href={h.url}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                            >
                                                 <Badge variant="secondary">{`${h.kuerzel} – ${h.bezeichnung}`}</Badge>
                                             </a>
                                         ) : (
                                             <Badge key={id} variant="secondary">
-                                                {h ? `${h.kuerzel} – ${h.bezeichnung}` : id}
+                                                {h
+                                                    ? `${h.kuerzel} – ${h.bezeichnung}`
+                                                    : id}
                                             </Badge>
                                         );
                                     })}
@@ -152,9 +204,15 @@ export default function GlossaryShow({
                                 </span>
                             </Row>
                             <Row label="Intern genutzt in">
-                                {e.genutzt_in.length > 0 ? e.genutzt_in.map((b) => bereiche[b] ?? b).join(', ') : '–'}
+                                {e.genutzt_in.length > 0
+                                    ? e.genutzt_in
+                                          .map((b) => bereiche[b] ?? b)
+                                          .join(', ')
+                                    : '–'}
                             </Row>
-                            {e.suchbegriffe && <Row label="Suchbegriffe">{e.suchbegriffe}</Row>}
+                            {e.suchbegriffe && (
+                                <Row label="Suchbegriffe">{e.suchbegriffe}</Row>
+                            )}
                             {(e.gueltig_ab || e.gueltig_bis) && (
                                 <Row label="Gültig">{`${e.gueltig_ab ?? '…'} bis ${e.gueltig_bis ?? '…'}`}</Row>
                             )}
@@ -162,14 +220,22 @@ export default function GlossaryShow({
                                 <Row label="Andere Bedeutungen">
                                     <span className="flex flex-wrap gap-2">
                                         {andere.map((a) => (
-                                            <Link key={a.id} href={`/glossar/${a.id}`} className="text-primary underline-offset-2 hover:underline">
+                                            <Link
+                                                key={a.id}
+                                                href={`/glossar/${a.id}`}
+                                                className="text-primary underline-offset-2 hover:underline"
+                                            >
                                                 <span translate="no">{`${a.abk} – ${a.bez}`}</span>
                                             </Link>
                                         ))}
                                     </span>
                                 </Row>
                             )}
-                            {e.updated_at && <Row label="Geändert">{formatDateTime(e.updated_at)}</Row>}
+                            {e.updated_at && (
+                                <Row label="Geändert">
+                                    {formatDateTime(e.updated_at)}
+                                </Row>
+                            )}
                         </dl>
                     </CardContent>
                 </Card>

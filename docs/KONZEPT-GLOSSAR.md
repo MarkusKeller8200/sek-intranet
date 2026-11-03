@@ -10,19 +10,19 @@ gehört zum **Core** (Module nutzen es über eine Core-Schnittstelle). Menü: «
 
 ## Spalten
 
-| # | Spalte | Regel |
-| --- | --- | --- |
-| 1 | Kategorie | eine oder mehrere aus der erweiterbaren Kategorienliste (mehrere nach dem Zusammenführen gleicher Begriffe) |
-| 2 | Abkürzung offiziell + Aliase | gesperrt (siehe unten); Aliase = andere Schreibweisen |
-| 3 | Abkürzung eigene + Alias | frei |
-| 4 | Bezeichnung offiziell | gesperrt |
-| 5 | Bezeichnung eigene | wird im Intranet überall angezeigt, wo auf den Eintrag verwiesen wird; leer = offizielle |
-| 6 | Kurzbeschreibung | ein Satz (max. 160 Zeichen) für den Tooltip |
-| 6a | Beschreibung | ausführlicher Text |
-| 7 | URL | Quelle, http(s) |
-| 8 | Notiz | Markdown; **gemeinsam für alle**, später je Mandant |
-| 9 | Herkunft | Mehrfachwerte aus der erweiterbaren Herkunftsliste (VSA, BI, Kanton, Bund, DSB, Gemeindeamt, Schule intern, gebräuchlich …) |
-| 10 | Intern genutzt in | Module/Bereiche: automatisch erkannte Bezüge plus Tags von Hand, als Links |
+| #   | Spalte                       | Regel                                                                                                                       |
+| --- | ---------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
+| 1   | Kategorie                    | eine oder mehrere aus der erweiterbaren Kategorienliste (mehrere nach dem Zusammenführen gleicher Begriffe)                 |
+| 2   | Abkürzung offiziell + Aliase | gesperrt (siehe unten); Aliase = andere Schreibweisen                                                                       |
+| 3   | Abkürzung eigene + Alias     | frei                                                                                                                        |
+| 4   | Bezeichnung offiziell        | gesperrt                                                                                                                    |
+| 5   | Bezeichnung eigene           | wird im Intranet überall angezeigt, wo auf den Eintrag verwiesen wird; leer = offizielle                                    |
+| 6   | Kurzbeschreibung             | ein Satz (max. 160 Zeichen) für den Tooltip                                                                                 |
+| 6a  | Beschreibung                 | ausführlicher Text                                                                                                          |
+| 7   | URL                          | Quelle, http(s)                                                                                                             |
+| 8   | Notiz                        | Markdown; **gemeinsam für alle**, später je Mandant                                                                         |
+| 9   | Herkunft                     | Mehrfachwerte aus der erweiterbaren Herkunftsliste (VSA, BI, Kanton, Bund, DSB, Gemeindeamt, Schule intern, gebräuchlich …) |
+| 10  | Intern genutzt in            | Module/Bereiche: automatisch erkannte Bezüge plus Tags von Hand, als Links                                                  |
 
 Zusätzlich: Status (aktuell / historisch / zu prüfen), Suchbegriffe, optional gültig ab/bis. Kategorien- und
 Herkunftsliste haben Abkürzung, Bezeichnung, Beschreibung, URL, Notiz (wie die Einstellungen der Abläufe, #52).

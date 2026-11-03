@@ -3,7 +3,11 @@ import { Copy, FileUp, ListTree, Plus } from 'lucide-react';
 import { useMemo, useRef } from 'react';
 import { toast } from 'sonner';
 import DataGrid from '@/components/data-grid';
-import type { CellChange, GridColumn, SavedView } from '@/components/grid/types';
+import type {
+    CellChange,
+    GridColumn,
+    SavedView,
+} from '@/components/grid/types';
 import PageHeader from '@/components/page-header';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -92,7 +96,10 @@ export default function GlossaryIndex({
                     >
                         <span translate="no">{r.anzeige || '(neu)'}</span>
                         {r.mehrdeutig && (
-                            <Badge variant="outline" title="Diese Abkürzung hat mehrere Bedeutungen">
+                            <Badge
+                                variant="outline"
+                                title="Diese Abkürzung hat mehrere Bedeutungen"
+                            >
                                 mehrdeutig
                             </Badge>
                         )}
@@ -101,7 +108,10 @@ export default function GlossaryIndex({
             }),
             text('kategorien', { separator: ';' }),
             text('abk_offiziell', { editable: rechte.official }),
-            text('aliase_offiziell', { editable: rechte.official, hidden: true }),
+            text('aliase_offiziell', {
+                editable: rechte.official,
+                hidden: true,
+            }),
             text('abk_eigen'),
             text('alias_eigen', { hidden: true }),
             text('bez_offiziell', { editable: rechte.official }),
@@ -128,7 +138,11 @@ export default function GlossaryIndex({
 
     const saveCells = async (changes: CellChange<GlossaryRow>[]) => {
         const res = await postJson<CellsResponse>('/glossar/zellen', {
-            changes: changes.map((c) => ({ id: c.id, field: c.field, value: c.value })),
+            changes: changes.map((c) => ({
+                id: c.id,
+                field: c.field,
+                value: c.value,
+            })),
         });
         if (!res.rows) {
             throw new Error(res.message ?? 'Speichern fehlgeschlagen.');
@@ -138,7 +152,9 @@ export default function GlossaryIndex({
     };
 
     const neueZeile = async () => {
-        const res = await postJson<{ id?: string; message?: string }>('/glossar/zeile');
+        const res = await postJson<{ id?: string; message?: string }>(
+            '/glossar/zeile',
+        );
         if (!res.id) {
             toast.error(res.message ?? 'Neue Zeile nicht möglich.');
 
@@ -146,14 +162,19 @@ export default function GlossaryIndex({
         }
         const id = res.id;
         await new Promise<void>((resolve) =>
-            router.reload({ only: ['rows', 'doppelte'], onFinish: () => resolve() }),
+            router.reload({
+                only: ['rows', 'doppelte'],
+                onFinish: () => resolve(),
+            }),
         );
 
         return id;
     };
 
     const ausgewaehlt = (ids: string[]) =>
-        ids.map((id) => byId.get(id)).filter((r): r is GlossaryRow => r !== undefined);
+        ids
+            .map((id) => byId.get(id))
+            .filter((r): r is GlossaryRow => r !== undefined);
 
     return (
         <>
@@ -167,8 +188,13 @@ export default function GlossaryIndex({
                             <>
                                 <Button asChild variant="outline">
                                     <Link href="/glossar/doppelte">
-                                        <Copy /> Doppelte Abkürzungen oder Begriffe
-                                        {doppelte > 0 && <Badge variant="secondary">{doppelte}</Badge>}
+                                        <Copy /> Doppelte Abkürzungen oder
+                                        Begriffe
+                                        {doppelte > 0 && (
+                                            <Badge variant="secondary">
+                                                {doppelte}
+                                            </Badge>
+                                        )}
                                     </Link>
                                 </Button>
                                 <Button asChild variant="outline">
@@ -198,20 +224,36 @@ export default function GlossaryIndex({
                     onAddRow={rechte.edit ? neueZeile : undefined}
                     onExport={(_format, ids) => void download(ids)}
                     extraExports={[
-                        { label: 'PDF', run: (ids) => printGlossary(ausgewaehlt(ids)) },
-                        { label: 'Markdown', run: (ids) => downloadMarkdown(ausgewaehlt(ids)) },
+                        {
+                            label: 'PDF',
+                            run: (ids) => printGlossary(ausgewaehlt(ids)),
+                        },
+                        {
+                            label: 'Markdown',
+                            run: (ids) => downloadMarkdown(ausgewaehlt(ids)),
+                        },
                     ]}
                     selectable={false}
                     searchPlaceholder="Abkürzung, Bezeichnung, Suchbegriff …"
                     emptyText="Keine Einträge gefunden."
-                    rowClassName={(r) => (r.status === 'historisch' ? 'opacity-60' : '')}
+                    rowClassName={(r) =>
+                        r.status === 'historisch' ? 'opacity-60' : ''
+                    }
                     toolbar={
                         rechte.edit && (
                             <>
-                                <Button variant="outline" size="sm" onClick={() => datei.current?.click()}>
+                                <Button
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={() => datei.current?.click()}
+                                >
                                     <FileUp /> Excel-Import
                                 </Button>
-                                <Button variant="ghost" size="sm" onClick={() => void download(null, true)}>
+                                <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    onClick={() => void download(null, true)}
+                                >
                                     Vorlage
                                 </Button>
                                 <input
@@ -223,7 +265,11 @@ export default function GlossaryIndex({
                                     onChange={(e) => {
                                         const file = e.target.files?.[0];
                                         if (file) {
-                                            router.post('/glossar/import', { datei: file }, { forceFormData: true });
+                                            router.post(
+                                                '/glossar/import',
+                                                { datei: file },
+                                                { forceFormData: true },
+                                            );
                                         }
                                         e.target.value = '';
                                     }}

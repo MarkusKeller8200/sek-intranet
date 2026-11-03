@@ -4,7 +4,14 @@ import PageHeader from '@/components/page-header';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import {
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
+} from '@/components/ui/table';
 
 type Zeile = {
     zeile: number;
@@ -29,7 +36,8 @@ export default function GlossaryImport({
     plan: Zeile[];
     felder: Record<string, string>;
 }) {
-    const zahl = (art: Zeile['art']) => plan.filter((p) => p.art === art).length;
+    const zahl = (art: Zeile['art']) =>
+        plan.filter((p) => p.art === art).length;
 
     return (
         <>
@@ -40,7 +48,12 @@ export default function GlossaryImport({
                     description={`${datei}: ${zahl('neu')} neu, ${zahl('geaendert')} geändert, ${zahl('fehler')} Fehler. Unveränderte Zeilen werden nicht angezeigt. Es wird nie etwas gelöscht.`}
                     actions={
                         <>
-                            <Button disabled={zahl('neu') + zahl('geaendert') === 0} onClick={() => router.post(`/glossar/import/${token}`)}>
+                            <Button
+                                disabled={zahl('neu') + zahl('geaendert') === 0}
+                                onClick={() =>
+                                    router.post(`/glossar/import/${token}`)
+                                }
+                            >
                                 <Check /> Übernehmen
                             </Button>
                             <Button asChild variant="outline">
@@ -57,17 +70,39 @@ export default function GlossaryImport({
                                     <TableHead>Zeile</TableHead>
                                     <TableHead>Art</TableHead>
                                     <TableHead>Eintrag</TableHead>
-                                    <TableHead>Änderungen bzw. Fehler</TableHead>
+                                    <TableHead>
+                                        Änderungen bzw. Fehler
+                                    </TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
                                 {plan.map((p) => (
-                                    <TableRow key={`${p.zeile}`} className="align-top">
-                                        <TableCell className="tabular-nums">{p.zeile}</TableCell>
-                                        <TableCell>
-                                            <Badge variant={p.art === 'fehler' ? 'destructive' : p.art === 'neu' ? 'default' : 'secondary'}>{ART[p.art]}</Badge>
+                                    <TableRow
+                                        key={`${p.zeile}`}
+                                        className="align-top"
+                                    >
+                                        <TableCell className="tabular-nums">
+                                            {p.zeile}
                                         </TableCell>
-                                        <TableCell className="whitespace-normal" translate="no">{p.titel}</TableCell>
+                                        <TableCell>
+                                            <Badge
+                                                variant={
+                                                    p.art === 'fehler'
+                                                        ? 'destructive'
+                                                        : p.art === 'neu'
+                                                          ? 'default'
+                                                          : 'secondary'
+                                                }
+                                            >
+                                                {ART[p.art]}
+                                            </Badge>
+                                        </TableCell>
+                                        <TableCell
+                                            className="whitespace-normal"
+                                            translate="no"
+                                        >
+                                            {p.titel}
+                                        </TableCell>
                                         <TableCell className="whitespace-normal">
                                             {p.art === 'fehler' ? (
                                                 <ul className="list-disc pl-4 text-destructive">
@@ -77,10 +112,20 @@ export default function GlossaryImport({
                                                 </ul>
                                             ) : (
                                                 <dl className="grid gap-0.5 text-xs">
-                                                    {Object.entries(p.aenderungen).map(([f, v]) => (
-                                                        <div key={f} className="flex gap-2">
-                                                            <dt className="text-muted-foreground">{felder[f] ?? f}:</dt>
-                                                            <dd translate="no">{v}</dd>
+                                                    {Object.entries(
+                                                        p.aenderungen,
+                                                    ).map(([f, v]) => (
+                                                        <div
+                                                            key={f}
+                                                            className="flex gap-2"
+                                                        >
+                                                            <dt className="text-muted-foreground">
+                                                                {felder[f] ?? f}
+                                                                :
+                                                            </dt>
+                                                            <dd translate="no">
+                                                                {v}
+                                                            </dd>
                                                         </div>
                                                     ))}
                                                 </dl>

@@ -5,21 +5,56 @@ import EmptyState from '@/components/empty-state';
 import PageHeader from '@/components/page-header';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+} from '@/components/ui/card';
 import { NativeSelect } from '@/components/ui/native-select';
 import type { GlossaryEntry } from '@/lib/glossary';
 import { abbreviation, designation } from '@/lib/glossary';
 
-type Gruppe = { key: string; art: string; wert: string; ids: string[]; eintraege: GlossaryEntry[] };
+type Gruppe = {
+    key: string;
+    art: string;
+    wert: string;
+    ids: string[];
+    eintraege: GlossaryEntry[];
+};
 
 /** Texte, bei denen beim Zusammenführen gewählt wird (Mehrfachwerte werden vereinigt). */
-const TEXTFELDER = ['abk_offiziell', 'abk_eigen', 'alias_eigen', 'bez_offiziell', 'bez_eigen', 'kurzbeschreibung', 'beschreibung', 'url', 'notiz', 'status'] as const;
+const TEXTFELDER = [
+    'abk_offiziell',
+    'abk_eigen',
+    'alias_eigen',
+    'bez_offiziell',
+    'bez_eigen',
+    'kurzbeschreibung',
+    'beschreibung',
+    'url',
+    'notiz',
+    'status',
+] as const;
 
-function GruppeKarte({ g, kategorien, herkunft, felder }: { g: Gruppe; kategorien: Record<string, string>; herkunft: Record<string, string>; felder: Record<string, string> }) {
+function GruppeKarte({
+    g,
+    kategorien,
+    herkunft,
+    felder,
+}: {
+    g: Gruppe;
+    kategorien: Record<string, string>;
+    herkunft: Record<string, string>;
+    felder: Record<string, string>;
+}) {
     const [ziel, setZiel] = useState(g.ids[0]);
     const [auswahl, setAuswahl] = useState<Record<string, string>>({});
     const [offen, setOffen] = useState(false);
-    const unterschiedlich = TEXTFELDER.filter((f) => new Set(g.eintraege.map((e) => String(e[f] ?? ''))).size > 1);
+    const unterschiedlich = TEXTFELDER.filter(
+        (f) => new Set(g.eintraege.map((e) => String(e[f] ?? ''))).size > 1,
+    );
 
     return (
         <Card>
@@ -30,24 +65,53 @@ function GruppeKarte({ g, kategorien, herkunft, felder }: { g: Gruppe; kategorie
                     <Badge variant="secondary">{`${g.eintraege.length} Einträge`}</Badge>
                 </CardTitle>
                 <CardDescription>
-                    Zusammenführen nur, wenn die Bedeutung gleich ist – der Eintrag erhält dann alle Kategorien. Sonst «als mehrdeutig belassen».
+                    Zusammenführen nur, wenn die Bedeutung gleich ist – der
+                    Eintrag erhält dann alle Kategorien. Sonst «als mehrdeutig
+                    belassen».
                 </CardDescription>
             </CardHeader>
             <CardContent className="grid gap-4">
                 <div className="grid gap-2 md:grid-cols-2 xl:grid-cols-3">
                     {g.eintraege.map((e) => (
-                        <div key={e.id} className="grid gap-1 rounded-lg border p-3 text-sm">
-                            <Link href={`/glossar/${e.id}`} className="font-semibold text-primary underline-offset-2 hover:underline" translate="no">
+                        <div
+                            key={e.id}
+                            className="grid gap-1 rounded-lg border p-3 text-sm"
+                        >
+                            <Link
+                                href={`/glossar/${e.id}`}
+                                className="font-semibold text-primary underline-offset-2 hover:underline"
+                                translate="no"
+                            >
                                 {`${abbreviation(e)} – ${designation(e)}`}
                             </Link>
                             <span className="flex flex-wrap gap-1">
                                 {e.kategorien.map((k) => (
-                                    <Badge key={k} variant="outline">{kategorien[k] ?? k}</Badge>
+                                    <Badge key={k} variant="outline">
+                                        {kategorien[k] ?? k}
+                                    </Badge>
                                 ))}
                             </span>
-                            {e.kurzbeschreibung && <span className="text-muted-foreground" translate="no">{e.kurzbeschreibung}</span>}
-                            <span className="text-xs text-muted-foreground">{e.herkunft.map((h) => herkunft[h] ?? h).join(', ')}</span>
-                            {e.notiz && <span className="text-xs text-muted-foreground" translate="no">{e.notiz}</span>}
+                            {e.kurzbeschreibung && (
+                                <span
+                                    className="text-muted-foreground"
+                                    translate="no"
+                                >
+                                    {e.kurzbeschreibung}
+                                </span>
+                            )}
+                            <span className="text-xs text-muted-foreground">
+                                {e.herkunft
+                                    .map((h) => herkunft[h] ?? h)
+                                    .join(', ')}
+                            </span>
+                            {e.notiz && (
+                                <span
+                                    className="text-xs text-muted-foreground"
+                                    translate="no"
+                                >
+                                    {e.notiz}
+                                </span>
+                            )}
                         </div>
                     ))}
                 </div>
@@ -56,35 +120,74 @@ function GruppeKarte({ g, kategorien, herkunft, felder }: { g: Gruppe; kategorie
                     <div className="grid gap-3 rounded-lg border bg-muted/30 p-4 text-sm">
                         <label className="grid gap-1 sm:grid-cols-[14rem_1fr] sm:items-center">
                             <span>Eintrag, der bleibt</span>
-                            <NativeSelect value={ziel} onChange={(e) => setZiel(e.target.value)}>
+                            <NativeSelect
+                                value={ziel}
+                                onChange={(e) => setZiel(e.target.value)}
+                            >
                                 {g.eintraege.map((e) => (
-                                    <option key={e.id} value={e.id}>{`${abbreviation(e)} – ${designation(e)} (${e.kategorien.map((k) => kategorien[k] ?? k).join(', ')})`}</option>
+                                    <option
+                                        key={e.id}
+                                        value={e.id}
+                                    >{`${abbreviation(e)} – ${designation(e)} (${e.kategorien.map((k) => kategorien[k] ?? k).join(', ')})`}</option>
                                 ))}
                             </NativeSelect>
                         </label>
                         {unterschiedlich.map((f) => (
-                            <label key={f} className="grid gap-1 sm:grid-cols-[14rem_1fr] sm:items-center">
+                            <label
+                                key={f}
+                                className="grid gap-1 sm:grid-cols-[14rem_1fr] sm:items-center"
+                            >
                                 <span>{`${felder[f] ?? f} übernehmen von`}</span>
-                                <NativeSelect value={auswahl[f] ?? ziel} onChange={(e) => setAuswahl({ ...auswahl, [f]: e.target.value })}>
+                                <NativeSelect
+                                    value={auswahl[f] ?? ziel}
+                                    onChange={(e) =>
+                                        setAuswahl({
+                                            ...auswahl,
+                                            [f]: e.target.value,
+                                        })
+                                    }
+                                >
                                     {g.eintraege.map((e) => (
-                                        <option key={e.id} value={e.id}>{String(e[f] ?? '') || '(leer)'}</option>
+                                        <option key={e.id} value={e.id}>
+                                            {String(e[f] ?? '') || '(leer)'}
+                                        </option>
                                     ))}
                                 </NativeSelect>
                             </label>
                         ))}
                         <p className="text-muted-foreground">
-                            Vereinigt werden: Kategorien, Aliase, Herkunft, «genutzt in», Suchbegriffe. Die anderen Einträge werden danach entfernt (im Änderungsverlauf nachvollziehbar).
+                            Vereinigt werden: Kategorien, Aliase, Herkunft,
+                            «genutzt in», Suchbegriffe. Die anderen Einträge
+                            werden danach entfernt (im Änderungsverlauf
+                            nachvollziehbar).
                         </p>
                         <div className="flex flex-wrap gap-2">
                             <Button
                                 type="button"
                                 onClick={() =>
-                                    router.post('/glossar/doppelte/zusammenfuehren', { ids: g.ids, ziel, auswahl: Object.fromEntries(unterschiedlich.map((f) => [f, auswahl[f] ?? ziel])) }, { preserveScroll: true })
+                                    router.post(
+                                        '/glossar/doppelte/zusammenfuehren',
+                                        {
+                                            ids: g.ids,
+                                            ziel,
+                                            auswahl: Object.fromEntries(
+                                                unterschiedlich.map((f) => [
+                                                    f,
+                                                    auswahl[f] ?? ziel,
+                                                ]),
+                                            ),
+                                        },
+                                        { preserveScroll: true },
+                                    )
                                 }
                             >
                                 <GitMerge /> Jetzt zusammenführen
                             </Button>
-                            <Button type="button" variant="outline" onClick={() => setOffen(false)}>
+                            <Button
+                                type="button"
+                                variant="outline"
+                                onClick={() => setOffen(false)}
+                            >
                                 Abbrechen
                             </Button>
                         </div>
@@ -96,7 +199,17 @@ function GruppeKarte({ g, kategorien, herkunft, felder }: { g: Gruppe; kategorie
                         <Button type="button" onClick={() => setOffen(true)}>
                             <GitMerge /> Zusammenführen …
                         </Button>
-                        <Button type="button" variant="outline" onClick={() => router.post('/glossar/doppelte/belassen', { key: g.key, ids: g.ids }, { preserveScroll: true })}>
+                        <Button
+                            type="button"
+                            variant="outline"
+                            onClick={() =>
+                                router.post(
+                                    '/glossar/doppelte/belassen',
+                                    { key: g.key, ids: g.ids },
+                                    { preserveScroll: true },
+                                )
+                            }
+                        >
                             <Split /> Als mehrdeutig belassen
                         </Button>
                     </div>
@@ -127,11 +240,23 @@ export default function GlossaryDuplicates({
                     description={`${gruppen.length} offene Gruppen mit gleicher Abkürzung oder gleicher Bezeichnung. Nichts wird automatisch geändert.`}
                 />
                 {gruppen.length === 0 ? (
-                    <EmptyState icon={CheckCircle2} title="Keine offenen Doppelten">
-                        Alle Gruppen sind zusammengeführt oder als mehrdeutig belassen.
+                    <EmptyState
+                        icon={CheckCircle2}
+                        title="Keine offenen Doppelten"
+                    >
+                        Alle Gruppen sind zusammengeführt oder als mehrdeutig
+                        belassen.
                     </EmptyState>
                 ) : (
-                    gruppen.map((g) => <GruppeKarte key={g.key} g={g} kategorien={kategorien} herkunft={herkunft} felder={felder} />)
+                    gruppen.map((g) => (
+                        <GruppeKarte
+                            key={g.key}
+                            g={g}
+                            kategorien={kategorien}
+                            herkunft={herkunft}
+                            felder={felder}
+                        />
+                    ))
                 )}
             </div>
         </>

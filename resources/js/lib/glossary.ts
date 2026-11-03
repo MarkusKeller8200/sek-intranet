@@ -50,13 +50,20 @@ export const designation = (r: { bez_eigen: string; bez_offiziell: string }) =>
     r.bez_eigen.trim() || r.bez_offiziell.trim();
 
 const esc = (s: string) =>
-    s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    s
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
 
 /** Nach Kategorie gliedern (Einträge mit mehreren Kategorien erscheinen mehrfach). */
 function byCategory(rows: GlossaryRow[]): [string, GlossaryRow[]][] {
     const groups = new Map<string, GlossaryRow[]>();
     for (const r of rows) {
-        const cats = r.kategorien.split(';').map((c) => c.trim()).filter(Boolean);
+        const cats = r.kategorien
+            .split(';')
+            .map((c) => c.trim())
+            .filter(Boolean);
         for (const c of cats.length ? cats : ['(ohne Kategorie)']) {
             groups.set(c, [...(groups.get(c) ?? []), r]);
         }
@@ -64,18 +71,25 @@ function byCategory(rows: GlossaryRow[]): [string, GlossaryRow[]][] {
 
     return [...groups.entries()]
         .sort(([a], [b]) => a.localeCompare(b, 'de-CH'))
-        .map(([c, list]) => [c, [...list].sort((a, b) => abbreviation(a).localeCompare(abbreviation(b), 'de-CH'))]);
+        .map(([c, list]) => [
+            c,
+            [...list].sort((a, b) =>
+                abbreviation(a).localeCompare(abbreviation(b), 'de-CH'),
+            ),
+        ]);
 }
 
 /** Druckansicht (im Druckdialog «Als PDF speichern»). */
 export function printGlossary(rows: GlossaryRow[]) {
     const body = byCategory(rows)
         .map(
-            ([cat, list]) => `<h2>${esc(cat)}</h2><table><thead><tr><th>Abkürzung</th><th>Bezeichnung</th><th>Kurzbeschreibung</th><th>Herkunft</th></tr></thead><tbody>${list
-                .map(
-                    (r) => `<tr><td><b>${esc(abbreviation(r))}</b>${r.abk_eigen && r.abk_offiziell && r.abk_eigen !== r.abk_offiziell ? `<br><small>offiziell: ${esc(r.abk_offiziell)}</small>` : ''}</td><td>${esc(designation(r))}${r.bez_eigen && r.bez_offiziell && r.bez_eigen !== r.bez_offiziell ? `<br><small>offiziell: ${esc(r.bez_offiziell)}</small>` : ''}</td><td>${esc(r.kurzbeschreibung)}</td><td>${esc(r.herkunft)}</td></tr>`,
-                )
-                .join('')}</tbody></table>`,
+            ([cat, list]) =>
+                `<h2>${esc(cat)}</h2><table><thead><tr><th>Abkürzung</th><th>Bezeichnung</th><th>Kurzbeschreibung</th><th>Herkunft</th></tr></thead><tbody>${list
+                    .map(
+                        (r) =>
+                            `<tr><td><b>${esc(abbreviation(r))}</b>${r.abk_eigen && r.abk_offiziell && r.abk_eigen !== r.abk_offiziell ? `<br><small>offiziell: ${esc(r.abk_offiziell)}</small>` : ''}</td><td>${esc(designation(r))}${r.bez_eigen && r.bez_offiziell && r.bez_eigen !== r.bez_offiziell ? `<br><small>offiziell: ${esc(r.bez_offiziell)}</small>` : ''}</td><td>${esc(r.kurzbeschreibung)}</td><td>${esc(r.herkunft)}</td></tr>`,
+                    )
+                    .join('')}</tbody></table>`,
         )
         .join('');
     const html = `<!doctype html><html lang="de-CH"><head><meta charset="utf-8"><title>Glossar</title>
@@ -99,16 +113,32 @@ const mdCell = (s: string) => s.replace(/\|/g, '\\|').replace(/\r?\n/g, ' ');
 
 /** Markdown-Datei herunterladen (Abschnitte je Kategorie). */
 export function downloadMarkdown(rows: GlossaryRow[]) {
-    const parts = [`# Glossar`, '', `${rows.length} Einträge · Stand ${new Date().toLocaleDateString('de-CH')}`, ''];
+    const parts = [
+        `# Glossar`,
+        '',
+        `${rows.length} Einträge · Stand ${new Date().toLocaleDateString('de-CH')}`,
+        '',
+    ];
     for (const [cat, list] of byCategory(rows)) {
-        parts.push(`## ${cat}`, '', '| Abkürzung | Bezeichnung | Kurzbeschreibung | Herkunft |', '| --- | --- | --- | --- |');
+        parts.push(
+            `## ${cat}`,
+            '',
+            '| Abkürzung | Bezeichnung | Kurzbeschreibung | Herkunft |',
+            '| --- | --- | --- | --- |',
+        );
         for (const r of list) {
-            const name = r.url ? `[${mdCell(designation(r))}](${r.url})` : mdCell(designation(r));
-            parts.push(`| **${mdCell(abbreviation(r))}** | ${name} | ${mdCell(r.kurzbeschreibung)} | ${mdCell(r.herkunft)} |`);
+            const name = r.url
+                ? `[${mdCell(designation(r))}](${r.url})`
+                : mdCell(designation(r));
+            parts.push(
+                `| **${mdCell(abbreviation(r))}** | ${name} | ${mdCell(r.kurzbeschreibung)} | ${mdCell(r.herkunft)} |`,
+            );
         }
         parts.push('');
     }
-    const blob = new Blob([parts.join('\n')], { type: 'text/markdown;charset=utf-8' });
+    const blob = new Blob([parts.join('\n')], {
+        type: 'text/markdown;charset=utf-8',
+    });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
