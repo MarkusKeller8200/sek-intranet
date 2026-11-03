@@ -12,7 +12,7 @@ gehört zum **Core** (Module nutzen es über eine Core-Schnittstelle). Menü: «
 
 | # | Spalte | Regel |
 | --- | --- | --- |
-| 1 | Kategorie | Auswahl aus der erweiterbaren Kategorienliste |
+| 1 | Kategorie | eine oder mehrere aus der erweiterbaren Kategorienliste (mehrere nach dem Zusammenführen gleicher Begriffe) |
 | 2 | Abkürzung offiziell + Aliase | gesperrt (siehe unten); Aliase = andere Schreibweisen |
 | 3 | Abkürzung eigene + Alias | frei |
 | 4 | Bezeichnung offiziell | gesperrt |
@@ -32,6 +32,13 @@ Herkunftsliste haben Abkürzung, Bezeichnung, Beschreibung, URL, Notiz (wie die 
 - **Offiziell nicht änderbar:** Spalten 2 und 4 sind in der normalen Bearbeitung gesperrt. Ändern nur mit Recht
   «offizielle Begriffe pflegen» (Vorgabe Administration) oder per Import mit diesem Recht; immer im Änderungsverlauf.
 - **Mehrdeutige Abkürzungen** (SHP, BFS, DSB, SV, SL …) sind erlaubt: eigene Einträge, Kennzeichen «mehrdeutig».
+- **Doppelte zusammenführen:** nur wenn Abkürzung **und** Bedeutung gleich sind; der zusammengeführte Eintrag erhält
+  **alle Kategorien** der Einzeleinträge (z. B. SHP: Behörden & Organisation, Sonderpädagogik, Personal). Gleiche
+  Abkürzung mit anderer Bedeutung bleibt getrennt (mehrdeutig).
+- **Ablauf:** Der Startinhalt wird **ohne Zusammenführen** übernommen (jede Zeile der Recherche ein Eintrag). Danach
+  hilft der Knopf **«Doppelte Abkürzungen oder Begriffe»**: zeigt Gruppen gleicher Abkürzung bzw. gleicher
+  Bezeichnung nebeneinander; je Gruppe «zusammenführen» (Kategorien, Aliase, Herkunft, genutzt in werden vereinigt,
+  Texte zur Auswahl) oder «als mehrdeutig belassen». Nichts geschieht automatisch.
 - **Ersetzen:** Die eigene Bezeichnung erscheint dort, wo das Intranet auf den Eintrag verweist (Baustein «Begriff»,
   Verknüpfungen aus Modulen). Freitext wird nicht verändert. Welche Stellen eines Moduls verweisen, wird im Einzelfall
   bei der Überarbeitung des Moduls festgelegt.
@@ -57,7 +64,8 @@ und Kurzbeschreibung**; ein Link führt direkt zum Eintrag im Glossar.
 ## Darstellung und Bearbeitung
 
 - **Tabelle** nach dem GUI-Baustein «Tabellen» (`@/components/data-grid`): Suche, Filter je Spalte, Sortierung,
-  Spaltenwahl, gespeicherte Ansichten. **Bearbeiten direkt in den Zellen** und **neue Zeilen direkt in der Tabelle**
+  Spaltenwahl, gespeicherte Ansichten, **Gruppierung nach Kategorie** (Einträge mit mehreren Kategorien erscheinen in
+  jeder ihrer Gruppen). **Bearbeiten direkt in den Zellen** und **neue Zeilen direkt in der Tabelle**
   (Erweiterung des Bausteins) – gesperrte Felder sind in der Tabelle nicht bearbeitbar.
 - **Einzeldatensatz:** Detailansicht (offiziell und eigen nebeneinander, Herkunft als Tags, «genutzt in» als Links,
   Notiz als Markdown) und Formular mit Markdown-Vorschau.
@@ -80,6 +88,7 @@ und Kurzbeschreibung**; ein Link führt direkt zum Eintrag im Glossar.
 
 ## Startinhalt
 
-10 Kategorien und rund 110 Einträge aus der Recherche, Dubletten zusammengeführt. Als «gebräuchlich» markierte
+10 Kategorien und alle Zeilen der Recherche als einzelne Einträge (rund 140, **ohne Zusammenführen**); das Bereinigen
+der Doppelten folgt danach mit dem Knopf «Doppelte Abkürzungen oder Begriffe». Als «gebräuchlich» markierte
 Kurzformen (SV, KLP, QM, QS, QE …) erhalten Herkunft «gebräuchlich» und Status «zu prüfen»; ICT-Begriffe werden als
 fachliche Ergänzung gekennzeichnet. Herkunft und URL je Kategorie gemäss Quellenangabe der Recherche.
