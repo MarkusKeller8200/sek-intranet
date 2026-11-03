@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Support\AuditLog;
+use App\Support\Glossary;
 use App\Support\Themes;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -19,7 +20,14 @@ class ThemeController extends Controller
 
     public function index(): Response
     {
-        return Inertia::render('color-concept', $this->shared() + ['activeId' => $this->themes->activeId()]);
+        $glossary = app(Glossary::class);
+        $tags = fn (string $list): array => array_map(fn (array $i): array => ['label' => (string) ($i['label'] ?: $i['kuerzel']), 'bezeichnung' => (string) $i['bezeichnung'], 'farbe' => (string) $i['farbe']], $glossary->items($list));
+
+        return Inertia::render('color-concept', $this->shared() + [
+            'activeId' => $this->themes->activeId(),
+            // Farbige Labels des Glossars (#74), Farbe je Eintrag unter Glossar → Kategorien & Herkunft
+            'glossarTags' => ['kategorien' => $tags('kategorien'), 'herkunft' => $tags('herkunft')],
+        ]);
     }
 
     public function create(Request $request): Response

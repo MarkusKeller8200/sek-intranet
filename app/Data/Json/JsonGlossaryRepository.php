@@ -3,6 +3,7 @@
 namespace App\Data\Json;
 
 use App\Data\Contracts\GlossaryRepository;
+use App\Support\Glossary;
 use App\Support\GlossarySeed;
 use InvalidArgumentException;
 
@@ -35,7 +36,15 @@ class JsonGlossaryRepository extends JsonRepository implements GlossaryRepositor
         // Feld «Label» (#64, #66): ältere Einträge erhalten das Label des Startinhalts bzw. die Abkürzung
         $seed = array_column($list === 'herkunft' ? GlossarySeed::herkunft() : GlossarySeed::kategorien(), 4, 0);
 
-        return array_map(fn (array $i): array => $i + ['label' => $seed[(string) $i['id']] ?? (string) ($i['kuerzel'] ?? '')], $items);
+        // Feld «Farbe» (#74): Startinhalt mit fester Farbe, weitere reihum aus der Palette
+        $colors = GlossarySeed::FARBEN[$list] ?? [];
+        $palette = Glossary::COLORS;
+
+        return array_map(fn (array $i, int $n): array => [
+            ...$i,
+            'label' => $i['label'] ?? $seed[(string) $i['id']] ?? (string) ($i['kuerzel'] ?? ''),
+            'farbe' => ($i['farbe'] ?? '') !== '' ? $i['farbe'] : ($colors[(string) $i['id']] ?? $palette[$n % count($palette)]),
+        ], $items, array_keys($items));
     }
 
     public function saveListItem(string $list, ?string $id, array $attributes): array

@@ -2,6 +2,7 @@ import { Head, usePage } from '@inertiajs/react';
 import { CircleAlert, CircleCheck, Info, TriangleAlert } from 'lucide-react';
 import AppWordmark from '@/components/app-wordmark';
 import FontPicker from '@/components/font-picker';
+import { GlossaryTag } from '@/components/glossary-tags';
 import OptionBadge from '@/components/option-badge';
 import PageHeader from '@/components/page-header';
 import ThemeSelector from '@/components/theme-selector';
@@ -104,10 +105,12 @@ export default function ColorConcept({
     themes,
     defaults,
     presets,
+    glossarTags = { kategorien: [], herkunft: [] },
 }: {
     themes: ThemeData[];
     defaults: ThemeDefaults;
     presets: Record<string, { name: string; description: string }>;
+    glossarTags?: Record<'kategorien' | 'herkunft', { label: string; bezeichnung: string; farbe: string }[]>;
 }) {
     const options = useOptions();
     const { navigation } = usePage().props;
@@ -247,6 +250,32 @@ export default function ColorConcept({
                             Schulhäuser und Zielgruppen. Termine erhalten
                             zusätzlich einen farbigen Rand links.
                         </p>
+                    </CardContent>
+                </Card>
+
+                <Card>
+                    <CardHeader>
+                        <CardTitle>Glossar: Kategorien und Herkunft</CardTitle>
+                        <CardDescription>
+                            Farbige Labels in der Glossar-Tabelle. Farbe je Eintrag unter Glossar → Kategorien & Herkunft.
+                        </CardDescription>
+                    </CardHeader>
+                    <CardContent className="grid gap-5">
+                        {(
+                            [
+                                ['kategorien', 'Kategorien'],
+                                ['herkunft', 'Herkunft'],
+                            ] as const
+                        ).map(([key, title]) => (
+                            <div key={key} className="grid gap-2">
+                                <span className="text-sm font-medium">{title}</span>
+                                <div className="flex flex-wrap gap-2">
+                                    {glossarTags[key].map((t) => (
+                                        <GlossaryTag key={t.label} label={t.label} color={t.farbe} title={t.bezeichnung} />
+                                    ))}
+                                </div>
+                            </div>
+                        ))}
                     </CardContent>
                 </Card>
 

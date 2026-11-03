@@ -14,6 +14,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -41,6 +42,7 @@ class GlossaryController extends Controller
             'rows' => $this->service->rows(),
             'kategorien' => $this->service->listOptions('kategorien'),
             'kategorienNamen' => $this->service->labelNames('kategorien'),
+            'tagFarben' => ['kategorien' => $this->service->tagColors('kategorien'), 'herkunft' => $this->service->tagColors('herkunft')],
             'herkunft' => $this->service->listOptions('herkunft'),
             'bereiche' => $this->service->areaOptions(),
             'status' => Glossary::STATUS,
@@ -451,6 +453,7 @@ class GlossaryController extends Controller
         $data = $request->validate([
             'kuerzel' => ['required', 'string', 'max:20'],
             'label' => ['nullable', 'string', 'max:30'],
+            'farbe' => ['nullable', 'string', Rule::in(Glossary::COLORS)],
             'bezeichnung' => ['required', 'string', 'max:200'],
             'beschreibung' => ['nullable', 'string', 'max:2000'],
             'url' => ['nullable', 'url:http,https', 'max:500'],
@@ -462,6 +465,6 @@ class GlossaryController extends Controller
             }
         }
 
-        return array_map(fn ($v): string => trim((string) $v), $data + ['label' => '', 'beschreibung' => '', 'url' => '', 'notiz' => '']);
+        return array_map(fn ($v): string => trim((string) $v), $data + ['label' => '', 'farbe' => '', 'beschreibung' => '', 'url' => '', 'notiz' => '']);
     }
 }

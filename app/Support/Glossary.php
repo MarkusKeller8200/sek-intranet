@@ -18,6 +18,9 @@ final class Glossary
     public const OFFICIAL = ['abk_offiziell', 'aliase_offiziell', 'bez_offiziell'];
 
     /** Mehrfachwerte (Text mit «;» in Tabelle und Excel). */
+    /** Farben der Palette (Farbkonzept, resources/js/lib/colors.ts). */
+    public const COLORS = ['brand', 'slate', 'sky', 'cyan', 'teal', 'emerald', 'amber', 'orange', 'rose', 'violet', 'indigo'];
+
     public const MULTI = ['kategorien', 'aliase_offiziell', 'herkunft', 'genutzt_in'];
 
     /** Feld → Spaltenname (Tabelle, Excel, Import). */
@@ -73,6 +76,31 @@ final class Glossary
         }
 
         return $labels;
+    }
+
+    /**
+     * Einträge einer Liste (Kategorien, Herkunft) mit Label und Farbe.
+     *
+     * @return list<array<string, mixed>>
+     */
+    public function items(string $list): array
+    {
+        return $this->glossary->listItems($list);
+    }
+
+    /**
+     * @return array<string, string> Label → Farbe (farbige Labels in der Tabelle, #74)
+     */
+    public function tagColors(string $list): array
+    {
+        $labels = $this->labels($list);
+        $colors = [];
+        foreach ($this->glossary->listItems($list) as $item) {
+            $color = (string) ($item['farbe'] ?? '');
+            $colors[$labels[(string) $item['id']]] = in_array($color, self::COLORS, true) ? $color : 'slate';
+        }
+
+        return $colors;
     }
 
     /**

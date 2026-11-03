@@ -23,6 +23,8 @@ laufend unter **Unveröffentlicht**. Ab 0.32.0 entsteht eine Version nur bei ein
 
 ### Neu
 
+- **Glossar: farbige Labels (#74):** Kategorien und Herkunft erscheinen in der Tabelle als farbige Labels (nur Werte
+  aus den Listen); Farbe je Eintrag unter «Kategorien & Herkunft» wählbar; neuer Abschnitt im Farbkonzept.
 - **Glossar: PDF mit Spalte «Link» (#73):** schmale Spalte, je Zeile nummeriert ab 1 (URL, dann Links aus Notiz
   und Beschreibung), der Link liegt hinter der Nummer (nur http/https); im vollständigen Umfang ersetzt sie die
   ausgeschriebene URL.

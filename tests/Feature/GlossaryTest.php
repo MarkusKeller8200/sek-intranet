@@ -147,6 +147,23 @@ class GlossaryTest extends TestCase
         $this->get('/glossar/listen?liste=herkunft')->assertInertia(fn (Assert $page) => $page->where('liste', 'herkunft')->where('eintraege.0.verwendet', 141)->where('eintraege.0.label', 'VSA'));
     }
 
+    public function test_tag_colors_for_table_lists_and_color_concept(): void
+    {
+        $this->signInAs('admin');
+        $this->get('/glossar')->assertInertia(fn (Assert $page) => $page
+            ->where('tagFarben.kategorien.Recht', 'rose')
+            ->where('tagFarben.herkunft.VSA', 'brand'));
+        $this->put('/glossar/listen/kategorien/rec', ['kuerzel' => 'REC', 'label' => 'Recht', 'bezeichnung' => 'Recht', 'farbe' => 'pink'])->assertSessionHasErrors('farbe');
+        $this->put('/glossar/listen/kategorien/rec', ['kuerzel' => 'REC', 'label' => 'Recht', 'bezeichnung' => 'Recht', 'farbe' => 'teal'])->assertRedirect();
+        $this->post('/glossar/listen/kategorien', ['kuerzel' => 'FIN', 'label' => 'Finanzen', 'bezeichnung' => 'Finanzen & Rechnungslegung'])->assertRedirect();
+        $this->get('/glossar')->assertInertia(fn (Assert $page) => $page
+            ->where('tagFarben.kategorien.Recht', 'teal')
+            ->where('tagFarben.kategorien.Finanzen', fn ($c): bool => in_array($c, Glossary::COLORS, true)));
+        $this->get('/farbkonzept')->assertOk()->assertInertia(fn (Assert $page) => $page
+            ->where('glossarTags.kategorien', fn ($t): bool => collect($t)->firstWhere('label', 'Recht')['farbe'] === 'teal')
+            ->has('glossarTags.herkunft', 8));
+    }
+
     public function test_origin_label_as_tag_in_table_and_for_input(): void
     {
         $this->signInAs('verwaltung');

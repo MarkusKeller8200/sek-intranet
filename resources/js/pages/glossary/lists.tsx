@@ -4,6 +4,7 @@ import type { FormEvent } from 'react';
 import { useState } from 'react';
 import DeleteButton from '@/components/delete-button';
 import FormField from '@/components/form-field';
+import { GlossaryTag } from '@/components/glossary-tags';
 import PageHeader from '@/components/page-header';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -18,11 +19,15 @@ import {
     TableRow,
 } from '@/components/ui/table';
 import { Textarea } from '@/components/ui/textarea';
+import type { ColorName } from '@/lib/colors';
+import { palette } from '@/lib/colors';
+import { cn } from '@/lib/utils';
 
 type Eintrag = {
     id: string;
     kuerzel: string;
     label?: string;
+    farbe?: string;
     bezeichnung: string;
     beschreibung: string;
     url: string;
@@ -34,6 +39,7 @@ const LISTEN = { kategorien: 'Kategorien', herkunft: 'Herkunft' } as const;
 const leer = {
     kuerzel: '',
     label: '',
+    farbe: '',
     bezeichnung: '',
     beschreibung: '',
     url: '',
@@ -58,6 +64,7 @@ export default function GlossaryLists({
                 ? {
                       kuerzel: e.kuerzel,
                       label: e.label ?? '',
+                      farbe: e.farbe ?? '',
                       bezeichnung: e.bezeichnung,
                       beschreibung: e.beschreibung,
                       url: e.url,
@@ -134,14 +141,10 @@ export default function GlossaryLists({
                                             {e.kuerzel}
                                         </TableCell>
                                         <TableCell>
-                                            {e.label && (
-                                                <Badge
-                                                    variant="secondary"
-                                                    translate="no"
-                                                >
-                                                    {e.label}
-                                                </Badge>
-                                            )}
+                                            <GlossaryTag
+                                                label={e.label || e.kuerzel}
+                                                color={e.farbe ?? 'slate'}
+                                            />
                                         </TableCell>
                                         <TableCell
                                             className="whitespace-normal"
@@ -260,6 +263,40 @@ export default function GlossaryLists({
                                         form.setData('label', e.target.value)
                                     }
                                 />
+                            </FormField>
+                            <FormField
+                                id="gl-f"
+                                label="Farbe"
+                                hint="Farbe des Labels in der Tabelle (Farbkonzept)"
+                                error={form.errors.farbe}
+                                className="sm:col-span-2"
+                            >
+                                <div
+                                    id="gl-f"
+                                    role="radiogroup"
+                                    aria-label="Farbe"
+                                    className="flex flex-wrap gap-2"
+                                >
+                                    {(Object.keys(palette) as ColorName[]).map((c) => (
+                                        <button
+                                            key={c}
+                                            type="button"
+                                            role="radio"
+                                            aria-checked={form.data.farbe === c}
+                                            aria-label={c}
+                                            onClick={() => form.setData('farbe', c)}
+                                            className={cn(
+                                                'rounded-md p-0.5 ring-offset-2 focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none',
+                                                form.data.farbe === c && 'ring-2 ring-primary',
+                                            )}
+                                        >
+                                            <GlossaryTag
+                                                label={form.data.label || form.data.kuerzel || 'Beispiel'}
+                                                color={c}
+                                            />
+                                        </button>
+                                    ))}
+                                </div>
                             </FormField>
                             <FormField
                                 id="gl-d"

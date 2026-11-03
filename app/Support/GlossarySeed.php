@@ -30,6 +30,12 @@ final class GlossarySeed
         ];
     }
 
+    /** Farben (Palette des Farbkonzepts) für die Listen des Startinhalts (#74). */
+    public const FARBEN = [
+        'kategorien' => ['beh' => 'violet', 'unt' => 'amber', 'sop' => 'teal', 'per' => 'emerald', 'qua' => 'indigo', 'rec' => 'rose', 'kis' => 'orange', 'ver' => 'cyan', 'sta' => 'slate', 'dsi' => 'sky'],
+        'herkunft' => ['vsa' => 'brand', 'bi' => 'violet', 'kanton' => 'indigo', 'bund' => 'rose', 'dsb' => 'sky', 'gemeinde' => 'emerald', 'schule' => 'amber', 'gebraeuchlich' => 'slate'],
+    ];
+
     /**
      * @return list<array{0: string, 1: string, 2: string, 3: string, 4: string}> id, Abkürzung, Bezeichnung, URL, Label
      */
