@@ -64,7 +64,7 @@ const sup = (r: GlossaryRow) =>
 const SUPERSCRIPT = '⁰¹²³⁴⁵⁶⁷⁸⁹';
 const supText = (r: GlossaryRow) =>
     r.bedeutungen > 1
-        ? [...String(r.bedeutungen)].map((d) => SUPERSCRIPT[Number(d)]).join('')
+        ? String(r.bedeutungen).replace(/\d/g, (d) => SUPERSCRIPT[Number(d)])
         : '';
 
 /** Nach Kategorie gliedern (Einträge mit mehreren Kategorien erscheinen mehrfach). */
