@@ -2,9 +2,18 @@
 
 use Illuminate\Support\Facades\Route;
 use Modules\Ablaeufe\Http\AblaeufeController;
+use Modules\Ablaeufe\Http\EinstellungenController;
 use Modules\Ablaeufe\Http\GruppenController;
 
 // Routen der Abläufe (nur geladen, wenn das Modul eingeschaltet ist; angemeldet)
+Route::middleware('can:config-ablaeufe')->group(function () {
+    Route::get('ablaeufe/einstellungen', [EinstellungenController::class, 'index'])->name('ablaeufe.einstellungen');
+    Route::post('ablaeufe/einstellungen/{liste}', [EinstellungenController::class, 'store'])->name('ablaeufe.einstellungen.store');
+    Route::post('ablaeufe/einstellungen/{liste}/reihenfolge', [EinstellungenController::class, 'sort'])->name('ablaeufe.einstellungen.sort');
+    Route::put('ablaeufe/einstellungen/{liste}/{id}', [EinstellungenController::class, 'update'])->name('ablaeufe.einstellungen.update');
+    Route::delete('ablaeufe/einstellungen/{liste}/{id}', [EinstellungenController::class, 'destroy'])->name('ablaeufe.einstellungen.destroy');
+});
+
 Route::middleware('can:edit-ablaeufe')->group(function () {
     Route::get('ablaeufe/neu', [AblaeufeController::class, 'create'])->name('ablaeufe.create');
     Route::post('ablaeufe', [AblaeufeController::class, 'store'])->name('ablaeufe.store');

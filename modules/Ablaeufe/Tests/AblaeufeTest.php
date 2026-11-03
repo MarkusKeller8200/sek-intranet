@@ -170,4 +170,53 @@ class AblaeufeTest extends TestCase
         $this->assertSame('ueberpruefung-zugriff', Ablauf::slug('Überprüfung Zugriff'));
         $this->assertSame(['a', 'a-2'], array_column(Ablauf::phasen([['key' => 'a', 'titel' => 'A'], ['key' => 'a', 'titel' => 'B']]), 'key'));
     }
+
+    public function test_settings_tables_with_start_values(): void
+    {
+        $this->signInAs('verwaltung');
+        $this->get('/ablaeufe/einstellungen')->assertOk()->assertInertia(fn (Assert $page) => $page
+            ->component('Ablaeufe::einstellungen')
+            ->where('aktiv', 'orte')
+            ->where('anzahl.fachbereiche', 9)
+            ->where('anzahl.mitwirkung', 4)
+            ->has('listen', 5));
+        $this->get('/ablaeufe/einstellungen?liste=rollen')->assertInertia(fn (Assert $page) => $page
+            ->where('eintraege.0.kuerzel', 'SL')
+            ->where('eintraege.0.fachbereich_id', 'sl')
+            ->where('fachbereiche.0.label', 'SB – Schulbehörde'));
+    }
+
+    public function test_settings_crud_rules(): void
+    {
+        $this->signInAs('schulleitung');
+        $eintrag = ['kuerzel' => 'DAZ', 'bezeichnung' => 'Deutsch als Zweitsprache', 'beschreibung' => 'Lehrperson DaZ', 'url' => 'https://example.org/daz', 'notiz' => 'n', 'fachbereich_id' => 'fsp'];
+        $this->post('/ablaeufe/einstellungen/rollen', $eintrag)->assertRedirect('/ablaeufe/einstellungen?liste=rollen');
+        $this->post('/ablaeufe/einstellungen/rollen', ['kuerzel' => 'daz'] + $eintrag)->assertSessionHasErrors('kuerzel');
+        $this->post('/ablaeufe/einstellungen/rollen', ['kuerzel' => 'X', 'url' => 'ftp://x'] + $eintrag)->assertSessionHasErrors('url');
+        $this->post('/ablaeufe/einstellungen/rollen', ['kuerzel' => 'Y', 'fachbereich_id' => 'gibt-es-nicht'] + $eintrag)->assertSessionHasErrors('fachbereich_id');
+        $this->post('/ablaeufe/einstellungen/gibt-es-nicht', $eintrag)->assertNotFound();
+
+        // Fachbereich mit Rollen nicht löschbar, ohne Rollen schon
+        $this->delete('/ablaeufe/einstellungen/fachbereiche/fsp')->assertRedirect();
+        $this->get('/ablaeufe/einstellungen?liste=fachbereiche')->assertInertia(fn (Assert $page) => $page->where('anzahl.fachbereiche', 9));
+        $this->delete('/ablaeufe/einstellungen/fachbereiche/ff')->assertRedirect();
+        $this->get('/ablaeufe/einstellungen?liste=fachbereiche')->assertInertia(fn (Assert $page) => $page->where('anzahl.fachbereiche', 8));
+
+        // Orte: Hierarchie, keine Schleifen
+        $this->post('/ablaeufe/einstellungen/orte', ['kuerzel' => 'HG', 'bezeichnung' => 'Haus Grün', 'typ' => 'schulhaus', 'parent_id' => 'sek'])->assertRedirect();
+        $hg = collect($this->get('/ablaeufe/einstellungen?liste=orte')->viewData('page')['props']['eintraege'])->firstWhere('kuerzel', 'HG');
+        $this->put('/ablaeufe/einstellungen/orte/sek', ['kuerzel' => 'SEK', 'bezeichnung' => 'Sekundarschule Bülach', 'typ' => 'standort', 'parent_id' => $hg['id']])->assertSessionHasErrors('parent_id');
+        $this->delete('/ablaeufe/einstellungen/orte/sek')->assertRedirect();
+        $this->get('/ablaeufe/einstellungen?liste=orte')->assertInertia(fn (Assert $page) => $page->where('anzahl.orte', 2));
+
+        // Reihenfolge
+        $this->post('/ablaeufe/einstellungen/mitwirkung/reihenfolge', ['ids' => ['i', 'v', 'e', 'm']])->assertRedirect();
+        $this->get('/ablaeufe/einstellungen?liste=mitwirkung')->assertInertia(fn (Assert $page) => $page->where('eintraege.0.kuerzel', 'I'));
+    }
+
+    public function test_settings_need_right(): void
+    {
+        $this->signInAs('lehrperson');
+        $this->get('/ablaeufe/einstellungen')->assertForbidden();
+    }
 }

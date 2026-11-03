@@ -4,6 +4,13 @@ Versionen des Moduls nach SemVer (module.json → «version»).
 
 ## [Unveröffentlicht]
 
+## [0.2.0]
+
+### Neu
+
+- Einstellungen (#52): erweiterbare Tabellen Orte (Typ, übergeordneter Ort), Fachbereiche, Rollen (mit Fachbereich),
+  Zeitlich und Mitwirkung – je mit Abkürzung, Bezeichnung, Beschreibung, URL und Notiz; Recht `config-ablaeufe`.
+
 ## [0.1.0]
 
 ### Neu

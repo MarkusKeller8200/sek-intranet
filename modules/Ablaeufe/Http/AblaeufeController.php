@@ -52,6 +52,7 @@ class AblaeufeController extends Controller
             'bereiche' => Ablauf::BEREICHE,
             'status' => Ablauf::STATUS,
             'darfBearbeiten' => $kannBearbeiten,
+            'darfEinstellungen' => Gate::allows('config-ablaeufe'),
         ]);
     }
 

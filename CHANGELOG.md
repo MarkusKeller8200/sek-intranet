@@ -22,6 +22,9 @@ laufend unter **Unveröffentlicht**. Ab 0.32.0 entsteht eine Version nur bei ein
   «Dokumente & Links», Bemerkungen, Frist zum Stichtag, «gilt für» (Personengruppen) und Gegenstück (z. B. Login
   erstellen ↔ sperren); Reihenfolge per Ziehen oder Pfeilen; Druck/PDF. Personengruppen mit Bemerkungen. Startinhalt:
   Ablauf «Mitarbeitende: Eintritt, Austritt, Mutation» aus der Excel-Vorlage (Entwurf).
+- **Einstellungen der Abläufe (#52):** erweiterbare Tabellen Orte (Standort, Schulhaus, Gebäude, Etage, Zimmer mit
+  übergeordnetem Ort), Fachbereiche, Rollen (je einem Fachbereich zugeordnet), Zeitlich und Mitwirkung – jeder Eintrag
+  mit Abkürzung, Bezeichnung, Beschreibung, URL und Notiz; Startwerte aus dem Chat (Abkürzungen teils Vorschläge).
 - **Rechte der Module je Rolle (#45):** Unter Einstellungen → Module legt die Administration fest, welche Rollen ein
   Modulrecht haben (z. B. «Abläufe ansehen»); Vorgabe aus `module.json`, Übersteuerung in `module_rights`.
 - **Neuerungen als Mitteilung (#26):** Bei einem freigegebenen Release erscheinen die Punkte «Für Mitarbeitende» aus

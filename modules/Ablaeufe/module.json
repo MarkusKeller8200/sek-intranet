@@ -1,7 +1,7 @@
 {
     "key": "ablaeufe",
     "name": "Abläufe Verwaltung",
-    "version": "0.1.0",
+    "version": "0.2.0",
     "core": ">=0.33.0",
     "description": "Verzeichnis wichtiger Abläufe als Checklisten-Vorlagen: Phasen, Schritte mit Verantwortung, Kommunikation, Dokumenten und Bemerkungen, Personengruppen. Beginn: Ein- und Austritt sowie Mutationen von Mitarbeitenden.",
     "aktiv": true,
@@ -11,11 +11,27 @@
     "rechte": {
         "view-ablaeufe": {
             "label": "Abläufe ansehen",
-            "roles": ["admin", "schulleitung", "verwaltung"]
+            "roles": [
+                "admin",
+                "schulleitung",
+                "verwaltung"
+            ]
         },
         "edit-ablaeufe": {
             "label": "Abläufe und Personengruppen bearbeiten",
-            "roles": ["admin", "schulleitung", "verwaltung"]
+            "roles": [
+                "admin",
+                "schulleitung",
+                "verwaltung"
+            ]
+        },
+        "config-ablaeufe": {
+            "label": "Einstellungen der Abläufe verwalten (Orte, Fachbereiche, Rollen, Zeitlich, Mitwirkung)",
+            "roles": [
+                "admin",
+                "schulleitung",
+                "verwaltung"
+            ]
         }
     },
     "menu": {
@@ -97,11 +113,219 @@
             "label": "Abläufe: Personengruppen",
             "description": "Gruppen für «gilt für» bei Schritten (z. B. Lehrpersonen, Vikare, Schulsozialarbeit), mit Bemerkung.",
             "fields": {
-                "name": { "type": "string", "required": true, "label": "Name" },
+                "name": {
+                    "type": "string",
+                    "required": true,
+                    "label": "Name"
+                },
                 "bemerkung": {
                     "type": "text",
                     "required": false,
                     "label": "Bemerkung"
+                },
+                "position": {
+                    "type": "int",
+                    "required": true,
+                    "label": "Reihenfolge"
+                }
+            }
+        },
+        "wf_orte": {
+            "label": "Abläufe: Orte",
+            "description": "Standort, Schulhaus, Gebäude, Etage, Zimmer mit übergeordnetem Ort.",
+            "fields": {
+                "kuerzel": {
+                    "type": "string",
+                    "required": true,
+                    "label": "Abkürzung"
+                },
+                "bezeichnung": {
+                    "type": "string",
+                    "required": true,
+                    "label": "Bezeichnung"
+                },
+                "beschreibung": {
+                    "type": "text",
+                    "required": false,
+                    "label": "Beschreibung"
+                },
+                "url": {
+                    "type": "url",
+                    "required": false,
+                    "label": "URL"
+                },
+                "notiz": {
+                    "type": "text",
+                    "required": false,
+                    "label": "Notiz"
+                },
+                "position": {
+                    "type": "int",
+                    "required": true,
+                    "label": "Reihenfolge"
+                },
+                "typ": {
+                    "type": "enum",
+                    "values": {
+                        "standort": "Standort",
+                        "schulhaus": "Schulhaus",
+                        "gebaeude": "Gebäude",
+                        "etage": "Etage",
+                        "zimmer": "Zimmer"
+                    },
+                    "required": true,
+                    "label": "Typ"
+                },
+                "parent_id": {
+                    "type": "ref",
+                    "references": "wf_orte",
+                    "required": false,
+                    "label": "Übergeordneter Ort"
+                }
+            }
+        },
+        "wf_fachbereiche": {
+            "label": "Abläufe: Fachbereiche",
+            "description": "Organisatorische Bereiche, z. B. Schulverwaltung, Fachstelle ICT.",
+            "fields": {
+                "kuerzel": {
+                    "type": "string",
+                    "required": true,
+                    "label": "Abkürzung"
+                },
+                "bezeichnung": {
+                    "type": "string",
+                    "required": true,
+                    "label": "Bezeichnung"
+                },
+                "beschreibung": {
+                    "type": "text",
+                    "required": false,
+                    "label": "Beschreibung"
+                },
+                "url": {
+                    "type": "url",
+                    "required": false,
+                    "label": "URL"
+                },
+                "notiz": {
+                    "type": "text",
+                    "required": false,
+                    "label": "Notiz"
+                },
+                "position": {
+                    "type": "int",
+                    "required": true,
+                    "label": "Reihenfolge"
+                }
+            }
+        },
+        "wf_rollen": {
+            "label": "Abläufe: Rollen",
+            "description": "Funktionen in Abläufen (SL, LP, FLP, SSA …), je einem Fachbereich zugeordnet.",
+            "fields": {
+                "kuerzel": {
+                    "type": "string",
+                    "required": true,
+                    "label": "Abkürzung"
+                },
+                "bezeichnung": {
+                    "type": "string",
+                    "required": true,
+                    "label": "Bezeichnung"
+                },
+                "beschreibung": {
+                    "type": "text",
+                    "required": false,
+                    "label": "Beschreibung"
+                },
+                "url": {
+                    "type": "url",
+                    "required": false,
+                    "label": "URL"
+                },
+                "notiz": {
+                    "type": "text",
+                    "required": false,
+                    "label": "Notiz"
+                },
+                "position": {
+                    "type": "int",
+                    "required": true,
+                    "label": "Reihenfolge"
+                },
+                "fachbereich_id": {
+                    "type": "ref",
+                    "references": "wf_fachbereiche",
+                    "required": false,
+                    "label": "Fachbereich"
+                }
+            }
+        },
+        "wf_zeitlich": {
+            "label": "Abläufe: Zeitlich",
+            "description": "Wann bzw. wie oft (jährlich, bei Eintritt …).",
+            "fields": {
+                "kuerzel": {
+                    "type": "string",
+                    "required": true,
+                    "label": "Abkürzung"
+                },
+                "bezeichnung": {
+                    "type": "string",
+                    "required": true,
+                    "label": "Bezeichnung"
+                },
+                "beschreibung": {
+                    "type": "text",
+                    "required": false,
+                    "label": "Beschreibung"
+                },
+                "url": {
+                    "type": "url",
+                    "required": false,
+                    "label": "URL"
+                },
+                "notiz": {
+                    "type": "text",
+                    "required": false,
+                    "label": "Notiz"
+                },
+                "position": {
+                    "type": "int",
+                    "required": true,
+                    "label": "Reihenfolge"
+                }
+            }
+        },
+        "wf_mitwirkung": {
+            "label": "Abläufe: Mitwirkung",
+            "description": "Art der Beteiligung (verantwortlich, Mitwirkung, Information …).",
+            "fields": {
+                "kuerzel": {
+                    "type": "string",
+                    "required": true,
+                    "label": "Abkürzung"
+                },
+                "bezeichnung": {
+                    "type": "string",
+                    "required": true,
+                    "label": "Bezeichnung"
+                },
+                "beschreibung": {
+                    "type": "text",
+                    "required": false,
+                    "label": "Beschreibung"
+                },
+                "url": {
+                    "type": "url",
+                    "required": false,
+                    "label": "URL"
+                },
+                "notiz": {
+                    "type": "text",
+                    "required": false,
+                    "label": "Notiz"
                 },
                 "position": {
                     "type": "int",

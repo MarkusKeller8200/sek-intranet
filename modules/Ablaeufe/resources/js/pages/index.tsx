@@ -1,5 +1,5 @@
 import { Head, Link } from '@inertiajs/react';
-import { Plus, Users, Workflow } from 'lucide-react';
+import { Plus, Settings, Users, Workflow } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import EmptyState from '@/components/empty-state';
 import PageHeader from '@/components/page-header';
@@ -33,11 +33,13 @@ export default function AblaeufeIndex({
     bereiche,
     status,
     darfBearbeiten,
+    darfEinstellungen,
 }: {
     ablaeufe: Eintrag[];
     bereiche: Record<string, string>;
     status: Record<string, string>;
     darfBearbeiten: boolean;
+    darfEinstellungen: boolean;
 }) {
     const [q, setQ] = useState('');
     const [bereich, setBereich] = useState('');
@@ -99,18 +101,29 @@ export default function AblaeufeIndex({
                             ))}
                         </NativeSelect>
                     )}
-                    {darfBearbeiten && (
+                    {(darfBearbeiten || darfEinstellungen) && (
                         <span className="ml-auto flex flex-wrap gap-2">
-                            <Button asChild variant="outline">
-                                <Link href="/ablaeufe/gruppen">
-                                    <Users /> Personengruppen
-                                </Link>
-                            </Button>
-                            <Button asChild>
-                                <Link href="/ablaeufe/neu">
-                                    <Plus /> Neuer Ablauf
-                                </Link>
-                            </Button>
+                            {darfEinstellungen && (
+                                <Button asChild variant="outline">
+                                    <Link href="/ablaeufe/einstellungen">
+                                        <Settings /> Einstellungen
+                                    </Link>
+                                </Button>
+                            )}
+                            {darfBearbeiten && (
+                                <>
+                                    <Button asChild variant="outline">
+                                        <Link href="/ablaeufe/gruppen">
+                                            <Users /> Personengruppen
+                                        </Link>
+                                    </Button>
+                                    <Button asChild>
+                                        <Link href="/ablaeufe/neu">
+                                            <Plus /> Neuer Ablauf
+                                        </Link>
+                                    </Button>
+                                </>
+                            )}
                         </span>
                     )}
                 </div>

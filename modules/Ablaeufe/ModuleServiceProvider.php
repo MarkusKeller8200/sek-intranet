@@ -5,8 +5,10 @@ namespace Modules\Ablaeufe;
 use App\Modules\ModuleProvider;
 use Modules\Ablaeufe\Data\Contracts\AblaufRepository;
 use Modules\Ablaeufe\Data\Contracts\GruppeRepository;
+use Modules\Ablaeufe\Data\Contracts\ListenRepository;
 use Modules\Ablaeufe\Data\Json\JsonAblaufRepository;
 use Modules\Ablaeufe\Data\Json\JsonGruppeRepository;
+use Modules\Ablaeufe\Data\Json\JsonListenRepository;
 use RuntimeException;
 
 /**
@@ -24,6 +26,10 @@ class ModuleServiceProvider extends ModuleProvider
         });
         $this->app->singleton(GruppeRepository::class, fn (): GruppeRepository => match ($this->storeType()) {
             'json' => new JsonGruppeRepository($this->store()),
+            default => throw new RuntimeException('Abläufe: Speicher «'.$this->storeType().'» ist noch nicht umgesetzt.'),
+        });
+        $this->app->singleton(ListenRepository::class, fn (): ListenRepository => match ($this->storeType()) {
+            'json' => new JsonListenRepository($this->store()),
             default => throw new RuntimeException('Abläufe: Speicher «'.$this->storeType().'» ist noch nicht umgesetzt.'),
         });
     }
