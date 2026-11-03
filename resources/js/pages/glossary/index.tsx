@@ -1,5 +1,13 @@
 import { Head, Link, router } from '@inertiajs/react';
-import { Copy, Eye, FileUp, ListTree, Pencil, Plus, Trash2 } from 'lucide-react';
+import {
+    Copy,
+    Eye,
+    FileUp,
+    ListTree,
+    Pencil,
+    Plus,
+    Trash2,
+} from 'lucide-react';
 import { useMemo, useRef, useState } from 'react';
 import { toast } from 'sonner';
 import DataGrid from '@/components/data-grid';
@@ -325,7 +333,10 @@ export default function GlossaryIndex({
                                   {
                                       label: 'Als Einzeldatensatz bearbeiten',
                                       icon: <Pencil />,
-                                      onSelect: () => router.visit(`/glossar/${r.id}/bearbeiten`),
+                                      onSelect: () =>
+                                          router.visit(
+                                              `/glossar/${r.id}/bearbeiten`,
+                                          ),
                                   },
                                   {
                                       label: 'Eintrag löschen …',
@@ -334,7 +345,11 @@ export default function GlossaryIndex({
                                       onSelect: () =>
                                           setLoeschen({
                                               ids: [r.id],
-                                              names: [r.anzeige || r.bez_offiziell || r.bez_eigen],
+                                              names: [
+                                                  r.anzeige ||
+                                                      r.bez_offiziell ||
+                                                      r.bez_eigen,
+                                              ],
                                               clear: () => undefined,
                                           }),
                                   },
