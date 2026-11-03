@@ -18,11 +18,13 @@ laufend unter **Unveröffentlicht**. Ab 0.32.0 entsteht eine Version nur bei ein
   Austritt und Mutationen von Mitarbeitenden – mit Verantwortung, Kommunikation, Dokumenten und Bemerkungen, druckbar.
 - [manage-users] Einstellungen → Module: Rechte der Module je Rolle ein- und ausschalten.
 - [view-glossary] Glossar (Menü Wissen): Abkürzungen und Begriffe der Volksschule – offiziell und wie wir sie
-  verwenden, nach Kategorie gruppiert, mit Suche und Export als Excel, PDF (kompakt A4 hoch oder voll A4 quer)
-  oder Markdown.
+  verwenden, nach Kategorie gruppiert, mit Suche und Export als Excel, PDF (Format, Umfang und Gruppierung
+  wählbar) oder Markdown.
 
 ### Neu
 
+- **Glossar: Dialog für den PDF-Export (#70):** Format (A4 hoch/quer), Umfang (kompakt, erweitert, vollständig),
+  Gruppierung (keine, Kategorie, Herkunft, Status) und Seitenumbruch bei Gruppe; die letzte Wahl bleibt im Browser.
 - **Zugang mit PIN je Rolle (#69):** Rolle wählen, 8-stelligen PIN eingeben, danach Demo-Person der Rolle wählen
   (Administrator: alle). PINs nur als Hash (`access_pins`), höchstens 5 Fehlversuche pro Minute und 20 pro Stunde je
   Adresse, im Log nur Rolle und Adresse. Das gemeinsame Passwort (Basic Auth) entfällt, sobald der PIN

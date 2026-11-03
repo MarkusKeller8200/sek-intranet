@@ -1,8 +1,9 @@
 import { Head, Link, router } from '@inertiajs/react';
 import { Copy, FileUp, ListTree, Plus } from 'lucide-react';
-import { useMemo, useRef } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { toast } from 'sonner';
 import DataGrid from '@/components/data-grid';
+import GlossaryPdfDialog from '@/components/glossary-pdf-dialog';
 import type {
     CellChange,
     GridColumn,
@@ -91,6 +92,7 @@ export default function GlossaryIndex({
     doppelte,
 }: Props) {
     const datei = useRef<HTMLInputElement>(null);
+    const [pdfIds, setPdfIds] = useState<string[] | null>(null);
     const byId = useMemo(() => new Map(rows.map((r) => [r.id, r])), [rows]);
 
     const columns = useMemo<GridColumn<GlossaryRow>[]>(() => {
@@ -259,24 +261,9 @@ export default function GlossaryIndex({
                     onExport={(_format, ids) => void download(ids)}
                     extraExports={[
                         {
-                            label: 'PDF kompakt (A4 hoch)',
-                            run: (ids) =>
-                                printGlossary(
-                                    ausgewaehlt(ids),
-                                    'kompakt',
-                                    status,
-                                    kategorienNamen,
-                                ),
-                        },
-                        {
-                            label: 'PDF voll (A4 quer)',
-                            run: (ids) =>
-                                printGlossary(
-                                    ausgewaehlt(ids),
-                                    'voll',
-                                    status,
-                                    kategorienNamen,
-                                ),
+                            label: 'PDF …',
+                            // erst nach dem Schliessen des Menüs öffnen (Fokus)
+                            run: (ids) => window.setTimeout(() => setPdfIds(ids), 0),
                         },
                         {
                             label: 'Markdown',
@@ -329,6 +316,19 @@ export default function GlossaryIndex({
                                     }}
                                 />
                             </>
+                        )
+                    }
+                />
+                <GlossaryPdfDialog
+                    count={pdfIds?.length ?? 0}
+                    open={pdfIds !== null}
+                    onOpenChange={(open) => !open && setPdfIds(null)}
+                    onCreate={(options) =>
+                        printGlossary(
+                            ausgewaehlt(pdfIds ?? []),
+                            options,
+                            status,
+                            kategorienNamen,
                         )
                     }
                 />
