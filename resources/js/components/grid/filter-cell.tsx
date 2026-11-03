@@ -136,7 +136,10 @@ export default function FilterCell<T>({
                                                 })
                                             }
                                         />
-                                        <OptionLabel label={label} color={column.colors?.[key]} />
+                                        <OptionLabel
+                                            label={label}
+                                            color={column.colors?.[key]}
+                                        />
                                     </label>
                                 );
                             })}

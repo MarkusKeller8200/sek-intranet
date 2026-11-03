@@ -2211,7 +2211,10 @@ function MultiEditor<T>({
                                     checked={chosen.includes(key)}
                                     onChange={() => toggle(key)}
                                 />
-                                <OptionLabel label={label} color={column.colors?.[key]} />
+                                <OptionLabel
+                                    label={label}
+                                    color={column.colors?.[key]}
+                                />
                             </label>
                         ))}
                     </div>
@@ -2281,18 +2284,39 @@ function DateEditor<T>({
                     }
                 }}
             />
-            <Popover anchor={anchor} open onClose={() => onCommit(typed)} onEscape={onCancel} width={264}>
+            <Popover
+                anchor={anchor}
+                open
+                onClose={() => onCommit(typed)}
+                onEscape={onCancel}
+                width={264}
+            >
                 <div className="grid gap-2" onKeyDown={stop}>
-                    <Calendar value={iso} onChange={(v) => onCommit(v, 'down')} />
+                    <Calendar
+                        value={iso}
+                        onChange={(v) => onCommit(v, 'down')}
+                    />
                     <div className="flex justify-between gap-2 border-t pt-2">
                         {!column.required ? (
-                            <Button type="button" size="sm" variant="ghost" onClick={() => onCommit('', 'down')}>
+                            <Button
+                                type="button"
+                                size="sm"
+                                variant="ghost"
+                                onClick={() => onCommit('', 'down')}
+                            >
                                 Leeren
                             </Button>
                         ) : (
                             <span />
                         )}
-                        <Button type="button" size="sm" variant="outline" onClick={() => onCommit(isoDate(new Date()), 'down')}>
+                        <Button
+                            type="button"
+                            size="sm"
+                            variant="outline"
+                            onClick={() =>
+                                onCommit(isoDate(new Date()), 'down')
+                            }
+                        >
                             Heute
                         </Button>
                     </div>
@@ -2314,7 +2338,8 @@ function SortMenu<T>({
 }) {
     const [open, setOpen] = useState(false);
     const anchor = useRef<HTMLButtonElement>(null);
-    const field = 'h-8 rounded-md border border-input bg-background px-2 text-sm';
+    const field =
+        'h-8 rounded-md border border-input bg-background px-2 text-sm';
     const setLevel = (level: number, rule: SortRule | null) => {
         const next = [...sorting];
         if (rule === null) {
@@ -2323,16 +2348,36 @@ function SortMenu<T>({
             next[level] = rule;
         }
         // Keine Spalte doppelt, keine Lücken
-        onChange(next.filter((r, i) => r && next.findIndex((x) => x?.id === r.id) === i).slice(0, MAX_SORT));
+        onChange(
+            next
+                .filter(
+                    (r, i) => r && next.findIndex((x) => x?.id === r.id) === i,
+                )
+                .slice(0, MAX_SORT),
+        );
     };
 
     return (
         <>
-            <Button ref={anchor} variant="outline" size="sm" onClick={() => setOpen((v) => !v)} aria-expanded={open}>
-                <ArrowUpDown /> {sorting.length > 0 ? `Sortiert (${sorting.length})` : 'Sortieren'}
+            <Button
+                ref={anchor}
+                variant="outline"
+                size="sm"
+                onClick={() => setOpen((v) => !v)}
+                aria-expanded={open}
+            >
+                <ArrowUpDown />{' '}
+                {sorting.length > 0
+                    ? `Sortiert (${sorting.length})`
+                    : 'Sortieren'}
                 <ChevronDown className="opacity-60" />
             </Button>
-            <Popover anchor={anchor} open={open} onClose={() => setOpen(false)} width={380}>
+            <Popover
+                anchor={anchor}
+                open={open}
+                onClose={() => setOpen(false)}
+                width={380}
+            >
                 <div className="grid gap-2">
                     <div className="font-medium">Sortieren</div>
                     {Array.from({ length: MAX_SORT }, (_, level) => {
@@ -2340,20 +2385,39 @@ function SortMenu<T>({
                         const disabled = level > sorting.length;
 
                         return (
-                            <div key={level} className="grid grid-cols-[1.5rem_minmax(0,1fr)_8rem] items-center gap-2">
-                                <span className="text-sm text-muted-foreground tabular-nums">{level + 1}.</span>
+                            <div
+                                key={level}
+                                className="grid grid-cols-[1.5rem_minmax(0,1fr)_8rem] items-center gap-2"
+                            >
+                                <span className="text-sm text-muted-foreground tabular-nums">
+                                    {level + 1}.
+                                </span>
                                 <select
                                     className={field}
                                     disabled={disabled}
                                     value={rule?.id ?? ''}
                                     aria-label={`Stufe ${level + 1}: Spalte`}
                                     onChange={(e) =>
-                                        setLevel(level, e.target.value === '' ? null : { id: e.target.value, desc: rule?.desc ?? false })
+                                        setLevel(
+                                            level,
+                                            e.target.value === ''
+                                                ? null
+                                                : {
+                                                      id: e.target.value,
+                                                      desc: rule?.desc ?? false,
+                                                  },
+                                        )
                                     }
                                 >
                                     <option value="">–</option>
                                     {columns
-                                        .filter((c) => c.id === rule?.id || !sorting.some((s) => s.id === c.id))
+                                        .filter(
+                                            (c) =>
+                                                c.id === rule?.id ||
+                                                !sorting.some(
+                                                    (s) => s.id === c.id,
+                                                ),
+                                        )
                                         .map((c) => (
                                             <option key={c.id} value={c.id}>
                                                 {c.title}
@@ -2365,7 +2429,13 @@ function SortMenu<T>({
                                     disabled={!rule}
                                     value={rule?.desc ? 'desc' : 'asc'}
                                     aria-label={`Stufe ${level + 1}: Richtung`}
-                                    onChange={(e) => rule && setLevel(level, { id: rule.id, desc: e.target.value === 'desc' })}
+                                    onChange={(e) =>
+                                        rule &&
+                                        setLevel(level, {
+                                            id: rule.id,
+                                            desc: e.target.value === 'desc',
+                                        })
+                                    }
                                 >
                                     <option value="asc">aufsteigend</option>
                                     <option value="desc">absteigend</option>
@@ -2373,12 +2443,25 @@ function SortMenu<T>({
                             </div>
                         );
                     })}
-                    <p className="text-xs text-muted-foreground">Auch im Spaltenkopf: Klick sortiert, Umschalt+Klick fügt eine Stufe hinzu.</p>
+                    <p className="text-xs text-muted-foreground">
+                        Auch im Spaltenkopf: Klick sortiert, Umschalt+Klick fügt
+                        eine Stufe hinzu.
+                    </p>
                     <div className="flex justify-between gap-2 pt-1">
-                        <Button type="button" size="sm" variant="ghost" disabled={sorting.length === 0} onClick={() => onChange([])}>
+                        <Button
+                            type="button"
+                            size="sm"
+                            variant="ghost"
+                            disabled={sorting.length === 0}
+                            onClick={() => onChange([])}
+                        >
                             Sortierung entfernen
                         </Button>
-                        <Button type="button" size="sm" onClick={() => setOpen(false)}>
+                        <Button
+                            type="button"
+                            size="sm"
+                            onClick={() => setOpen(false)}
+                        >
                             Fertig
                         </Button>
                     </div>

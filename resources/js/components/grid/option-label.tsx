@@ -2,7 +2,13 @@ import { isColorName, palette } from '@/lib/colors';
 import { cn } from '@/lib/utils';
 
 /** Wert einer Auswahlliste: farbiges Label, wenn die Spalte Farben hat, sonst Text (#76). */
-export default function OptionLabel({ label, color }: { label: string; color?: string }) {
+export default function OptionLabel({
+    label,
+    color,
+}: {
+    label: string;
+    color?: string;
+}) {
     if (!color) {
         return <span translate="no">{label}</span>;
     }
