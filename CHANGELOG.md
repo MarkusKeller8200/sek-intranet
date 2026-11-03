@@ -23,6 +23,8 @@ laufend unter **Unveröffentlicht**. Ab 0.32.0 entsteht eine Version nur bei ein
 
 ### Neu
 
+- **Glossar: Begriffe ohne Abkürzung (#72):** Tabelle zeigt den Begriff kursiv und sortiert danach; PDF und Markdown
+  mit «–» als Abkürzung.
 - **Glossar: Mehrfachauswahl (#71):** Checkbox je Zeile, «Auswahl löschen» mit Rückfrage (Recht `edit-glossary`),
   jede Löschung im Änderungsverlauf.
 - **Glossar: Dialog für den PDF-Export (#70):** Format (A4 hoch/quer), Umfang (kompakt, erweitert, vollständig),

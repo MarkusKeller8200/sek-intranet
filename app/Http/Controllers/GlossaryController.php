@@ -363,7 +363,7 @@ class GlossaryController extends Controller
                 'zeile' => $n + 2,
                 'art' => $existing === null ? 'neu' : 'geaendert',
                 'id' => $id,
-                'titel' => Glossary::shortName($changes + ($existing ?? [])).' – '.Glossary::displayName($changes + ($existing ?? [])),
+                'titel' => trim(Glossary::shortName($changes + ($existing ?? [])).' – '.Glossary::displayName($changes + ($existing ?? [])), ' –'),
                 'meldungen' => [],
                 'aenderungen' => array_map(fn ($v): string => is_array($v) ? implode('; ', $v) : (string) $v, $changes),
                 'daten' => $changes,

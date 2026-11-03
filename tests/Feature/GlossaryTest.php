@@ -97,6 +97,21 @@ class GlossaryTest extends TestCase
         $this->assertSame(0, app(GlossaryExamples::class)->apply(), 'nur einmal');
     }
 
+    public function test_term_without_abbreviation_shows_designation(): void
+    {
+        $this->signInAs('verwaltung');
+        $this->post('/glossar', ['bez_offiziell' => 'Personendaten', 'kategorien' => ['dsi'], 'herkunft' => ['dsb'], 'status' => 'aktuell'])->assertRedirect();
+        $this->get('/glossar')->assertInertia(fn (Assert $page) => $page->where('rows', function ($rows): bool {
+            $names = collect($rows)->pluck('anzeige')->all();
+            $row = collect($rows)->firstWhere('anzeige', 'Personendaten');
+
+            return $row !== null && $row['begriff'] === true && $row['mehrdeutig'] === false
+                && array_search('Personendaten', $names, true) > array_search('LP', $names, true)
+                && array_search('Personendaten', $names, true) < array_search('PHZH', $names, true)
+                && collect($rows)->firstWhere('anzeige', 'VSA')['begriff'] === false;
+        }));
+    }
+
     public function test_delete_selection_with_right_only(): void
     {
         $ids = collect($this->repo()->all())->where('abk_offiziell', 'SHP')->pluck('id')->values()->all();

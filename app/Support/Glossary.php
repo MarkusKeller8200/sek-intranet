@@ -159,7 +159,9 @@ final class Glossary
             }
             $row['bedeutungen'] = max(1, ...array_map(fn (string $a): int => count($meanings[$a] ?? []), self::abbreviations($e) ?: ['']));
             $row['mehrdeutig'] = $row['bedeutungen'] > 1;
-            $row['anzeige'] = self::shortName($e);
+            // Begriff ohne Abkürzung (#72): Bezeichnung anzeigen und danach sortieren
+            $row['begriff'] = self::shortName($e) === '' && self::displayName($e) !== '';
+            $row['anzeige'] = $row['begriff'] ? self::displayName($e) : self::shortName($e);
             $rows[] = $row;
         }
         usort($rows, fn (array $a, array $b): int => strnatcasecmp((string) $a['anzeige'], (string) $b['anzeige']));

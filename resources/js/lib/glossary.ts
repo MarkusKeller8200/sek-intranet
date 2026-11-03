@@ -19,6 +19,8 @@ export type GlossaryRow = {
     gueltig_ab: string;
     gueltig_bis: string;
     mehrdeutig: boolean;
+    /** Begriff ohne Abkürzung (#72) */
+    begriff: boolean;
     /** Anzahl verschiedener Bedeutungen der Abkürzung (gleiche Bezeichnung zählt einmal) */
     bedeutungen: number;
     anzeige: string;
@@ -50,6 +52,17 @@ export const abbreviation = (r: { abk_eigen: string; abk_offiziell: string }) =>
     r.abk_eigen.trim() || r.abk_offiziell.trim();
 export const designation = (r: { bez_eigen: string; bez_offiziell: string }) =>
     r.bez_eigen.trim() || r.bez_offiziell.trim();
+
+/** Titel: «Abkürzung – Bezeichnung», bei Begriffen ohne Abkürzung nur die Bezeichnung (#72). */
+export const entryTitle = (r: {
+    abk_eigen: string;
+    abk_offiziell: string;
+    bez_eigen: string;
+    bez_offiziell: string;
+}) => [abbreviation(r), designation(r)].filter(Boolean).join(' – ');
+
+/** Sortier- und Anzeigeschlüssel: Abkürzung, sonst Bezeichnung. */
+const sortKey = (r: GlossaryRow) => abbreviation(r) || designation(r);
 
 const esc = (s: string) =>
     s
@@ -85,7 +98,7 @@ function byCategory(rows: GlossaryRow[]): [string, GlossaryRow[]][] {
         .map(([c, list]) => [
             c,
             [...list].sort((a, b) =>
-                abbreviation(a).localeCompare(abbreviation(b), 'de-CH'),
+                sortKey(a).localeCompare(sortKey(b), 'de-CH'),
             ),
         ]);
 }
@@ -124,7 +137,7 @@ type Labels = Record<string, string>;
 
 const byAbbreviation = (list: GlossaryRow[]) =>
     [...list].sort((a, b) =>
-        abbreviation(a).localeCompare(abbreviation(b), 'de-CH'),
+        sortKey(a).localeCompare(sortKey(b), 'de-CH'),
     );
 
 /** Gliedern nach Kategorie, Herkunft oder Status (Mehrfachwerte: in jeder ihrer Gruppen). */
@@ -159,6 +172,14 @@ function groupRows(
         .map(([k, list]) => [k, byAbbreviation(list)]);
 }
 
+/** HTML-Element ohne spitze Klammern im Quelltext der Ausdrücke (i18n-Extraktion). */
+const tag = (name: string, inner: string) => `<${name}>${inner}</${name}>`;
+/** Begriff ohne Abkürzung (#72): «–» in der Abkürzungsspalte, Begriff kursiv unter Bezeichnung. */
+const abkHtml = (r: GlossaryRow) =>
+    r.begriff ? tag('small', '–') : tag('b', esc(abbreviation(r)));
+const bezHtml = (r: GlossaryRow) =>
+    r.begriff ? tag('i', esc(designation(r))) : esc(designation(r));
+
 type Column = {
     title: string;
     width: number;
@@ -175,13 +196,13 @@ function columns(o: PdfOptions, status: Labels): Column[] {
         title: 'Abkürzung',
         width: full ? 9 : 12,
         cell: (r) =>
-            `<b>${esc(abbreviation(r))}</b>${sup(r)}${full ? official(r.abk_eigen, r.abk_offiziell) + (aliases(r) ? `<br><small>Alias: ${esc(aliases(r))}</small>` : '') : ''}`,
+            abkHtml(r) + `${sup(r)}${full ? official(r.abk_eigen, r.abk_offiziell) + (aliases(r) ? `<br><small>Alias: ${esc(aliases(r))}</small>` : '') : ''}`,
     });
     const bez = (full: boolean, url = false): Column => ({
         title: 'Bezeichnung',
         width: full ? 20 : 40,
         cell: (r) =>
-            `${esc(designation(r))}${full ? official(r.bez_eigen, r.bez_offiziell) : ''}${url && r.url ? `<br><small class="url">${esc(r.url)}</small>` : ''}`,
+            bezHtml(r) + `${full ? official(r.bez_eigen, r.bez_offiziell) : ''}${url && r.url ? `<br><small class="url">${esc(r.url)}</small>` : ''}`,
     });
     const kurz: Column = {
         title: 'Kurzbeschreibung',
@@ -344,7 +365,7 @@ export function downloadMarkdown(rows: GlossaryRow[], names: Labels = {}) {
                 ? `[${mdCell(designation(r))}](${r.url})`
                 : mdCell(designation(r));
             parts.push(
-                `| **${mdCell(abbreviation(r))}**${supText(r)} | ${name} | ${mdCell(r.kurzbeschreibung)} | ${mdCell(r.herkunft)} |`,
+                `| ${r.begriff ? '–' : `**${mdCell(abbreviation(r))}**`}${supText(r)} | ${r.begriff ? `*${name}*` : name} | ${mdCell(r.kurzbeschreibung)} | ${mdCell(r.herkunft)} |`,
             );
         }
         parts.push('');

@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { formatDateTime } from '@/lib/format';
 import type { GlossaryEntry } from '@/lib/glossary';
-import { abbreviation, designation } from '@/lib/glossary';
+import { entryTitle } from '@/lib/glossary';
 
 type Herkunft = {
     id: string;
@@ -45,7 +45,7 @@ export default function GlossaryShow({
     status: Record<string, string>;
     rechte: { edit: boolean; official: boolean };
 }) {
-    const titel = `${abbreviation(e)}${designation(e) ? ` – ${designation(e)}` : ''}`;
+    const titel = entryTitle(e);
 
     return (
         <>

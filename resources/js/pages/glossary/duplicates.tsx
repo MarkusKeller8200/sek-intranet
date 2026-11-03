@@ -14,7 +14,7 @@ import {
 } from '@/components/ui/card';
 import { NativeSelect } from '@/components/ui/native-select';
 import type { GlossaryEntry } from '@/lib/glossary';
-import { abbreviation, designation } from '@/lib/glossary';
+import { entryTitle } from '@/lib/glossary';
 
 type Gruppe = {
     key: string;
@@ -82,7 +82,7 @@ function GruppeKarte({
                                 className="font-semibold text-primary underline-offset-2 hover:underline"
                                 translate="no"
                             >
-                                {`${abbreviation(e)} – ${designation(e)}`}
+                                {entryTitle(e)}
                             </Link>
                             <span className="flex flex-wrap gap-1">
                                 {e.kategorien.map((k) => (
@@ -128,7 +128,7 @@ function GruppeKarte({
                                     <option
                                         key={e.id}
                                         value={e.id}
-                                    >{`${abbreviation(e)} – ${designation(e)} (${e.kategorien.map((k) => kategorien[k] ?? k).join(', ')})`}</option>
+                                    >{`${entryTitle(e)} (${e.kategorien.map((k) => kategorien[k] ?? k).join(', ')})`}</option>
                                 ))}
                             </NativeSelect>
                         </label>
