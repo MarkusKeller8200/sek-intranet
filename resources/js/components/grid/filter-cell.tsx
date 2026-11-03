@@ -84,8 +84,18 @@ export default function FilterCell<T>({
                 <Filter className="size-3.5" />
             </button>
 
-            <Popover anchor={anchor} open={open} onClose={() => setOpen(false)}>
-                <div className="grid gap-2">
+            <Popover
+                anchor={anchor}
+                open={open}
+                onClose={() => setOpen(false)}
+                resizable
+                height={
+                    draft.op === 'in' || draft.op === 'notIn'
+                        ? Math.min(420, 170 + (Object.keys(column.options ?? {}).length + 1) * 30)
+                        : undefined
+                }
+            >
+                <div className="flex min-h-0 flex-1 flex-col gap-2">
                     <div className="font-medium">Filter «{column.title}»</div>
                     <select
                         className={field}
@@ -103,7 +113,7 @@ export default function FilterCell<T>({
                     </select>
 
                     {(draft.op === 'in' || draft.op === 'notIn') && (
-                        <div className="grid max-h-56 gap-1 overflow-y-auto rounded-md border p-2">
+                        <div className="grid min-h-16 flex-1 content-start gap-1 overflow-y-auto rounded-md border p-2">
                             {[
                                 ...Object.entries(column.options ?? {}),
                                 ['', '(leer)'] as const,

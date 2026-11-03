@@ -23,6 +23,9 @@ laufend unter **Unveröffentlicht**. Ab 0.32.0 entsteht eine Version nur bei ein
 
 ### Neu
 
+- **Tabelle und Kalender (#77):** farbiger Einrastpunkt beim Spalten-Ziehen; Dropdowns und Kalender erscheinen
+  oberhalb, wenn unten kein Platz ist; Auswahllisten mit Ziehecke rechts unten; Kalender mit Monatsauswahl und
+  senkrechtem Jahres-Spinner.
 - **Tabelle: Sortierung in 3 Stufen, Kalender, farbige Auswahl (#76):** Knopf «Sortieren» mit Stufe 1–3 (Spalte und
   Richtung), Kalender beim Bearbeiten von Datumszellen (Leeren, Heute), farbige Labels auch in Auswahlliste und Filter.
 - **Tabelle: Spaltentyp Mehrfachauswahl (#75):** Filter mit Mehrfachauswahl («enthält eine von», «enthält keine

@@ -223,6 +223,8 @@ export default function DataGrid<T extends GridRow>({
         'idle',
     );
     const [dragging, setDragging] = useState<string | null>(null);
+    // Einrastpunkt beim Spalten-Ziehen (#77): Zielspalte, die Spalte landet links oder rechts davon
+    const [dropTarget, setDropTarget] = useState<string | null>(null);
     const undoStack = useRef<CellChange<T>[][]>([]);
     const redoStack = useRef<CellChange<T>[][]>([]);
     const [, setHistoryTick] = useState(0);
@@ -1599,6 +1601,14 @@ export default function DataGrid<T extends GridRow>({
                                         onDragOver={(e) => {
                                             if (dragging && dragging !== id) {
                                                 e.preventDefault();
+                                                if (dropTarget !== id) {
+                                                    setDropTarget(id);
+                                                }
+                                            }
+                                        }}
+                                        onDragLeave={(e) => {
+                                            if (!e.currentTarget.contains(e.relatedTarget as Node | null)) {
+                                                setDropTarget((t) => (t === id ? null : t));
                                             }
                                         }}
                                         onDrop={(e) => {
@@ -1607,6 +1617,7 @@ export default function DataGrid<T extends GridRow>({
                                                 moveColumn(dragging, id);
                                             }
                                             setDragging(null);
+                                            setDropTarget(null);
                                         }}
                                         className={cn(
                                             'relative h-9 border-r border-b bg-muted px-2 text-left align-middle font-semibold whitespace-nowrap text-foreground',
@@ -1615,8 +1626,18 @@ export default function DataGrid<T extends GridRow>({
                                             id === lastPinned &&
                                                 'border-r-2 border-r-brand/40',
                                             dragging === id && 'opacity-40',
+                                            dropTarget === id && dragging && 'bg-brand/10',
                                         )}
                                     >
+                                        {dropTarget === id && dragging && (
+                                            <span
+                                                aria-hidden
+                                                className={cn(
+                                                    'pointer-events-none absolute inset-y-0 z-20 w-1 rounded-full bg-brand',
+                                                    order.indexOf(dragging) < order.indexOf(id) ? '-right-0.5' : '-left-0.5',
+                                                )}
+                                            />
+                                        )}
                                         <div
                                             className="flex min-w-0 items-center gap-1"
                                             draggable
@@ -1625,7 +1646,10 @@ export default function DataGrid<T extends GridRow>({
                                                 e.dataTransfer.effectAllowed =
                                                     'move';
                                             }}
-                                            onDragEnd={() => setDragging(null)}
+                                            onDragEnd={() => {
+                                                setDragging(null);
+                                                setDropTarget(null);
+                                            }}
                                             title="Ziehen zum Verschieben"
                                         >
                                             <GripVertical
@@ -2182,7 +2206,9 @@ function MultiEditor<T>({
                 open
                 onClose={() => onCommit(value())}
                 onEscape={onCancel}
-                width={260}
+                width={280}
+                height={Math.min(380, 96 + options.length * 34)}
+                resizable
             >
                 <div
                     ref={list}
@@ -2191,9 +2217,9 @@ function MultiEditor<T>({
                     aria-multiselectable
                     aria-label={column.title}
                     onKeyDown={onKeyDown}
-                    className="grid gap-2 outline-none"
+                    className="flex min-h-0 flex-1 flex-col gap-2 outline-none"
                 >
-                    <div className="grid max-h-64 gap-0.5 overflow-y-auto">
+                    <div className="grid min-h-0 flex-1 content-start gap-0.5 overflow-y-auto">
                         {options.map(([key, label], i) => (
                             <label
                                 key={key}
