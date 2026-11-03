@@ -1,5 +1,6 @@
 import { Link, usePage } from '@inertiajs/react';
 import AppLogoIcon from '@/components/app-logo-icon';
+import AppCredit from '@/components/app-credit';
 import AppWordmark from '@/components/app-wordmark';
 import { NavModules } from '@/components/nav-modules';
 import { InstallAppButton } from '@/components/install-app';
@@ -33,6 +34,7 @@ export function AppSidebar() {
                 >
                     <AppWordmark className="w-full" />
                 </Link>
+                <AppCredit className="px-1 group-data-[collapsible=icon]:hidden" />
                 {/* Schmale Leiste: nur das Signet */}
                 <Link
                     href="/start"

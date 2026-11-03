@@ -1,4 +1,5 @@
 import { Link } from '@inertiajs/react';
+import AppCredit from '@/components/app-credit';
 import AppWordmark from '@/components/app-wordmark';
 import type { AuthLayoutProps } from '@/types';
 
@@ -19,6 +20,7 @@ export default function AuthSimpleLayout({
                             <AppWordmark className="w-72 max-w-full" />
                             <span className="sr-only">{title}</span>
                         </Link>
+                        <AppCredit className="-mt-3 w-72 max-w-full" />
 
                         <div className="space-y-2 text-center">
                             <h1 className="text-xl font-medium">{title}</h1>
