@@ -43,16 +43,26 @@ class Plugin extends BasePlugin implements DemoResponder, SignatureProvider
 
     public function demoActive(PluginContext $ctx): bool
     {
-        return ! self::swissServer() || $ctx->setting('demo', true) !== false;
+        if ($ctx->setting('demo', true) !== false) {
+            return true;
+        }
+
+        // Ausserhalb der Schweiz nur mit ausdrücklichem Endtest (erfundene Dokumente, eigene E-Mail)
+        return ! self::swissServer() && $ctx->setting('endtest', false) !== true;
     }
 
     public function status(PluginContext $ctx): ?string
     {
+        if ($ctx->setting('demo', true) !== false) {
+            return 'Demo-Modus (simulierte Antworten).';
+        }
         if (! self::swissServer()) {
-            return 'Demo-Modus (Server ausserhalb der Schweiz: nichts geht an DeepSign).';
+            return $ctx->setting('endtest', false) === true
+                ? 'ENDTEST: echte Aufrufe an DeepSign auf einem Server ausserhalb der Schweiz – nur erfundene Dokumente, danach ausschalten.'
+                : 'Demo-Modus (Server ausserhalb der Schweiz: nichts geht an DeepSign; für den Endtest «Endtest» einschalten).';
         }
 
-        return $ctx->setting('demo', true) !== false ? 'Demo-Modus (simulierte Antworten).' : null;
+        return null;
     }
 
     public function test(PluginContext $ctx): array

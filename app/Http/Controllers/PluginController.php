@@ -9,6 +9,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Validator;
 use Inertia\Inertia;
 use Inertia\Response;
 use InvalidArgumentException;
@@ -174,11 +175,22 @@ class PluginController extends Controller
 
     public function api(Request $request, string $id): JsonResponse
     {
-        $data = $request->validate([
+        // Mit Datei (Endpunkte mit «file», z. B. DeepSign-Upload): multipart, Angaben als JSON in «payload»
+        $input = $request->has('payload') ? (array) json_decode((string) $request->input('payload'), true) : $request->all();
+        $data = Validator::make($input, [
             'endpoint' => ['required', 'string'],
             'params' => ['array'],
             'body' => ['nullable', 'string', 'max:100000'],
-        ]);
+        ])->validate();
+
+        $file = null;
+        $upload = $request->file('file_upload');
+        if ($upload instanceof UploadedFile) {
+            if (! $upload->isValid() || $upload->getSize() > 20 * 1024 * 1024) {
+                return response()->json(['status' => 'error', 'message' => 'Datei ungültig oder grösser als 20 MB.'], 422);
+            }
+            $file = ['name' => $upload->getClientOriginalName(), 'contents' => (string) $upload->get(), 'mime' => (string) ($upload->getMimeType() ?? 'application/octet-stream')];
+        }
 
         $body = null;
         if (($data['body'] ?? '') !== '' && $data['body'] !== null) {
@@ -189,7 +201,7 @@ class PluginController extends Controller
             $body = $decoded;
         }
 
-        return $this->json(fn (): array => $this->plugins->apiCall($id, (string) $data['endpoint'], (array) ($data['params'] ?? []), $body, $this->user($request)));
+        return $this->json(fn (): array => $this->plugins->apiCall($id, (string) $data['endpoint'], (array) ($data['params'] ?? []), $body, $this->user($request), $file));
     }
 
     public function access(Request $request, string $id): JsonResponse

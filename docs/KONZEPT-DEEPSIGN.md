@@ -112,6 +112,13 @@ für die Person und das Visum herunterladbar.
 genaues Format des Webhooks und der Signatur, Antwort von `document-access-url`. Im Demo-Modus ist der Ablauf
 vollständig testbar; mit echtem Zugang auf dem Schweizer Server prüfen.
 
+## Endtest auf dem Testserver (#84)
+
+Auf einem Server ausserhalb der Schweiz ist der Demo-Modus erzwungen. Für den Endtest mit echtem Zugang gibt es den
+Schalter **«Endtest»** (Demo-Modus aus, Endtest an): Dann gehen echte Aufrufe an DeepSign, die Plugin-Karte zeigt
+«ENDTEST». Nur mit erfundenen Dokumenten und der eigenen E-Mail als Unterzeichnende:r testen und danach wieder
+ausschalten. Im API-Tester lässt sich bei «Dokument hochladen» eine Datei wählen (multipart: `data` + `file`).
+
 ## Zugang einrichten (#83)
 
 Quelle: [API Access Setup](https://apidocs.deepcloud.swiss/deepsign-api-docs/setup_overview.html).

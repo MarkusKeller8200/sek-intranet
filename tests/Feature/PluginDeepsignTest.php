@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Plugins\ManifestOpenApi;
 use App\Plugins\PluginManager;
 use Illuminate\Http\Client\Request;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Sleep;
 use Plugins\Deepsign\Plugin;
@@ -208,5 +209,61 @@ class PluginDeepsignTest extends TestCase
             ->assertJsonPath('status', 'success')
             ->assertJsonPath('links.0.url', Plugin::serviceUserUrl(Plugin::TEST, 'partner-client-456'));
         Http::assertNothingSent();
+    }
+
+    public function test_endtest_allows_real_calls_outside_switzerland(): void
+    {
+        Http::fake([
+            self::TOKEN_URL => Http::response(['access_token' => 'token-abc-123456', 'expires_in' => 300]),
+            'api.sign.deepbox.swiss/api/v1/overview*' => Http::response(['documents' => [], 'size' => 2]),
+            'deepcloud.swiss/api/v1/users/me' => Http::response(['display_name' => 'Intranet Testschule']),
+        ]);
+        config(['intranet.server_in_switzerland' => false]);
+        $this->enable([
+            'demo' => false, 'endtest' => true,
+            'username' => 'service-sekbuelach', 'password' => 'geheimes-passwort-123',
+            'client_id' => 'partner-client-456', 'client_secret' => 'partner-secret-789',
+        ]);
+        $this->signInAs('admin');
+
+        $this->postJson('/plugins/deepsign/test')->assertJson(['ok' => true])
+            ->assertJsonPath('message', fn (string $m): bool => str_starts_with($m, 'Verbunden mit DeepSign: 2 Dokumente sichtbar.'));
+        Http::assertSent(fn (Request $r): bool => str_starts_with($r->url(), 'https://api.sign.deepbox.swiss/api/v1/overview'));
+    }
+
+    public function test_api_tester_uploads_file_as_multipart(): void
+    {
+        Http::fake([
+            self::TOKEN_URL => Http::response(['access_token' => 'token-abc-123456', 'expires_in' => 300]),
+            'api.sign.deepbox.swiss/api/v1/documents/file' => Http::response(['documentId' => 'doc-echt-1', 'documentStatus' => 'draft'], 201),
+        ]);
+        config(['intranet.server_in_switzerland' => false]);
+        $this->enable([
+            'demo' => false, 'endtest' => true,
+            'username' => 'service-sekbuelach', 'password' => 'geheimes-passwort-123',
+            'client_id' => 'partner-client-456', 'client_secret' => 'partner-secret-789',
+        ], allowWrite: true);
+        $this->signInAs('admin');
+        $payload = (string) json_encode(['endpoint' => 'document-upload', 'params' => [], 'body' => '{"initiatorAliasName": "Sekundarschule Bülach"}']);
+        $pdf = UploadedFile::fake()->createWithContent('Endtest.pdf', "%PDF-1.4\n% Endtest (erfunden)\n%%EOF");
+
+        $this->post('/plugins/deepsign/api', ['payload' => $payload, 'file_upload' => $pdf], ['Accept' => 'application/json'])
+            ->assertOk()
+            ->assertJsonPath('http_status', 201)
+            ->assertJsonPath('body', fn (string $b): bool => str_contains($b, 'doc-echt-1'));
+
+        Http::assertSent(function (Request $r): bool {
+            if ($r->url() !== 'https://api.sign.deepbox.swiss/api/v1/documents/file' || ! $r->isMultipart()) {
+                return false;
+            }
+            $parts = collect($r->data())->keyBy('name');
+
+            return ($parts['file']['filename'] ?? null) === 'Endtest.pdf'
+                && str_contains((string) ($parts['data']['contents'] ?? ''), 'Sekundarschule Bülach');
+        });
+
+        // Endpunkte ohne Datei nehmen keine an
+        $other = (string) json_encode(['endpoint' => 'overview', 'params' => []]);
+        $this->post('/plugins/deepsign/api', ['payload' => $other, 'file_upload' => $pdf], ['Accept' => 'application/json'])->assertStatus(422);
     }
 }

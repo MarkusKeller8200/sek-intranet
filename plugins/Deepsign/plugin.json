@@ -1,7 +1,7 @@
 {
     "id": "deepsign",
     "name": "DeepSign",
-    "version": "0.3",
+    "version": "0.4",
     "api": 1,
     "category": "other",
     "author": "SekBülach Intranet",
@@ -105,7 +105,7 @@
                 "danger": true,
                 "test": false,
                 "use": "Dokument zur Unterschrift senden (#39)",
-                "note": "multipart/form-data mit den Teilen «data» (JSON wie unten) und «file» (PDF, DOCX oder XLSX bis 40 MB). Der API-Tester sendet nur JSON: echt erst über die Schnittstelle «Unterschriften», im Demo-Modus testbar.",
+                "note": "multipart/form-data: Teil «data» = Body unten (JSON), Teil «file» = Dokument (PDF, DOCX oder XLSX; im Intranet bis 20 MB). Im API-Tester die Datei im Feld «Datei» wählen.",
                 "body": {
                     "initiatorAliasName": "Sekundarschule Bülach",
                     "sendMail": "others",
@@ -133,7 +133,11 @@
                         "name": "signatureMode",
                         "type": "string",
                         "help": "timestamp = einfach, advanced = fortgeschritten (2FA), qualified = qualifiziert.",
-                        "choices": ["timestamp", "advanced", "qualified"],
+                        "choices": [
+                            "timestamp",
+                            "advanced",
+                            "qualified"
+                        ],
                         "example": "timestamp"
                     },
                     {
@@ -171,9 +175,17 @@
                         "name": "callbackEventTypes",
                         "type": "array",
                         "help": "Ereignisse für den Webhook.",
-                        "example": ["signee-completed", "document-completed"]
+                        "example": [
+                            "signee-completed",
+                            "document-completed"
+                        ]
                     }
-                ]
+                ],
+                "file": {
+                    "field": "file",
+                    "data": "data",
+                    "accept": ".pdf,.docx,.xlsx"
+                }
             },
             {
                 "id": "scan-predefined",
@@ -183,7 +195,11 @@
                 "status": "partial",
                 "effect": "read",
                 "test": false,
-                "note": "multipart/form-data mit dem Teil «file» (PDF); speichert nichts. Im API-Tester nur im Demo-Modus."
+                "note": "multipart/form-data mit dem Teil «file» (PDF); speichert nichts. Im API-Tester die Datei im Feld «Datei» wählen.",
+                "file": {
+                    "field": "file",
+                    "accept": ".pdf"
+                }
             },
             {
                 "id": "document-update",
@@ -592,13 +608,26 @@
             "help": "Für Tests ohne Zugang und auf dem Testserver. Ausschalten erst mit Zugang und auf dem Schweizer Server."
         },
         {
+            "key": "endtest",
+            "type": "check",
+            "label": "Endtest: echte Aufrufe auf diesem Server erlauben (Server ausserhalb der Schweiz)",
+            "default": false,
+            "help": "Nur für den Endtest mit erfundenen Dokumenten und eigener E-Mail. Ohne diesen Schalter bleibt auf einem Server ausserhalb der Schweiz der Demo-Modus erzwungen. Nach dem Test wieder ausschalten."
+        },
+        {
             "key": "environment",
             "type": "select",
             "label": "Umgebung",
             "default": "https://deepcloud.swiss",
             "choices": [
-                ["https://deepcloud.swiss", "Produktion (deepcloud.swiss)"],
-                ["https://int.deepcloud.swiss", "Test (int.deepcloud.swiss)"]
+                [
+                    "https://deepcloud.swiss",
+                    "Produktion (deepcloud.swiss)"
+                ],
+                [
+                    "https://int.deepcloud.swiss",
+                    "Test (int.deepcloud.swiss)"
+                ]
             ],
             "help": "Anmeldung und Erstellen des Service-Benutzers (DeepAdmin) in dieser Umgebung."
         },
@@ -653,8 +682,14 @@
             "label": "Signaturstufe (Vorgabe)",
             "default": "timestamp",
             "choices": [
-                ["timestamp", "Einfach (Zeitstempel)"],
-                ["advanced", "Fortgeschritten (2FA)"],
+                [
+                    "timestamp",
+                    "Einfach (Zeitstempel)"
+                ],
+                [
+                    "advanced",
+                    "Fortgeschritten (2FA)"
+                ],
                 ["qualified", "Qualifiziert"]
             ],
             "help": "Entscheid offen (#36)."
@@ -691,9 +726,18 @@
                     "choices": [
                         ["", "alle"],
                         ["draft", "Entwurf"],
-                        ["in-progress", "in Arbeit"],
-                        ["signed", "unterschrieben"],
-                        ["withdrawn", "zurückgezogen"],
+                        [
+                            "in-progress",
+                            "in Arbeit"
+                        ],
+                        [
+                            "signed",
+                            "unterschrieben"
+                        ],
+                        [
+                            "withdrawn",
+                            "zurückgezogen"
+                        ],
                         ["rejected", "abgelehnt"]
                     ]
                 }

@@ -3306,5 +3306,9 @@
     ],
     "Zurückgezogen von": ["Withdrawn by", "Zrugzoge vo"],
     "Fehler beim Senden": ["Error when sending", "Fähler bim Schicke"],
-    "Unterschrieben am": ["Signed on", "Unterschriibe am"]
+    "Unterschrieben am": ["Signed on", "Unterschriibe am"],
+    "Die Datei geht als eigener Teil (multipart) mit, der Body als JSON. Höchstens {n} MB.": [
+        "The file is sent as a separate part (multipart), the body as JSON. At most {n} MB.",
+        "D Datei gaht als eigene Teil (multipart) mit, de Body als JSON. Höchschtens {n} MB."
+    ]
 }

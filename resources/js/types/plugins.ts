@@ -56,6 +56,8 @@ export type PluginEndpoint = {
     }[];
     /** false = nicht in «Zugriff prüfen» */
     test?: boolean;
+    /** Datei-Upload (multipart): Teil für die Datei, Teil für den Body als JSON, erlaubte Endungen */
+    file?: { field?: string; data?: string; accept?: string };
 };
 
 export type PluginAction = {

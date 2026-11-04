@@ -283,15 +283,24 @@ final class PluginManager
      *
      * @param  array<string, mixed>  $params
      * @param  array<string, mixed>|null  $body
+     * @param  array{name: string, contents: string, mime?: string}|null  $file  Datei für Endpunkte mit «file» (multipart)
      * @return array<string, mixed>
      */
-    public function apiCall(string $id, string $endpointId, array $params, ?array $body, ?IntranetUser $user): array
+    public function apiCall(string $id, string $endpointId, array $params, ?array $body, ?IntranetUser $user, ?array $file = null): array
     {
         $this->requireReady($id);
+        $endpoint = $this->manifest($id)->endpoint($endpointId);
+        $spec = is_array($endpoint['file'] ?? null) ? $endpoint['file'] : null;
+        if ($file !== null && $spec === null) {
+            throw new InvalidArgumentException('Dieser Endpunkt nimmt keine Datei entgegen.');
+        }
+        if ($file !== null && $spec !== null) {
+            $file += ['field' => (string) ($spec['field'] ?? 'file'), 'data_field' => (string) ($spec['data'] ?? 'data')];
+        }
 
-        return $this->guarded($id, $user, "API {$endpointId}", function (PluginContext $ctx) use ($endpointId, $params, $body): array {
+        return $this->guarded($id, $user, "API {$endpointId}", function (PluginContext $ctx) use ($endpointId, $params, $body, $file): array {
             $start = microtime(true);
-            $response = $ctx->call($endpointId, $params, $body);
+            $response = $ctx->call($endpointId, $params, $body, $file);
             $raw = $response->body();
             $json = json_decode($raw, true);
 

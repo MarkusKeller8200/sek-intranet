@@ -942,6 +942,7 @@ function ApiTester({
     const [result, setResult] = useState<PluginResult | null>(null);
     const [busy, setBusy] = useState(false);
     const [confirmOpen, setConfirmOpen] = useState(false);
+    const [file, setFile] = useState<File | null>(null);
     // Inhalt bei allem ausser GET; schreibend laut «effect» (z. B. Listen per POST sind lesend)
     const hasBody = endpoint.method.toUpperCase() !== 'GET';
     const writing = endpoint.effect ? endpoint.effect === 'write' : hasBody;
@@ -961,6 +962,7 @@ function ApiTester({
                 params,
                 body: hasBody ? body : null,
             },
+            endpoint.file && file ? { upload: file } : {},
         );
         setResult(answer);
         setBusy(false);
@@ -1036,6 +1038,22 @@ function ApiTester({
                                 )}
                             </div>
                         ))}
+                    </div>
+                )}
+
+                {endpoint.file && (
+                    <div className="grid gap-1.5 md:max-w-md">
+                        <Label htmlFor="tester-file">Datei</Label>
+                        <Input
+                            id="tester-file"
+                            type="file"
+                            accept={endpoint.file.accept}
+                            onChange={(e) => setFile(e.target.files?.[0] ?? null)}
+                        />
+                        <p className="text-xs text-muted-foreground">
+                            Die Datei geht als eigener Teil (multipart) mit, der
+                            Body als JSON. Höchstens 20 MB.
+                        </p>
                     </div>
                 )}
 

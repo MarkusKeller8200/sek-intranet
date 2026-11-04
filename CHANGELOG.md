@@ -17,6 +17,8 @@ laufend unter **Unveröffentlicht**. Ab 0.32.0 entsteht eine Version nur bei ein
 
 ### Neu
 
+- **DeepSign-Endtest (#84):** Schalter «Endtest» erlaubt echte Aufrufe an DeepSign auch auf dem Testserver (sonst
+  Demo-Modus erzwungen); der API-Tester lädt bei Endpunkten mit Datei ein Dokument hoch (multipart).
 - **Unterschriften (#38–#43):** Kern-Schnittstelle «Unterschriften» (Aufträge, Status je Person, Ereignisse an das
   Modul) mit DeepSign als Anbieter: PDF mit Unterzeichnenden in Reihenfolge senden und starten, Webhook mit Signatur
   und Abfrage alle 15 Minuten (Zeitplan im Container), unterschriebenes PDF sofort abholen und beim Modul ablegen,
