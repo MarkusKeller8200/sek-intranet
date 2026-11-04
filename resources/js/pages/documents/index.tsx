@@ -126,7 +126,9 @@ export default function DocumentsIndex({
                                                     {doc.title}
                                                     {doc.restricted && (
                                                         <span
-                                                            title={doc.restricted}
+                                                            title={
+                                                                doc.restricted
+                                                            }
                                                             className="ml-1.5 inline-flex align-middle text-muted-foreground"
                                                         >
                                                             <Lock
