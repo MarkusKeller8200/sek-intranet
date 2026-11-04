@@ -1,0 +1,28 @@
+name: issue-closed
+
+# Geschlossene Issues tragen kein Status-Label mehr (_1 bereit, _2 in Arbeit, _3 Beta-Test …).
+# Greift bei jedem Schliessen, egal ob von Hand, per API oder durch einen Commit.
+on:
+  issues:
+    types: [closed]
+
+permissions:
+  issues: write
+
+jobs:
+  status-labels:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - name: Status-Labels entfernen
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          NUMBER: ${{ github.event.issue.number }}
+          LABELS: ${{ toJSON(github.event.issue.labels.*.name) }}
+        run: |
+          printf '%s' "$LABELS" | jq -r '.[] | select(startswith("_"))' | while IFS= read -r label; do
+            encoded=$(jq -rn --arg l "$label" '$l | @uri')
+            gh api -X DELETE "repos/$REPO/issues/$NUMBER/labels/$encoded" > /dev/null
+            echo "Entfernt: $label"
+          done

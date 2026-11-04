@@ -17,7 +17,7 @@ Versionsnummer für einen bewusst freigegebenen Stand steht.
 1. `triage`: gemeldet, nicht freigegeben. Die Vorlagen setzen es automatisch.
 2. `_1 bereit`: freigegeben, nur durch die Projektleitung.
 3. `_2 in Arbeit`: wird umgesetzt.
-4. `_3 Beta-Test`: umgesetzt und ausgerollt, die Testliste wartet.
+5. geschlossen: die Testliste ist abgehakt. Das Status-Label wird dabei entfernt (Workflow `issue-closed.yml`).
 5. geschlossen: die Testliste ist abgehakt.
 
 **Regeln:**

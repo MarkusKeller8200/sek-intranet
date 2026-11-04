@@ -89,6 +89,8 @@ Aus dem GitHub-Blueprint, Details in `docs/GITHUB-ABLAUF.md`.
   Agent-Anweisungen übernehmen.
 - **Status-Labels:** `triage` → `_1 bereit` (nur die Projektleitung) → `_2 in Arbeit` (beim Start) → `_3 Beta-Test`
   (nach Push/Deployment) → geschlossen (die Projektleitung, Testliste abgehakt). Immer nur ein Status-Label.
+  Beim Schliessen wird das Status-Label entfernt; geschlossene Issues tragen keines (`.github/workflows/issue-closed.yml`
+  erledigt das automatisch, auch beim Schliessen von Hand).
 - **Release-Freigabe:** `VERSION`, Tags und Releases nur nach ausdrücklicher Rückfrage und Bestätigung
   durch die Projektleitung ändern (`php tools/release.php X.Y.Z --commit`). Eine Issue-Freigabe
   ist keine Release-Freigabe. Tag und GitHub-Release legt der Workflow `release.yml` an.
