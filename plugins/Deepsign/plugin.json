@@ -1,7 +1,7 @@
 {
     "id": "deepsign",
     "name": "DeepSign",
-    "version": "0.1",
+    "version": "0.2",
     "api": 1,
     "category": "other",
     "author": "SekBülach Intranet",
@@ -11,19 +11,29 @@
         "name": "DeepSign API",
         "home": "https://deepcloud.swiss/de/deepsign/",
         "docs": "https://apidocs.deepcloud.swiss/deepsign-api-docs/index.html",
-        "base": "https://api.sign.deepbox.swiss/api/v1",
         "auth": {
             "type": "oauth2_password",
-            "token_url": "https://deepcloud.swiss/auth/realms/sso/protocol/openid-connect/token",
+            "token_url": "{environment}/auth/realms/sso/protocol/openid-connect/token",
             "username_setting": "username",
             "password_setting": "password",
             "form": {
                 "client_id": "client_id",
                 "client_secret": "client_secret"
-            }
+            },
+            "hosts": ["default", "account"]
         },
-        "auth_note": "Zugang bei DeepCloud beantragen (development@deepcloud.swiss): Service-Benutzer (Benutzername, Passwort) und Partner-Client (client_id, client_secret). Alle vier Werte werden verschlüsselt gespeichert und nie angezeigt.",
+        "auth_note": "Zugang bei DeepCloud beantragen (development@deepcloud.swiss): Partner-Client (client_id, client_secret). Den Service-Benutzer erstellt danach die Schule selbst mit der Aktion «Service-Benutzer erstellen» (DeepAdmin, Benutzername und Passwort werden nur einmal angezeigt). Alle vier Werte werden verschlüsselt gespeichert und nie angezeigt.",
         "endpoints": [
+            {
+                "id": "me",
+                "method": "GET",
+                "path": "/users/me",
+                "host": "account",
+                "label": "Service-Benutzer (wer bin ich, Firmen)",
+                "status": "partial",
+                "use": "Verbindung testen",
+                "note": "Nur Produktion dokumentiert (deepcloud.swiss/api/v1/users/me); liefert die Firmen (companies, group_id)."
+            },
             {
                 "id": "overview",
                 "method": "GET",
@@ -123,7 +133,11 @@
                         "name": "signatureMode",
                         "type": "string",
                         "help": "timestamp = einfach, advanced = fortgeschritten (2FA), qualified = qualifiziert.",
-                        "choices": ["timestamp", "advanced", "qualified"],
+                        "choices": [
+                            "timestamp",
+                            "advanced",
+                            "qualified"
+                        ],
                         "example": "timestamp"
                     },
                     {
@@ -161,7 +175,10 @@
                         "name": "callbackEventTypes",
                         "type": "array",
                         "help": "Ereignisse für den Webhook.",
-                        "example": ["signee-completed", "document-completed"]
+                        "example": [
+                            "signee-completed",
+                            "document-completed"
+                        ]
                     }
                 ]
             },
@@ -568,7 +585,10 @@
                 ],
                 "note": "Aus dem Microsoft-Connector; in der API-Doku nicht beschrieben."
             }
-        ]
+        ],
+        "hosts": {
+            "account": "https://deepcloud.swiss/api/v1"
+        }
     },
     "settings": [
         {
@@ -579,18 +599,28 @@
             "help": "Für Tests ohne Zugang und auf dem Testserver. Ausschalten erst mit Zugang und auf dem Schweizer Server."
         },
         {
-            "key": "username",
-            "type": "password",
-            "label": "Service-Benutzer",
-            "required": true,
-            "required_unless": "demo"
+            "key": "environment",
+            "type": "select",
+            "label": "Umgebung",
+            "default": "https://deepcloud.swiss",
+            "choices": [
+                [
+                    "https://deepcloud.swiss",
+                    "Produktion (deepcloud.swiss)"
+                ],
+                [
+                    "https://int.deepcloud.swiss",
+                    "Test (int.deepcloud.swiss)"
+                ]
+            ],
+            "help": "Anmeldung und Erstellen des Service-Benutzers (DeepAdmin) in dieser Umgebung."
         },
         {
-            "key": "password",
-            "type": "password",
-            "label": "Passwort des Service-Benutzers",
-            "required": true,
-            "required_unless": "demo"
+            "key": "base_url",
+            "type": "url",
+            "label": "API-Adresse",
+            "default": "https://api.sign.deepbox.swiss/api/v1",
+            "help": "Produktion: https://api.sign.deepbox.swiss/api/v1. Die Adresse der Testumgebung bei DeepCloud erfragen."
         },
         {
             "key": "client_id",
@@ -605,6 +635,18 @@
             "label": "Partner-Client: client_secret",
             "required": true,
             "required_unless": "demo"
+        },
+        {
+            "key": "username",
+            "type": "password",
+            "label": "Service-Benutzer",
+            "help": "Mit der Aktion «Service-Benutzer erstellen» erzeugen und hier einfügen (wird nur einmal angezeigt)."
+        },
+        {
+            "key": "password",
+            "type": "password",
+            "label": "Passwort des Service-Benutzers",
+            "help": "Mit der Aktion «Service-Benutzer erstellen» erzeugen und hier einfügen (wird nur einmal angezeigt)."
         },
         {
             "key": "company_id",
@@ -624,8 +666,14 @@
             "label": "Signaturstufe (Vorgabe)",
             "default": "timestamp",
             "choices": [
-                ["timestamp", "Einfach (Zeitstempel)"],
-                ["advanced", "Fortgeschritten (2FA)"],
+                [
+                    "timestamp",
+                    "Einfach (Zeitstempel)"
+                ],
+                [
+                    "advanced",
+                    "Fortgeschritten (2FA)"
+                ],
                 ["qualified", "Qualifiziert"]
             ],
             "help": "Entscheid offen (#36)."
@@ -643,6 +691,13 @@
     ],
     "actions": [
         {
+            "id": "service-user",
+            "label": "Service-Benutzer erstellen",
+            "kind": "read",
+            "description": "Öffnet DeepAdmin: Mit dem DeepCloud-Konto der Schule anmelden und den Zugriff für das Intranet bestätigen. Benutzername und Passwort erscheinen nur einmal – in die Einstellungen kopieren.",
+            "options": []
+        },
+        {
             "id": "documents",
             "label": "Dokumente anzeigen",
             "kind": "read",
@@ -655,9 +710,18 @@
                     "choices": [
                         ["", "alle"],
                         ["draft", "Entwurf"],
-                        ["in-progress", "in Arbeit"],
-                        ["signed", "unterschrieben"],
-                        ["withdrawn", "zurückgezogen"],
+                        [
+                            "in-progress",
+                            "in Arbeit"
+                        ],
+                        [
+                            "signed",
+                            "unterschrieben"
+                        ],
+                        [
+                            "withdrawn",
+                            "zurückgezogen"
+                        ],
                         ["rejected", "abgelehnt"]
                     ]
                 }

@@ -5,6 +5,7 @@ namespace App\Plugins;
 /**
  * Ergebnis einer Plugin-Aktion. Die Oberfläche zeigt Meldung, optional eine
  * Tabelle und – bei Übernahmen – eine Vorschau mit Auswahl («Übernehmen»).
+ * withLink(): Knopf «Öffnen» zu einer https-Adresse (neuer Tab), z. B. Freigabe beim Dienst.
  */
 final class ActionResult
 {
@@ -19,6 +20,21 @@ final class ActionResult
         public readonly bool $preview = false,
         public readonly string $status = 'success',
     ) {}
+
+    /** @var list<array{label: string, url: string}> */
+    private array $links = [];
+
+    /**
+     * Link als Knopf im Ergebnis (nur https://, öffnet in neuem Tab).
+     */
+    public function withLink(string $label, string $url): self
+    {
+        if (str_starts_with($url, 'https://')) {
+            $this->links[] = ['label' => $label, 'url' => $url];
+        }
+
+        return $this;
+    }
 
     public static function ok(string $message): self
     {
@@ -63,6 +79,7 @@ final class ActionResult
             'columns' => $this->columns,
             'rows' => $this->rows,
             'preview' => $this->preview,
+            'links' => $this->links,
         ];
     }
 }

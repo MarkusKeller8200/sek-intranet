@@ -8,6 +8,7 @@ use App\Plugins\DemoResponder;
 use App\Plugins\PluginContext;
 use Illuminate\Http\Client\Response;
 use RuntimeException;
+use Throwable;
 
 /**
  * DeepSign (DeepCloud AG): elektronische Unterschrift. Konzept: docs/KONZEPT-DEEPSIGN.md, Meilenstein
@@ -30,6 +31,11 @@ class Plugin extends BasePlugin implements DemoResponder
     public const DEMO_OBSERVER = 'c4d5e6f7-8a9b-4c0d-9e1f-2a3b4c5d6e7f';
 
     private const DOCUMENT_STATUS = ['draft', 'in-progress', 'signed', 'withdrawn', 'rejected'];
+
+    /** Umgebungen (Einstellung «environment» = Adresse der Anmeldung). */
+    public const PRODUCTION = 'https://deepcloud.swiss';
+
+    public const TEST = 'https://int.deepcloud.swiss';
 
     public function demoActive(PluginContext $ctx): bool
     {
@@ -58,17 +64,72 @@ class Plugin extends BasePlugin implements DemoResponder
         }
 
         $count = (int) ($response->json('size') ?? count((array) $response->json('documents')));
+        $message = ($ctx->demo() ? 'Demo-Modus: ' : 'Verbunden mit DeepSign: ')."{$count} Dokumente sichtbar.";
 
-        return ['ok' => true, 'message' => ($ctx->demo() ? 'Demo-Modus: ' : 'Verbunden mit DeepSign: ')."{$count} Dokumente sichtbar."];
+        // Service-Benutzer und Firmen (users/me, nur Produktion dokumentiert) – nur als Zusatz
+        if ($ctx->demo() || self::environment($ctx) === self::PRODUCTION) {
+            try {
+                $me = $ctx->call('me');
+                if ($me->successful()) {
+                    $name = (string) ($me->json('display_name') ?? $me->json('email') ?? $me->json('username') ?? '');
+                    $companies = array_values(array_filter(array_map(
+                        fn (mixed $c): string => is_array($c) ? (string) ($c['display_name'] ?? $c['name'] ?? '') : '',
+                        (array) $me->json('companies'),
+                    )));
+                    $message .= ($name !== '' ? " Service-Benutzer: {$name}" : '').($companies !== [] ? ' ('.implode(', ', $companies).')' : '').'.';
+                }
+            } catch (Throwable) {
+                // users/me ist nur ein Zusatz
+            }
+        }
+
+        return ['ok' => true, 'message' => str_replace('..', '.', $message)];
     }
 
     public function action(string $action, PluginContext $ctx, array $options): ActionResult
     {
         return match ($action) {
+            'service-user' => $this->serviceUser($ctx),
             'documents' => $this->documents($ctx, (string) ($options['status'] ?? '')),
             'modes' => $this->modes($ctx),
             default => parent::action($action, $ctx, $options),
         };
+    }
+
+    /**
+     * Link zu DeepAdmin: Die Schule meldet sich mit ihrem DeepCloud-Konto an und erlaubt dem Intranet den Zugriff.
+     * DeepAdmin zeigt Benutzername und Passwort des neuen Service-Benutzers einmal an (copy_paste).
+     */
+    private function serviceUser(PluginContext $ctx): ActionResult
+    {
+        $clientId = $ctx->secret('client_id');
+        if ($clientId === null) {
+            return ActionResult::warning('Zuerst den Partner-Client (client_id) von DeepCloud in den Einstellungen eintragen.');
+        }
+
+        $url = self::serviceUserUrl(self::environment($ctx), $clientId);
+
+        return ActionResult::ok(
+            'In DeepAdmin ('.(self::environment($ctx) === self::PRODUCTION ? 'Produktion' : 'Test').') mit dem DeepCloud-Konto der Schule anmelden '
+            .'und den Zugriff bestätigen. Benutzername und Passwort erscheinen nur einmal: in die Einstellungen kopieren, speichern, '
+            .'dann «Verbindung testen».'
+        )->withLink('DeepAdmin öffnen', $url);
+    }
+
+    public static function serviceUserUrl(string $environment, string $clientId): string
+    {
+        $admin = $environment === self::TEST ? 'https://admin.int.deepbox.swiss' : 'https://admin.deepbox.swiss';
+
+        return $admin.'/third-party-connection/?'.http_build_query([
+            'response_type' => 'service_account',
+            'client_id' => $clientId,
+            'response_mode' => 'copy_paste',
+        ]);
+    }
+
+    private static function environment(PluginContext $ctx): string
+    {
+        return $ctx->setting('environment') === self::TEST ? self::TEST : self::PRODUCTION;
     }
 
     private function documents(PluginContext $ctx, string $status): ActionResult
@@ -153,6 +214,10 @@ class Plugin extends BasePlugin implements DemoResponder
         }
 
         return match ((string) $endpoint['id']) {
+            'me' => ['status' => 200, 'json' => [
+                'display_name' => 'Intranet SekBülach (Demo)', 'email' => '0f1e2d3c-demo@in.deepcloud.swiss',
+                'companies' => [['group_id' => '0c1d2e3f-4a5b-4c6d-8e7f-9a0b1c2d3e4f', 'display_name' => 'Sekundarschule Bülach (Demo)']],
+            ]],
             'overview' => ['status' => 200, 'json' => self::demoOverview((string) ($query['filterDocumentStatus'] ?? ''), (int) ($query['limit'] ?? 10), (int) ($query['offset'] ?? 0))],
             'available-modes' => ['status' => 200, 'json' => [
                 'timestamp' => (object) [],

@@ -15,6 +15,10 @@ laufend unter **Unveröffentlicht**. Ab 0.32.0 entsteht eine Version nur bei ein
   Partner-Client (verschlüsselt), Verbindung testen, Dokumente und Signaturstufen anzeigen, API-Tester mit
   18 Endpunkten. **Demo-Modus** mit simulierten Antworten, solange kein Zugang vorhanden ist (auf dem Testserver
   immer). Neue Kern-Schnittstelle `DemoResponder` für Plugins mit Demo-Modus.
+- **DeepSign: Service-Benutzer erstellen (#83):** Aktion öffnet DeepAdmin, um den Service-Benutzer für das Intranet
+  freizugeben (Benutzername und Passwort werden einmal angezeigt); Einstellung «Umgebung» Test/Produktion und
+  «API-Adresse»; «Verbindung testen» zeigt den Service-Benutzer und seine Firmen. Plugin-Aktionen können Links
+  zurückgeben, Einstellungen ohne Wert nehmen die Vorgabe aus `plugin.json`.
 - **API-Tester mit Beispielwerten (#82):** Parameter und Body sind vorausgefüllt; «Beispiel einsetzen», «Felder
   löschen», IDs aus der letzten Antwort für Pfadparameter, «Mögliche Werte» mit «Einfügen», «Formatieren» und
   laufender JSON-Prüfung – in allen Plugins und im Tester der eigenen REST-API. Die API-Ansicht (Scalar) zeigt

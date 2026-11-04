@@ -75,6 +75,28 @@ DeepSign (api.sign.deepbox.swiss)
   (404 unbekannte ID, 400 ungültige E-Mail). Auf einem Server ausserhalb der Schweiz immer eingeschaltet.
 - Aktionen «Dokumente anzeigen» und «Signaturstufen anzeigen»; Tests mit `Http::fake()` (Token, 401, 429).
 
+## Zugang einrichten (#83)
+
+Quelle: [API Access Setup](https://apidocs.deepcloud.swiss/deepsign-api-docs/setup_overview.html).
+
+1. **Partner-Registrierung (einmalig):** Anfrage an development@deepcloud.swiss. DeepCloud gibt `client_id` und
+   `client_secret` (Methode Client-Secret; alternativ JWKS – noch nicht umgesetzt). Übergabe der Service-Benutzer:
+   «Manual Copy-Paste» (empfohlen) oder Callback-URL (Redirect-URI muss registriert sein).
+2. **Service-Benutzer erstellen:** Aktion «Service-Benutzer erstellen» öffnet
+   `https://admin.deepbox.swiss/third-party-connection/?response_type=service_account&client_id=…&response_mode=copy_paste`
+   (Test: `admin.int.deepbox.swiss`). Die Schule meldet sich mit ihrem DeepCloud-Konto an und bestätigt. Benutzername
+   (`…@in.deepcloud.swiss`) und Passwort erscheinen **nur einmal** und kommen in die Einstellungen.
+3. **Token:** `grant_type=password` mit Service-Benutzer und Partner-Client (`deepcloud.swiss` bzw.
+   `int.deepcloud.swiss`). Token gilt 15 Minuten und wird zwischengespeichert.
+4. **Prüfen:** «Verbindung testen» ruft die Übersicht und `GET https://deepcloud.swiss/api/v1/users/me` (Service-Benutzer
+   und Firmen) auf.
+
+- **Testumgebung vorhanden:** `int.deepcloud.swiss` / `admin.int.deepbox.swiss`; Testkonten akzeptieren eine
+  Test-Kreditkarte. Die API-Adresse der Testumgebung ist nicht dokumentiert → bei DeepCloud erfragen (Einstellung
+  «API-Adresse»).
+- Später auf dem Schweizer Server: Übergabe per `response_mode=form_post` an eine registrierte Redirect-URI (Felder
+  `state`, `service_account_username`, `service_account_password` …), Anmeldung per JWKS statt `client_secret`.
+
 ## Datenschutz
 
 Unterschriebene Rapporte sind Personendaten. Echte Dokumente erst in der Produktion bei Infomaniak
@@ -85,6 +107,6 @@ Vertrag zur Auftragsbearbeitung, Aufbewahrungsfrist der unterschriebenen Dokumen
 
 1. API-Zugang (`development@deepcloud.swiss`), Service-Benutzer und Partner-Client einrichten; Kosten
 2. Signaturstufe für Monatsrapporte (einfach oder fortgeschritten), Identifikation der Unterzeichnenden
-3. Gibt es ein Testsystem bzw. eine Sandbox?
+3. ~~Gibt es ein Testsystem bzw. eine Sandbox?~~ Ja (`int.deepcloud.swiss`); offen: API-Adresse der Testumgebung
 4. Serverstandort, Vertrag zur Auftragsbearbeitung, IDG Kanton Zürich
 5. Verhalten bei abgelehnter Unterschrift, Sprache der Einladungen (Deutsch)

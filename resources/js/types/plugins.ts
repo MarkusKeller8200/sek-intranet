@@ -115,6 +115,8 @@ export type PluginResult = {
     columns?: { key: string; label: string }[];
     rows?: Record<string, unknown>[];
     preview?: boolean;
+    /** Links aus einer Aktion (nur https, neuer Tab) */
+    links?: { label: string; url: string }[];
     log?: string[];
     http_status?: number;
     ms?: number;

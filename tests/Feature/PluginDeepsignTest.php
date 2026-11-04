@@ -40,7 +40,7 @@ class PluginDeepsignTest extends TestCase
     public function test_manifest_with_examples_for_every_parameter(): void
     {
         $manifest = app(PluginManager::class)->manifest('deepsign');
-        $this->assertCount(18, $manifest->endpoints());
+        $this->assertCount(19, $manifest->endpoints());
         $this->assertSame('oauth2_password', $manifest->auth()['type']);
         $this->assertEqualsCanonicalizing(['username', 'password', 'client_id', 'client_secret'], $manifest->secretKeys());
 
@@ -78,7 +78,7 @@ class PluginDeepsignTest extends TestCase
 
         $this->postJson('/plugins/deepsign/test')->assertOk()
             ->assertJson(['ok' => true])
-            ->assertJsonPath('message', 'Demo-Modus: 3 Dokumente sichtbar.');
+            ->assertJsonPath('message', 'Demo-Modus: 3 Dokumente sichtbar. Service-Benutzer: Intranet SekBülach (Demo) (Sekundarschule Bülach (Demo)).');
 
         $this->postJson('/plugins/deepsign/aktion/documents', ['options' => ['status' => 'signed']])->assertOk()
             ->assertJsonPath('rows.0.status', 'unterschrieben')
@@ -125,7 +125,7 @@ class PluginDeepsignTest extends TestCase
         ]);
         $this->signInAs('admin');
 
-        $this->postJson('/plugins/deepsign/test')->assertJsonPath('message', 'Demo-Modus: 3 Dokumente sichtbar.');
+        $this->postJson('/plugins/deepsign/test')->assertJsonPath('message', fn (string $m): bool => str_starts_with($m, 'Demo-Modus: 3 Dokumente sichtbar.'));
         Http::assertNothingSent();
     }
 
@@ -134,13 +134,16 @@ class PluginDeepsignTest extends TestCase
         Http::fake([
             self::TOKEN_URL => Http::response(['access_token' => 'token-abc-123456', 'expires_in' => 300]),
             'api.sign.deepbox.swiss/api/v1/overview*' => Http::response(['documents' => [], 'pagination' => ['offset' => 0, 'limit' => 1], 'size' => 7]),
+            'deepcloud.swiss/api/v1/users/me' => Http::response(['display_name' => 'Intranet Testschule', 'companies' => [['group_id' => 'g-1', 'display_name' => 'Testschule (erfunden)']]]),
         ]);
         $this->realAccount();
         $this->signInAs('admin');
 
         $this->postJson('/plugins/deepsign/test')->assertOk()
             ->assertJson(['ok' => true])
-            ->assertJsonPath('message', 'Verbunden mit DeepSign: 7 Dokumente sichtbar.');
+            ->assertJsonPath('message', 'Verbunden mit DeepSign: 7 Dokumente sichtbar. Service-Benutzer: Intranet Testschule (Testschule (erfunden)).');
+        Http::assertSent(fn (Request $r): bool => $r->url() === 'https://deepcloud.swiss/api/v1/users/me'
+            && $r->header('Authorization') === ['Bearer token-abc-123456']);
 
         Http::assertSent(fn (Request $r): bool => $r->url() === self::TOKEN_URL
             && $r['grant_type'] === 'password' && $r['username'] === 'service-sekbuelach'
@@ -179,5 +182,31 @@ class PluginDeepsignTest extends TestCase
         $message = (string) $this->postJson('/plugins/deepsign/test')->json('message');
         $this->assertStringContainsString('Anmeldung beim Dienst fehlgeschlagen', $message);
         $this->assertStringNotContainsString('geheimes-passwort-123', $message);
+    }
+
+    public function test_service_user_link_for_production_and_test(): void
+    {
+        $this->assertSame(
+            'https://admin.deepbox.swiss/third-party-connection/?response_type=service_account&client_id=partner-client-456&response_mode=copy_paste',
+            Plugin::serviceUserUrl(Plugin::PRODUCTION, 'partner-client-456'),
+        );
+        $this->assertStringStartsWith('https://admin.int.deepbox.swiss/third-party-connection/?', Plugin::serviceUserUrl(Plugin::TEST, 'x'));
+
+        Http::fake();
+        $this->signInAs('admin');
+
+        // Ohne client_id: Hinweis statt Link
+        $this->enable(['demo' => true]);
+        $this->postJson('/plugins/deepsign/aktion/service-user', ['options' => []])->assertOk()
+            ->assertJsonPath('status', 'warning')
+            ->assertJsonPath('links', []);
+
+        // Nur Partner-Client eingetragen (noch kein Service-Benutzer): Aktion läuft, Link zur Testumgebung
+        config(['intranet.server_in_switzerland' => true]);
+        $this->enable(['demo' => false, 'environment' => Plugin::TEST, 'client_id' => 'partner-client-456', 'client_secret' => 'partner-secret-789']);
+        $this->postJson('/plugins/deepsign/aktion/service-user', ['options' => []])->assertOk()
+            ->assertJsonPath('status', 'success')
+            ->assertJsonPath('links.0.url', Plugin::serviceUserUrl(Plugin::TEST, 'partner-client-456'));
+        Http::assertNothingSent();
     }
 }

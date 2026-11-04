@@ -1,3 +1,4 @@
+import { ExternalLink } from 'lucide-react';
 import { useState } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -89,6 +90,24 @@ export default function PluginResultView({
                     <span className="ml-2 opacity-70">({result.ms} ms)</span>
                 )}
             </div>
+
+            {(result.links ?? []).length > 0 && (
+                <div className="flex flex-wrap gap-2">
+                    {(result.links ?? [])
+                        .filter((l) => l.url.startsWith('https://'))
+                        .map((l) => (
+                            <Button key={l.url} asChild variant="outline">
+                                <a
+                                    href={l.url}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                >
+                                    <ExternalLink /> {l.label}
+                                </a>
+                            </Button>
+                        ))}
+                </div>
+            )}
 
             {rows.length > 0 && result.columns && (
                 <div className="max-h-[28rem] overflow-auto rounded-md border">

@@ -206,6 +206,13 @@ eine Einstellung `demo`). Dann geht keine Anfrage an den Dienst und keine Anmeld
 `"required_unless": "demo"` sind im Demo-Modus nicht nötig. Beispiel: DeepSign (auf einem Server ausserhalb der
 Schweiz immer im Demo-Modus).
 
+### Links und Vorgaben
+
+- `ActionResult::ok(…)->withLink('Öffnen', 'https://…')` zeigt im Ergebnis einen Knopf, der die Adresse in einem neuen
+  Tab öffnet (nur `https://`), z. B. «Service-Benutzer erstellen» bei DeepSign.
+- `$ctx->setting('x')` liefert ohne gespeicherten Wert die Vorgabe aus `plugin.json` (`settings[].default`); auch
+  `{x}` in Adressen und `token_url` wird so ersetzt.
+
 ### Plugin.php
 
 ```php

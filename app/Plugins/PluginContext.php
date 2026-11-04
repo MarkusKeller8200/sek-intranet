@@ -43,11 +43,22 @@ final class PluginContext
         private readonly UserRepository $userRepository,
     ) {}
 
+    /**
+     * Einstellung; ohne gespeicherten Wert gilt die Vorgabe aus plugin.json («default»), dann $default.
+     */
     public function setting(string $key, mixed $default = null): mixed
     {
         $value = $this->settings[$key] ?? null;
+        if ($value !== null && $value !== '') {
+            return $value;
+        }
+        foreach ($this->manifest->settings() as $setting) {
+            if (($setting['key'] ?? null) === $key && isset($setting['default']) && $setting['default'] !== '') {
+                return $setting['default'];
+            }
+        }
 
-        return $value === null || $value === '' ? $default : $value;
+        return $default;
     }
 
     public function secret(string $key): ?string
