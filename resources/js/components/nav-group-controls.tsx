@@ -17,8 +17,7 @@ export default function NavGroupControls({
 }: {
     className?: string;
 }) {
-    const groups = usePage<{ navigation: ModuleNavGroup[] }>().props
-        .navigation;
+    const groups = usePage<{ navigation: ModuleNavGroup[] }>().props.navigation;
     const { isMobile } = useSidebar();
     const { isCurrentOrParentUrl } = useCurrentUrl();
     const { stored, mobile, single } = useNavGroups();
