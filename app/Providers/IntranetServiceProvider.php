@@ -73,7 +73,7 @@ class IntranetServiceProvider extends ServiceProvider
     public function boot(): void
     {
         // Unterschriften ohne Modul (Verwaltung → Unterschriften, Plugin-Aktion «Dokument senden»): PDF im Kern ablegen
-        Signatures::listen(Signatures::MANUAL, fn (string $event, array $request, ?string $pdf): ?bool => $this->app->make(Signatures::class)->manualEvent($event, $request, $pdf));
+        Signatures::listen(Signatures::MANUAL, fn (string $event, array $request, ?string $pdf): bool => $this->app->make(Signatures::class)->manualEvent($event, $request, $pdf));
 
         Auth::provider('intranet', fn ($app): RepositoryUserProvider => new RepositoryUserProvider(
             $app->make(UserRepository::class),
