@@ -133,11 +133,7 @@
                         "name": "signatureMode",
                         "type": "string",
                         "help": "timestamp = einfach, advanced = fortgeschritten (2FA), qualified = qualifiziert.",
-                        "choices": [
-                            "timestamp",
-                            "advanced",
-                            "qualified"
-                        ],
+                        "choices": ["timestamp", "advanced", "qualified"],
                         "example": "timestamp"
                     },
                     {
@@ -175,10 +171,7 @@
                         "name": "callbackEventTypes",
                         "type": "array",
                         "help": "Ereignisse für den Webhook.",
-                        "example": [
-                            "signee-completed",
-                            "document-completed"
-                        ]
+                        "example": ["signee-completed", "document-completed"]
                     }
                 ]
             },
@@ -604,14 +597,8 @@
             "label": "Umgebung",
             "default": "https://deepcloud.swiss",
             "choices": [
-                [
-                    "https://deepcloud.swiss",
-                    "Produktion (deepcloud.swiss)"
-                ],
-                [
-                    "https://int.deepcloud.swiss",
-                    "Test (int.deepcloud.swiss)"
-                ]
+                ["https://deepcloud.swiss", "Produktion (deepcloud.swiss)"],
+                ["https://int.deepcloud.swiss", "Test (int.deepcloud.swiss)"]
             ],
             "help": "Anmeldung und Erstellen des Service-Benutzers (DeepAdmin) in dieser Umgebung."
         },
@@ -666,14 +653,8 @@
             "label": "Signaturstufe (Vorgabe)",
             "default": "timestamp",
             "choices": [
-                [
-                    "timestamp",
-                    "Einfach (Zeitstempel)"
-                ],
-                [
-                    "advanced",
-                    "Fortgeschritten (2FA)"
-                ],
+                ["timestamp", "Einfach (Zeitstempel)"],
+                ["advanced", "Fortgeschritten (2FA)"],
                 ["qualified", "Qualifiziert"]
             ],
             "help": "Entscheid offen (#36)."
@@ -710,18 +691,9 @@
                     "choices": [
                         ["", "alle"],
                         ["draft", "Entwurf"],
-                        [
-                            "in-progress",
-                            "in Arbeit"
-                        ],
-                        [
-                            "signed",
-                            "unterschrieben"
-                        ],
-                        [
-                            "withdrawn",
-                            "zurückgezogen"
-                        ],
+                        ["in-progress", "in Arbeit"],
+                        ["signed", "unterschrieben"],
+                        ["withdrawn", "zurückgezogen"],
                         ["rejected", "abgelehnt"]
                     ]
                 }
