@@ -13,6 +13,7 @@ import navigation from '@/i18n/navigation.json';
 import options from '@/i18n/options.json';
 import pages from '@/i18n/pages.json';
 import people from '@/i18n/people.json';
+import shortForms from '@/i18n/short.json';
 import system from '@/i18n/system.json';
 
 /** «short»: Abkürzung, wenn für die Bezeichnung der Platz nicht reicht (FitLabel, #78). */
@@ -157,6 +158,20 @@ export function translate(text: string): string | null {
     missing.add(key);
 
     return null;
+}
+
+/**
+ * Kurzform einer Bezeichnung für zu wenig Platz (#81), z. B. Spaltentitel «Bezeichnung offiziell» → «Bez. offiz.».
+ * Katalog resources/js/i18n/short.json: «Deutscher Text»: [Deutsch, English, Züritüütsch]; null, wenn keine Kurzform.
+ */
+export function shortOf(label: string, language: Language = current): string | null {
+    const forms = (shortForms as Record<string, string[]>)[keyOf(label).key];
+    if (!forms) {
+        return null;
+    }
+    const column = language === 'de-CH' ? 0 : COLUMNS.indexOf(language) + 1;
+
+    return forms[column] || forms[0] || null;
 }
 
 /** Für Texte, die nicht im DOM landen (z. B. confirm, document.title). */

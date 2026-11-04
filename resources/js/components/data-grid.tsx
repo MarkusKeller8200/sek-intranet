@@ -37,6 +37,7 @@ import type {
     ReactNode,
 } from 'react';
 import { toast } from 'sonner';
+import FitLabel from '@/components/fit-label';
 import FilterCell from '@/components/grid/filter-cell';
 import OptionLabel from '@/components/grid/option-label';
 import Popover from '@/components/grid/popover';
@@ -1997,9 +1998,9 @@ export default function DataGrid<T extends GridRow>({
                                                 }
                                                 title="Sortieren (Umschalt+Klick: weitere Stufe)"
                                             >
-                                                <span className="truncate">
-                                                    {column.title}
-                                                </span>
+                                                <FitLabel
+                                                    label={column.title}
+                                                />
                                                 {rule ? (
                                                     rule.desc ? (
                                                         <ArrowDown className="size-3.5 shrink-0" />

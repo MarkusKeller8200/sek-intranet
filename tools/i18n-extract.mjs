@@ -112,7 +112,10 @@ for (const block of [
 const catalog = {};
 for (const dir of [catalogDir, ...moduleCatalogDirs]) {
     for (const name of fs.existsSync(dir) ? fs.readdirSync(dir) : []) {
-        if (name.endsWith('.json') && name !== 'ignore.json')
+        if (
+            name.endsWith('.json') &&
+            !['ignore.json', 'short.json'].includes(name)
+        )
             Object.assign(
                 catalog,
                 JSON.parse(fs.readFileSync(path.join(dir, name), 'utf8')),
@@ -136,5 +139,30 @@ if (process.argv.includes('--json')) {
     );
     for (const [t, s] of missing.slice(0, 400)) console.log(`- ${t}    (${s})`);
 }
-// In CI (--check): fehlende Übersetzungen lassen den Lauf scheitern
-if (process.argv.includes('--check') && missing.length > 0) process.exit(1);
+// Kurzformen (short.json, #81): je Sprache vorhanden und nicht länger als die Bezeichnung
+const shortFile = path.join(catalogDir, 'short.json');
+const shortProblems = [];
+if (fs.existsSync(shortFile)) {
+    const forms = JSON.parse(fs.readFileSync(shortFile, 'utf8'));
+    for (const [german, list] of Object.entries(forms)) {
+        const longs = [german, ...(catalog[german] ?? [])];
+        if (!Array.isArray(list) || list.length !== 3 || list.some((f) => !f))
+            shortProblems.push(`${german}: drei Kurzformen nötig (DE, EN, ZH)`);
+        else if (longs.length !== 3)
+            shortProblems.push(`${german}: Bezeichnung ohne Übersetzung`);
+        else
+            list.forEach((f, i) => {
+                if (f.length > longs[i].length)
+                    shortProblems.push(
+                        `${german}: Kurzform «${f}» länger als «${longs[i]}»`,
+                    );
+            });
+    }
+}
+for (const p of shortProblems) console.log(`- Kurzform: ${p}`);
+// In CI (--check): fehlende Übersetzungen oder ungültige Kurzformen lassen den Lauf scheitern
+if (
+    process.argv.includes('--check') &&
+    (missing.length > 0 || shortProblems.length > 0)
+)
+    process.exit(1);

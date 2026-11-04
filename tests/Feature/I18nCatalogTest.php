@@ -15,7 +15,7 @@ class I18nCatalogTest extends TestCase
     {
         $catalogs = [];
         foreach (glob(resource_path('js/i18n/*.json')) ?: [] as $file) {
-            if (basename($file) === 'ignore.json') {
+            if (in_array(basename($file), ['ignore.json', 'short.json'], true)) {
                 continue;
             }
             $data = json_decode((string) file_get_contents($file), true);

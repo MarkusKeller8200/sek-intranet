@@ -1,5 +1,7 @@
 import * as React from "react"
 
+import FitLabel from "@/components/fit-label"
+import { shortOf } from "@/lib/i18n"
 import { cn } from "@/lib/utils"
 
 function Table({ className, ...props }: React.ComponentProps<"table">) {
@@ -36,7 +38,8 @@ function TableRow({ className, ...props }: React.ComponentProps<"tr">) {
   )
 }
 
-function TableHead({ className, ...props }: React.ComponentProps<"th">) {
+/** Reiner Text mit Kurzform im Katalog (short.json) schaltet bei zu wenig Platz um (#81). */
+function TableHead({ className, children, ...props }: React.ComponentProps<"th">) {
   return (
     <th
       data-slot="table-head"
@@ -45,7 +48,9 @@ function TableHead({ className, ...props }: React.ComponentProps<"th">) {
         className
       )}
       {...props}
-    />
+    >
+      {typeof children === "string" && shortOf(children, "de-CH") ? <FitLabel label={children} /> : children}
+    </th>
   )
 }
 

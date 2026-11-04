@@ -39,7 +39,12 @@ Sprachwahl in den Einstellungen, Fallback auf die Ausgangssprache).
 2. Im selben Commit in den passenden Katalog eintragen (Englisch und Zürichdeutsch).
 3. `node tools/i18n-extract.mjs` meldet fehlende Einträge (`--all` zeigt alle, `--json` maschinenlesbar).
    Wörter, die nie übersetzt werden (Eigennamen), kommen in `ignore.json`.
-4. `I18nCatalogTest` prüft: gültiges JSON, je Eintrag zwei nicht leere Übersetzungen, gleich viele `{n}`.
+4. **Kurzformen** (#81): Reicht der Platz für eine Bezeichnung nicht (z. B. Spaltentitel in Tabellen), zeigt
+   `FitLabel` die Kurzform aus `short.json`: `"Bezeichnung offiziell": ["Bez. offiz.", "Off. name", "Bez. offiz."]`
+   (Deutsch, Englisch, Zürichdeutsch). Die volle Bezeichnung bleibt Tooltip und für Screenreader. Eingebaut in die
+   Spaltenköpfe der Datentabelle und in `TableHead` mit reinem Text. Die Prüfung meldet fehlende oder zu lange
+   Kurzformen.
+5. `I18nCatalogTest` prüft: gültiges JSON, je Eintrag zwei nicht leere Übersetzungen, gleich viele `{n}`.
 
 ## Grenzen und später
 

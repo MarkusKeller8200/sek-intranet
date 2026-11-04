@@ -23,6 +23,8 @@ laufend unter **Unveröffentlicht**. Ab 0.32.0 entsteht eine Version nur bei ein
 
 ### Neu
 
+- **Kurzform bei zu wenig Platz (#81):** Spaltentitel in Tabellen wechseln auf eine Abkürzung, wenn die Spalte
+  zu schmal ist (z. B. «Bezeichnung offiziell» → «Bez. offiz.»), in allen Sprachen; volle Bezeichnung als Tooltip.
 - **Vermerk unter dem Logo (#80):** «© 2026 developed by Markus Keller – in Eigeninitiative für die SekBülach» (sehr kleine Schrift) in der
   Seitenleiste und auf der Anmeldeseite.
 - **Glossar-PDF und Datenstrukturen (#79):** Labels im PDF in den Farben der Tabelle; «Datenstrukturen» zeigt neu

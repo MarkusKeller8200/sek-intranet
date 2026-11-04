@@ -1,9 +1,13 @@
 import { useLayoutEffect, useRef, useState } from 'react';
+import { useLanguage } from '@/components/language-picker';
+import { shortOf } from '@/lib/i18n';
 import { cn } from '@/lib/utils';
 
 /**
- * Bezeichnung, die bei zu wenig Platz auf die Abkürzung umschaltet (#78, z. B. Sprachen: «Züritüütsch» → «ZH»).
- * Die volle Bezeichnung steht dann als Tooltip und für Screenreader zur Verfügung.
+ * Bezeichnung, die bei zu wenig Platz auf die Kurzform umschaltet (#78, #81; z. B. «Züritüütsch» → «ZH»).
+ * Ohne «short» kommt die Kurzform aus dem Katalog resources/js/i18n/short.json (passend zur Sprache);
+ * gibt es keine, wird die Bezeichnung wie bisher mit «…» gekürzt. Die volle Bezeichnung steht als
+ * Tooltip und für Screenreader zur Verfügung.
  */
 export default function FitLabel({
     label,
@@ -11,9 +15,11 @@ export default function FitLabel({
     className,
 }: {
     label: string;
-    short: string;
+    short?: string;
     className?: string;
 }) {
+    const language = useLanguage();
+    const abbreviation = short ?? shortOf(label, language);
     const box = useRef<HTMLSpanElement>(null);
     const probe = useRef<HTMLSpanElement>(null);
     const [fits, setFits] = useState(true);
@@ -29,11 +35,23 @@ export default function FitLabel({
         if (typeof ResizeObserver === 'undefined') {
             return;
         }
+        // auch die Messprobe beobachten: die Übersetzung im DOM ändert ihre Breite
         const observer = new ResizeObserver(check);
         observer.observe(el);
+        if (probe.current) {
+            observer.observe(probe.current);
+        }
 
         return () => observer.disconnect();
-    }, [label]);
+    }, [label, abbreviation]);
+
+    if (!abbreviation) {
+        return (
+            <span className={cn('block min-w-0 truncate', className)}>
+                {label}
+            </span>
+        );
+    }
 
     return (
         <span
@@ -56,7 +74,10 @@ export default function FitLabel({
                 label
             ) : (
                 <abbr title={label} className="no-underline">
-                    {short}
+                    <span aria-hidden translate="no">
+                        {abbreviation}
+                    </span>
+                    <span className="sr-only">{label}</span>
                 </abbr>
             )}
         </span>
