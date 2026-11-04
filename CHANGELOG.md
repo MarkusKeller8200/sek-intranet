@@ -11,8 +11,6 @@ laufend unter **Unveröffentlicht**. Ab 0.32.0 entsteht eine Version nur bei ein
 
 ### Für Mitarbeitende
 
-- [view-glossary] Abkürzungen wie «VSA» oder «SL» sind fein gepunktet unterstrichen: darüberfahren oder antippen
-  zeigt die Erklärung aus dem Glossar (abschaltbar unter Einstellungen → Darstellung).
 - Anmeldung neu mit Rolle und 8-stelligem PIN statt gemeinsamem Passwort; neue Rollen Schüler:in, Eltern und
   Externe (vorerst nur Kommunikation und Wissen & Ablage).
 - [manage-users] Einstellungen → Zugang (PIN): PIN je Rolle setzen, ändern oder entfernen.
@@ -21,7 +19,8 @@ laufend unter **Unveröffentlicht**. Ab 0.32.0 entsteht eine Version nur bei ein
 - [manage-users] Einstellungen → Module: Rechte der Module je Rolle ein- und ausschalten.
 - [view-glossary] Glossar (Menü Wissen): Abkürzungen und Begriffe der Volksschule – offiziell und wie wir sie
   verwenden, nach Kategorie gruppiert, mit Suche und Export als Excel, PDF (Format, Umfang und Gruppierung
-  wählbar) oder Markdown.
+  wählbar) oder Markdown. Abkürzungen wie «VSA» sind im Intranet fein gepunktet unterstrichen: darüberfahren oder
+  antippen zeigt die Erklärung.
 
 ### Neu
 

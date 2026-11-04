@@ -94,6 +94,9 @@ Aus dem GitHub-Blueprint, Details in `docs/GITHUB-ABLAUF.md`.
   ist keine Release-Freigabe. Tag und GitHub-Release legt der Workflow `release.yml` an.
 - **Release abschliessen:** Hat der Release-Meilenstein keine offenen Punkte mehr, im Chat ankündigen, was
   hineinkommt, und nach Bestätigung das Release erstellen; danach Meilenstein schliessen.
+- **Meilensteine nach Thema, Version beim Abschluss (ab 04.11.2026):** Meilensteine werden nach Thema angelegt
+  (z. B. «Glossar», «Workflow»). Ist ein Meilenstein erledigt und wird daraus ein Release, erhält er die
+  Versionsnummer an erster Stelle: «0.34.0 – Glossar» (wie «0.32.0 – GitHub-Ablauf & Versionierung»).
 - Meilensteine per REST-API oder Kommentar `/milestone …` auf dem Admin-Issue (`.github/blueprint/MILESTONE-ADMIN.md`).
 
 <!-- /blueprint:github-ablauf -->
