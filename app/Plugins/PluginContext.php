@@ -232,7 +232,8 @@ final class PluginContext
             if ($body !== null) {
                 $request = $request->attach($file['data_field'] ?? 'data', (string) json_encode($body, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES), 'data.json', ['Content-Type' => 'application/json']);
             }
-            $response = $request->send($method, $path);
+            // Laravel hängt die Teile nur an, wenn «multipart» in den Optionen steht
+            $response = $request->send($method, $path, ['multipart' => []]);
         } else {
             $response = $body === null
                 ? $request->send($method, $path)
