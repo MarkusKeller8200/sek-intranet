@@ -41,7 +41,8 @@ export default function GlossaryShow({
     andere: { id: string; abk: string; bez: string }[];
     kategorien: Record<string, string>;
     herkunft: Herkunft[];
-    bereiche: Record<string, string>;
+    /** «Intern genutzt in»: Bereich/Modul → Titel und Link (#60) */
+    bereiche: Record<string, { title: string; href: string | null }>;
     status: Record<string, string>;
     rechte: { edit: boolean; official: boolean };
 }) {
@@ -204,11 +205,26 @@ export default function GlossaryShow({
                                 </span>
                             </Row>
                             <Row label="Intern genutzt in">
-                                {e.genutzt_in.length > 0
-                                    ? e.genutzt_in
-                                          .map((b) => bereiche[b] ?? b)
-                                          .join(', ')
-                                    : '–'}
+                                <span className="flex flex-wrap gap-x-3 gap-y-1">
+                                    {e.genutzt_in.map((b) => {
+                                        const area = bereiche[b];
+
+                                        return area?.href ? (
+                                            <Link
+                                                key={b}
+                                                href={area.href}
+                                                className="text-primary underline-offset-2 hover:underline"
+                                            >
+                                                {area.title}
+                                            </Link>
+                                        ) : (
+                                            <span key={b}>
+                                                {area?.title ?? b}
+                                            </span>
+                                        );
+                                    })}
+                                    {e.genutzt_in.length === 0 && '–'}
+                                </span>
                             </Row>
                             {e.suchbegriffe && (
                                 <Row label="Suchbegriffe">{e.suchbegriffe}</Row>

@@ -11,6 +11,8 @@ laufend unter **Unveröffentlicht**. Ab 0.32.0 entsteht eine Version nur bei ein
 
 ### Für Mitarbeitende
 
+- [view-glossary] Abkürzungen wie «VSA» oder «SL» sind fein gepunktet unterstrichen: darüberfahren oder antippen
+  zeigt die Erklärung aus dem Glossar (abschaltbar unter Einstellungen → Darstellung).
 - Anmeldung neu mit Rolle und 8-stelligem PIN statt gemeinsamem Passwort; neue Rollen Schüler:in, Eltern und
   Externe (vorerst nur Kommunikation und Wissen & Ablage).
 - [manage-users] Einstellungen → Zugang (PIN): PIN je Rolle setzen, ändern oder entfernen.
@@ -23,6 +25,12 @@ laufend unter **Unveröffentlicht**. Ab 0.32.0 entsteht eine Version nur bei ein
 
 ### Neu
 
+- **Baustein «Begriff» (#60):** Abkürzungen aus dem Glossar sind fein gepunktet unterstrichen; beim Darüberfahren,
+  Fokussieren oder Antippen erscheinen Abkürzung, Bezeichnung und Kurzbeschreibung, ein Klick öffnet den Eintrag.
+  Mehrdeutige zeigen alle Bedeutungen. Farbe der Punkte im Farbkonzept (Theme), «Begriffe hervorheben» unter
+  Darstellung abschaltbar; «Intern genutzt in» im Glossar als Links; neuer GUI-Baustein «Begriff».
+- **Begriffe im Freitext (#61):** In Mitteilungen, Terminen, Abläufen und Markdown-Notizen werden Abkürzungen aus dem
+  Glossar beim Anzeigen erkannt und ausgezeichnet; der gespeicherte Text bleibt unverändert.
 - **Kurzform bei zu wenig Platz (#81):** Spaltentitel in Tabellen wechseln auf eine Abkürzung, wenn die Spalte
   zu schmal ist (z. B. «Bezeichnung offiziell» → «Bez. offiz.»), in allen Sprachen; volle Bezeichnung als Tooltip.
 - **Vermerk unter dem Logo (#80):** «© 2026 developed by Markus Keller – in Eigeninitiative für die SekBülach» (sehr kleine Schrift) in der

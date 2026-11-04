@@ -30,6 +30,7 @@ export type Auth = {
     can: {
         manageContent: boolean;
         manageUsers: boolean;
+        viewGlossary: boolean;
     };
     notifications?: NotificationSummary | null;
 };

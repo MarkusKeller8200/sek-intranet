@@ -1,11 +1,21 @@
 import type { ReactNode } from 'react';
+import { TermText } from '@/components/term-text';
 import { cn } from '@/lib/utils';
 
 /**
  * Markdown sicher anzeigen (ohne HTML): Überschriften (#, ##, ###), Absätze, Listen (-, *, 1.), **fett**, *kursiv*,
  * `Code`, Links [Text](https://…) und reine https-Links. Alles andere bleibt Text.
+ * Begriffe aus dem Glossar im Text werden ausgezeichnet (#61), nicht in Code und Links; `terms={false}` schaltet
+ * das ab.
  */
-function inline(text: string, keyBase: string): ReactNode[] {
+function inline(text: string, keyBase: string, terms = true): ReactNode[] {
+    const plain = (s: string, key: string): ReactNode => {
+        if (!terms) {
+            return s;
+        }
+
+        return <TermText key={key} text={s} />;
+    };
     const out: ReactNode[] = [];
     const re =
         /(\*\*[^*]+\*\*|\*[^*\s][^*]*\*|`[^`]+`|\[[^\]]+\]\((https?:\/\/[^)\s]+)\)|https?:\/\/[^\s)]+)/g;
@@ -14,12 +24,14 @@ function inline(text: string, keyBase: string): ReactNode[] {
     let i = 0;
     while ((m = re.exec(text)) !== null) {
         if (m.index > last) {
-            out.push(text.slice(last, m.index));
+            out.push(plain(text.slice(last, m.index), `${keyBase}-t${i}`));
         }
         const t = m[0];
         const key = `${keyBase}-${i++}`;
         if (t.startsWith('**')) {
-            out.push(<strong key={key}>{t.slice(2, -2)}</strong>);
+            out.push(
+                <strong key={key}>{plain(t.slice(2, -2), `${key}-t`)}</strong>,
+            );
         } else if (t.startsWith('`')) {
             out.push(
                 <code
@@ -55,12 +67,12 @@ function inline(text: string, keyBase: string): ReactNode[] {
                 </a>,
             );
         } else {
-            out.push(<em key={key}>{t.slice(1, -1)}</em>);
+            out.push(<em key={key}>{plain(t.slice(1, -1), `${key}-t`)}</em>);
         }
         last = m.index + t.length;
     }
     if (last < text.length) {
-        out.push(text.slice(last));
+        out.push(plain(text.slice(last), `${keyBase}-end`));
     }
 
     return out;
@@ -71,9 +83,12 @@ type Liste = { ordered: boolean; items: string[] };
 export default function Markdown({
     text,
     className,
+    terms = true,
 }: {
     text: string;
     className?: string;
+    /** Begriffe aus dem Glossar auszeichnen (#61) */
+    terms?: boolean;
 }) {
     const blocks: ReactNode[] = [];
     const lines = text.replace(/\r\n?/g, '\n').split('\n');
@@ -82,13 +97,13 @@ export default function Markdown({
     const flush = () => {
         if (para.length > 0) {
             const k = `p${blocks.length}`;
-            blocks.push(<p key={k}>{inline(para.join(' '), k)}</p>);
+            blocks.push(<p key={k}>{inline(para.join(' '), k, terms)}</p>);
             para = [];
         }
         if (list) {
             const k = `l${blocks.length}`;
             const items = list.items.map((it, i) => (
-                <li key={i}>{inline(it, `${k}-${i}`)}</li>
+                <li key={i}>{inline(it, `${k}-${i}`, terms)}</li>
             ));
             blocks.push(
                 list.ordered ? (
@@ -116,7 +131,7 @@ export default function Markdown({
                 h[1].length === 1 ? 'text-lg font-semibold' : 'font-semibold';
             blocks.push(
                 <p key={k} className={cls}>
-                    {inline(h[2], k)}
+                    {inline(h[2], k, terms)}
                 </p>,
             );
         } else if (li) {

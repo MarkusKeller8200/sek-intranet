@@ -5,6 +5,7 @@ import DeleteButton from '@/components/delete-button';
 import EmptyState from '@/components/empty-state';
 import OptionBadge from '@/components/option-badge';
 import PageHeader from '@/components/page-header';
+import { TermText } from '@/components/term-text';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
@@ -118,7 +119,9 @@ export default function EventsIndex({
                                             className="text-sm whitespace-pre-line text-muted-foreground"
                                             translate="no"
                                         >
-                                            {event.description}
+                                            <TermText
+                                                text={event.description}
+                                            />
                                         </p>
                                     )}
                                 </div>

@@ -196,6 +196,7 @@ Route::middleware('auth')->group(function () {
     Route::middleware('can:view-glossary')->group(function () {
         Route::get('glossar', [GlossaryController::class, 'index'])->name('glossary.index');
         Route::post('glossar/export', [GlossaryController::class, 'export'])->middleware('throttle:30,1')->name('glossary.export');
+        Route::get('glossar/begriffe', [GlossaryController::class, 'terms'])->middleware('throttle:120,1')->name('glossary.terms');
         Route::get('glossar/{id}', [GlossaryController::class, 'show'])->name('glossary.show');
     });
     Route::get('versionen', VersionController::class)->name('versions');

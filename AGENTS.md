@@ -28,6 +28,10 @@ Projekt: SekBülach Intranet, Prototyp. Stack und Konventionen wie IDA.
   kommt im selben Commit in einen Katalog `resources/js/i18n/*.json` als `"Deutsch": ["English", "Züritüütsch"]`
   (Zahlen als `{n}`). `node tools/i18n-extract.mjs` muss «0 fehlen» melden (läuft in `composer ci:check` mit `--check`). Daten (Namen, Inhalte) mit
   `translate="no"` schützen.
+- Begriffe aus dem Glossar (Abkürzungen wie «VSA», «SL») in Oberflächentexten mit dem Baustein «Begriff»
+  auszeichnen: `<Term match="SL">SL</Term>` oder `<Term id="…" />` (`components/ui/term.tsx`). Freitext aus Daten
+  (Mitteilungen, Termine, Abläufe) mit `<TermText text={…} />` bzw. über `Markdown` anzeigen – nie in Eingabefeldern,
+  Code oder Links. Welche Stellen eines Moduls den Baustein nutzen, wird bei dessen Überarbeitung festgelegt.
 - Versionierung: Nummer nur in `VERSION` (SemVer), Änderungen laufend in `CHANGELOG.md` unter «Unveröffentlicht».
   `VERSION` nie selbst erhöhen – siehe «GitHub-Ablauf und Releases».
 - MCP-Schnittstelle (Konzept, `docs/KONZEPT-MCP.md`): Werkzeuge werden aus `App\Support\OpenApi` abgeleitet

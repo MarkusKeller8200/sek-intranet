@@ -23,6 +23,7 @@ import type { ReactNode } from 'react';
 import { toast } from 'sonner';
 import FormField from '@/components/form-field';
 import { Demo } from '@/components/gui-demos-extra';
+import { TermText } from '@/components/term-text';
 import { AlertDialog } from '@/components/ui/alert-dialog';
 import { Attachment } from '@/components/ui/attachment';
 import type { AttachmentState } from '@/components/ui/attachment';
@@ -73,6 +74,7 @@ import {
     SheetTrigger,
 } from '@/components/ui/sheet';
 import { Switch } from '@/components/ui/switch';
+import { Term } from '@/components/ui/term';
 import { Toggle } from '@/components/ui/toggle';
 import {
     Blockquote,
@@ -955,6 +957,47 @@ function ChartExtra() {
     );
 }
 
+function TermDemo() {
+    return (
+        <>
+            <Demo
+                title="Begriff im Code"
+                hint="Mit der Maus darüberfahren, mit Tab fokussieren oder antippen. Ein Klick öffnet den Eintrag im Glossar."
+            >
+                <p className="flex flex-wrap gap-4 text-sm" translate="no">
+                    <Term match="VSA" />
+                    <Term match="SL" />
+                    <Term match="LP" />
+                </p>
+            </Demo>
+            <Demo
+                title="Mehrdeutige Abkürzung"
+                hint="Zeigt alle Bedeutungen. Enter oder Pfeil nach unten springt in die Liste."
+            >
+                <p className="text-sm" translate="no">
+                    <Term match="SHP" />
+                </p>
+            </Demo>
+            <Demo
+                title="Begriffe im Freitext"
+                hint="Mitteilungen, Termine und Abläufe: Begriffe werden beim Anzeigen erkannt, der gespeicherte Text bleibt unverändert."
+            >
+                <p className="text-sm" translate="no">
+                    <TermText text="Das VSA informiert die SL über die neue Weisung; die SHP ist eingeladen." />
+                </p>
+            </Demo>
+            <Demo
+                title="Unbekannter Begriff"
+                hint="Ohne Eintrag im Glossar, ohne Recht oder mit ausgeschalteter Einstellung «Begriffe hervorheben» erscheint normaler Text."
+            >
+                <p className="text-sm" translate="no">
+                    <Term match="XYZ" />
+                </p>
+            </Demo>
+        </>
+    );
+}
+
 export const MORE_DEMOS: Record<string, () => ReactNode> = {
     typografie: TypographyDemo,
     eingabegruppe: InputGroupDemo,
@@ -966,6 +1009,7 @@ export const MORE_DEMOS: Record<string, () => ReactNode> = {
     vorschaukarte: HoverCardDemo,
     scrollbereich: ScrollAreaDemo,
     codeblock: CodeBlockDemo,
+    begriff: TermDemo,
     geteilt: ResizableDemo,
 };
 

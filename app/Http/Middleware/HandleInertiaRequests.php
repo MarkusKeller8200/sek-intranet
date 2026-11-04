@@ -38,6 +38,8 @@ class HandleInertiaRequests extends Middleware
                 'can' => [
                     'manageContent' => $user !== null && Gate::forUser($user)->allows('manage-content'),
                     'manageUsers' => $user !== null && Gate::forUser($user)->allows('manage-users'),
+                    // Baustein «Begriff» und Begriffe im Freitext (#60, #61)
+                    'viewGlossary' => $user !== null && Gate::forUser($user)->allows('view-glossary'),
                 ],
                 // Glocke: ungelesene und neueste Benachrichtigungen
                 'notifications' => fn (): ?array => $user !== null ? app(Notifications::class)->summary((string) $user->getAuthIdentifier()) : null,

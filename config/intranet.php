@@ -233,6 +233,12 @@ $guiComponents = [
         'parts' => ['Mit Zeilennummern', 'Konsolenausgabe', 'Vergleich (+/−), Kopieren'],
         'imports' => ['@/components/ui/code-block'],
     ],
+    'begriff' => [
+        'category' => 'daten', 'title' => 'Begriff', 'icon' => 'BookA',
+        'description' => 'Begriff aus dem Glossar, fein gepunktet unterstrichen: beim Darüberfahren, Fokussieren oder Antippen ein Tooltip mit Abkürzung, Bezeichnung und Kurzbeschreibung; Klick öffnet den Eintrag. Im Code als Baustein, im Freitext automatisch.',
+        'parts' => ['Begriff im Code', 'Mehrdeutige Abkürzung (alle Bedeutungen)', 'Begriffe im Freitext', 'Farbe der Punkte im Theme, abschaltbar je Person'],
+        'imports' => ['@/components/ui/term', '@/components/term-text'],
+    ],
     // Rückmeldung
     'meldungen' => [
         'category' => 'rueckmeldung', 'title' => 'Meldungen & Dialoge', 'icon' => 'MessageSquareWarning',

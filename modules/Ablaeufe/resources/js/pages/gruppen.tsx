@@ -5,6 +5,7 @@ import { useState } from 'react';
 import DeleteButton from '@/components/delete-button';
 import FormField from '@/components/form-field';
 import PageHeader from '@/components/page-header';
+import { TermText } from '@/components/term-text';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
@@ -97,7 +98,9 @@ export default function AblaeufeGruppen({ gruppen }: { gruppen: Gruppe[] }) {
                                                 className="basis-full text-xs text-muted-foreground"
                                                 translate="no"
                                             >
-                                                {g.bemerkung}
+                                                <TermText
+                                                    text={g.bemerkung}
+                                                />
                                             </span>
                                         )}
                                         <span className="ml-auto flex gap-1">

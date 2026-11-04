@@ -26,6 +26,7 @@ final class Themes
         'Status' => ['destructive', 'destructive-foreground', 'success', 'success-soft', 'warning', 'warning-soft', 'info', 'info-soft'],
         'Seitenleiste' => ['sidebar', 'sidebar-foreground', 'sidebar-primary', 'sidebar-primary-foreground', 'sidebar-accent', 'sidebar-accent-foreground', 'sidebar-border', 'sidebar-ring'],
         'Diagramme' => ['chart-1', 'chart-2', 'chart-3', 'chart-4', 'chart-5'],
+        'Glossar-Begriffe' => ['term-underline', 'term-underline-hover'],
     ];
 
     /** @var array{light: array<string, string>, dark: array<string, string>}|null */

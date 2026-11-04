@@ -63,8 +63,16 @@ export function contrast(a: string, b: string): number {
     return (l1 + 0.05) / (l2 + 0.05);
 }
 
-/** Paare Schrift/Fläche, die mindestens AA (4.5:1) erreichen müssen. */
-export const CONTRAST_PAIRS: { label: string; fg: string; bg: string }[] = [
+/**
+ * Paare Schrift/Fläche, die mindestens AA erreichen müssen: Text 4.5:1, Linien und Symbole
+ * (z. B. die Punkte unter Glossar-Begriffen) 3:1 (`min`).
+ */
+export const CONTRAST_PAIRS: {
+    label: string;
+    fg: string;
+    bg: string;
+    min?: number;
+}[] = [
     { label: 'Text auf Hintergrund', fg: 'foreground', bg: 'background' },
     { label: 'Text auf Karte', fg: 'card-foreground', bg: 'card' },
     {
@@ -99,6 +107,12 @@ export const CONTRAST_PAIRS: { label: string; fg: string; bg: string }[] = [
     },
     { label: 'Erfolg auf hellem Erfolg', fg: 'success', bg: 'success-soft' },
     { label: 'Warnung auf heller Warnung', fg: 'warning', bg: 'warning-soft' },
+    {
+        label: 'Punkte unter Begriffen auf Hintergrund',
+        fg: 'term-underline',
+        bg: 'background',
+        min: 3,
+    },
 ];
 
 /** Lesbare Bezeichnungen der Farbwerte. */
@@ -142,4 +156,6 @@ export const TOKEN_LABELS: Record<string, string> = {
     'chart-3': 'Diagramm 3',
     'chart-4': 'Diagramm 4',
     'chart-5': 'Diagramm 5',
+    'term-underline': 'Punkte unter Begriffen',
+    'term-underline-hover': 'Punkte unter Begriffen (darüber)',
 };

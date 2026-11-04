@@ -2,6 +2,7 @@ import { Head, Link } from '@inertiajs/react';
 import { ArrowLeftRight, FileText, Pencil, Printer } from 'lucide-react';
 import DeleteButton from '@/components/delete-button';
 import PageHeader from '@/components/page-header';
+import { TermText } from '@/components/term-text';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
@@ -165,7 +166,9 @@ export default function AblaufShow({
                                                     </TableCell>
                                                     <TableCell className="max-w-sm whitespace-normal">
                                                         <span translate="no">
-                                                            {s.text}
+                                                            <TermText
+                                                                text={s.text}
+                                                            />
                                                         </span>
                                                         {s.gilt_fuer.length >
                                                             0 && (
@@ -258,7 +261,11 @@ export default function AblaufShow({
                                                             className="block"
                                                             translate="no"
                                                         >
-                                                            {s.bemerkung}
+                                                            <TermText
+                                                                text={
+                                                                    s.bemerkung
+                                                                }
+                                                            />
                                                         </span>
                                                     </TableCell>
                                                 </TableRow>

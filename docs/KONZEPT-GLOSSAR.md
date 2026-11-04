@@ -61,6 +61,23 @@ und Kurzbeschreibung**; ein Link führt direkt zum Eintrag im Glossar.
   mit dem bestehenden Baustein (Hover-Karte).
 - Abschaltbar je Person (Einstellung «Begriffe hervorheben») und nicht in Eingabefeldern, Code-Blöcken und Links.
 
+**Umsetzung (#60, #61):**
+
+- Daten: `GET /glossar/begriffe` (Recht `view-glossary`, `App\Support\Glossary::terms()`): je Eintrag angezeigte
+  Abkürzung und Bezeichnung, Kurzbeschreibung und alle Schreibweisen (Abkürzungen, Aliase). Mit ETag; der Browser
+  fragt nach jedem Seitenwechsel nach (`lib/glossary-terms.ts`), damit eine geänderte eigene Bezeichnung sofort
+  überall erscheint.
+- Baustein: `components/ui/term.tsx`. Ein Eintrag = Link zum Glossar (erstes Antippen zeigt den Tooltip, das zweite
+  öffnet den Eintrag); mehrere = Knopf mit Liste der Bedeutungen. Esc schliesst, Tooltip auch mit der Tastatur.
+- Freitext: `components/term-text.tsx`, eingebaut in `Markdown`, Mitteilungen, Termine und Abläufe (Schritte,
+  Bemerkungen, Personengruppen). Erkannt werden ganze Wörter mit gleicher Gross-/Kleinschreibung, nur Schreibweisen
+  ab zwei Zeichen mit Grossbuchstabe, Ziffer oder Satzzeichen (gewöhnliche Wörter bleiben unberührt). Begriffe ohne
+  Abkürzung werden im Freitext nicht ausgezeichnet.
+- Einstellung «Begriffe hervorheben» unter Darstellung, gilt für den Browser (wie Schriftart und Sprache).
+- «Intern genutzt in»: Links zum ersten sichtbaren Menüpunkt des Bereichs bzw. zum Modul; ohne Link, wenn die Person
+  den Bereich nicht sieht. Automatisch erkannte Bezüge folgen, sobald Module mit dem Glossar verknüpft sind.
+- Später: Notiz und eigene Bezeichnungen je Mandant.
+
 ## Darstellung und Bearbeitung
 
 - **Tabelle** nach dem GUI-Baustein «Tabellen» (`@/components/data-grid`): Suche, Filter je Spalte, Sortierung,

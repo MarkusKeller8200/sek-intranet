@@ -2,6 +2,7 @@ import { Head, Link, usePage } from '@inertiajs/react';
 import { ArrowLeft, Clock, History, Pencil, Pin } from 'lucide-react';
 import DeleteButton from '@/components/delete-button';
 import OptionBadge from '@/components/option-badge';
+import { TermText } from '@/components/term-text';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { formatDateTime } from '@/lib/format';
@@ -80,7 +81,7 @@ export default function AnnouncementShow({
                     className="leading-relaxed whitespace-pre-line"
                     translate="no"
                 >
-                    {announcement.body}
+                    <TermText text={announcement.body} />
                 </div>
                 {announcement.release_version && (
                     <div>

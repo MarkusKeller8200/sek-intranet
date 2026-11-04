@@ -36,3 +36,5 @@ Code zu ändern.
 - Vorschau in einem Teilbereich (`components/theme-scope.tsx`): setzt `--name` und `--color-name` (Tailwind löst
   `--color-*` am `<html>` auf) und für dunkel die Klasse `dark`.
 - Vorlagen: `config/intranet.php` → `theme_presets`.
+- Glossar-Begriffe (#60): `--term-underline` (Farbe der Punkte) und `--term-underline-hover` (beim Darüberfahren und
+  beim Fokus), Gruppe «Glossar-Begriffe». Kontrastprüfung gegen den Hintergrund mit 3:1 (Linie, kein Text).

@@ -4,6 +4,7 @@ import FontPicker from '@/components/font-picker';
 import { InstallAppButton } from '@/components/install-app';
 import LanguagePicker from '@/components/language-picker';
 import Heading from '@/components/heading';
+import TermHighlightSetting from '@/components/term-highlight-setting';
 
 export default function Appearance() {
     return (
@@ -30,6 +31,13 @@ export default function Appearance() {
                     description="Sprache der Oberfläche. Gilt für diesen Browser; Inhalte wie Mitteilungen bleiben in ihrer Sprache."
                 />
                 <LanguagePicker />
+
+                <Heading
+                    variant="small"
+                    title="Begriffe aus dem Glossar"
+                    description="Abkürzungen und Begriffe aus dem Glossar sind fein gepunktet unterstrichen und zeigen beim Darüberfahren oder Antippen eine kurze Erklärung. Gilt für diesen Browser."
+                />
+                <TermHighlightSetting />
 
                 <Heading
                     variant="small"

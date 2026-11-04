@@ -53,7 +53,23 @@ class GlossaryController extends Controller
         ]);
     }
 
-    public function show(string $id): Response
+    /**
+     * Begriffe für den Baustein «Begriff» und den Freitext (#60, #61). Mit ETag: der Browser fragt bei jedem
+     * Seitenwechsel nach, erhält aber nur bei Änderungen neue Daten.
+     */
+    public function terms(Request $request): HttpResponse
+    {
+        $terms = $this->service->terms();
+        $response = response()->json(['terms' => $terms]);
+        $response->setEtag(md5((string) json_encode($terms)));
+        $response->setPrivate();
+        $response->headers->addCacheControlDirective('no-cache');
+        $response->isNotModified($request);
+
+        return $response;
+    }
+
+    public function show(Request $request, string $id): Response
     {
         $entry = $this->glossary->findOrFail($id);
         $short = mb_strtolower(Glossary::shortName($entry));
@@ -67,7 +83,7 @@ class GlossaryController extends Controller
             'andere' => array_map(fn (array $e): array => ['id' => $e['id'], 'abk' => Glossary::shortName($e), 'bez' => Glossary::displayName($e)], $others),
             'kategorien' => $this->service->listOptions('kategorien'),
             'herkunft' => $this->glossary->listItems('herkunft'),
-            'bereiche' => $this->service->areaOptions(),
+            'bereiche' => $this->service->areaLinks($request->user()),
             'status' => Glossary::STATUS,
             'rechte' => $this->rights(),
         ]);

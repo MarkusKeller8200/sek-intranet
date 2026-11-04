@@ -4,6 +4,7 @@ namespace App\Support;
 
 use App\Data\Contracts\GlossaryRepository;
 use App\Modules\ModuleRegistry;
+use Illuminate\Contracts\Auth\Authenticatable;
 use InvalidArgumentException;
 
 /**
@@ -47,6 +48,7 @@ final class Glossary
     public function __construct(
         private readonly GlossaryRepository $glossary,
         private readonly ModuleRegistry $modules,
+        private readonly ModuleNavigation $navigation,
     ) {}
 
     // ---------- Listen und Anzeige ----------
@@ -135,6 +137,80 @@ final class Glossary
         }
 
         return $options;
+    }
+
+    /**
+     * Links für «Intern genutzt in» (#60): Bereich → erster sichtbarer Menüpunkt, Modul → sein Menüpunkt.
+     * Ohne Link, wenn die Person den Bereich nicht sieht.
+     *
+     * @return array<string, array{title: string, href: string|null}>
+     */
+    public function areaLinks(?Authenticatable $user): array
+    {
+        $visible = [];
+        $firstOfGroup = [];
+        foreach ($this->navigation->groups($user) as $group) {
+            $firstOfGroup[$group['key']] = $group['items'][0]['href'] ?? null;
+            foreach ($group['items'] as $item) {
+                $visible[] = $item['href'];
+                foreach ($item['children'] ?? [] as $child) {
+                    $visible[] = (string) $child['href'];
+                }
+            }
+        }
+        $moduleHrefs = [];
+        foreach ($this->modules->all() as $manifest) {
+            $first = array_values($manifest->menu['eintraege'])[0] ?? null;
+            $moduleHrefs[$manifest->key] = is_array($first) && is_string($first['href'] ?? null) ? $first['href'] : null;
+        }
+
+        $links = [];
+        foreach ($this->areaOptions() as $key => $title) {
+            [$kind, $name] = explode(':', $key, 2) + [1 => ''];
+            $href = $kind === 'bereich' ? ($firstOfGroup[$name] ?? null) : ($moduleHrefs[$name] ?? null);
+            $links[$key] = ['title' => $title, 'href' => $href !== null && in_array($href, $visible, true) ? $href : null];
+        }
+
+        return $links;
+    }
+
+    /**
+     * Kompakte Liste für den Baustein «Begriff» und für Begriffe im Freitext (#60, #61): je Eintrag die
+     * angezeigte Abkürzung und Bezeichnung, die Kurzbeschreibung und alle Schreibweisen, die im Text
+     * erkannt werden (Abkürzungen und Aliase, Gross-/Kleinschreibung wie im Glossar).
+     *
+     * @return list<array{id: string, abk: string, bez: string, kurz: string, match: list<string>, historisch: bool}>
+     */
+    public function terms(): array
+    {
+        $terms = [];
+        foreach ($this->glossary->all() as $e) {
+            $match = [];
+            $candidates = [(string) ($e['abk_offiziell'] ?? ''), (string) ($e['abk_eigen'] ?? '')];
+            foreach ((array) ($e['aliase_offiziell'] ?? []) as $alias) {
+                $candidates[] = (string) $alias;
+            }
+            foreach (explode(';', (string) ($e['alias_eigen'] ?? '')) as $alias) {
+                $candidates[] = $alias;
+            }
+            foreach ($candidates as $c) {
+                $c = trim($c);
+                if ($c !== '' && ! in_array($c, $match, true)) {
+                    $match[] = $c;
+                }
+            }
+            $terms[] = [
+                'id' => (string) $e['id'],
+                'abk' => self::shortName($e),
+                'bez' => self::displayName($e),
+                'kurz' => trim((string) ($e['kurzbeschreibung'] ?? '')),
+                'match' => $match,
+                'historisch' => ($e['status'] ?? '') === 'historisch',
+            ];
+        }
+        usort($terms, fn (array $a, array $b): int => strcmp($a['id'], $b['id']));
+
+        return $terms;
     }
 
     /**

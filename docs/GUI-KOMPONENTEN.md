@@ -390,6 +390,17 @@ Code, Konsolenausgabe und Vergleiche mit Kopfzeile, Zeilennummern und Kopieren �
 
 Code: `@/components/ui/code-block`
 
+### 3.12 [Begriff](https://intranet.sekbuelach.ch/gui-prototypen/begriff)
+
+Begriff aus dem Glossar, fein gepunktet unterstrichen: beim Darüberfahren, Fokussieren oder Antippen ein Tooltip mit Abkürzung, Bezeichnung und Kurzbeschreibung; Klick öffnet den Eintrag. Im Code als Baustein, im Freitext automatisch.
+
+- Begriff im Code
+- Mehrdeutige Abkürzung (alle Bedeutungen)
+- Begriffe im Freitext
+- Farbe der Punkte im Theme, abschaltbar je Person
+
+Code: `@/components/ui/term`, `@/components/term-text`
+
 <a id="rueckmeldung"></a>
 
 ## 4. Rückmeldung

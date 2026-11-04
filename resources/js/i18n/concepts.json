@@ -3147,5 +3147,61 @@
         "us eigener Initiative für d SekBülach"
     ],
     "Abkürzung": ["Abbreviation", "Abchürzig"],
-    "Gültig ab": ["Valid from", "Gültig ab"]
+    "Gültig ab": ["Valid from", "Gültig ab"],
+    "Begriff": ["Term", "Begriff"],
+    "Begriff im Code": ["Term in code", "Begriff im Code"],
+    "Begriff aus dem Glossar, fein gepunktet unterstrichen: beim Darüberfahren, Fokussieren oder Antippen ein Tooltip mit Abkürzung, Bezeichnung und Kurzbeschreibung; Klick öffnet den Eintrag. Im Code als Baustein, im Freitext automatisch.": [
+        "Glossary term underlined with fine dots: on hover, focus or tap a tooltip with abbreviation, name and short description; a click opens the entry. In code as a component, in free text automatically.",
+        "Begriff us em Glossar, fiin punktet understriche: bim Drüberfahre, Fokussiere oder Aatippe en Tooltip mit Abchürzig, Bezeichnig und Churzbeschriibig; en Klick tuet de Iitrag uf. Im Code als Baustei, im Freitext automatisch."
+    ],
+    "Mehrdeutige Abkürzung (alle Bedeutungen)": [
+        "Ambiguous abbreviation (all meanings)",
+        "Mehrdütigi Abchürzig (alli Bedütige)"
+    ],
+    "Farbe der Punkte im Theme, abschaltbar je Person": [
+        "Dot colour in the theme, can be switched off per person",
+        "Farb vo de Pünkt im Theme, pro Person abschaltbar"
+    ],
+    "Mit der Maus darüberfahren, mit Tab fokussieren oder antippen. Ein Klick öffnet den Eintrag im Glossar.": [
+        "Hover with the mouse, focus with Tab or tap. A click opens the entry in the glossary.",
+        "Mit de Muus drüberfahre, mit Tab fokussiere oder aatippe. En Klick tuet de Iitrag im Glossar uf."
+    ],
+    "Mehrdeutige Abkürzung": ["Ambiguous abbreviation", "Mehrdütigi Abchürzig"],
+    "Zeigt alle Bedeutungen. Enter oder Pfeil nach unten springt in die Liste.": [
+        "Shows all meanings. Enter or arrow down jumps into the list.",
+        "Zeigt alli Bedütige. Enter oder Pfiil nach une springt i d Liste."
+    ],
+    "Begriffe im Freitext": ["Terms in free text", "Begriff im Freitext"],
+    "Mitteilungen, Termine und Abläufe: Begriffe werden beim Anzeigen erkannt, der gespeicherte Text bleibt unverändert.": [
+        "Announcements, events and workflows: terms are recognised when displayed; the stored text stays unchanged.",
+        "Mitteilige, Termin und Abläuf: Begriff werded bim Aazeige erkännt, de gspeichereti Text bliibt unveränderet."
+    ],
+    "Unbekannter Begriff": ["Unknown term", "Unbekannte Begriff"],
+    "Ohne Eintrag im Glossar, ohne Recht oder mit ausgeschalteter Einstellung «Begriffe hervorheben» erscheint normaler Text.": [
+        "Without a glossary entry, without permission or with «Highlight terms» switched off, plain text is shown.",
+        "Ohni Iitrag im Glossar, ohni Rächt oder wänn «Begriff hervorhebe» abgschaltet isch, gseht mer normale Text."
+    ],
+    "Begriffe hervorheben": ["Highlight terms", "Begriff hervorhebe"],
+    "Zum Ausprobieren: mit der Maus darüberfahren oder antippen.": [
+        "Try it: hover with the mouse or tap.",
+        "Zum Uusprobiere: mit de Muus drüberfahre oder aatippe."
+    ],
+    "Punkte unter Begriffen": ["Dots under terms", "Pünkt under Begriff"],
+    "Punkte unter Begriffen (darüber)": [
+        "Dots under terms (hover)",
+        "Pünkt under Begriff (drüber)"
+    ],
+    "Punkte unter Begriffen auf Hintergrund": [
+        "Term dots on background",
+        "Pünkt under Begriff uf em Hintergrund"
+    ],
+    "Glossar-Begriffe": ["Glossary terms", "Glossar-Begriff"],
+    "Begriffe aus dem Glossar": ["Glossary terms", "Begriff us em Glossar"],
+    "Abkürzungen und Begriffe aus dem Glossar sind fein gepunktet unterstrichen und zeigen beim Darüberfahren oder Antippen eine kurze Erklärung. Gilt für diesen Browser.": [
+        "Abbreviations and terms from the glossary are underlined with fine dots and show a short explanation when you hover over or tap them. Applies to this browser.",
+        "Abchürzige und Begriff us em Glossar sind fiin punktet understriche und zeiged bim Drüberfahre oder Aatippe e churzi Erklärig. Gilt für dä Browser."
+    ],
+    "Mehrere Bedeutungen": ["Several meanings", "Mehreri Bedütige"],
+    "Im Glossar öffnen": ["Open in glossary", "Im Glossar uftue"],
+    "historisch": ["historical", "historisch"]
 }

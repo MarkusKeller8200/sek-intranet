@@ -11,7 +11,7 @@ use Inertia\Testing\AssertableInertia as Assert;
 use Tests\TestCase;
 
 /**
- * Glossar (#53–#59, #62): Startinhalt, Tabelle, Sperre der offiziellen Felder, Listen, Excel, Doppelte.
+ * Glossar (#53–#62): Startinhalt, Tabelle, Sperre der offiziellen Felder, Listen, Excel, Doppelte.
  */
 class GlossaryTest extends TestCase
 {
@@ -229,6 +229,45 @@ class GlossaryTest extends TestCase
         $this->assertNull(collect($this->repo()->all())->firstWhere('abk_eigen', 'NEU2'));
         $this->assertCount(142, $this->repo()->all(), 'nie gelöscht');
         $this->post('/glossar/import/'.$token)->assertNotFound();
+    }
+
+    public function test_terms_for_component_and_free_text(): void
+    {
+        $this->signInAs('lehrperson');
+        $this->get('/glossar')->assertInertia(fn (Assert $page) => $page->where('auth.can.viewGlossary', true));
+
+        $response = $this->getJson('/glossar/begriffe')->assertOk();
+        $vsa = collect($response->json('terms'))->firstWhere('abk', 'VSA');
+        $this->assertNotNull($vsa);
+        $this->assertContains('VSA', $vsa['match']);
+        $this->assertSame('Volksschulamt', $vsa['bez']);
+        $this->assertSame(['id', 'abk', 'bez', 'kurz', 'match', 'historisch'], array_keys($vsa));
+        $this->assertCount(3, collect($response->json('terms'))->filter(fn (array $t): bool => in_array('SHP', $t['match'], true)));
+
+        // Unverändert: nur «304»; eigene Bezeichnung ändern → neue Daten
+        $etag = (string) $response->headers->get('ETag');
+        $this->getJson('/glossar/begriffe', ['If-None-Match' => $etag])->assertStatus(304);
+        $this->repo()->update($vsa['id'], ['bez_eigen' => 'Volksschulamt Zürich', 'alias_eigen' => 'VS-Amt']);
+        $fresh = $this->getJson('/glossar/begriffe', ['If-None-Match' => $etag])->assertOk();
+        $vsa = collect($fresh->json('terms'))->firstWhere('id', $vsa['id']);
+        $this->assertSame('Volksschulamt Zürich', $vsa['bez']);
+        $this->assertContains('VS-Amt', $vsa['match']);
+    }
+
+    public function test_used_in_as_links_only_where_visible(): void
+    {
+        $vsa = $this->entry('VSA');
+        $this->repo()->update($vsa['id'], ['genutzt_in' => ['bereich:wissen', 'modul:ablaeufe']]);
+
+        $this->signInAs('lehrperson');
+        $this->get('/glossar/'.$vsa['id'])->assertOk()->assertInertia(fn (Assert $page) => $page
+            ->where('bereiche.bereich:wissen.href', '/dokumente')
+            ->where('bereiche.modul:ablaeufe.href', null)
+            ->where('bereiche.modul:ablaeufe.title', 'Modul Abläufe Verwaltung'));
+
+        $this->signInAs('verwaltung');
+        $this->get('/glossar/'.$vsa['id'])->assertInertia(fn (Assert $page) => $page
+            ->where('bereiche.modul:ablaeufe.href', '/ablaeufe'));
     }
 
     public function test_menu_and_rights(): void

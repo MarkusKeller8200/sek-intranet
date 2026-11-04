@@ -1,7 +1,7 @@
 {
     "key": "ablaeufe",
     "name": "Abläufe Verwaltung",
-    "version": "0.2.0",
+    "version": "0.2.1",
     "core": ">=0.33.0",
     "description": "Verzeichnis wichtiger Abläufe als Checklisten-Vorlagen: Phasen, Schritte mit Verantwortung, Kommunikation, Dokumenten und Bemerkungen, Personengruppen. Beginn: Ein- und Austritt sowie Mutationen von Mitarbeitenden.",
     "aktiv": true,
