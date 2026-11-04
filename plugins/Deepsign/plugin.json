@@ -214,11 +214,7 @@
                         "name": "signatureMode",
                         "type": "string",
                         "help": "`timestamp` - Simple Electronic Signature (SES)",
-                        "choices": [
-                            "timestamp",
-                            "advanced",
-                            "qualified"
-                        ],
+                        "choices": ["timestamp", "advanced", "qualified"],
                         "example": "timestamp"
                     },
                     {
@@ -244,14 +240,8 @@
                     {
                         "name": "callbackEventTypes",
                         "type": "array",
-                        "choices": [
-                            "signee-completed",
-                            "document-completed"
-                        ],
-                        "example": [
-                            "signee-completed",
-                            "document-completed"
-                        ]
+                        "choices": ["signee-completed", "document-completed"],
+                        "example": ["signee-completed", "document-completed"]
                     },
                     {
                         "name": "callbackUrl",
@@ -274,11 +264,7 @@
                         "name": "visualSignatureRequirement",
                         "type": "string",
                         "help": "Configure if participants can or must add a visual signature.",
-                        "choices": [
-                            "optional",
-                            "required",
-                            "prohibited"
-                        ],
+                        "choices": ["optional", "required", "prohibited"],
                         "example": "optional"
                     },
                     {
@@ -671,12 +657,8 @@
                     }
                 ],
                 "body": [
-                    [
-                        "7a8b9c0d-1e2f-4a3b-8c4d-5e6f7a8b9c0d"
-                    ],
-                    [
-                        "8b9c0d1e-2f3a-4b4c-9d5e-6f7a8b9c0d1e"
-                    ]
+                    ["7a8b9c0d-1e2f-4a3b-8c4d-5e6f7a8b9c0d"],
+                    ["8b9c0d1e-2f3a-4b4c-9d5e-6f7a8b9c0d1e"]
                 ],
                 "note": "Body: Liste von Gruppen; jede Gruppe ist eine Liste von signeeIds, die gleichzeitig unterschreiben."
             },
@@ -1078,11 +1060,7 @@
                         "type": "string",
                         "required": true,
                         "help": "`timestamp` - Simple Electronic Signature (SES)",
-                        "choices": [
-                            "timestamp",
-                            "advanced",
-                            "qualified"
-                        ],
+                        "choices": ["timestamp", "advanced", "qualified"],
                         "example": "timestamp"
                     },
                     {
@@ -1239,11 +1217,7 @@
                         "type": "string",
                         "required": true,
                         "help": "`timestamp` - Simple Electronic Signature (SES)",
-                        "choices": [
-                            "timestamp",
-                            "advanced",
-                            "qualified"
-                        ],
+                        "choices": ["timestamp", "advanced", "qualified"],
                         "example": "timestamp"
                     },
                     {
@@ -1326,9 +1300,7 @@
                 "danger": true,
                 "test": false,
                 "body": {
-                    "acceptSealIds": [
-                        "2c3d4e5f-6a7b-4c8d-9e0f-1a2b3c4d5e6f"
-                    ],
+                    "acceptSealIds": ["2c3d4e5f-6a7b-4c8d-9e0f-1a2b3c4d5e6f"],
                     "sealId": "2c3d4e5f-6a7b-4c8d-9e0f-1a2b3c4d5e6f",
                     "autographPosition": {
                         "pageNumber": 1,
@@ -1376,9 +1348,7 @@
                         "type": "array",
                         "required": true,
                         "help": "Allowed sealIds of a seal used for sealing. Since the client needs a right-management for seals, this property allows to set the sealIds. The sealId of the seal found by pattern or provided by sealKey/sealId are checked ",
-                        "example": [
-                            "2c3d4e5f-6a7b-4c8d-9e0f-1a2b3c4d5e6f"
-                        ]
+                        "example": ["2c3d4e5f-6a7b-4c8d-9e0f-1a2b3c4d5e6f"]
                     },
                     {
                         "name": "signatureProfile",
@@ -1413,9 +1383,7 @@
                 "danger": true,
                 "test": false,
                 "body": {
-                    "acceptSealIds": [
-                        "2c3d4e5f-6a7b-4c8d-9e0f-1a2b3c4d5e6f"
-                    ],
+                    "acceptSealIds": ["2c3d4e5f-6a7b-4c8d-9e0f-1a2b3c4d5e6f"],
                     "signatureLocationPlacement": "last",
                     "xmlSignatureMode": "baseline-b",
                     "sealId": "2c3d4e5f-6a7b-4c8d-9e0f-1a2b3c4d5e6f"
@@ -1441,20 +1409,14 @@
                         "type": "array",
                         "required": true,
                         "help": "Allowed sealIds of a seal used for sealing. Since the client needs a right-management for seals, this property allows to set the sealIds. The sealId of the seal found by pattern or provided by sealKey/sealId are checked ",
-                        "example": [
-                            "2c3d4e5f-6a7b-4c8d-9e0f-1a2b3c4d5e6f"
-                        ]
+                        "example": ["2c3d4e5f-6a7b-4c8d-9e0f-1a2b3c4d5e6f"]
                     },
                     {
                         "name": "xmlSignatureMode",
                         "type": "string",
                         "required": true,
                         "help": "`baseline-b` - XAdES Baseline B Signature",
-                        "choices": [
-                            "baseline-b",
-                            "baseline-t",
-                            "baseline-lt"
-                        ],
+                        "choices": ["baseline-b", "baseline-t", "baseline-lt"],
                         "example": "baseline-b"
                     },
                     {
@@ -1810,11 +1772,7 @@
                         "name": "signatureMode",
                         "type": "string",
                         "help": "`timestamp` - Simple Electronic Signature (SES)",
-                        "choices": [
-                            "timestamp",
-                            "advanced",
-                            "qualified"
-                        ],
+                        "choices": ["timestamp", "advanced", "qualified"],
                         "example": "timestamp"
                     },
                     {
@@ -1877,14 +1835,8 @@
                     {
                         "name": "callbackEventTypes",
                         "type": "array",
-                        "choices": [
-                            "signee-completed",
-                            "document-completed"
-                        ],
-                        "example": [
-                            "signee-completed",
-                            "document-completed"
-                        ]
+                        "choices": ["signee-completed", "document-completed"],
+                        "example": ["signee-completed", "document-completed"]
                     },
                     {
                         "name": "callbackUrl",
@@ -1919,11 +1871,7 @@
                         "type": "string",
                         "required": true,
                         "help": "Configure if participants can or must add a visual signature.",
-                        "choices": [
-                            "optional",
-                            "required",
-                            "prohibited"
-                        ],
+                        "choices": ["optional", "required", "prohibited"],
                         "example": "optional"
                     },
                     {
@@ -2016,11 +1964,7 @@
                         "name": "signatureMode",
                         "type": "string",
                         "help": "`timestamp` - Simple Electronic Signature (SES)",
-                        "choices": [
-                            "timestamp",
-                            "advanced",
-                            "qualified"
-                        ],
+                        "choices": ["timestamp", "advanced", "qualified"],
                         "example": "timestamp"
                     },
                     {
@@ -2083,14 +2027,8 @@
                     {
                         "name": "callbackEventTypes",
                         "type": "array",
-                        "choices": [
-                            "signee-completed",
-                            "document-completed"
-                        ],
-                        "example": [
-                            "signee-completed",
-                            "document-completed"
-                        ]
+                        "choices": ["signee-completed", "document-completed"],
+                        "example": ["signee-completed", "document-completed"]
                     },
                     {
                         "name": "callbackUrl",
@@ -2119,11 +2057,7 @@
                         "type": "string",
                         "required": true,
                         "help": "Configure if participants can or must add a visual signature.",
-                        "choices": [
-                            "optional",
-                            "required",
-                            "prohibited"
-                        ],
+                        "choices": ["optional", "required", "prohibited"],
                         "example": "optional"
                     },
                     {
@@ -2254,14 +2188,8 @@
             "label": "Umgebung",
             "default": "https://deepcloud.swiss",
             "choices": [
-                [
-                    "https://deepcloud.swiss",
-                    "Produktion (deepcloud.swiss)"
-                ],
-                [
-                    "https://int.deepcloud.swiss",
-                    "Test (int.deepcloud.swiss)"
-                ]
+                ["https://deepcloud.swiss", "Produktion (deepcloud.swiss)"],
+                ["https://int.deepcloud.swiss", "Test (int.deepcloud.swiss)"]
             ],
             "help": "Anmeldung und Erstellen des Service-Benutzers (DeepAdmin) in dieser Umgebung."
         },
@@ -2316,14 +2244,8 @@
             "label": "Signaturstufe (Vorgabe)",
             "default": "timestamp",
             "choices": [
-                [
-                    "timestamp",
-                    "Einfach (Zeitstempel)"
-                ],
-                [
-                    "advanced",
-                    "Fortgeschritten (2FA)"
-                ],
+                ["timestamp", "Einfach (Zeitstempel)"],
+                ["advanced", "Fortgeschritten (2FA)"],
                 ["qualified", "Qualifiziert"]
             ],
             "help": "Entscheid offen (#36)."
@@ -2380,14 +2302,8 @@
                     "label": "Reihenfolge",
                     "default": "nacheinander",
                     "choices": [
-                        [
-                            "nacheinander",
-                            "Nacheinander (wie aufgelistet)"
-                        ],
-                        [
-                            "gleichzeitig",
-                            "Alle gleichzeitig"
-                        ]
+                        ["nacheinander", "Nacheinander (wie aufgelistet)"],
+                        ["gleichzeitig", "Alle gleichzeitig"]
                     ]
                 },
                 {
@@ -2415,18 +2331,9 @@
                     "choices": [
                         ["", "alle"],
                         ["draft", "Entwurf"],
-                        [
-                            "in-progress",
-                            "in Arbeit"
-                        ],
-                        [
-                            "signed",
-                            "unterschrieben"
-                        ],
-                        [
-                            "withdrawn",
-                            "zurückgezogen"
-                        ],
+                        ["in-progress", "in Arbeit"],
+                        ["signed", "unterschrieben"],
+                        ["withdrawn", "zurückgezogen"],
                         ["rejected", "abgelehnt"]
                     ]
                 }
@@ -2458,14 +2365,8 @@
                     "label": "Signaturstufe",
                     "default": "advanced",
                     "choices": [
-                        [
-                            "advanced",
-                            "Fortgeschritten (2FA)"
-                        ],
-                        [
-                            "qualified",
-                            "Qualifiziert"
-                        ]
+                        ["advanced", "Fortgeschritten (2FA)"],
+                        ["qualified", "Qualifiziert"]
                     ]
                 }
             ]

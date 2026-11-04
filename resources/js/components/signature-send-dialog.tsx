@@ -130,7 +130,9 @@ export default function SignatureSendDialog({
                                     className="grid grid-cols-[auto_1fr_1fr_auto] items-start gap-2"
                                 >
                                     <span className="pt-2 text-sm text-muted-foreground tabular-nums">
-                                        {form.data.gleichzeitig ? '•' : `${i + 1}.`}
+                                        {form.data.gleichzeitig
+                                            ? '•'
+                                            : `${i + 1}.`}
                                     </span>
                                     <div className="grid gap-1">
                                         <Input
@@ -138,12 +140,22 @@ export default function SignatureSendDialog({
                                             placeholder="Name"
                                             value={p.name}
                                             onChange={(e) =>
-                                                setPerson(i, 'name', e.target.value)
+                                                setPerson(
+                                                    i,
+                                                    'name',
+                                                    e.target.value,
+                                                )
                                             }
                                         />
-                                        {errors[`unterzeichnende.${i}.name`] && (
+                                        {errors[
+                                            `unterzeichnende.${i}.name`
+                                        ] && (
                                             <span className="text-xs text-destructive">
-                                                {errors[`unterzeichnende.${i}.name`]}
+                                                {
+                                                    errors[
+                                                        `unterzeichnende.${i}.name`
+                                                    ]
+                                                }
                                             </span>
                                         )}
                                     </div>
@@ -154,12 +166,22 @@ export default function SignatureSendDialog({
                                             placeholder="E-Mail"
                                             value={p.email}
                                             onChange={(e) =>
-                                                setPerson(i, 'email', e.target.value)
+                                                setPerson(
+                                                    i,
+                                                    'email',
+                                                    e.target.value,
+                                                )
                                             }
                                         />
-                                        {errors[`unterzeichnende.${i}.email`] && (
+                                        {errors[
+                                            `unterzeichnende.${i}.email`
+                                        ] && (
                                             <span className="text-xs text-destructive">
-                                                {errors[`unterzeichnende.${i}.email`]}
+                                                {
+                                                    errors[
+                                                        `unterzeichnende.${i}.email`
+                                                    ]
+                                                }
                                             </span>
                                         )}
                                     </div>
@@ -168,7 +190,10 @@ export default function SignatureSendDialog({
                                         variant="ghost"
                                         size="icon"
                                         aria-label={`Person ${i + 1} entfernen`}
-                                        disabled={form.data.unterzeichnende.length === 1}
+                                        disabled={
+                                            form.data.unterzeichnende.length ===
+                                            1
+                                        }
                                         onClick={() =>
                                             form.setData(
                                                 'unterzeichnende',
@@ -192,7 +217,9 @@ export default function SignatureSendDialog({
                                     type="button"
                                     variant="outline"
                                     size="sm"
-                                    disabled={form.data.unterzeichnende.length >= 20}
+                                    disabled={
+                                        form.data.unterzeichnende.length >= 20
+                                    }
                                     onClick={() =>
                                         form.setData('unterzeichnende', [
                                             ...form.data.unterzeichnende,
@@ -206,13 +233,18 @@ export default function SignatureSendDialog({
                                     <Checkbox
                                         id="s-gleichzeitig"
                                         checked={form.data.gleichzeitig}
-                                        onCheckedChange={(c: boolean | 'indeterminate') =>
-                                            form.setData('gleichzeitig', c === true)
+                                        onCheckedChange={(
+                                            c: boolean | 'indeterminate',
+                                        ) =>
+                                            form.setData(
+                                                'gleichzeitig',
+                                                c === true,
+                                            )
                                         }
                                     />
                                     <Label htmlFor="s-gleichzeitig">
-                                        Alle gleichzeitig (sonst nacheinander wie
-                                        aufgelistet)
+                                        Alle gleichzeitig (sonst nacheinander
+                                        wie aufgelistet)
                                     </Label>
                                 </div>
                             </div>
@@ -257,7 +289,9 @@ export default function SignatureSendDialog({
                             </Button>
                             <Button type="submit" disabled={form.processing}>
                                 <Send />{' '}
-                                {form.processing ? 'Sendet …' : 'Senden und starten'}
+                                {form.processing
+                                    ? 'Sendet …'
+                                    : 'Senden und starten'}
                             </Button>
                         </DialogFooter>
                     </form>

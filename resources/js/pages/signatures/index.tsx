@@ -206,7 +206,9 @@ export default function Signatures({
                         <Button
                             variant="outline"
                             disabled={!anbieter}
-                            onClick={() => post('/unterschriften/aktualisieren')}
+                            onClick={() =>
+                                post('/unterschriften/aktualisieren')
+                            }
                         >
                             <RefreshCw /> Alle aktualisieren
                         </Button>
