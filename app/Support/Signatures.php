@@ -94,7 +94,7 @@ final class Signatures
         $all = $this->store->all(self::COLLECTION);
         usort($all, fn (array $a, array $b): int => strcmp((string) ($b['created_at'] ?? ''), (string) ($a['created_at'] ?? '')));
 
-        return array_values(array_map(fn (array $r): array => self::public($r), $all));
+        return array_map(fn (array $r): array => self::public($r), $all);
     }
 
     /**
@@ -156,7 +156,7 @@ final class Signatures
                 'signed_at' => null,
                 'provider_id' => null,
             ], $data['signees']),
-            'observers' => array_values($data['observers'] ?? []),
+            'observers' => $data['observers'] ?? [],
             'comment' => $data['comment'] ?? null,
             'callback_secret' => Crypt::encryptString($secret),
             'created_by' => $by !== null ? (string) $by->getAuthIdentifier() : null,
@@ -173,7 +173,7 @@ final class Signatures
                 'file_name' => $data['file_name'],
                 'comment' => $data['comment'] ?? null,
                 'signees' => array_map(fn (array $s): array => ['email' => $s['email'], 'order' => $s['order'], 'position' => $s['position'] ?? null], $data['signees']),
-                'observers' => array_values($data['observers'] ?? []),
+                'observers' => $data['observers'] ?? [],
             ], $pdf, $callback));
         } catch (Throwable $e) {
             $this->store->update(self::COLLECTION, (string) $record['id'], ['status' => 'fehler', 'error' => mb_substr($e->getMessage(), 0, 500)]);

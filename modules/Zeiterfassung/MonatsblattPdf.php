@@ -44,7 +44,7 @@ final class MonatsblattPdf
             $pdf->text(100, $y, ($e['art'] ?? '') === 'abwesenheit' ? 'Abwesenheit' : 'Arbeit', 8.5);
             $pdf->text(160, $y, SimplePdf::fit(Kategorien::label((string) $e['kategorie']), 135, 8.5), 8.5);
             $pdf->text(300, $y, $zeit, 8.5);
-            $pdf->textRight(395, $y, isset($e['pause_min']) && $e['pause_min'] !== null ? (string) $e['pause_min'] : '', 8.5);
+            $pdf->textRight(395, $y, isset($e['pause_min']) ? (string) $e['pause_min'] : '', 8.5);
             $pdf->textRight(450, $y, number_format((float) $e['stunden'], 2, '.', "'"), 8.5);
             $pdf->text(462, $y, SimplePdf::fit((string) ($e['projekt'] ?? ''), self::RIGHT - 462, 8.5), 8.5);
             $y += 13;

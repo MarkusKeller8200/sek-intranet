@@ -13,23 +13,24 @@ final class SimplePdf
 
     public const HEIGHT = 841.89;
 
-    /** @var list<string> Inhalt je Seite */
+    /** @var list<string> Inhalt der fertigen Seiten */
     private array $pages = [];
 
-    public function __construct(private readonly string $title = '')
-    {
-        $this->addPage();
-    }
+    /** Inhalt der aktuellen Seite */
+    private string $current = '';
+
+    public function __construct(private readonly string $title = '') {}
 
     public function addPage(): void
     {
-        $this->pages[] = '';
+        $this->pages[] = $this->current;
+        $this->current = '';
     }
 
     /** Aktuelle Seite (ab 1). */
     public function page(): int
     {
-        return count($this->pages);
+        return count($this->pages) + 1;
     }
 
     public function text(float $x, float $y, string $text, float $size = 10, bool $bold = false): void
@@ -86,7 +87,7 @@ final class SimplePdf
         $kids = [];
         $next = 5;
         $pageObjects = [];
-        foreach ($this->pages as $content) {
+        foreach ([...$this->pages, $this->current] as $content) {
             $pageId = $next++;
             $contentId = $next++;
             $kids[] = "{$pageId} 0 R";
@@ -119,14 +120,14 @@ final class SimplePdf
 
     private function draw(string $operation): void
     {
-        $this->pages[count($this->pages) - 1] .= $operation."\n";
+        $this->current .= $operation."\n";
     }
 
     private static function escape(string $text): string
     {
         $text = str_replace(["\r", "\n", "\t"], ' ', $text);
-        $converted = @mb_convert_encoding($text, 'Windows-1252', 'UTF-8');
+        $converted = mb_convert_encoding($text, 'Windows-1252', 'UTF-8');
 
-        return str_replace(['\\', '(', ')'], ['\\\\', '\\(', '\\)'], is_string($converted) ? $converted : $text);
+        return str_replace(['\\', '(', ')'], ['\\\\', '\\(', '\\)'], $converted);
     }
 }
