@@ -25,7 +25,7 @@ import {
     CardTitle,
 } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { collectIds, parseJson } from '@/lib/api-examples';
+import { collectIds, parseJson, showValue } from '@/lib/api-examples';
 import { formatDateTime } from '@/lib/format';
 import { postJson } from '@/lib/http';
 import { palette } from '@/lib/colors';
@@ -50,10 +50,10 @@ function startValue(p: Parameter): string {
         return lastIds[p.name];
     }
     if (p.example !== undefined && p.example !== null) {
-        return String(p.example);
+        return showValue(p.example);
     }
 
-    return p.schema?.default !== undefined ? String(p.schema.default) : '';
+    return showValue(p.schema?.default);
 }
 
 type Operation = {
