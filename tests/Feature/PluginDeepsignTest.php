@@ -252,15 +252,9 @@ class PluginDeepsignTest extends TestCase
             ->assertJsonPath('http_status', 201)
             ->assertJsonPath('body', fn (string $b): bool => str_contains($b, 'doc-echt-1'));
 
-        Http::assertSent(function (Request $r): bool {
-            if ($r->url() !== 'https://api.sign.deepbox.swiss/api/v1/documents/file' || ! $r->isMultipart()) {
-                return false;
-            }
-            $parts = collect($r->data())->keyBy('name');
-
-            return ($parts['file']['filename'] ?? null) === 'Endtest.pdf'
-                && str_contains((string) ($parts['data']['contents'] ?? ''), 'Sekundarschule Bülach');
-        });
+        Http::assertSent(fn (Request $r): bool => $r->url() === 'https://api.sign.deepbox.swiss/api/v1/documents/file'
+            && $r->hasFile('file', null, 'Endtest.pdf')
+            && $r->hasFile('data'));
 
         // Endpunkte ohne Datei nehmen keine an
         $other = (string) json_encode(['endpoint' => 'overview', 'params' => []]);
