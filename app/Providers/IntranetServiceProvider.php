@@ -17,6 +17,7 @@ use App\Data\Json\JsonUserRepository;
 use App\Data\Store\JsonStore;
 use App\Plugins\PluginManager;
 use App\Support\Roles;
+use App\Support\Signatures;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
@@ -71,6 +72,9 @@ class IntranetServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        // Unterschriften ohne Modul (Verwaltung → Unterschriften, Plugin-Aktion «Dokument senden»): PDF im Kern ablegen
+        Signatures::listen(Signatures::MANUAL, fn (string $event, array $request, ?string $pdf): ?bool => $this->app->make(Signatures::class)->manualEvent($event, $request, $pdf));
+
         Auth::provider('intranet', fn ($app): RepositoryUserProvider => new RepositoryUserProvider(
             $app->make(UserRepository::class),
         ));

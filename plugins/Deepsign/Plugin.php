@@ -7,7 +7,9 @@ use App\Plugins\BasePlugin;
 use App\Plugins\DemoResponder;
 use App\Plugins\PluginContext;
 use App\Plugins\SignatureProvider;
+use App\Support\Signatures;
 use Illuminate\Http\Client\Response;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
@@ -110,12 +112,55 @@ class Plugin extends BasePlugin implements DemoResponder, SignatureProvider
     {
         return match ($action) {
             'service-user' => $this->serviceUser($ctx),
+            'send' => $this->send($ctx, $options),
             'documents' => $this->documents($ctx, (string) ($options['status'] ?? '')),
             'modes' => $this->modes($ctx),
             'seals' => $this->seals($ctx),
             'authority' => $this->authority($ctx, (string) ($options['signatureMode'] ?? 'advanced')),
             default => parent::action($action, $ctx, $options),
         };
+    }
+
+    /**
+     * Dokument zur Unterschrift senden: über die Kern-Schnittstelle «Unterschriften», damit der Auftrag unter
+     * Verwaltung → Unterschriften erscheint (Status, Erinnern, unterschriebenes PDF).
+     *
+     * @param  array<string, mixed>  $options
+     */
+    private function send(PluginContext $ctx, array $options): ActionResult
+    {
+        $file = $options['file'] ?? null;
+        if (! $file instanceof UploadedFile || ! $file->isValid()) {
+            return ActionResult::warning('Bitte ein PDF wählen.');
+        }
+        if ($file->getSize() > 20 * 1024 * 1024) {
+            return ActionResult::warning('Das PDF ist grösser als 20 MB.');
+        }
+        $signees = Signatures::parseSignees((string) ($options['signees'] ?? ''));
+        if ($signees === []) {
+            return ActionResult::warning('Mindestens eine unterzeichnende Person angeben (eine pro Zeile: Name; E-Mail).');
+        }
+        $observers = array_values(array_filter(array_map('trim', explode(',', (string) ($options['observers'] ?? '')))));
+
+        $request = app(Signatures::class)->sendManual(
+            (string) ($options['title'] ?? ''),
+            $file->getClientOriginalName(),
+            (string) $file->get(),
+            $signees,
+            ($options['order'] ?? '') === 'gleichzeitig',
+            $observers,
+            is_string($options['comment'] ?? null) ? $options['comment'] : null,
+            $ctx->user,
+        );
+
+        return ActionResult::table(($ctx->demo() ? 'Demo-Modus: ' : '').'«'.$request['title'].'» ist zur Unterschrift versendet. Status unter Verwaltung → Unterschriften.', [
+            ['key' => 'order', 'label' => 'Reihenfolge'],
+            ['key' => 'name', 'label' => 'Name'],
+            ['key' => 'email', 'label' => 'E-Mail'],
+            ['key' => 'status', 'label' => 'Status'],
+        ], array_map(fn (array $s): array => [
+            'order' => (int) $s['order'] + 1, 'name' => (string) $s['name'], 'email' => (string) $s['email'], 'status' => (string) $s['status'],
+        ], array_values(array_filter((array) $request['signees'], 'is_array'))));
     }
 
     /**

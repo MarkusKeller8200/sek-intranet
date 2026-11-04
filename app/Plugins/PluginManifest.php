@@ -250,6 +250,8 @@ final class PluginManifest
                 'name' => $this->service()['name'] ?? $this->name(),
                 'home' => $this->service()['home'] ?? null,
                 'docs' => $this->service()['docs'] ?? null,
+                // Swagger-Doku des Herstellers (nur https)
+                'swagger' => is_string($this->service()['swagger'] ?? null) && str_starts_with($this->service()['swagger'], 'https://') ? $this->service()['swagger'] : null,
                 'auth' => $this->auth()['type'] ?? 'none',
                 'hosts' => $this->hosts(),
                 'auth_note' => $this->service()['auth_note'] ?? null,

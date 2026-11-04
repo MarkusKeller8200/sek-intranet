@@ -8,6 +8,7 @@ use Illuminate\Http\Client\Request;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Sleep;
+use Inertia\Testing\AssertableInertia as Assert;
 use Plugins\Deepsign\Plugin;
 use Tests\TestCase;
 
@@ -317,5 +318,12 @@ class PluginDeepsignTest extends TestCase
             ->assertJsonPath('rows.0.service', 'MobileID')
             ->assertJsonPath('rows.1.available', 'nein');
         Http::assertNothingSent();
+    }
+
+    public function test_swagger_link_on_plugin_page(): void
+    {
+        $this->signInAs('admin');
+        $this->get('/plugins/deepsign')->assertOk()->assertInertia(fn (Assert $page) => $page
+            ->where('plugin.service.swagger', 'https://api.sign.deepbox.swiss/swagger-ui/index.html?configUrl=/api-docs/swagger-config'));
     }
 }

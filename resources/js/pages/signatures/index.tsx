@@ -1,6 +1,7 @@
 import { Head, router } from '@inertiajs/react';
 import {
     BellRing,
+    Download,
     ExternalLink,
     FlaskConical,
     Play,
@@ -13,6 +14,7 @@ import { useMemo, useState } from 'react';
 import { toast } from 'sonner';
 import EmptyState from '@/components/empty-state';
 import PageHeader from '@/components/page-header';
+import SignatureSendDialog from '@/components/signature-send-dialog';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { AlertDialog } from '@/components/ui/alert-dialog';
 import { Badge } from '@/components/ui/badge';
@@ -62,6 +64,8 @@ type Props = {
     personStatus: Record<string, string>;
     anbieter: { id: string; name: string; demo: boolean } | null;
     darfOeffnen: boolean;
+    /** Aufträge mit abgelegtem unterschriebenem PDF (von Hand gesendet) */
+    mitPdf: string[];
     filter: { modul: string; monat: string; status: string };
 };
 
@@ -97,6 +101,7 @@ export default function Signatures({
     personStatus,
     anbieter,
     darfOeffnen,
+    mitPdf,
     filter,
 }: Props) {
     const [modul, setModul] = useState(filter.modul);
@@ -197,14 +202,19 @@ export default function Signatures({
                             ))}
                         </NativeSelect>
                     </div>
-                    <Button
-                        variant="outline"
-                        className="ml-auto"
-                        disabled={!anbieter}
-                        onClick={() => post('/unterschriften/aktualisieren')}
-                    >
-                        <RefreshCw /> Alle aktualisieren
-                    </Button>
+                    <div className="ml-auto flex flex-wrap gap-2">
+                        <Button
+                            variant="outline"
+                            disabled={!anbieter}
+                            onClick={() => post('/unterschriften/aktualisieren')}
+                        >
+                            <RefreshCw /> Alle aktualisieren
+                        </Button>
+                        <SignatureSendDialog
+                            disabled={!anbieter}
+                            demo={anbieter?.demo ?? false}
+                        />
+                    </div>
                 </div>
 
                 {sichtbar.length === 0 ? (
@@ -261,6 +271,15 @@ export default function Signatures({
                                                     {status[a.status] ??
                                                         a.status}
                                                 </Badge>
+                                                {mitPdf.includes(a.id) && (
+                                                    <a
+                                                        href={`/unterschriften/${a.id}/pdf`}
+                                                        className="mt-1 flex items-center gap-1 text-xs text-primary hover:underline"
+                                                    >
+                                                        <Download className="size-3.5" />{' '}
+                                                        Unterschriebenes PDF
+                                                    </a>
+                                                )}
                                                 {a.status ===
                                                     'unterschrieben' &&
                                                     !a.fetched_at && (

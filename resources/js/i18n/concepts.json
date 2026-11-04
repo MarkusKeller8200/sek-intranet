@@ -3310,5 +3310,42 @@
     "Die Datei geht als eigener Teil (multipart) mit, der Body als JSON. Höchstens {n} MB.": [
         "The file is sent as a separate part (multipart), the body as JSON. At most {n} MB.",
         "D Datei gaht als eigene Teil (multipart) mit, de Body als JSON. Höchschtens {n} MB."
-    ]
+    ],
+    "Dokument zur Unterschrift senden": [
+        "Send document for signature",
+        "Dokumänt zur Unterschrift schicke"
+    ],
+    "Unterzeichnende *": ["Signers *", "Unterzeichnendi *"],
+    "Person hinzufügen": ["Add person", "Person hinzuefüege"],
+    "Alle gleichzeitig (sonst nacheinander wie aufgelistet)": [
+        "All at the same time (otherwise one after another as listed)",
+        "Alli glichziitig (susch nachenand wie ufglistet)"
+    ],
+    "Dokument (PDF, höchstens {n} MB) *": [
+        "Document (PDF, at most {n} MB) *",
+        "Dokumänt (PDF, höchschtens {n} MB) *"
+    ],
+    "Erscheint in der Einladung und in der Übersicht. Leer = Dateiname.": [
+        "Shown in the invitation and the overview. Empty = file name.",
+        "Erschiint i de Iiladig und i de Übersicht. Leer = Dateiname."
+    ],
+    "E-Mail-Adressen, mehrere mit Komma. Sieht das Dokument, unterschreibt nicht.": [
+        "Email addresses, separate several with commas. Sees the document, does not sign.",
+        "E-Mail-Adrässe, mehreri mit Komma. Gseht s Dokumänt, unterschriibt nöd."
+    ],
+    "Demo-Modus: Es geht nichts an DeepSign, der Ablauf lässt sich danach simulieren.": [
+        "Demo mode: nothing is sent to DeepSign; the process can then be simulated.",
+        "Demo-Modus: Es gaht nüt a DeepSign, de Ablauf chasch nachher simuliere."
+    ],
+    "Das PDF geht an DeepSign, die Unterzeichnenden erhalten eine E-Mail mit dem Link zum Unterschreiben.": [
+        "The PDF is sent to DeepSign; the signers receive an email with the link to sign.",
+        "S PDF gaht a DeepSign, d Unterzeichnende überchömed e E-Mail mit em Link zum Unterschriibe."
+    ],
+    "Senden und starten": ["Send and start", "Schicke und starte"],
+    "Swagger-Doku": ["Swagger docs", "Swagger-Doku"],
+    "Unterschriebenes PDF (nur von Hand gesendete Aufträge)": [
+        "Signed PDF (manually sent requests only)",
+        "Unterschriibnigs PDF (nur vo Hand gschickti Ufträg)"
+    ],
+    "Unterschriebenes PDF": ["Signed PDF", "Unterschriibnigs PDF"]
 }

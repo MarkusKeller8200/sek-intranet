@@ -7,8 +7,10 @@ use App\Plugins\PluginManager;
 use App\Support\Notifications;
 use App\Support\Signatures;
 use App\Support\SimplePdf;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Testing\AssertableInertia as Assert;
 use InvalidArgumentException;
 use RuntimeException;
@@ -218,5 +220,69 @@ class SignaturesTest extends TestCase
         $this->post("/unterschriften/{$request['id']}/zurueckziehen")->assertRedirect();
         $this->delete("/unterschriften/{$request['id']}")->assertRedirect();
         $this->assertSame([], app(Signatures::class)->all());
+    }
+
+    public function test_send_document_from_page_and_download_signed_pdf(): void
+    {
+        Storage::fake('local');
+        $this->enableDeepsign();
+        $this->signInAs('verwaltung');
+        $pdf = UploadedFile::fake()->createWithContent('Vereinbarung.pdf', $this->pdf());
+
+        // Pflichtangaben
+        $this->post('/unterschriften', ['unterzeichnende' => []])->assertSessionHasErrors(['datei', 'unterzeichnende']);
+        $this->post('/unterschriften', ['datei' => $pdf, 'unterzeichnende' => [['name' => 'Anna', 'email' => 'keine-adresse']]])
+            ->assertSessionHasErrors('unterzeichnende.0.email');
+
+        $this->post('/unterschriften', [
+            'datei' => $pdf,
+            'titel' => 'Vereinbarung Weiterbildung (erfunden)',
+            'unterzeichnende' => [
+                ['name' => 'Anna Muster', 'email' => 'anna.muster@sekbuelach.example'],
+                ['name' => 'Beat Beispiel', 'email' => 'beat.beispiel@sekbuelach.example'],
+            ],
+            'gleichzeitig' => '0',
+            'beobachtende' => 'personal@sekbuelach.example',
+        ])->assertRedirect()->assertSessionHasNoErrors();
+
+        $request = app(Signatures::class)->all()[0];
+        $this->assertSame(Signatures::MANUAL, $request['module']);
+        $this->assertSame('Vereinbarung Weiterbildung (erfunden)', $request['title']);
+        $this->assertSame([0, 1], array_column($request['signees'], 'order'));
+        $this->assertSame(['personal@sekbuelach.example'], $request['observers']);
+        $this->get("/unterschriften/{$request['id']}/pdf")->assertNotFound();
+
+        $this->post("/unterschriften/{$request['id']}/demo")->assertRedirect();
+        $this->post("/unterschriften/{$request['id']}/demo")->assertRedirect();
+        $this->get('/unterschriften')->assertInertia(fn (Assert $page) => $page->where('mitPdf', [$request['id']]));
+        $download = $this->get("/unterschriften/{$request['id']}/pdf")->assertOk()->streamedContent();
+        $this->assertStringStartsWith('%PDF', $download);
+
+        $this->signInAs('lehrperson');
+        $this->get("/unterschriften/{$request['id']}/pdf")->assertForbidden();
+    }
+
+    public function test_send_action_in_plugin_with_file_dialog(): void
+    {
+        $this->enableDeepsign();
+        $this->signInAs('admin');
+        $payload = (string) json_encode(['options' => [
+            'title' => '', 'order' => 'gleichzeitig',
+            'signees' => "Anna Muster; anna.muster@sekbuelach.example\nbeat.beispiel@sekbuelach.example",
+        ]]);
+        $file = UploadedFile::fake()->createWithContent('Protokoll.pdf', $this->pdf());
+
+        $this->post('/plugins/deepsign/aktion/send', ['payload' => $payload, 'file_file' => $file], ['Accept' => 'application/json'])
+            ->assertOk()
+            ->assertJsonPath('status', 'success')
+            ->assertJsonPath('rows.1.name', 'beat.beispiel@sekbuelach.example');
+
+        $request = app(Signatures::class)->all()[0];
+        $this->assertSame('Protokoll', $request['title']);
+        $this->assertSame([0, 0], array_column($request['signees'], 'order'));
+        $this->assertSame(
+            [['name' => 'Anna Muster', 'email' => 'anna.muster@sekbuelach.example'], ['name' => 'b@x.ch', 'email' => 'b@x.ch']],
+            Signatures::parseSignees("Anna Muster; anna.muster@sekbuelach.example\n\nb@x.ch"),
+        );
     }
 }

@@ -11,12 +11,18 @@ laufend unter **Unveröffentlicht**. Ab 0.32.0 entsteht eine Version nur bei ein
 
 ### Für Mitarbeitende
 
+- [manage-signatures] Verwaltung → Unterschriften: beliebiges PDF zur elektronischen Unterschrift senden
+  (Unterzeichnende nacheinander oder gleichzeitig); das unterschriebene PDF lässt sich danach dort herunterladen.
 - [visum-zeiterfassung] Visierte Monatsrapporte lassen sich elektronisch unterschreiben (DeepSign): Das
   unterschriebene PDF liegt danach automatisch in der Zeiterfassung der Person.
 - [manage-signatures] Verwaltung → Unterschriften: offene und abgeschlossene Unterschriften, erinnern und zurückziehen.
 
 ### Neu
 
+- **Dokument zur Unterschrift senden (#86):** Dialog auf Verwaltung → Unterschriften und Aktion im Plugin DeepSign:
+  PDF wählen, Unterzeichnende in Reihenfolge oder gleichzeitig, zur Kenntnis an, Nachricht – startet den
+  Signaturprozess; das unterschriebene PDF wird abgelegt und ist herunterladbar. Plugin-Seite mit Link zur
+  Swagger-Doku (`service.swagger`).
 - **DeepSign: alle Endpunkte (#85):** Alle 53 Endpunkte der DeepSign-API im Plugin und im API-Tester, je mit
   Beispielwerten, Feldern und Demo-Antwort (Umschläge, Gruppen und Reihenfolge, Anhänge, Hash- und Datei-Signatur,
   Siegel, Unterschrift als Bild); Aktionen «Siegel anzeigen» und «Identifikation anzeigen». Versand an die echte API

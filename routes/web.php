@@ -197,6 +197,8 @@ Route::middleware('auth')->group(function () {
     // Unterschriften (#42)
     Route::middleware('can:manage-signatures')->group(function () {
         Route::get('unterschriften', [SignatureController::class, 'index'])->name('signatures.index');
+        Route::post('unterschriften', [SignatureController::class, 'store'])->middleware('throttle:20,1')->name('signatures.store');
+        Route::get('unterschriften/{id}/pdf', [SignatureController::class, 'pdf'])->name('signatures.pdf');
         Route::post('unterschriften/aktualisieren', [SignatureController::class, 'refreshAll'])->middleware('throttle:10,1')->name('signatures.refresh-all');
         Route::post('unterschriften/{id}/aktualisieren', [SignatureController::class, 'refresh'])->middleware('throttle:30,1')->name('signatures.refresh');
         Route::post('unterschriften/{id}/starten', [SignatureController::class, 'start'])->name('signatures.start');

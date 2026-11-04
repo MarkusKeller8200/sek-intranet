@@ -112,6 +112,16 @@ für die Person und das Visum herunterladbar.
 genaues Format des Webhooks und der Signatur, Antwort von `document-access-url`. Im Demo-Modus ist der Ablauf
 vollständig testbar; mit echtem Zugang auf dem Schweizer Server prüfen.
 
+## Dokument von Hand senden (#86)
+
+- **Verwaltung → Unterschriften → «Dokument zur Unterschrift senden»** (Recht `manage-signatures`) bzw. Plugin-Aktion
+  «Dokument zur Unterschrift senden» (Unterzeichnende als Zeilen «Name; E-Mail»): PDF bis 20 MB, Unterzeichnende
+  nacheinander oder gleichzeitig, optional zur Kenntnis an und Nachricht. Läuft über `Signatures::sendManual()`
+  (Modul `unterschriften`); ohne festes Unterschriftsfeld platzieren die Unterzeichnenden ihre Unterschrift selbst.
+- Das unterschriebene PDF legt der Kern unter `storage/app/private/signatures/<auftrag>.pdf` ab
+  (`Signatures::manualEvent`); Download unter `/unterschriften/{id}/pdf`.
+- Swagger-Doku von DeepSign als Link auf der Plugin-Seite (`service.swagger`).
+
 ## Alle Endpunkte (#85)
 
 Quelle: OpenAPI-Beschreibung von DeepSign (Swagger `api.sign.deepbox.swiss/swagger-ui`, 53 Operationen, am 04.11.2026 von

@@ -8,6 +8,7 @@ use App\Plugins\PluginManager;
 use App\Plugins\SignatureProvider;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use InvalidArgumentException;
 use RuntimeException;
@@ -25,6 +26,11 @@ use Throwable;
 final class Signatures
 {
     public const COLLECTION = 'signature_requests';
+
+    /** Aufträge ohne Modul (von Hand gesendet); das unterschriebene PDF legt der Kern unter signatures/ ab. */
+    public const MANUAL = 'unterschriften';
+
+    private const MANUAL_DIR = 'signatures';
 
     public const STATUS = [
         'entwurf' => 'Entwurf',
@@ -284,6 +290,90 @@ final class Signatures
         }
 
         return $result;
+    }
+
+    /**
+     * Dokument von Hand zur Unterschrift senden (Seite «Unterschriften», Plugin-Aktion). Unterzeichnende als Liste
+     * {name, email}; Reihenfolge wie aufgelistet oder alle gleichzeitig.
+     *
+     * @param  list<array{name: string, email: string}>  $signees
+     * @param  list<string>  $observers
+     * @return array<string, mixed>
+     */
+    public function sendManual(string $title, string $fileName, string $pdf, array $signees, bool $parallel, array $observers, ?string $comment, ?IntranetUser $by): array
+    {
+        $title = trim($title) !== '' ? trim($title) : pathinfo($fileName, PATHINFO_FILENAME);
+        foreach ($observers as $email) {
+            if (filter_var($email, FILTER_VALIDATE_EMAIL) === false) {
+                throw new InvalidArgumentException("Ungültige E-Mail bei «Zur Kenntnis an»: {$email}");
+            }
+        }
+
+        return $this->create([
+            'module' => self::MANUAL,
+            'reference' => 'manuell:'.Str::uuid()->toString(),
+            'title' => mb_substr($title, 0, 200),
+            'file_name' => preg_replace('/[^\w.\- ]+/u', '_', $fileName) ?: 'Dokument.pdf',
+            'comment' => $comment !== null && trim($comment) !== '' ? mb_substr(trim($comment), 0, 1000) : null,
+            'signees' => array_values(array_map(fn (array $s, int $i): array => ['name' => $s['name'], 'email' => $s['email'], 'order' => $parallel ? 0 : $i], $signees, array_keys($signees))),
+            'observers' => $observers,
+        ], $pdf, $by);
+    }
+
+    /**
+     * Zeilen «Name; E-Mail» (oder nur E-Mail) in Unterzeichnende umwandeln.
+     *
+     * @return list<array{name: string, email: string}>
+     */
+    public static function parseSignees(string $text): array
+    {
+        $signees = [];
+        foreach (preg_split('/\R/', $text) ?: [] as $line) {
+            $parts = array_map('trim', preg_split('/[;,\t]/', $line) ?: []);
+            $parts = array_values(array_filter($parts, fn (string $p): bool => $p !== ''));
+            if ($parts === []) {
+                continue;
+            }
+            $email = array_pop($parts);
+            $signees[] = ['name' => $parts !== [] ? implode(' ', $parts) : $email, 'email' => $email];
+        }
+
+        return $signees;
+    }
+
+    /**
+     * Ereignisse der von Hand gesendeten Aufträge: unterschriebenes PDF ablegen.
+     *
+     * @param  array<string, mixed>  $request
+     */
+    public function manualEvent(string $event, array $request, ?string $pdf): ?bool
+    {
+        if ($event !== 'signatur.abgeschlossen') {
+            return true;
+        }
+        if ($pdf === null) {
+            return false;
+        }
+        $path = self::MANUAL_DIR.'/'.preg_replace('/[^a-zA-Z0-9-]/', '', (string) $request['id']).'.pdf';
+        if (! Storage::disk('local')->put($path, $pdf)) {
+            return false;
+        }
+        $this->store->update(self::COLLECTION, (string) $request['id'], ['pdf_path' => $path]);
+        if (is_string($request['created_by'] ?? null)) {
+            $this->notifications->toUsers([$request['created_by']], 'signatur.abgeschlossen', 'Dokument unterschrieben',
+                "«{$request['title']}» ist von allen unterschrieben und liegt unter Unterschriften.", '/unterschriften', null);
+        }
+
+        return true;
+    }
+
+    /** Pfad des abgelegten PDF eines von Hand gesendeten Auftrags (oder null). */
+    public function manualPdf(string $id): ?string
+    {
+        $record = $this->store->find(self::COLLECTION, $id);
+        $path = $record['pdf_path'] ?? null;
+
+        return is_string($path) && str_starts_with($path, self::MANUAL_DIR.'/') && Storage::disk('local')->exists($path) ? $path : null;
     }
 
     public function remind(string $id, int $index, ?IntranetUser $by): void

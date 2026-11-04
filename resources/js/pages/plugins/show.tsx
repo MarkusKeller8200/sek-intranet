@@ -199,6 +199,16 @@ export default function PluginShow({
                             API-Doku <ExternalLink className="size-3.5" />
                         </a>
                     )}
+                    {plugin.service.swagger && (
+                        <a
+                            href={plugin.service.swagger}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="inline-flex items-center gap-1 text-primary hover:underline"
+                        >
+                            Swagger-Doku <ExternalLink className="size-3.5" />
+                        </a>
+                    )}
                     {plugin.events.length > 0 && (
                         <span className="text-muted-foreground">
                             Reagiert auf: {plugin.events.join(', ')}

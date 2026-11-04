@@ -95,6 +95,7 @@ export type PluginInfo = {
         name: string;
         home: string | null;
         docs: string | null;
+        swagger?: string | null;
         auth: string;
         auth_note: string | null;
         hosts: Record<string, string>;

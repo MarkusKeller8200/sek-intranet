@@ -1211,6 +1211,7 @@ return [
                 'warned_at' => ['type' => 'datetime', 'required' => false, 'label' => 'Warnung «nicht abgeholt» gesendet'],
                 'withdrawn_by' => ['type' => 'ref', 'references' => 'users', 'required' => false, 'label' => 'Zurückgezogen von'],
                 'error' => ['type' => 'text', 'required' => false, 'label' => 'Fehler beim Senden'],
+                'pdf_path' => ['type' => 'string', 'required' => false, 'label' => 'Unterschriebenes PDF (nur von Hand gesendete Aufträge)'],
             ],
         ],
         'themes' => [
