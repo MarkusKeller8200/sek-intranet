@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Data\Contracts\DocumentRepository;
 use App\Data\Contracts\UserRepository;
+use App\Support\DocumentAccess;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
@@ -24,14 +25,15 @@ class DocumentController extends Controller
         private readonly UserRepository $users,
     ) {}
 
-    public function index(): Response
+    public function index(Request $request): Response
     {
         $names = $this->users->names();
 
         return Inertia::render('documents/index', [
             'documents' => array_map(fn (array $d): array => $this->public($d) + [
                 'created_by_name' => $names[$d['created_by'] ?? ''] ?? null,
-            ], $this->documents->sorted()),
+                'restricted' => DocumentAccess::ABILITIES[(string) ($d['ability'] ?? '')] ?? null,
+            ], DocumentAccess::filter($this->documents->sorted(), $request->user())),
         ]);
     }
 
@@ -53,16 +55,16 @@ class DocumentController extends Controller
         return redirect()->route('documents.index');
     }
 
-    public function edit(string $id): Response
+    public function edit(Request $request, string $id): Response
     {
         return Inertia::render('documents/form', [
-            'document' => $this->public($this->documents->findOrFail($id)),
+            'document' => $this->public($this->visibleOrFail($request, $id)),
         ]);
     }
 
     public function update(Request $request, string $id): RedirectResponse
     {
-        $existing = $this->documents->findOrFail($id);
+        $existing = $this->visibleOrFail($request, $id);
         $hasFile = ($existing['kind'] ?? null) === 'file' && is_string($existing['file_path'] ?? null);
 
         $data = $this->validated($request, requireFile: ! $hasFile);
@@ -80,9 +82,9 @@ class DocumentController extends Controller
         return redirect()->route('documents.index');
     }
 
-    public function destroy(string $id): RedirectResponse
+    public function destroy(Request $request, string $id): RedirectResponse
     {
-        $document = $this->documents->findOrFail($id);
+        $document = $this->visibleOrFail($request, $id);
 
         if (($document['kind'] ?? null) === 'file' && is_string($document['file_path'] ?? null)) {
             Storage::disk('local')->delete($document['file_path']);
@@ -94,9 +96,9 @@ class DocumentController extends Controller
         return redirect()->route('documents.index');
     }
 
-    public function download(string $id): StreamedResponse
+    public function download(Request $request, string $id): StreamedResponse
     {
-        $document = $this->documents->findOrFail($id);
+        $document = $this->visibleOrFail($request, $id);
         $path = $document['file_path'] ?? null;
 
         abort_unless(
@@ -153,6 +155,19 @@ class DocumentController extends Controller
         }
 
         return $result + ['url' => null];
+    }
+
+    /**
+     * Eingeschränkte Dokumente (#94) gibt es für andere nicht.
+     *
+     * @return array<string, mixed>
+     */
+    private function visibleOrFail(Request $request, string $id): array
+    {
+        $document = $this->documents->findOrFail($id);
+        abort_unless(DocumentAccess::visible($document, $request->user()), 404);
+
+        return $document;
     }
 
     /**

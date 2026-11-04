@@ -277,4 +277,37 @@ class GlossaryTest extends TestCase
         $this->get('/glossar/doppelte')->assertForbidden();
         $this->get('/glossar/neu')->assertForbidden();
     }
+    public function test_active_flag_hides_entries_for_viewers_and_from_terms(): void
+    {
+        $vsa = $this->entry('VSA');
+        $this->assertTrue(Glossary::active($vsa), 'ohne Feld aktiv');
+
+        $this->signInAs('verwaltung');
+        $this->postJson('/glossar/zellen', ['changes' => [['id' => $vsa['id'], 'field' => 'aktiv', 'value' => false]]])
+            ->assertOk()->assertJsonPath('rows.0.aktiv', false);
+        $this->assertFalse($this->repo()->find($vsa['id'])['aktiv']);
+        $this->postJson('/glossar/zellen', ['changes' => [['id' => $vsa['id'], 'field' => 'aktiv', 'value' => 'vielleicht']]])->assertStatus(422);
+        // Pflegende sehen inaktive Einträge (abgeblendet)
+        $this->get('/glossar')->assertInertia(fn (Assert $page) => $page
+            ->has('rows', 141)
+            ->where('felder.aktiv', 'Aktiv'));
+        $this->get('/glossar/'.$vsa['id'])->assertOk();
+
+        $this->signInAs('lehrperson');
+        $this->get('/glossar')->assertInertia(fn (Assert $page) => $page
+            ->has('rows', 140)
+            ->where('rows', fn ($rows): bool => collect($rows)->every(fn (array $r): bool => $r['aktiv'] === true)));
+        $this->get('/glossar/'.$vsa['id'])->assertNotFound();
+        $this->assertNull(collect($this->getJson('/glossar/begriffe')->json('terms'))->firstWhere('id', $vsa['id']), 'nicht markiert');
+
+        // Excel: ja/nein
+        $this->assertTrue(Glossary::flag('ja'));
+        $this->assertTrue(Glossary::flag(''));
+        $this->assertFalse(Glossary::flag('nein'));
+        $this->assertFalse(Glossary::flag('0'));
+        $this->assertNull(Glossary::flag('vielleicht'));
+        $this->signInAs('verwaltung');
+        $this->put('/glossar/'.$vsa['id'], ['aktiv' => true])->assertRedirect();
+        $this->assertTrue($this->repo()->find($vsa['id'])['aktiv']);
+    }
 }

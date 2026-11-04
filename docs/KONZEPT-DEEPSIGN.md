@@ -194,3 +194,16 @@ Vertrag zur Auftragsbearbeitung, Aufbewahrungsfrist der unterschriebenen Dokumen
 3. ~~Gibt es ein Testsystem bzw. eine Sandbox?~~ Ja (`int.deepcloud.swiss`); offen: API-Adresse der Testumgebung
 4. Serverstandort, Vertrag zur Auftragsbearbeitung, IDG Kanton Zürich
 5. Verhalten bei abgelehnter Unterschrift, Sprache der Einladungen (Deutsch)
+
+## Webhook und Ablage (#93, #94)
+
+- **Webhook:** Plugin-Einstellung «Webhook verwenden» (oder Server-Schalter `INTRANET_SIGNATURE_WEBHOOK`) und
+  «Öffentliche Adresse des Intranets» (`webhook_url`, leer = Adresse dieses Servers; der Pfad
+  `/api/signaturen/deepsign/callback` wird angehängt). Der Kern übergibt Adresse, Geheimnis und `enabled`; das
+  Plugin entscheidet, ob `callbackUrl`/`callbackSecret` mitgehen. Die Aktion «Webhook prüfen» legt ein Geheimnis für
+  2 Minuten in den Cache und schickt eine Meldung mit `documentId = intranet-webhook-test`, signiert wie DeepSign;
+  das Intranet antwortet mit 204 nur bei richtiger Signatur.
+- **Dokumente ablegen:** Aktion «Dokumente ablegen» holt unterschriebene Dokumente (`overview` mit
+  `filterDocumentStatus=signed` oder eine Dokument-ID), lädt das PDF über `files[].fileUrl` und legt es in
+  «Dokumente & Links» ab (`App\Support\DocumentAccess`). Herkunft `deepsign:<documentId>` verhindert Doppeltes.
+  Standard: Kategorie «Unterschriebene Dokumente», nur sichtbar mit Recht `manage-signatures` (Feld `ability`).

@@ -8,6 +8,7 @@ use App\Data\Contracts\EventRepository;
 use App\Data\Contracts\UserRepository;
 use App\Http\Controllers\Controller;
 use App\Support\AuditLog;
+use App\Support\DocumentAccess;
 use App\Support\PersonFields;
 use App\Support\PersonTypes;
 use App\Support\PersonValidator;
@@ -175,7 +176,7 @@ class V1Controller extends Controller
             fn (array $d): array => array_diff_key($d, ['file_path' => true]) + [
                 'download_url' => ($d['kind'] ?? null) === 'file' ? url("/dokumente/{$d['id']}/download") : null,
             ],
-            $documents->sorted(),
+            DocumentAccess::filter($documents->sorted(), $request->user()),
         ));
     }
 

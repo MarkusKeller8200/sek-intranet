@@ -20,6 +20,8 @@
     ],
     "Originaler Dateiname": ["Original file name", "Originale Dateiname"],
     "Dateigrösse (Bytes)": ["File size (bytes)", "Dateigrössi (Bytes)"],
+    "Nur sichtbar mit Recht (leer = alle)": ["Visible only with permission (empty = everyone)", "Nur sichtbar mit Rächt (läär = alli)"],
+    "Aktiv (fehlt = aktiv)": ["Active (missing = active)", "Aktiv (fählt = aktiv)"],
     "System: Plugin-Zustand": [
         "System: plugin state",
         "System: Plugin-Zuestand"

@@ -2,11 +2,14 @@
 
 namespace Tests\Feature;
 
+use App\Data\Contracts\DocumentRepository;
 use App\Plugins\ManifestOpenApi;
 use App\Plugins\PluginManager;
 use Illuminate\Http\Client\Request;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Sleep;
 use Inertia\Testing\AssertableInertia as Assert;
 use Plugins\Deepsign\Plugin;
@@ -325,5 +328,83 @@ class PluginDeepsignTest extends TestCase
         $this->signInAs('admin');
         $this->get('/plugins/deepsign')->assertOk()->assertInertia(fn (Assert $page) => $page
             ->where('plugin.service.swagger', 'https://api.sign.deepbox.swiss/swagger-ui/index.html?configUrl=/api-docs/swagger-config'));
+    }
+    public function test_webhook_setting_url_and_probe(): void
+    {
+        $this->enable(['demo' => true, 'webhook' => true, 'webhook_url' => 'https://intranet.sekbuelach.example/']);
+        $ctx = app(PluginManager::class)->context('deepsign', null);
+        $this->assertSame('https://intranet.sekbuelach.example/api/signaturen/deepsign/callback', Plugin::webhookUrl($ctx, route('signatures.callback', ['provider' => 'deepsign'])));
+
+        // Probe: signierte Meldung an die eigene Adresse (Signatur mit dem kurzzeitigen Geheimnis)
+        Http::fake(function (Request $request) {
+            $secret = (string) Cache::get('intranet-webhook-test:deepsign');
+            $valid = $secret !== '' && ($request->header('X-DeepSign-Signature-256')[0] ?? '') === 'sha256='.hash_hmac('sha256', $request->body(), $secret)
+                && $request['documentId'] === 'intranet-webhook-test';
+
+            return Http::response('', $valid ? 204 : 401);
+        });
+        $this->signInAs('admin');
+        $this->postJson('/plugins/deepsign/aktion/webhook', ['options' => []])->assertOk()
+            ->assertJsonPath('message', 'Webhook bereit.')
+            ->assertJsonPath('rows.1.value', 'https://intranet.sekbuelach.example/api/signaturen/deepsign/callback')
+            ->assertJsonPath('rows.3.value', 'angenommen – der Webhook funktioniert');
+
+        $this->assertNull(Cache::get('intranet-webhook-test:deepsign'), 'Geheimnis wieder entfernt');
+
+        // Endpunkt des Intranets: Probe nur mit dem kurzzeitigen Geheimnis
+        $body = (string) json_encode(['documentId' => 'intranet-webhook-test']);
+        Cache::put('intranet-webhook-test:deepsign', 'probe-geheim', 60);
+        $this->call('POST', '/api/signaturen/deepsign/callback', [], [], [], ['HTTP_X_DEEPSIGN_SIGNATURE_256' => 'sha256='.hash_hmac('sha256', $body, 'probe-geheim')], $body)
+            ->assertStatus(204);
+        $this->call('POST', '/api/signaturen/deepsign/callback', [], [], [], ['HTTP_X_DEEPSIGN_SIGNATURE_256' => 'sha256='.hash_hmac('sha256', $body, 'geraten')], $body)
+            ->assertStatus(401);
+    }
+
+    public function test_send_uses_webhook_only_when_enabled(): void
+    {
+        $this->enable(['demo' => true]);
+        $ctx = app(PluginManager::class)->context('deepsign', null);
+        $method = new \ReflectionMethod(Plugin::class, 'webhook');
+        $callback = ['url' => 'https://intranet.sekbuelach.example/api/signaturen/deepsign/callback', 'secret' => 'geheim-123', 'enabled' => false];
+        $this->assertNull($method->invoke(null, $ctx, $callback));
+        $this->assertNotNull($method->invoke(null, $ctx, ['enabled' => true] + $callback));
+
+        $this->enable(['demo' => true, 'webhook' => true]);
+        $ctx = app(PluginManager::class)->context('deepsign', null);
+        $this->assertSame(['url' => $callback['url'], 'secret' => 'geheim-123'], $method->invoke(null, $ctx, $callback));
+    }
+
+    public function test_archive_signed_documents_into_documents_once(): void
+    {
+        Http::fake();
+        Storage::fake('local');
+        $this->enable(['demo' => true]);
+        $this->signInAs('admin');
+
+        $this->postJson('/plugins/deepsign/aktion/archive', ['options' => []])->assertOk()
+            ->assertJsonPath('rows.0.result', 'abgelegt')
+            ->assertJsonCount(1, 'rows');
+        $doc = collect(app(DocumentRepository::class)->all())->firstWhere('source', 'deepsign:demo-signed-0926');
+        $this->assertNotNull($doc);
+        $this->assertSame('unterschriften', $doc['category']);
+        $this->assertSame('manage-signatures', $doc['ability']);
+        $this->assertSame('Monatsrapport September 2026 – Muster Anna', $doc['title']);
+        Storage::disk('local')->assertExists((string) $doc['file_path']);
+        $this->assertStringStartsWith('%PDF', (string) Storage::disk('local')->get((string) $doc['file_path']));
+
+        // zweites Mal: erkannt; nicht unterschriebenes Dokument: nicht abgelegt
+        $this->postJson('/plugins/deepsign/aktion/archive', ['options' => []])->assertOk()
+            ->assertJsonPath('rows.0.result', 'bereits abgelegt («Monatsrapport September 2026 – Muster Anna»)');
+        $this->postJson('/plugins/deepsign/aktion/archive', ['options' => ['documentId' => Plugin::DEMO_DOCUMENT]])->assertOk()
+            ->assertJsonPath('rows.0.result', 'nicht abgelegt – Status in Arbeit');
+        $this->assertCount(1, collect(app(DocumentRepository::class)->all())->where('source', 'deepsign:demo-signed-0926'));
+
+        // nur Verwaltung sieht das abgelegte Dokument
+        $this->get('/dokumente/'.$doc['id'].'/download')->assertOk();
+        $this->signInAs('lehrperson');
+        $this->get('/dokumente')->assertInertia(fn (Assert $page) => $page
+            ->where('documents', fn ($docs): bool => collect($docs)->firstWhere('id', $doc['id']) === null));
+        $this->get('/dokumente/'.$doc['id'].'/download')->assertNotFound();
+        Http::assertNothingSent();
     }
 }

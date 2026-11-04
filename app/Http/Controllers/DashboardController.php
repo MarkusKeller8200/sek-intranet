@@ -8,6 +8,7 @@ use App\Data\Contracts\DocumentRepository;
 use App\Data\Contracts\EventRepository;
 use App\Data\Contracts\UserRepository;
 use App\Plugins\PluginManager;
+use App\Support\DocumentAccess;
 use App\Support\ReleaseAnnouncements;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -32,7 +33,7 @@ class DashboardController extends Controller
             ),
             'events' => $events->upcoming(5),
             'links' => array_slice(array_values(array_filter(
-                $documents->sorted(),
+                DocumentAccess::filter($documents->sorted(), $request->user()),
                 fn (array $d): bool => ($d['category'] ?? null) === 'links',
             )), 0, 6),
             // Kacheln der Plugins: nachgeladen, damit langsame Dienste die Startseite nicht bremsen.

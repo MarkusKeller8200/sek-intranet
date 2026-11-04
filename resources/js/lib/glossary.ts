@@ -19,6 +19,8 @@ export type GlossaryRow = {
     suchbegriffe: string;
     gueltig_ab: string;
     gueltig_bis: string;
+    /** Aktiv (#91): inaktive Einträge sehen nur Pflegende, sie werden im Freitext nicht markiert */
+    aktiv: boolean;
     mehrdeutig: boolean;
     /** Begriff ohne Abkürzung (#72) */
     begriff: boolean;
@@ -46,6 +48,7 @@ export type GlossaryEntry = {
     suchbegriffe: string;
     gueltig_ab: string | null;
     gueltig_bis: string | null;
+    aktiv?: boolean;
     updated_at?: string;
 };
 

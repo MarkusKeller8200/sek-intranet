@@ -55,6 +55,8 @@ export type DocumentItem = StoredRecord & {
     file_size: number | null;
     created_by: string;
     created_by_name?: string | null;
+    /** Eingeschränkt sichtbar (#94): Beschreibung der Einschränkung */
+    restricted?: string | null;
 };
 
 export type Person = StoredRecord & {

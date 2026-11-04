@@ -201,9 +201,9 @@ export default function DataGrid<T extends GridRow>({
     /**
      * Kachelansicht (#88): eine Kachel je Zeile, einspaltig. Mit dieser Angabe erscheint der Umschalter
      * Tabelle | Kacheln (je Browser gemerkt). Suche, Filter, Sortierung, Gruppierung, Auswahl und Export gelten
-     * auch für die Kacheln.
+     * auch für die Kacheln; die Spaltenauswahl bestimmt, welche Angaben die Kachel zeigt (#90).
      */
-    renderCard?: (row: T) => ReactNode;
+    renderCard?: (row: T, visible: Set<string>) => ReactNode;
 }) {
     const byId = useMemo(
         () => new Map(columns.map((c) => [c.id as string, c])),
@@ -318,6 +318,11 @@ export default function DataGrid<T extends GridRow>({
         ),
     ];
     const visibleCols = visibleIds.map((id) => byId.get(id) as GridColumn<T>);
+    const visibleKey = visibleIds.join('|');
+    const visibleSet = useMemo(
+        () => new Set(visibleKey.split('|')),
+        [visibleKey],
+    );
     const width = (id: string) => state.sizing?.[id] ?? DEFAULT_W;
 
     const leftOffsets: Record<string, number> = {};
@@ -1916,13 +1921,7 @@ export default function DataGrid<T extends GridRow>({
             {cards && renderCard && (
                 <CardList
                     items={items}
-                    columns={columns}
-                    sorting={sorting}
-                    grouping={grouping}
-                    onSort={(id, desc) =>
-                        patch({ sorting: id ? [{ id, desc }] : [] })
-                    }
-                    onGroup={(id) => patch({ grouping: id })}
+                    visible={visibleSet}
                     collapsed={collapsed}
                     onToggleGroup={(key) =>
                         setCollapsed((current) => {
@@ -2475,16 +2474,12 @@ export default function DataGrid<T extends GridRow>({
 }
 
 /**
- * Kachelansicht (#88): einspaltige Liste mit Sortieren und Gruppieren (gleicher Zustand wie die Tabelle),
- * Gruppen auf- und zuklappbar, Auswahl je Kachel.
+ * Kachelansicht (#88, #90): einspaltige Liste. Sortieren, Gruppieren und Spaltenauswahl sind dieselben wie in der
+ * Tabelle (Knöpfe der Werkzeugleiste); die Kachel zeigt nur die sichtbaren Spalten. Gruppen auf- und zuklappbar.
  */
 function CardList<T extends GridRow>({
     items,
-    columns,
-    sorting,
-    grouping,
-    onSort,
-    onGroup,
+    visible,
     collapsed,
     onToggleGroup,
     selectable,
@@ -2494,69 +2489,17 @@ function CardList<T extends GridRow>({
     emptyText,
 }: {
     items: Item<T>[];
-    columns: GridColumn<T>[];
-    sorting: { id: string; desc: boolean }[];
-    grouping: string | null;
-    onSort: (id: string | null, desc: boolean) => void;
-    onGroup: (id: string | null) => void;
+    visible: Set<string>;
     collapsed: Set<string>;
     onToggleGroup: (key: string) => void;
     selectable: boolean;
     selected: Set<string>;
     onSelect: (id: string, value: boolean) => void;
-    renderCard: (row: T) => ReactNode;
+    renderCard: (row: T, visible: Set<string>) => ReactNode;
     emptyText: string;
 }) {
-    const sort = sorting[0] ?? null;
-
     return (
         <div className="grid gap-2">
-            <div className="flex flex-wrap items-center gap-2 text-sm">
-                <label className="flex items-center gap-1.5">
-                    <span className="text-muted-foreground">Sortieren</span>
-                    <select
-                        className="h-8 rounded-md border border-input bg-background px-2 text-sm"
-                        value={sort?.id ?? ''}
-                        onChange={(e) =>
-                            onSort(e.target.value || null, sort?.desc ?? false)
-                        }
-                    >
-                        <option value="">wie erfasst</option>
-                        {columns.map((c) => (
-                            <option key={c.id as string} value={c.id as string}>
-                                {c.title}
-                            </option>
-                        ))}
-                    </select>
-                </label>
-                {sort && (
-                    <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => onSort(sort.id, !sort.desc)}
-                        aria-label={sort.desc ? 'Absteigend' : 'Aufsteigend'}
-                        title={sort.desc ? 'Absteigend' : 'Aufsteigend'}
-                    >
-                        {sort.desc ? <ArrowDown /> : <ArrowUp />}
-                    </Button>
-                )}
-                <label className="flex items-center gap-1.5">
-                    <span className="text-muted-foreground">Gruppieren</span>
-                    <select
-                        className="h-8 rounded-md border border-input bg-background px-2 text-sm"
-                        value={grouping ?? ''}
-                        onChange={(e) => onGroup(e.target.value || null)}
-                    >
-                        <option value="">keine</option>
-                        {columns.map((c) => (
-                            <option key={c.id as string} value={c.id as string}>
-                                {c.title}
-                            </option>
-                        ))}
-                    </select>
-                </label>
-            </div>
-
             <ul
                 className="grid max-h-[calc(100vh-15rem)] gap-2 overflow-auto pr-1"
                 aria-label="Kacheln"
@@ -2601,7 +2544,7 @@ function CardList<T extends GridRow>({
                                 />
                             )}
                             <div className="min-w-0 flex-1">
-                                {renderCard(item.row)}
+                                {renderCard(item.row, visible)}
                             </div>
                         </li>
                     ),

@@ -7,6 +7,7 @@ import Markdown from '@/components/markdown';
 import PageHeader from '@/components/page-header';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { MultiSelect } from '@/components/ui/multi-select';
 import { NativeSelect } from '@/components/ui/native-select';
@@ -50,6 +51,7 @@ export default function GlossaryForm({
         suchbegriffe: eintrag?.suchbegriffe ?? '',
         gueltig_ab: eintrag?.gueltig_ab ?? '',
         gueltig_bis: eintrag?.gueltig_bis ?? '',
+        aktiv: eintrag?.aktiv !== false,
     });
     const [vorschau, setVorschau] = useState(false);
     const d = form.data;
@@ -241,6 +243,17 @@ export default function GlossaryForm({
                                     </option>
                                 ))}
                             </NativeSelect>
+                            <label className="mt-2 flex items-center gap-2 text-sm">
+                                <Checkbox
+                                    id="g-aktiv"
+                                    checked={d.aktiv}
+                                    onCheckedChange={(c) =>
+                                        form.setData('aktiv', c === true)
+                                    }
+                                />
+                                Aktiv – inaktive Einträge sehen nur Pflegende,
+                                sie werden im Text nicht markiert
+                            </label>
                         </FormField>
                         <FormField
                             id="g-kurz"

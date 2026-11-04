@@ -483,6 +483,7 @@ return [
         'it' => 'IT-Anleitungen',
         'unterricht' => 'Unterricht',
         'links' => 'Wichtige Links',
+        'unterschriften' => 'Unterschriebene Dokumente',
     ],
 
     /*
@@ -999,6 +1000,7 @@ return [
             'it' => 'cyan',
             'unterricht' => 'emerald',
             'links' => 'sky',
+            'unterschriften' => 'violet',
         ],
     ],
 
@@ -1144,6 +1146,8 @@ return [
                 'file_path' => ['type' => 'string', 'required' => false, 'label' => 'Dateipfad (bei Art Datei)'],
                 'file_name' => ['type' => 'string', 'required' => false, 'label' => 'Originaler Dateiname'],
                 'file_size' => ['type' => 'int', 'required' => false, 'label' => 'Dateigrösse (Bytes)'],
+                'ability' => ['type' => 'string', 'required' => false, 'label' => 'Nur sichtbar mit Recht (leer = alle)'],
+                'source' => ['type' => 'string', 'required' => false, 'label' => 'Herkunft (z. B. deepsign:<Dokument-ID>)'],
                 'created_by' => ['type' => 'ref', 'references' => 'users', 'required' => true, 'label' => 'Erfasst von'],
             ],
         ],
@@ -1353,6 +1357,7 @@ return [
                 'suchbegriffe' => ['type' => 'string', 'required' => false, 'label' => 'Suchbegriffe'],
                 'gueltig_ab' => ['type' => 'date', 'required' => false, 'label' => 'Gültig ab'],
                 'gueltig_bis' => ['type' => 'date', 'required' => false, 'label' => 'Gültig bis'],
+                'aktiv' => ['type' => 'bool', 'required' => false, 'label' => 'Aktiv (fehlt = aktiv)'],
                 'dubletten_ok' => ['type' => 'json', 'required' => false, 'label' => 'Als mehrdeutig belassen (Gruppen)'],
                 'fruehere_ids' => ['type' => 'json', 'required' => false, 'label' => 'Frühere IDs (zusammengeführt)'],
             ],

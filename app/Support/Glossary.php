@@ -43,7 +43,11 @@ final class Glossary
         'suchbegriffe' => 'Suchbegriffe',
         'gueltig_ab' => 'Gültig ab',
         'gueltig_bis' => 'Gültig bis',
+        'aktiv' => 'Aktiv',
     ];
+
+    /** Häkchen-Felder (Excel: ja/nein). */
+    public const BOOL = ['aktiv'];
 
     public function __construct(
         private readonly GlossaryRepository $glossary,
@@ -185,6 +189,10 @@ final class Glossary
     {
         $terms = [];
         foreach ($this->glossary->all() as $e) {
+            // Inaktive Einträge werden nicht markiert (#91)
+            if (! self::active($e)) {
+                continue;
+            }
             $match = [];
             $candidates = [(string) ($e['abk_offiziell'] ?? ''), (string) ($e['abk_eigen'] ?? '')];
             foreach ((array) ($e['aliase_offiziell'] ?? []) as $alias) {
@@ -214,6 +222,16 @@ final class Glossary
     }
 
     /**
+     * Aktiv (#91): fehlt das Feld (ältere Einträge), gilt der Eintrag als aktiv.
+     *
+     * @param  array<string, mixed>  $entry
+     */
+    public static function active(array $entry): bool
+    {
+        return ($entry['aktiv'] ?? true) !== false;
+    }
+
+    /**
      * Angezeigte Abkürzung: eigene, sonst offizielle.
      *
      * @param  array<string, mixed>  $entry
@@ -238,13 +256,17 @@ final class Glossary
     }
 
     /**
-     * Zeilen für die Tabelle: Mehrfachwerte als Text, Kennzeichen «mehrdeutig».
+     * Zeilen für die Tabelle: Mehrfachwerte als Text, Kennzeichen «mehrdeutig». Ohne $withInactive nur aktive
+     * Einträge (für Personen ohne Recht «Glossar pflegen»).
      *
      * @return list<array<string, mixed>>
      */
-    public function rows(): array
+    public function rows(bool $withInactive = true): array
     {
         $entries = $this->glossary->all();
+        if (! $withInactive) {
+            $entries = array_values(array_filter($entries, fn (array $e): bool => self::active($e)));
+        }
         $lists = ['kategorien' => $this->labels('kategorien'), 'herkunft' => $this->labels('herkunft'), 'genutzt_in' => $this->areaOptions()];
         // Mehrfachbedeutung (#67): nur verschiedene Bezeichnungen zählen; gleiche Bezeichnung in anderer
         // Kategorie ist kein echtes Duplikat
@@ -261,6 +283,7 @@ final class Glossary
             foreach (array_keys(self::FIELDS) as $field) {
                 $row[$field] = $this->cellText($field, $e[$field] ?? null, $lists);
             }
+            $row['aktiv'] = self::active($e);
             $row['bedeutungen'] = max(1, ...array_map(fn (string $a): int => count($meanings[$a] ?? []), self::abbreviations($e) ?: ['']));
             $row['mehrdeutig'] = $row['bedeutungen'] > 1;
             // Begriff ohne Abkürzung (#72): Bezeichnung anzeigen und danach sortieren
@@ -317,6 +340,15 @@ final class Glossary
         foreach ($input as $field => $value) {
             if (! isset(self::FIELDS[$field])) {
                 $errors[$field] = "Feld «{$field}» gibt es nicht.";
+
+                continue;
+            }
+            if (in_array($field, self::BOOL, true)) {
+                $flag = self::flag($value);
+                if ($flag === null) {
+                    $errors[$field] = self::FIELDS[$field].': ja oder nein.';
+                }
+                $data[$field] = $flag ?? true;
 
                 continue;
             }
@@ -378,7 +410,7 @@ final class Glossary
         return ['kategorien' => [], 'abk_offiziell' => '', 'aliase_offiziell' => [], 'abk_eigen' => '', 'alias_eigen' => '',
             'bez_offiziell' => '', 'bez_eigen' => '', 'kurzbeschreibung' => '', 'beschreibung' => '', 'url' => '', 'notiz' => '',
             'herkunft' => [], 'genutzt_in' => [], 'status' => 'aktuell', 'suchbegriffe' => '', 'gueltig_ab' => null, 'gueltig_bis' => null,
-            'dubletten_ok' => []];
+            'aktiv' => true, 'dubletten_ok' => []];
     }
 
     /**
@@ -387,6 +419,24 @@ final class Glossary
     public static function split(string $text): array
     {
         return array_values(array_filter(array_map('trim', preg_split('/[;\n]/', $text) ?: []), fn (string $s): bool => $s !== ''));
+    }
+
+    /** Häkchen aus Tabelle, Formular oder Excel: true/false, ja/nein, 1/0, x; leer = ja. null = ungültig. */
+    public static function flag(mixed $value): ?bool
+    {
+        if (is_bool($value)) {
+            return $value;
+        }
+        if (is_int($value)) {
+            return $value !== 0;
+        }
+        $text = mb_strtolower(trim(is_scalar($value) ? (string) $value : ''));
+
+        return match ($text) {
+            '', '1', 'ja', 'j', 'x', 'true', 'yes', 'aktiv', 'wahr', 'oui', 'sì', 'si' => true,
+            '0', 'nein', 'n', 'false', 'no', 'inaktiv', 'falsch', 'non' => false,
+            default => null,
+        };
     }
 
     private static function date(string $value): string|false

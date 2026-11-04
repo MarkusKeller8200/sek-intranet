@@ -138,6 +138,7 @@ export default function PluginShow({
                 <PageHeader
                     title={plugin.name}
                     description={plugin.description}
+                    inline
                     actions={
                         <>
                             <Button

@@ -39,7 +39,8 @@ class GlossaryController extends Controller
     public function index(Request $request, GridViews $views): Response
     {
         return Inertia::render('glossary/index', [
-            'rows' => $this->service->rows(),
+            // Inaktive Einträge sehen nur Pflegende (#91)
+            'rows' => $this->service->rows(Gate::allows('edit-glossary')),
             'kategorien' => $this->service->listOptions('kategorien'),
             'kategorienNamen' => $this->service->labelNames('kategorien'),
             'tagFarben' => ['kategorien' => $this->service->tagColors('kategorien'), 'herkunft' => $this->service->tagColors('herkunft')],
@@ -72,10 +73,12 @@ class GlossaryController extends Controller
     public function show(Request $request, string $id): Response
     {
         $entry = $this->glossary->findOrFail($id);
+        abort_if(! Glossary::active($entry) && Gate::denies('edit-glossary'), 404);
         $short = mb_strtolower(Glossary::shortName($entry));
         $others = array_values(array_filter(
             $this->glossary->all(),
-            fn (array $e): bool => $e['id'] !== $id && $short !== '' && mb_strtolower(Glossary::shortName($e)) === $short,
+            fn (array $e): bool => $e['id'] !== $id && $short !== '' && mb_strtolower(Glossary::shortName($e)) === $short
+                && (Glossary::active($e) || Gate::allows('edit-glossary')),
         ));
 
         return Inertia::render('glossary/show', [
@@ -317,11 +320,11 @@ class GlossaryController extends Controller
         $rows = [];
         if (! $request->boolean('vorlage')) {
             $ids = isset($data['ids']) ? array_flip(array_map('strval', (array) $data['ids'])) : null;
-            foreach ($this->service->rows() as $row) {
+            foreach ($this->service->rows(Gate::allows('edit-glossary')) as $row) {
                 if ($ids !== null && ! isset($ids[$row['id']])) {
                     continue;
                 }
-                $rows[] = [(string) $row['id'], ...array_map(fn (string $f): string => (string) ($row[$f] ?? ''), array_keys(Glossary::FIELDS))];
+                $rows[] = [(string) $row['id'], ...array_map(fn (string $f): string => is_bool($row[$f] ?? null) ? ($row[$f] ? 'ja' : 'nein') : (string) ($row[$f] ?? ''), array_keys(Glossary::FIELDS))];
             }
         }
         $name = $request->boolean('vorlage') ? 'glossar-vorlage' : 'glossar-'.date('Y-m-d');
@@ -368,7 +371,7 @@ class GlossaryController extends Controller
             }
             $changes = $existing === null
                 ? array_filter($check['data'], fn ($v): bool => $v !== '' && $v !== [] && $v !== null)
-                : array_filter($check['data'], fn ($v, string $f): bool => ($existing[$f] ?? (in_array($f, Glossary::MULTI, true) ? [] : '')) != $v, ARRAY_FILTER_USE_BOTH);
+                : array_filter($check['data'], fn ($v, string $f): bool => ($existing[$f] ?? (in_array($f, Glossary::MULTI, true) ? [] : (in_array($f, Glossary::BOOL, true) ? true : ''))) != $v, ARRAY_FILTER_USE_BOTH);
             if ($existing === null && Glossary::shortName($changes) === '' && Glossary::displayName($changes) === '') {
                 $plan[] = ['zeile' => $n + 2, 'art' => 'fehler', 'id' => '', 'titel' => '', 'meldungen' => ['Abkürzung oder Bezeichnung fehlt.'], 'aenderungen' => []];
 
@@ -383,7 +386,7 @@ class GlossaryController extends Controller
                 'id' => $id,
                 'titel' => trim(Glossary::shortName($changes + ($existing ?? [])).' – '.Glossary::displayName($changes + ($existing ?? [])), ' –'),
                 'meldungen' => [],
-                'aenderungen' => array_map(fn ($v): string => is_array($v) ? implode('; ', $v) : (string) $v, $changes),
+                'aenderungen' => array_map(fn ($v): string => is_array($v) ? implode('; ', $v) : (is_bool($v) ? ($v ? 'ja' : 'nein') : (string) $v), $changes),
                 'daten' => $changes,
             ];
         }

@@ -7,10 +7,14 @@ use App\Plugins\BasePlugin;
 use App\Plugins\DemoResponder;
 use App\Plugins\PluginContext;
 use App\Plugins\SignatureProvider;
+use App\Support\AuditLog;
+use App\Support\DocumentAccess;
 use App\Support\Signatures;
+use App\Support\SimplePdf;
 use Illuminate\Http\Client\Response;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
 use RuntimeException;
@@ -117,6 +121,8 @@ class Plugin extends BasePlugin implements DemoResponder, SignatureProvider
             'modes' => $this->modes($ctx),
             'seals' => $this->seals($ctx),
             'authority' => $this->authority($ctx, (string) ($options['signatureMode'] ?? 'advanced')),
+            'webhook' => $this->webhookCheck($ctx),
+            'archive' => $this->archive($ctx, $options),
             default => parent::action($action, $ctx, $options),
         };
     }
@@ -578,6 +584,163 @@ class Plugin extends BasePlugin implements DemoResponder, SignatureProvider
         ];
     }
 
+    // ---------- Webhook (#93) ----------
+
+    /**
+     * Webhook für ein neues Dokument: nur, wenn der Server ihn erlaubt oder die Einstellung «Webhook verwenden» an ist.
+     *
+     * @param  array{url: string, secret: string, enabled?: bool}|null  $callback
+     * @return array{url: string, secret: string}|null
+     */
+    private static function webhook(PluginContext $ctx, ?array $callback): ?array
+    {
+        if ($callback === null || (($callback['enabled'] ?? false) !== true && $ctx->setting('webhook', false) !== true)) {
+            return null;
+        }
+
+        return ['url' => self::webhookUrl($ctx, $callback['url']), 'secret' => $callback['secret']];
+    }
+
+    /** Adresse des Webhooks: öffentliche Adresse aus den Einstellungen (falls gesetzt) + Pfad des Intranets. */
+    public static function webhookUrl(PluginContext $ctx, string $default): string
+    {
+        $base = trim((string) $ctx->setting('webhook_url', ''));
+        if ($base === '') {
+            return $default;
+        }
+        $path = parse_url($default, PHP_URL_PATH);
+
+        return rtrim($base, '/').(is_string($path) ? $path : '');
+    }
+
+    /**
+     * Webhook prüfen: Zustand und Adresse zeigen, dann eine signierte Probe-Meldung an die eigene Adresse schicken
+     * (gleiches Format und gleiche Signatur wie DeepSign). Das Intranet nimmt sie nur mit dem richtigen Geheimnis an.
+     */
+    private function webhookCheck(PluginContext $ctx): ActionResult
+    {
+        $id = $ctx->manifest->id();
+        $url = self::webhookUrl($ctx, route('signatures.callback', ['provider' => $id]));
+        $on = $ctx->setting('webhook', false) === true || (bool) config('intranet.signatures.webhook');
+
+        $secret = Str::random(40);
+        Cache::put(Signatures::WEBHOOK_TEST.':'.$id, $secret, now()->addMinutes(2));
+        $body = (string) json_encode(['eventType' => 'document-completed', 'documentId' => Signatures::WEBHOOK_TEST, 'signeeId' => null, 'timestamp' => now()->toIso8601String()]);
+        $ctx->log('POST '.$url.' (Probe-Meldung)');
+        try {
+            $response = Http::connectTimeout(5)->timeout(15)
+                ->withHeaders(['X-DeepSign-Signature-256' => 'sha256='.hash_hmac('sha256', $body, $secret)])
+                ->withBody($body, 'application/json')
+                ->post($url);
+            $ctx->log("→ HTTP {$response->status()}");
+            $result = match ($response->status()) {
+                204 => 'angenommen – der Webhook funktioniert',
+                401 => 'abgelehnt (Signatur) – HTTP 401',
+                404 => 'nicht gefunden – Adresse prüfen (HTTP 404)',
+                default => 'unerwartete Antwort (HTTP '.$response->status().')',
+            };
+            $ok = $response->status() === 204;
+        } catch (Throwable $e) {
+            $result = 'nicht erreichbar: '.mb_substr($e->getMessage(), 0, 160);
+            $ok = false;
+        } finally {
+            Cache::forget(Signatures::WEBHOOK_TEST.':'.$id);
+        }
+
+        $rows = [
+            ['what' => 'Webhook beim Versenden', 'value' => $on ? 'eingeschaltet' : 'ausgeschaltet – Status wird alle 15 Minuten abgeglichen'],
+            ['what' => 'Adresse', 'value' => $url],
+            ['what' => 'Ereignisse', 'value' => 'signee-completed, document-completed'],
+            ['what' => 'Probe-Meldung', 'value' => $result],
+        ];
+        if (! str_starts_with($url, 'https://')) {
+            $rows[] = ['what' => 'Hinweis', 'value' => 'DeepSign erreicht nur eine öffentliche https-Adresse. In den Einstellungen die Webhook-Adresse eintragen.'];
+        }
+        $message = $ok
+            ? ($on ? 'Webhook bereit.' : 'Probe angenommen. Zum Verwenden in den Einstellungen «Webhook verwenden» einschalten.')
+            : 'Probe-Meldung nicht angenommen.';
+
+        return ActionResult::table($message, [
+            ['key' => 'what', 'label' => 'Angabe'],
+            ['key' => 'value', 'label' => 'Wert'],
+        ], $rows);
+    }
+
+    // ---------- Dokumente ablegen (#94) ----------
+
+    /**
+     * Unterschriebene Dokumente herunterladen und in «Dokumente & Links» ablegen. Ohne Dokument-ID alle
+     * unterschriebenen, die noch fehlen. Herkunft «deepsign:<ID>» verhindert Doppeltes.
+     *
+     * @param  array<string, mixed>  $options
+     */
+    private function archive(PluginContext $ctx, array $options): ActionResult
+    {
+        if ($ctx->user !== null && Gate::forUser($ctx->user)->denies('manage-content')) {
+            return ActionResult::warning('Ablegen braucht das Recht «Inhalte verwalten».');
+        }
+        $categories = (array) config('intranet.document_categories', []);
+        $category = (string) ($options['category'] ?? 'unterschriften');
+        if (! array_key_exists($category, $categories)) {
+            $category = array_key_exists('unterschriften', $categories) ? 'unterschriften' : (string) array_key_first($categories);
+        }
+        $ability = ($options['visibility'] ?? 'verwaltung') === 'alle' ? null : 'manage-signatures';
+
+        $documentId = trim((string) ($options['documentId'] ?? ''));
+        if ($documentId !== '') {
+            $details = $ctx->call('document', ['documentId' => $documentId]);
+            if (! $details->successful()) {
+                throw new RuntimeException(self::failure($details));
+            }
+            $docs = [['documentId' => $documentId, 'documentName' => (string) $details->json('documentName'), 'documentStatus' => (string) $details->json('documentStatus')]];
+        } else {
+            $overview = $ctx->call('overview', ['limit' => 100, 'order' => 'creationTime desc', 'filterDocumentStatus' => 'signed']);
+            if (! $overview->successful()) {
+                throw new RuntimeException(self::failure($overview));
+            }
+            $docs = array_values(array_filter((array) $overview->json('documents'), 'is_array'));
+        }
+
+        $store = app(DocumentAccess::class);
+        $rows = [];
+        $stored = 0;
+        foreach ($docs as $doc) {
+            $id = (string) ($doc['documentId'] ?? '');
+            $name = trim((string) ($doc['documentName'] ?? '')) ?: $id;
+            $status = (string) ($doc['documentStatus'] ?? '');
+            $existing = $id !== '' ? $store->bySource('deepsign:'.$id) : null;
+            if ($id === '') {
+                continue;
+            } elseif ($existing !== null) {
+                $result = 'bereits abgelegt («'.(string) $existing['title'].'»)';
+            } elseif ($status !== 'signed') {
+                $result = 'nicht abgelegt – Status '.self::statusLabel($status);
+            } else {
+                $pdf = $this->signatureDownload($ctx, $id);
+                if ($pdf === null) {
+                    $result = 'PDF nicht verfügbar';
+                } else {
+                    $fileName = str_ends_with(strtolower($name), '.pdf') ? $name : $name.'.pdf';
+                    $title = preg_replace('/\.pdf$/i', '', $name) ?: $name;
+                    $document = $store->store($title, $fileName, $pdf, $category, $ability, 'deepsign:'.$id, 'Unterschrieben mit DeepSign.', $ctx->user);
+                    app(AuditLog::class)->record('documents', null, array_diff_key($document, ['file_path' => true]), 'DeepSign: Dokument abgelegt', $ctx->user);
+                    $result = 'abgelegt';
+                    $stored++;
+                }
+            }
+            $rows[] = ['name' => $name, 'status' => self::statusLabel($status), 'result' => $result];
+        }
+
+        $message = ($ctx->demo() ? 'Demo-Modus: ' : '').$stored.' von '.count($rows).' Dokumenten abgelegt'
+            .' (Kategorie «'.(string) ($categories[$category] ?? $category).'», '.($ability === null ? 'für alle sichtbar' : 'nur Verwaltung').').';
+
+        return ActionResult::table($message, [
+            ['key' => 'name', 'label' => 'Dokument'],
+            ['key' => 'status', 'label' => 'Status bei DeepSign'],
+            ['key' => 'result', 'label' => 'Ergebnis'],
+        ], $rows)->withLink('Dokumente & Links öffnen', url('/dokumente'));
+    }
+
     // ---------- Schnittstelle «Unterschriften» (App\Support\Signatures) ----------
 
     public function signatureSend(PluginContext $ctx, array $request, string $pdf, ?array $callback): array
@@ -592,6 +755,7 @@ class Plugin extends BasePlugin implements DemoResponder, SignatureProvider
             'comment' => $request['comment'] ?? null,
             'companyId' => $ctx->setting('company_id'),
         ], fn (mixed $v): bool => $v !== null && $v !== '');
+        $callback = self::webhook($ctx, $callback);
         if ($callback !== null) {
             $data += [
                 'callbackUrl' => $callback['url'],
@@ -691,6 +855,16 @@ class Plugin extends BasePlugin implements DemoResponder, SignatureProvider
     {
         if ($ctx->demo()) {
             $file = Cache::get(self::DEMO_CACHE.'file:'.$providerId);
+            if (! is_string($file) && self::demoStatusOf($providerId) === 'signed') {
+                // Demo-Dokument aus der Übersicht (nicht selbst versendet): erfundenes PDF
+                $pdf = new SimplePdf('Demo – unterschriebenes Dokument');
+                $pdf->addPage();
+                $pdf->text(56, 780, 'Demo-Modus: unterschriebenes Dokument aus DeepSign', 14, true);
+                $pdf->text(56, 756, 'Dokument-ID: '.$providerId);
+                $pdf->text(56, 740, 'Erfundener Inhalt – nichts wurde an DeepSign gesendet.');
+
+                return $pdf->output();
+            }
 
             return is_string($file) ? $file : null;
         }

@@ -3,6 +3,7 @@ import {
     Download,
     ExternalLink,
     FileText,
+    Lock,
     Pencil,
     Plus,
     Search,
@@ -123,6 +124,24 @@ export default function DocumentsIndex({
                                             <span className="grid gap-0.5">
                                                 <span className="text-sm font-medium">
                                                     {doc.title}
+                                                    {doc.restricted && (
+                                                        <span
+                                                            title={
+                                                                doc.restricted
+                                                            }
+                                                            className="ml-1.5 inline-flex align-middle text-muted-foreground"
+                                                        >
+                                                            <Lock
+                                                                className="size-3.5"
+                                                                aria-hidden
+                                                            />
+                                                            <span className="sr-only">
+                                                                {
+                                                                    doc.restricted
+                                                                }
+                                                            </span>
+                                                        </span>
+                                                    )}
                                                 </span>
                                                 {doc.description && (
                                                     <span className="text-xs text-muted-foreground">

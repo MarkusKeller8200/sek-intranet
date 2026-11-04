@@ -1,7 +1,7 @@
 {
     "id": "deepsign",
     "name": "DeepSign",
-    "version": "0.6",
+    "version": "0.7",
     "api": 1,
     "category": "other",
     "author": "SekBülach Intranet",
@@ -2259,6 +2259,19 @@
                 ["zertes", "Schweiz (ZertES)"],
                 ["eidas", "EU (eIDAS)"]
             ]
+        },
+        {
+            "key": "webhook",
+            "type": "check",
+            "label": "Webhook verwenden (DeepSign meldet Unterschriften sofort)",
+            "default": false,
+            "help": "Nur wenn das Intranet von aussen über https erreichbar ist. Ohne Webhook wird der Status alle 15 Minuten abgeglichen. Mit der Aktion «Webhook prüfen» testen."
+        },
+        {
+            "key": "webhook_url",
+            "type": "url",
+            "label": "Öffentliche Adresse des Intranets (für den Webhook)",
+            "help": "z. B. https://intranet.sekbuelach.ch – leer = Adresse dieses Servers. Der Pfad /api/signaturen/deepsign/callback wird angehängt."
         }
     ],
     "actions": [
@@ -2338,6 +2351,50 @@
                     ]
                 }
             ]
+        },
+        {
+            "id": "archive",
+            "label": "Dokumente ablegen",
+            "kind": "read",
+            "description": "Unterschriebene Dokumente bei DeepSign herunterladen und in «Dokumente & Links» ablegen. Bereits abgelegte werden erkannt (kein Doppeltes). Liest nur bei DeepSign.",
+            "options": [
+                {
+                    "key": "documentId",
+                    "type": "text",
+                    "label": "Dokument-ID (leer = alle unterschriebenen, die noch fehlen)",
+                    "placeholder": "3f1c2a9e-5b7d-4e2a-9c61-1d2e3f4a5b6c"
+                },
+                {
+                    "key": "category",
+                    "type": "select",
+                    "label": "Kategorie",
+                    "default": "unterschriften",
+                    "choices": [
+                        ["unterschriften", "Unterschriebene Dokumente"],
+                        ["reglemente", "Reglemente & Weisungen"],
+                        ["formulare", "Formulare"],
+                        ["it", "IT-Anleitungen"],
+                        ["unterricht", "Unterricht"]
+                    ]
+                },
+                {
+                    "key": "visibility",
+                    "type": "select",
+                    "label": "Sichtbar für",
+                    "default": "verwaltung",
+                    "choices": [
+                        ["verwaltung", "nur Verwaltung (Recht «Unterschriften verwalten»)"],
+                        ["alle", "alle mit Zugang zu «Dokumente & Links»"]
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "webhook",
+            "label": "Webhook prüfen",
+            "kind": "read",
+            "description": "Zeigt Zustand und Adresse des Webhooks und schickt eine signierte Probe-Meldung an das Intranet (gleiches Format wie DeepSign).",
+            "options": []
         },
         {
             "id": "modes",

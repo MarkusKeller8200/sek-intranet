@@ -16,8 +16,27 @@ laufend unter **Unveröffentlicht**. Ab 0.32.0 entsteht eine Version nur bei ein
 - [visum-zeiterfassung] Visierte Monatsrapporte lassen sich elektronisch unterschreiben (DeepSign): Das
   unterschriebene PDF liegt danach automatisch in der Zeiterfassung der Person.
 - [manage-signatures] Verwaltung → Unterschriften: offene und abgeschlossene Unterschriften, erinnern und zurückziehen.
+- [edit-glossary] Glossar: Einträge lassen sich deaktivieren (Spalte «Aktiv»); inaktive sieht nur, wer das Glossar
+  pflegt, und sie werden im Text nicht mehr markiert.
 
 ### Neu
+
+- **Glossar-Kacheln konfigurierbar (#90):** Die Spaltenauswahl bestimmt, welche Angaben die Kachel zeigt – alle
+  Angaben möglich, Wichtiges oben, Weniger wichtiges unten; ausgeblendete Angaben brauchen keinen Platz. Sortieren
+  und Gruppieren über die bestehenden Knöpfe der Tabelle (gleicher Zustand für Tabelle und Kacheln); die eigene
+  Leiste über den Kacheln entfällt.
+- **Glossar: Spalte «Aktiv» (#91):** Häkchen in Tabelle (umschalten, filtern), Formular, Einzelansicht und Excel
+  (ja/nein). Inaktive Einträge nur für Pflegende sichtbar (abgeblendet, «inaktiv»), nicht im Export für andere und
+  nicht mehr in der Begriffsmarkierung.
+- **Plugins: Knöpfe auf Titelhöhe (#92):** Ein-/Ausschalten, Verbindung testen und API-Ansicht stehen rechts auf
+  der Höhe des Titels; die Beschreibung darunter (`PageHeader inline`).
+- **DeepSign: Webhook (#93):** Einstellungen «Webhook verwenden» und «Öffentliche Adresse des Intranets»; beim
+  Versenden geht der Webhook nur mit, wenn er eingeschaltet ist (oder `INTRANET_SIGNATURE_WEBHOOK`). Aktion
+  «Webhook prüfen» zeigt Zustand und Adresse und schickt eine signierte Probe-Meldung an das Intranet.
+- **DeepSign: Dokumente ablegen (#94):** Aktion lädt unterschriebene Dokumente herunter und legt sie in «Dokumente &
+  Links» ab (neue Kategorie «Unterschriebene Dokumente», Standard: nur Verwaltung sichtbar). Bereits abgelegte
+  werden erkannt. Dokumente & Links kennen dafür eingeschränkte Sichtbarkeit (Feld `ability`, Schloss-Symbol) –
+  auch in der REST-API und auf der Startseite.
 
 - **Glossar als Kacheln (#88):** Umschalter Tabelle | Kacheln (je Browser gemerkt). Kacheln einspaltig und kompakt:
   Abkürzung, Bezeichnung, Labels, gekürzte Kurzbeschreibung (ganz im Tooltip), Status, Link zur Quelle. Suche,

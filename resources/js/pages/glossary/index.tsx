@@ -213,6 +213,13 @@ export default function GlossaryIndex({
                 required: true,
                 hidden: true,
             },
+            {
+                id: 'aktiv',
+                title: felder.aktiv ?? 'Aktiv',
+                type: 'bool',
+                editable: rechte.edit,
+                hidden: !rechte.edit,
+            },
             text('suchbegriffe', { hidden: true }),
             text('gueltig_ab', { type: 'date', hidden: true }),
             text('gueltig_bis', { type: 'date', hidden: true }),
@@ -323,11 +330,13 @@ export default function GlossaryIndex({
                         },
                     ]}
                     selectable={rechte.edit}
-                    renderCard={(r) => (
+                    renderCard={(r, visible) => (
                         <GlossaryCard
                             row={r}
+                            visible={visible}
                             colors={tagFarben}
                             status={status}
+                            felder={felder}
                         />
                     )}
                     rowMenu={(r) => [
@@ -391,7 +400,9 @@ export default function GlossaryIndex({
                     searchPlaceholder="Abkürzung, Bezeichnung, Suchbegriff …"
                     emptyText="Keine Einträge gefunden."
                     rowClassName={(r) =>
-                        r.status === 'historisch' ? 'opacity-60' : ''
+                        r.status === 'historisch' || !r.aktiv
+                            ? 'opacity-60'
+                            : ''
                     }
                     toolbar={
                         rechte.edit && (

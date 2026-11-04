@@ -6,6 +6,7 @@ use App\Auth\IntranetUser;
 use App\Data\Store\JsonStore;
 use App\Plugins\PluginManager;
 use App\Plugins\SignatureProvider;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
@@ -26,6 +27,9 @@ use Throwable;
 final class Signatures
 {
     public const COLLECTION = 'signature_requests';
+
+    /** Dokument-ID der Probe-Meldung (Aktion «Webhook prüfen», #93). */
+    public const WEBHOOK_TEST = 'intranet-webhook-test';
 
     /** Aufträge ohne Modul (von Hand gesendet); das unterschriebene PDF legt der Kern unter signatures/ ab. */
     public const MANUAL = 'unterschriften';
@@ -169,9 +173,13 @@ final class Signatures
             'created_by' => $by !== null ? (string) $by->getAuthIdentifier() : null,
         ]);
 
-        $callback = (bool) config('intranet.signatures.webhook')
-            ? ['url' => route('signatures.callback', ['provider' => $provider['id']]), 'secret' => $secret]
-            : null;
+        // Webhook: Adresse und Geheimnis gehen immer mit; ob er verwendet wird, entscheidet der Anbieter (Plugin-
+        // Einstellung «Webhook verwenden», #93) oder der Server (INTRANET_SIGNATURE_WEBHOOK)
+        $callback = [
+            'url' => route('signatures.callback', ['provider' => $provider['id']]),
+            'secret' => $secret,
+            'enabled' => (bool) config('intranet.signatures.webhook'),
+        ];
 
         try {
             /** @var array{provider_id: string, signee_ids: list<string>} $sent */
@@ -465,6 +473,12 @@ final class Signatures
         $documentId = $provider['plugin']->signatureCallbackId($raw);
         if ($documentId === null) {
             return 400;
+        }
+        // Probe-Meldung der Aktion «Webhook prüfen» (#93): Geheimnis kurzzeitig im Cache
+        if ($documentId === self::WEBHOOK_TEST) {
+            $secret = Cache::pull(self::WEBHOOK_TEST.':'.$providerId);
+
+            return is_string($secret) && $provider['plugin']->signatureVerifyCallback($headers, $raw, $secret) ? 204 : 401;
         }
         $record = null;
         foreach ($this->store->all(self::COLLECTION) as $r) {

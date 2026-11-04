@@ -85,6 +85,9 @@ export default function GlossaryShow({
                     >
                         {status[e.status] ?? e.status}
                     </Badge>
+                    {e.aktiv === false && (
+                        <Badge variant="destructive">inaktiv</Badge>
+                    )}
                 </div>
 
                 <div className="grid gap-4 md:grid-cols-2">

@@ -17,7 +17,9 @@ interface SignatureProvider
      * Dokument hochladen und Unterzeichnende/Beobachtende hinzufügen (noch nicht gestartet).
      *
      * @param  array{title: string, file_name: string, comment?: string|null, signees: list<array{email: string, order: int, position?: array<string, int|float>|null}>, observers: list<string>}  $request
-     * @param  array{url: string, secret: string}|null  $callback  Webhook (nur wenn von aussen erreichbar)
+     * @param  array{url: string, secret: string, enabled?: bool}|null  $callback  Webhook: Adresse und Geheimnis; enabled = Server
+     *                                                                             erlaubt ihn (INTRANET_SIGNATURE_WEBHOOK). Der Anbieter darf ihn
+     *                                                                             zusätzlich per eigener Einstellung einschalten.
      * @return array{provider_id: string, signee_ids: list<string>}
      */
     public function signatureSend(PluginContext $ctx, array $request, string $pdf, ?array $callback): array;
