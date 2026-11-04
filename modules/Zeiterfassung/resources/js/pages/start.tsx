@@ -140,9 +140,7 @@ export default function ZeiterfassungStart(props: Props) {
                 {props.unterschrift.status && (
                     <div className="flex flex-wrap items-center gap-3 text-sm">
                         <span>Elektronische Unterschrift:</span>
-                        <UnterschriftBadge
-                            status={props.unterschrift.status}
-                        />
+                        <UnterschriftBadge status={props.unterschrift.status} />
                         {props.unterschrift.pdf && (
                             <Button asChild variant="outline" size="sm">
                                 <a href={props.unterschrift.pdf}>

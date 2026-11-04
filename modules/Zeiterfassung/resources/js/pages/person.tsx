@@ -108,8 +108,7 @@ export default function ZeiterfassungPerson(props: Props) {
                         </AlertDescription>
                     </Alert>
                 )}
-                {(status.status === 'visiert' ||
-                    props.unterschrift.status) && (
+                {(status.status === 'visiert' || props.unterschrift.status) && (
                     <UnterschriftKarte
                         personId={person.id}
                         monat={monat}

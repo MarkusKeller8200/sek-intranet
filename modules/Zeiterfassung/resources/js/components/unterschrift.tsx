@@ -45,9 +45,12 @@ export function UnterschriftBadge({ status }: { status: string | null }) {
             variant={
                 status === 'unterschrieben'
                     ? 'default'
-                    : ['abgelehnt', 'zurueckgezogen', 'abgelaufen', 'fehler'].includes(
-                            status,
-                        )
+                    : [
+                            'abgelehnt',
+                            'zurueckgezogen',
+                            'abgelaufen',
+                            'fehler',
+                        ].includes(status)
                       ? 'destructive'
                       : 'secondary'
             }
@@ -97,8 +100,8 @@ export default function UnterschriftKarte({
                     <UnterschriftBadge status={unterschrift.status} />
                 </CardTitle>
                 <CardDescription>
-                    Der visierte Monatsrapport geht als PDF an die Person und
-                    an die Schulleitung. Das unterschriebene PDF wird danach
+                    Der visierte Monatsrapport geht als PDF an die Person und an
+                    die Schulleitung. Das unterschriebene PDF wird danach
                     automatisch hier abgelegt.
                 </CardDescription>
             </CardHeader>
@@ -110,7 +113,7 @@ export default function UnterschriftKarte({
                                 key={`${s.order}-${s.email}`}
                                 className="flex flex-wrap items-center gap-2"
                             >
-                                <span className="tabular-nums text-muted-foreground">
+                                <span className="text-muted-foreground tabular-nums">
                                     {s.order + 1}.
                                 </span>
                                 <span translate="no">{s.name}</span>

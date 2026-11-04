@@ -27,7 +27,12 @@ export type Unterschrift = {
     auftrag?: {
         id: string;
         status: string;
-        signees: { name: string; email: string; order: number; status: string }[];
+        signees: {
+            name: string;
+            email: string;
+            order: number;
+            status: string;
+        }[];
     } | null;
 };
 

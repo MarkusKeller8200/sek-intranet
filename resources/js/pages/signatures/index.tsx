@@ -75,11 +75,15 @@ type Rueckfrage = {
 
 const OFFEN = ['versendet', 'teilweise'];
 
-function variant(status: string): 'default' | 'secondary' | 'destructive' | 'outline' {
+function variant(
+    status: string,
+): 'default' | 'secondary' | 'destructive' | 'outline' {
     if (status === 'unterschrieben') {
         return 'default';
     }
-    if (['abgelehnt', 'zurueckgezogen', 'abgelaufen', 'fehler'].includes(status)) {
+    if (
+        ['abgelehnt', 'zurueckgezogen', 'abgelaufen', 'fehler'].includes(status)
+    ) {
         return 'destructive';
     }
 
@@ -227,7 +231,10 @@ export default function Signatures({
                                 </TableHeader>
                                 <TableBody>
                                     {sichtbar.map((a) => (
-                                        <TableRow key={a.id} className="align-top">
+                                        <TableRow
+                                            key={a.id}
+                                            className="align-top"
+                                        >
                                             <TableCell className="max-w-72 whitespace-normal">
                                                 <span
                                                     className="font-medium"
@@ -248,11 +255,14 @@ export default function Signatures({
                                                 )}
                                             </TableCell>
                                             <TableCell>
-                                                <Badge variant={variant(a.status)}>
+                                                <Badge
+                                                    variant={variant(a.status)}
+                                                >
                                                     {status[a.status] ??
                                                         a.status}
                                                 </Badge>
-                                                {a.status === 'unterschrieben' &&
+                                                {a.status ===
+                                                    'unterschrieben' &&
                                                     !a.fetched_at && (
                                                         <span className="mt-1 block text-xs text-warning">
                                                             noch nicht abgelegt
@@ -286,19 +296,21 @@ export default function Signatures({
                                                                         variant="ghost"
                                                                         size="sm"
                                                                         onClick={() =>
-                                                                            setFrage({
-                                                                                title: 'Erinnerung senden?',
-                                                                                description: `${s.name} erhält die Einladung zum Unterschreiben noch einmal per E-Mail.`,
-                                                                                confirmLabel:
-                                                                                    'Erinnern',
-                                                                                run: () =>
-                                                                                    post(
-                                                                                        `/unterschriften/${a.id}/erinnern`,
-                                                                                        {
-                                                                                            person: i,
-                                                                                        },
-                                                                                    ),
-                                                                            })
+                                                                            setFrage(
+                                                                                {
+                                                                                    title: 'Erinnerung senden?',
+                                                                                    description: `${s.name} erhält die Einladung zum Unterschreiben noch einmal per E-Mail.`,
+                                                                                    confirmLabel:
+                                                                                        'Erinnern',
+                                                                                    run: () =>
+                                                                                        post(
+                                                                                            `/unterschriften/${a.id}/erinnern`,
+                                                                                            {
+                                                                                                person: i,
+                                                                                            },
+                                                                                        ),
+                                                                                },
+                                                                            )
                                                                         }
                                                                     >
                                                                         <BellRing />{' '}
@@ -373,7 +385,8 @@ export default function Signatures({
                                                         <RefreshCw />
                                                     </Button>
                                                     {darfOeffnen &&
-                                                        a.status !== 'fehler' && (
+                                                        a.status !==
+                                                            'fehler' && (
                                                             <Button
                                                                 variant="ghost"
                                                                 size="sm"
