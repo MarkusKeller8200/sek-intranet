@@ -62,13 +62,15 @@ export default function FitLabel({
             )}
             title={fits ? undefined : label}
         >
-            {/* unsichtbar: misst die volle Breite */}
+            {/* unsichtbar, aber im Fluss: hält die Breite der vollen Bezeichnung offen,
+                damit die Spalte beim Breiterziehen wieder Platz dafür bekommt (#81) */}
             <span
-                ref={probe}
                 aria-hidden
-                className="invisible absolute whitespace-nowrap"
+                className="invisible block h-0 overflow-hidden"
             >
-                {label}
+                <span ref={probe} className="inline-block whitespace-nowrap">
+                    {label}
+                </span>
             </span>
             {fits ? (
                 label
