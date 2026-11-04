@@ -1,5 +1,5 @@
 import { Head, Link } from '@inertiajs/react';
-import { ExternalLink, Lock, Pencil } from 'lucide-react';
+import { ArrowLeft, ExternalLink, Lock, Pencil } from 'lucide-react';
 import type { ReactNode } from 'react';
 import DeleteButton from '@/components/delete-button';
 import Markdown from '@/components/markdown';
@@ -52,6 +52,16 @@ export default function GlossaryShow({
         <>
             <Head title={titel} />
             <div className="flex max-w-5xl flex-1 flex-col gap-6 p-4 md:p-6">
+                <Button
+                    variant="ghost"
+                    size="sm"
+                    className="self-start"
+                    asChild
+                >
+                    <Link href={"/glossar"}>
+                        <ArrowLeft /> Zum Glossar
+                    </Link>
+                </Button>
                 <PageHeader
                     title={titel}
                     description={e.kurzbeschreibung || undefined}
@@ -274,6 +284,13 @@ export default function GlossaryShow({
     );
 }
 
-GlossaryShow.layout = {
-    breadcrumbs: [{ title: 'Glossar', href: '/glossar' }],
-};
+// Brotkrumen: «Glossar» führt zur Hauptseite, der Eintrag ist die aktuelle Seite
+GlossaryShow.layout = (props: { eintrag: GlossaryEntry }) => ({
+    breadcrumbs: [
+        { title: 'Glossar', href: '/glossar' },
+        {
+            title: entryTitle(props.eintrag),
+            href: `/glossar/${props.eintrag.id}`,
+        },
+    ],
+});

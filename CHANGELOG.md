@@ -21,6 +21,8 @@ laufend unter **Unveröffentlicht**. Ab 0.32.0 entsteht eine Version nur bei ein
 
 ### Neu
 
+- **Glossar: Zurück und Brotkrumen (#96):** Einzelansicht mit «Zum Glossar», Bearbeiten mit «Zurück zum Eintrag»;
+  die Brotkrume «Glossar» führt zur Hauptseite (Glossar › Eintrag › Bearbeiten).
 - **DeepSign: Signaturprozess auf der DeepSign-Seite (#95):** Aktion lädt ein PDF als Entwurf hoch und öffnet die
   DeepSign-Seite (`document-access-url`), um dort Unterzeichnende und Felder festzulegen und zu starten; auch für
   bestehende Dokumente (ID).

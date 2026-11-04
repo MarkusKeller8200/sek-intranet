@@ -1,5 +1,5 @@
 import { Head, Link, useForm } from '@inertiajs/react';
-import { Lock, Save } from 'lucide-react';
+import { ArrowLeft, Lock, Save } from 'lucide-react';
 import type { FormEvent } from 'react';
 import { useState } from 'react';
 import FormField from '@/components/form-field';
@@ -13,6 +13,7 @@ import { MultiSelect } from '@/components/ui/multi-select';
 import { NativeSelect } from '@/components/ui/native-select';
 import { Textarea } from '@/components/ui/textarea';
 import type { GlossaryEntry } from '@/lib/glossary';
+import { entryTitle } from '@/lib/glossary';
 
 const opts = (o: Record<string, string>) =>
     Object.entries(o).map(([value, label]) => ({ value, label }));
@@ -85,6 +86,17 @@ export default function GlossaryForm({
                 onSubmit={submit}
                 className="flex max-w-5xl flex-1 flex-col gap-6 p-4 md:p-6"
             >
+                <Button
+                    variant="ghost"
+                    size="sm"
+                    className="self-start"
+                    asChild
+                >
+                    <Link href={eintrag ? `/glossar/${eintrag.id}` : '/glossar'}>
+                        <ArrowLeft />{' '}
+                        {eintrag ? 'Zurück zum Eintrag' : 'Zum Glossar'}
+                    </Link>
+                </Button>
                 <PageHeader
                     title={eintrag ? 'Eintrag bearbeiten' : 'Neuer Eintrag'}
                 />
@@ -438,6 +450,22 @@ export default function GlossaryForm({
     );
 }
 
-GlossaryForm.layout = {
-    breadcrumbs: [{ title: 'Glossar', href: '/glossar' }],
-};
+// Brotkrumen: «Glossar» führt zur Hauptseite, der Eintrag zur Einzelansicht
+GlossaryForm.layout = (props: { eintrag: GlossaryEntry | null }) => ({
+    breadcrumbs: props.eintrag
+        ? [
+              { title: 'Glossar', href: '/glossar' },
+              {
+                  title: entryTitle(props.eintrag),
+                  href: `/glossar/${props.eintrag.id}`,
+              },
+              {
+                  title: 'Bearbeiten',
+                  href: `/glossar/${props.eintrag.id}/bearbeiten`,
+              },
+          ]
+        : [
+              { title: 'Glossar', href: '/glossar' },
+              { title: 'Neuer Eintrag', href: '/glossar/neu' },
+          ],
+});
