@@ -1199,7 +1199,7 @@ return [
                 'provider' => ['type' => 'string', 'required' => true, 'label' => 'Anbieter (Plugin)'],
                 'provider_id' => ['type' => 'string', 'required' => false, 'label' => 'ID beim Anbieter'],
                 'status' => ['type' => 'enum', 'values' => ['entwurf' => 'Entwurf', 'versendet' => 'versendet', 'teilweise' => 'teilweise unterschrieben', 'unterschrieben' => 'unterschrieben', 'abgelehnt' => 'abgelehnt', 'zurueckgezogen' => 'zurückgezogen', 'abgelaufen' => 'abgelaufen', 'fehler' => 'Fehler'], 'required' => true, 'label' => 'Status'],
-                'signees' => ['type' => 'json', 'required' => true, 'label' => 'Unterzeichnende [{person_id, name, email, order, status, signed_at, provider_id}]'],
+                'signees' => ['type' => 'json', 'required' => true, 'label' => 'Unterzeichnende [{person_id, name, email, order, status, signed_at, provider_id, position}]'],
                 'observers' => ['type' => 'json', 'required' => false, 'label' => 'Beobachtende (E-Mail)'],
                 'comment' => ['type' => 'text', 'required' => false, 'label' => 'Nachricht an die Unterzeichnenden'],
                 'callback_secret' => ['type' => 'string', 'required' => true, 'label' => 'Geheimnis für den Webhook (verschlüsselt)'],

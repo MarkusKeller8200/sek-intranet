@@ -155,6 +155,7 @@ final class Signatures
                 'status' => 'wartet',
                 'signed_at' => null,
                 'provider_id' => null,
+                'position' => $s['position'] ?? null,
             ], $data['signees']),
             'observers' => $data['observers'] ?? [],
             'comment' => $data['comment'] ?? null,
@@ -255,7 +256,7 @@ final class Signatures
             $open = in_array($record['status'], self::OPEN, true);
             $unfetched = $record['status'] === 'unterschrieben' && ($record['fetched_at'] ?? null) === null;
             $last = is_string($record['last_checked_at'] ?? null) ? strtotime($record['last_checked_at']) : false;
-            if (! $unfetched && (! $open || ($last !== false && $last > time() - $minutes * 60))) {
+            if (! $unfetched && (! $open || ($last !== false && $last > now()->getTimestamp() - $minutes * 60))) {
                 continue;
             }
 
@@ -273,7 +274,7 @@ final class Signatures
             $current = $this->store->find(self::COLLECTION, (string) $record['id']) ?? $record;
             $completed = is_string($current['completed_at'] ?? null) ? strtotime($current['completed_at']) : false;
             if ($current['status'] === 'unterschrieben' && ($current['fetched_at'] ?? null) === null && ($current['warned_at'] ?? null) === null
-                && $completed !== false && $completed < time() - $warnAfter * 3600) {
+                && $completed !== false && $completed < now()->getTimestamp() - $warnAfter * 3600) {
                 $this->notifications->toAbility('manage-signatures', 'signatur.nicht_abgeholt', 'Unterschriebenes Dokument nicht abgeholt',
                     "«{$current['title']}» ist seit über {$warnAfter} Stunden unterschrieben, konnte aber nicht abgelegt werden. DeepSign löscht es nach 14 Tagen.",
                     '/unterschriften', null);
