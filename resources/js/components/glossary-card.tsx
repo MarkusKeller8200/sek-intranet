@@ -14,7 +14,10 @@ export default function GlossaryCard({
     status,
 }: {
     row: GlossaryRow;
-    colors: { kategorien: Record<string, string>; herkunft: Record<string, string> };
+    colors: {
+        kategorien: Record<string, string>;
+        herkunft: Record<string, string>;
+    };
     status: Record<string, string>;
 }) {
     const bezeichnung = row.bez_eigen || row.bez_offiziell;
@@ -74,7 +77,8 @@ export default function GlossaryCard({
                             className="ml-auto inline-flex shrink-0 items-center gap-1 text-primary hover:underline"
                             title={row.url}
                         >
-                            Quelle <ExternalLink className="size-3" aria-hidden />
+                            Quelle{' '}
+                            <ExternalLink className="size-3" aria-hidden />
                         </a>
                     )}
                 </div>

@@ -2557,7 +2557,10 @@ function CardList<T extends GridRow>({
                 </label>
             </div>
 
-            <ul className="grid max-h-[calc(100vh-15rem)] gap-2 overflow-auto pr-1" aria-label="Kacheln">
+            <ul
+                className="grid max-h-[calc(100vh-15rem)] gap-2 overflow-auto pr-1"
+                aria-label="Kacheln"
+            >
                 {items.map((item) =>
                     item.kind === 'group' ? (
                         <li key={`g-${item.key}`} className="pt-2 first:pt-0">
@@ -2583,7 +2586,8 @@ function CardList<T extends GridRow>({
                             key={item.row.id}
                             className={cn(
                                 'flex items-start gap-2 rounded-lg border bg-card p-2.5',
-                                selected.has(item.row.id) && 'border-primary ring-1 ring-primary',
+                                selected.has(item.row.id) &&
+                                    'border-primary ring-1 ring-primary',
                             )}
                         >
                             {selectable && (
@@ -2591,9 +2595,9 @@ function CardList<T extends GridRow>({
                                     className="mt-1"
                                     aria-label="Auswählen"
                                     checked={selected.has(item.row.id)}
-                                    onCheckedChange={(c: boolean | 'indeterminate') =>
-                                        onSelect(item.row.id, c === true)
-                                    }
+                                    onCheckedChange={(
+                                        c: boolean | 'indeterminate',
+                                    ) => onSelect(item.row.id, c === true)}
                                 />
                             )}
                             <div className="min-w-0 flex-1">

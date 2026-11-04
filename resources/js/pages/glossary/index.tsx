@@ -324,7 +324,11 @@ export default function GlossaryIndex({
                     ]}
                     selectable={rechte.edit}
                     renderCard={(r) => (
-                        <GlossaryCard row={r} colors={tagFarben} status={status} />
+                        <GlossaryCard
+                            row={r}
+                            colors={tagFarben}
+                            status={status}
+                        />
                     )}
                     rowMenu={(r) => [
                         {
