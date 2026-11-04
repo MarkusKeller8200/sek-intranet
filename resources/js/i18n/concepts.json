@@ -3214,9 +3214,9 @@
         "Leer – es wird kein Inhalt gschickt."
     ],
     "Gültiges JSON.": ["Valid JSON.", "Gültigs JSON."],
-    "Erwartet wird ein JSON-Objekt.": [
-        "A JSON object is expected.",
-        "Erwartet wird es JSON-Objekt."
+    "Erwartet wird ein JSON-Objekt oder eine Liste.": [
+        "A JSON object or a list is expected.",
+        "Erwartet wird es JSON-Objekt oder e Liste."
     ],
     "Beispiel einsetzen": ["Use example", "Biispiel iisetze"],
     "Felder löschen": ["Clear fields", "Fälder lösche"],

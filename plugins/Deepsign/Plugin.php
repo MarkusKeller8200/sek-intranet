@@ -34,6 +34,12 @@ class Plugin extends BasePlugin implements DemoResponder, SignatureProvider
 
     public const DEMO_OBSERVER = 'c4d5e6f7-8a9b-4c0d-9e1f-2a3b4c5d6e7f';
 
+    public const DEMO_FILE = '5e6f7a8b-9c0d-4e1f-8a2b-3c4d5e6f7a8b';
+
+    public const DEMO_ATTACHMENT = '9a0b1c2d-3e4f-4a5b-8c6d-7e8f9a0b1c2d';
+
+    public const DEMO_KEY = '6d7e8f9a-0b1c-4d2e-8f3a-4b5c6d7e8f9a';
+
     private const DOCUMENT_STATUS = ['draft', 'in-progress', 'signed', 'withdrawn', 'rejected'];
 
     /** Umgebungen (Einstellung «environment» = Adresse der Anmeldung). */
@@ -106,6 +112,8 @@ class Plugin extends BasePlugin implements DemoResponder, SignatureProvider
             'service-user' => $this->serviceUser($ctx),
             'documents' => $this->documents($ctx, (string) ($options['status'] ?? '')),
             'modes' => $this->modes($ctx),
+            'seals' => $this->seals($ctx),
+            'authority' => $this->authority($ctx, (string) ($options['signatureMode'] ?? 'advanced')),
             default => parent::action($action, $ctx, $options),
         };
     }
@@ -181,6 +189,57 @@ class Plugin extends BasePlugin implements DemoResponder, SignatureProvider
         ], $rows);
     }
 
+    private function seals(PluginContext $ctx): ActionResult
+    {
+        $response = $ctx->call('seals');
+        if (! $response->successful()) {
+            throw new RuntimeException(self::failure($response));
+        }
+        $rows = [];
+        foreach ((array) $response->json() as $seal) {
+            if (is_array($seal)) {
+                $rows[] = [
+                    'name' => (string) ($seal['displayName'] ?? $seal['name'] ?? ''),
+                    'key' => (string) ($seal['sealKey'] ?? ''),
+                    'id' => (string) ($seal['sealId'] ?? ''),
+                ];
+            }
+        }
+
+        return ActionResult::table(($ctx->demo() ? 'Demo-Modus: ' : '').count($rows).' Siegel.', [
+            ['key' => 'name', 'label' => 'Siegel'],
+            ['key' => 'key', 'label' => 'Schlüssel'],
+            ['key' => 'id', 'label' => 'ID'],
+        ], $rows);
+    }
+
+    private function authority(PluginContext $ctx, string $mode): ActionResult
+    {
+        $mode = in_array($mode, ['advanced', 'qualified'], true) ? $mode : 'advanced';
+        $response = $ctx->call('authority-services', ['signatureMode' => $mode, 'jurisdiction' => (string) $ctx->setting('jurisdiction', 'zertes')]);
+        if (! $response->successful()) {
+            throw new RuntimeException(self::failure($response));
+        }
+        $rows = [];
+        foreach ((array) $response->json() as $service => $info) {
+            $info = is_array($info) ? $info : [];
+            $rows[] = [
+                'service' => match ($service) {
+                    'ras' => 'MobileID', 'did' => 'DeepID', default => (string) $service,
+                },
+                'available' => ($info['available'] ?? null) === false ? 'nein' : 'ja',
+                'detail' => implode(', ', array_map(fn (mixed $v, int|string $k): string => $k.': '.(is_scalar($v) ? (string) $v : (string) json_encode($v)),
+                    array_values(array_diff_key($info, ['available' => true])), array_keys(array_diff_key($info, ['available' => true])))),
+            ];
+        }
+
+        return ActionResult::table(($ctx->demo() ? 'Demo-Modus: ' : '').'Identifikation für '.($mode === 'qualified' ? 'qualifizierte' : 'fortgeschrittene').' Unterschriften.', [
+            ['key' => 'service', 'label' => 'Identifikation'],
+            ['key' => 'available', 'label' => 'Verfügbar'],
+            ['key' => 'detail', 'label' => 'Angaben'],
+        ], $rows);
+    }
+
     private function modes(PluginContext $ctx): ActionResult
     {
         $response = $ctx->call('available-modes');
@@ -249,19 +308,21 @@ class Plugin extends BasePlugin implements DemoResponder, SignatureProvider
             ]]],
             'signees' => ['status' => 200, 'json' => self::demoSignees()],
             'signee' => ['status' => 200, 'json' => self::demoSignees()[0]],
-            'signee-add' => ! filter_var((string) ($body['email'] ?? ''), FILTER_VALIDATE_EMAIL)
-                ? self::demoError(400, 'email is invalid.')
-                : ['status' => 201, 'json' => array_merge(self::demoSignees()[0], [
+            'signee-add' => match (true) {
+                ! filter_var((string) ($body['email'] ?? ''), FILTER_VALIDATE_EMAIL) => self::demoError(400, 'email is invalid.'),
+                ! in_array($body['signeeType'] ?? null, ['sign', 'approve'], true) => self::demoError(400, 'signeeType is required.'),
+                default => ['status' => 201, 'json' => array_merge(self::demoSignees()[0], [
                     'signeeId' => 'demo-'.substr(hash('sha256', (string) ($body['email'] ?? '')), 0, 12),
                     'email' => (string) ($body['email'] ?? ''), 'signOrder' => (int) ($body['signOrder'] ?? 0), 'signStatus' => 'on-hold',
                     'initiatorComment' => (string) ($body['comment'] ?? ''), 'signedTime' => null,
                 ])],
+            },
             'signee-update' => ['status' => 200, 'json' => array_merge(self::demoSignees()[0], array_intersect_key((array) $body, array_flip(['email', 'signOrder', 'autographPosition'])))],
             'signee-delete' => ['status' => 200, 'json' => self::demoSignees()[0]],
             'observer-add' => ['status' => 201, 'json' => ['observerId' => self::DEMO_OBSERVER, 'documentId' => $doc, 'email' => (string) ($body['email'] ?? ''), 'isAdmin' => (bool) ($body['isAdmin'] ?? false), 'language' => 'de']],
-            'document-access-url' => ['status' => 200, 'json' => ['url' => 'https://app.deepsign.swiss/demo/'.self::DEMO_DOCUMENT, 'validUntil' => now()->addMinutes(5)->toIso8601String()]],
+            'document-access-url' => ['status' => 200, 'json' => 'https://app.deepsign.swiss/demo/'.self::DEMO_DOCUMENT],
             'document-update', 'document-start', 'document-withdraw', 'document-delete', 'signee-resend', 'observer-delete' => ['status' => 204],
-            default => self::demoError(501, 'Im Demo-Modus nicht simuliert.'),
+            default => self::demoGeneric((string) $endpoint['id'], $pathParams, $body, $ctx),
         };
     }
 
@@ -353,10 +414,15 @@ class Plugin extends BasePlugin implements DemoResponder, SignatureProvider
                 if (! filter_var((string) ($body['email'] ?? ''), FILTER_VALIDATE_EMAIL)) {
                     return self::demoError(400, 'email is invalid.');
                 }
+                // wie DeepSign: signeeType und fileSignatureFields sind Pflicht
+                if (! in_array($body['signeeType'] ?? null, ['sign', 'approve'], true) || ! array_key_exists('fileSignatureFields', (array) $body)) {
+                    return self::demoError(400, 'signeeType and fileSignatureFields are required.');
+                }
                 $signee = [
                     'signeeId' => 'demo-'.Str::lower(Str::random(12)), 'documentId' => $doc, 'email' => (string) $body['email'],
                     'signOrder' => (int) ($body['signOrder'] ?? 0), 'signStatus' => 'on-hold', 'signedTime' => null, 'language' => 'de',
-                    'initiatorComment' => (string) ($body['comment'] ?? ''), 'autographPosition' => $body['autographPosition'] ?? null,
+                    'initiatorComment' => (string) ($body['comment'] ?? ''), 'signeeType' => (string) $body['signeeType'],
+                    'fileSignatureFields' => $body['fileSignatureFields'],
                 ];
                 $state['signees'] = [...$signees, $signee];
                 self::saveDemoState($state);
@@ -378,6 +444,9 @@ class Plugin extends BasePlugin implements DemoResponder, SignatureProvider
 
                 return ['status' => 204];
             case 'document-withdraw':
+                if (! in_array($body['sendMail'] ?? null, ['all', 'others', 'none'], true)) {
+                    return self::demoError(400, 'sendMail is required.');
+                }
                 $state['documentStatus'] = 'withdrawn';
                 self::saveDemoState($state);
 
@@ -391,14 +460,14 @@ class Plugin extends BasePlugin implements DemoResponder, SignatureProvider
 
                 return ['status' => 204];
             case 'document-access-url':
-                return ['status' => 200, 'json' => ['url' => 'https://app.deepsign.swiss/demo/'.$doc, 'validUntil' => now()->addMinutes(5)->toIso8601String()]];
+                return ['status' => 200, 'json' => 'https://app.deepsign.swiss/demo/'.$doc];
             case 'signee-resend':
             case 'document-update':
             case 'signee-delete':
             case 'observer-delete':
                 return ['status' => 204];
             default:
-                return self::demoError(501, 'Im Demo-Modus nicht simuliert.');
+                return self::demoGeneric($endpoint, $pathParams, $body, $ctx);
         }
     }
 
@@ -444,6 +513,7 @@ class Plugin extends BasePlugin implements DemoResponder, SignatureProvider
             'documentMimeType' => 'application/pdf',
             // Im echten Betrieb ca. 1 Minute gültig, ohne Anmeldung abrufbar
             'documentUrl' => $status === 'signed' ? 'https://api.sign.deepbox.swiss/demo/download/'.$state['documentId'] : null,
+            'files' => [self::demoFile((string) ($state['documentName'] ?? 'Dokument.pdf'), $status === 'signed' ? 'https://api.sign.deepbox.swiss/demo/download/'.$state['documentId'] : null)],
             'documentStatus' => $status,
             'signStatus' => match (true) {
                 $status === 'signed' => 'signed',
@@ -468,8 +538,10 @@ class Plugin extends BasePlugin implements DemoResponder, SignatureProvider
     public function signatureSend(PluginContext $ctx, array $request, string $pdf, ?array $callback): array
     {
         $data = array_filter([
+            'documentName' => $request['title'],
             'initiatorAliasName' => (string) $ctx->setting('initiator_alias', 'Sekundarschule Bülach'),
             'sendMail' => 'others',
+            'visualSignatureRequirement' => 'optional',
             'signatureMode' => (string) $ctx->setting('signature_mode', 'timestamp'),
             'jurisdiction' => (string) $ctx->setting('jurisdiction', 'zertes'),
             'comment' => $request['comment'] ?? null,
@@ -488,16 +560,22 @@ class Plugin extends BasePlugin implements DemoResponder, SignatureProvider
         if (! $upload->successful() || ! is_string($documentId) || $documentId === '') {
             throw new RuntimeException(self::failure($upload));
         }
+        // Unterschriftsfelder gelten je Datei des Dokuments (fileSignatureFields: fileId → Positionen)
+        $fileId = $upload->json('files.0.fileId');
 
         try {
             $ids = [];
             foreach ($request['signees'] as $signee) {
-                $added = $ctx->call('signee-add', ['documentId' => $documentId], array_filter([
+                $position = $signee['position'] ?? null;
+                $added = $ctx->call('signee-add', ['documentId' => $documentId], [
+                    'signeeType' => 'sign',
                     'email' => $signee['email'],
                     'signOrder' => $signee['order'],
                     'language' => 'de',
-                    'autographPosition' => $signee['position'] ?? null,
-                ], fn (mixed $v): bool => $v !== null));
+                    'fileSignatureFields' => is_string($fileId) && $position !== null
+                        ? [$fileId => ['autographPositions' => [$position]]]
+                        : (object) [],
+                ]);
                 $signeeId = $added->json('signeeId');
                 if (! $added->successful() || ! is_string($signeeId)) {
                     throw new RuntimeException('Unterzeichnende «'.$signee['email'].'»: '.self::failure($added));
@@ -522,7 +600,7 @@ class Plugin extends BasePlugin implements DemoResponder, SignatureProvider
 
     public function signatureStart(PluginContext $ctx, string $providerId): void
     {
-        self::expect($ctx->call('document-start', ['documentId' => $providerId], []));
+        self::expect($ctx->call('document-start', ['documentId' => $providerId]));
     }
 
     public function signatureStatus(PluginContext $ctx, string $providerId): array
@@ -539,7 +617,7 @@ class Plugin extends BasePlugin implements DemoResponder, SignatureProvider
                 continue;
             }
             $status = match ((string) ($s['signStatus'] ?? '')) {
-                'signed' => 'unterschrieben',
+                'signed', 'approved' => 'unterschrieben',
                 'rejected' => 'abgelehnt',
                 'on-hold' => 'wartet',
                 default => 'offen',
@@ -573,12 +651,12 @@ class Plugin extends BasePlugin implements DemoResponder, SignatureProvider
         }
 
         $details = $ctx->call('document', ['documentId' => $providerId]);
-        $url = $details->json('documentUrl');
+        // files[0].fileUrl (documentUrl ist veraltet); gilt ca. 1 Minute, Abruf ohne Authorization-Header
+        $url = $details->json('files.0.fileUrl') ?? $details->json('documentUrl');
         if (! $details->successful() || ! is_string($url) || ! str_starts_with($url, 'https://')) {
             return null;
         }
-        // documentUrl gilt ca. 1 Minute und wird ohne Anmeldung abgerufen (kein Authorization-Header)
-        $ctx->log('GET documentUrl (ohne Anmeldung)');
+        $ctx->log('GET fileUrl (ohne Anmeldung)');
         $file = Http::connectTimeout(5)->timeout(60)->get($url);
         $ctx->log("→ HTTP {$file->status()}");
 
@@ -587,12 +665,12 @@ class Plugin extends BasePlugin implements DemoResponder, SignatureProvider
 
     public function signatureRemind(PluginContext $ctx, string $providerId, string $signeeId): void
     {
-        self::expect($ctx->call('signee-resend', ['documentId' => $providerId, 'signeeId' => $signeeId], []));
+        self::expect($ctx->call('signee-resend', ['documentId' => $providerId, 'signeeId' => $signeeId]));
     }
 
     public function signatureWithdraw(PluginContext $ctx, string $providerId): void
     {
-        self::expect($ctx->call('document-withdraw', ['documentId' => $providerId], []));
+        self::expect($ctx->call('document-withdraw', ['documentId' => $providerId], ['sendMail' => 'others']));
     }
 
     public function signatureDelete(PluginContext $ctx, string $providerId): void
@@ -602,18 +680,15 @@ class Plugin extends BasePlugin implements DemoResponder, SignatureProvider
 
     public function signatureAccessUrl(PluginContext $ctx, string $providerId): ?string
     {
-        $response = $ctx->call('document-access-url', ['documentId' => $providerId], []);
+        $response = $ctx->call('document-access-url', ['documentId' => $providerId]);
         if (! $response->successful()) {
             throw new RuntimeException(self::failure($response));
         }
-        foreach (['url', 'documentAccessUrl', 'accessUrl'] as $key) {
-            $url = $response->json($key);
-            if (is_string($url) && str_starts_with($url, 'https://')) {
-                return $url;
-            }
-        }
+        // Antwort ist die Adresse als Text (bzw. als JSON-Zeichenkette)
+        $json = $response->json();
+        $url = is_string($json) ? $json : trim($response->body(), " \n\r\t\"");
 
-        return null;
+        return str_starts_with($url, 'https://') ? $url : null;
     }
 
     public function signatureVerifyCallback(array $headers, string $raw, string $secret): bool
@@ -680,6 +755,67 @@ class Plugin extends BasePlugin implements DemoResponder, SignatureProvider
     }
 
     /**
+     * @return array<string, mixed>
+     */
+    private static function demoFile(string $name, ?string $url): array
+    {
+        return [
+            'fileId' => self::DEMO_FILE, 'fileName' => $name, 'mimeType' => 'application/pdf',
+            'fileUrl' => $url ?? 'https://api.sign.deepbox.swiss/demo/file/'.self::DEMO_FILE, 'thumbnailUrl' => null,
+            'creationTime' => '2026-11-01T08:00:00Z', 'filePolicy' => ['canDelete' => false, 'canUpdate' => true],
+        ];
+    }
+
+    /**
+     * Simulierte Antworten der übrigen Endpunkte (Benutzer, Siegel, Reihenfolge, Gruppen, Dateien, Anhänge, Hash- und
+     * Datei-Service). Schreibende ohne Inhalt antworten wie DeepSign mit 204.
+     *
+     * @param  array<string, string>  $pathParams
+     * @param  array<string, mixed>|null  $body
+     * @return array{status: int, json?: mixed}
+     */
+    private static function demoGeneric(string $endpoint, array $pathParams, ?array $body, PluginContext $ctx): array
+    {
+        $attachment = ['attachmentId' => self::DEMO_ATTACHMENT, 'name' => 'Beilage Spesen.pdf', 'size' => 48213, 'mimeType' => 'application/pdf'];
+
+        return match ($endpoint) {
+            'user' => ['status' => 200, 'json' => ['email' => '0f1e2d3c-demo@in.deepcloud.swiss', 'userId' => '0f1e2d3c-4b5a-4c6d-8e7f-9a0b1c2d3e4f', 'location' => 'Bülach', 'optionalText' => 'Schulverwaltung', 'autographUrl' => null, 'deepSignStorage' => true, 'companiesWithDisabledStorage' => []]],
+            'seals' => ['status' => 200, 'json' => [['sealId' => '2c3d4e5f-6a7b-4c8d-9e0f-1a2b3c4d5e6f', 'sealKey' => 'siegel-schulverwaltung', 'displayName' => 'Sekundarschule Bülach (Demo)', 'companyId' => '0c1d2e3f-4a5b-4c6d-8e7f-9a0b1c2d3e4f']]],
+            'authority-services' => ['status' => 200, 'json' => [
+                'ras' => ['available' => true, 'phoneNumber' => '+4179•••0000'],
+                'did' => ['available' => false],
+            ]],
+            'sign-order' => ['status' => 200, 'json' => ['context' => 'Reihenfolge: 1. Muster Anna, 2. Beispiel Beat (Demo)']],
+            'file' => ($pathParams['fileId'] ?? '') === self::DEMO_FILE
+                ? ['status' => 200, 'json' => self::demoFile('Monatsrapport Oktober 2026 – Muster Anna.pdf', null)]
+                : self::demoError(404, 'File not found.'),
+            'attachments' => ['status' => 200, 'json' => [$attachment]],
+            'attachment-add' => ['status' => 201, 'json' => ['attachmentId' => 'demo-'.Str::lower(Str::random(12)), 'name' => (string) (($body['_file'] ?? [])['name'] ?? 'Anhang.pdf'), 'size' => strlen((string) (($body['_file'] ?? [])['contents'] ?? '')), 'mimeType' => 'application/pdf']],
+            'attachment-download-url' => ($pathParams['attachmentId'] ?? '') === self::DEMO_ATTACHMENT
+                ? ['status' => 200, 'json' => 'https://api.sign.deepbox.swiss/demo/attachment/'.self::DEMO_ATTACHMENT]
+                : self::demoError(404, 'Attachment not found.'),
+            'file-add' => ['status' => 201, 'json' => self::demoFile((string) (($body['_file'] ?? [])['name'] ?? 'Datei.pdf'), null)],
+            'document-deepbox' => trim((string) ($body['deepboxDocumentId'] ?? '')) === ''
+                ? self::demoError(400, 'deepboxDocumentId is required.')
+                : ['status' => 201, 'json' => self::demoDocument('draft', $ctx, $body, 'demo-deepbox-1')],
+            'hash-sign' => ($body['hashes'] ?? []) === []
+                ? self::demoError(400, 'hashes must not be empty.')
+                : ['status' => 202, 'json' => ['hashKey' => self::DEMO_KEY, 'signStatus' => 'pending', 'otpCallbackUrl' => null, 'oauth2LoginUrl' => null, 'correlationCode' => 'DEMO-42']],
+            'hash-seal' => ['status' => 201, 'json' => ['signStatus' => 'signed', 'signatureData' => ['signatures' => [['hashId' => 'rapport-2026-10', 'signature' => 'ZGVtby1zaWduYXR1cmU=']]], 'lastError' => null]],
+            'file-sign' => ['status' => 202, 'json' => ['fileKey' => self::DEMO_KEY, 'signStatus' => 'in-progress', 'otpCallbackUrl' => null, 'oauth2LoginUrl' => null, 'correlationCode' => 'DEMO-42']],
+            'file-seal', 'file-seal-xml' => ['status' => 201, 'json' => 'Demo: versiegelte Datei (im echten Betrieb Binärdaten)'],
+            'hash-status' => ['status' => 200, 'json' => ['signStatus' => 'signed', 'signatureData' => ['signatures' => [['hashId' => 'rapport-2026-10', 'signature' => 'ZGVtby1zaWduYXR1cmU=']]], 'lastError' => null]],
+            'file-status' => ['status' => 200, 'json' => ['fileKey' => self::DEMO_KEY, 'signStatus' => 'signed']],
+            'file-download' => ['status' => 200, 'json' => 'Demo: unterschriebene Datei (im echten Betrieb Binärdaten)'],
+            'signature-preview' => ['status' => 200, 'json' => 'Demo: Vorschau der Unterschrift (im echten Betrieb ein Bild)'],
+            'user-update', 'signee-group-update', 'signee-group-signature-field', 'signee-group-order', 'sign-order-update', 'sign-order-delete',
+            'sign-order-initiator', 'observer-update', 'file-update', 'file-delete', 'file-order', 'attachment-update', 'attachment-delete',
+            'attachment-order', 'autograph-update', 'autograph-delete' => ['status' => 204],
+            default => self::demoError(501, 'Im Demo-Modus nicht simuliert.'),
+        };
+    }
+
+    /**
      * @return array{documents: list<array<string, mixed>>, pagination: array{offset: int, limit: int}, size: int}
      */
     private static function demoOverview(string $status, int $limit, int $offset): array
@@ -724,6 +860,7 @@ class Plugin extends BasePlugin implements DemoResponder, SignatureProvider
             'documentMimeType' => 'application/pdf',
             // Im echten Betrieb ca. 1 Minute gültig, ohne Anmeldung abrufbar
             'documentUrl' => $status === 'signed' ? 'https://api.sign.deepbox.swiss/demo/download/'.$id : null,
+            'files' => [self::demoFile($name, $status === 'signed' ? 'https://api.sign.deepbox.swiss/demo/download/'.$id : null)],
             'thumbnailUrl' => null,
             'creationTime' => '2026-11-01T08:00:00Z',
             'startTime' => $status === 'draft' ? null : '2026-11-01T08:05:00Z',

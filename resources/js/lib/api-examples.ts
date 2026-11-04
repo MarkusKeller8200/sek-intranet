@@ -59,15 +59,12 @@ export function jsonState(text: string): JsonState {
     }
     try {
         const value: unknown = JSON.parse(text);
-        if (
-            value === null ||
-            typeof value !== 'object' ||
-            Array.isArray(value)
-        ) {
+        // Objekt oder Liste (z. B. Reihenfolge als Liste von IDs)
+        if (value === null || typeof value !== 'object') {
             return {
                 ok: false,
                 empty: false,
-                message: 'Erwartet wird ein JSON-Objekt.',
+                message: 'Erwartet wird ein JSON-Objekt oder eine Liste.',
             };
         }
 

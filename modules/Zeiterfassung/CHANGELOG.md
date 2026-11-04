@@ -4,6 +4,12 @@ Versionen des Moduls nach SemVer (module.json → «version»).
 
 ## [Unveröffentlicht]
 
+## [0.2.1]
+
+### Geändert
+
+- Unterschriftsfelder werden ab der linken unteren Ecke angegeben, wie DeepSign es verlangt (#85).
+
 ## [0.2.0]
 
 ### Neu

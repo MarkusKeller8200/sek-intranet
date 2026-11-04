@@ -303,6 +303,10 @@ final class PluginManager
             $response = $ctx->call($endpointId, $params, $body, $file);
             $raw = $response->body();
             $json = json_decode($raw, true);
+            // Dateien (PDF, Bilder) nicht als Text ausgeben
+            if ($json === null && $raw !== '' && ! mb_check_encoding($raw, 'UTF-8')) {
+                $raw = 'Binärdaten: '.number_format(strlen($raw), 0, '.', "'").' Bytes ('.($response->header('Content-Type') ?: 'unbekannter Typ').')';
+            }
 
             return [
                 'status' => $response->successful() ? 'success' : 'error',

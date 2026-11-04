@@ -112,6 +112,36 @@ für die Person und das Visum herunterladbar.
 genaues Format des Webhooks und der Signatur, Antwort von `document-access-url`. Im Demo-Modus ist der Ablauf
 vollständig testbar; mit echtem Zugang auf dem Schweizer Server prüfen.
 
+## Alle Endpunkte (#85)
+
+Quelle: OpenAPI-Beschreibung von DeepSign (Swagger `api.sign.deepbox.swiss/swagger-ui`, 53 Operationen, am 04.11.2026 von
+Markus übergeben). Alle 53 stehen im Plugin (Status «umgesetzt»), dazu `users/me` beim Anmeldedienst – je mit
+Beispielwerten, Feldern («Mögliche Werte») und Demo-Antwort:
+
+| Bereich | Endpunkte |
+| --- | --- |
+| Konto | DeepSign-Benutzer lesen/ändern, Siegel, Identifikation je Stufe, Signaturstufen, Unterschrift (Bild) hochladen/löschen, Vorschau |
+| Dokumente | Übersicht (mit Suche `q`), hochladen (Datei oder DeepBox), Details, ändern, starten, zurückziehen, löschen, Link zum Bearbeiten, PDF prüfen |
+| Umschlag (mehrere Dateien) | Datei hinzufügen, lesen, umbenennen, entfernen, Reihenfolge |
+| Unterzeichnende | auflisten, hinzufügen, lesen, ändern, entfernen, erinnern |
+| Gruppen und Reihenfolge | Gruppe (nötige Unterschriften), Unterschriftsfeld je Datei, Reihenfolge der Gruppen, Reihenfolge lesen/festlegen/aufheben, Absender:in zuerst/zuletzt |
+| Beobachtende | hinzufügen, ändern, entfernen |
+| Anhänge | auflisten, hinzufügen, umbenennen, entfernen, Reihenfolge, Download-Link |
+| Service | Hash unterschreiben/versiegeln, Datei unterschreiben/versiegeln, XML versiegeln (XAdES), Status, Download |
+
+**Geklärt durch die Beschreibung** (vorher offen):
+
+- **Position** (`Position`): Punkte (72 dpi), x/y = linke **untere** Ecke des Felds, gemessen ab der linken unteren
+  Ecke der Seite. Das Monatsblatt rechnet die Felder entsprechend um.
+- **Unterzeichnende** brauchen `signeeType` (`sign` oder `approve`) und `fileSignatureFields` (Schlüssel = `fileId`
+  aus `files[]` der Dokumentdetails, Wert = `{autographPositions: [...]}`); `autographPosition` ist veraltet.
+- **Hochladen** braucht `sendMail` und `visualSignatureRequirement`.
+- **Zurückziehen** braucht einen Body mit `sendMail`.
+- **Download:** `files[].fileUrl` (`documentUrl` ist veraltet).
+- **Link zum Bearbeiten:** Antwort ist die Adresse als Text.
+- **Webhook** (`CallbackInfo`): `eventType` (`signee-completed`, `document-completed`), `documentId`, `signeeId`,
+  `timestamp`; Signatur im Kopf `X-DeepSign-Signature-256` (HMAC-SHA-256 des Inhalts mit `callbackSecret`).
+
 ## Endtest auf dem Testserver (#84)
 
 Auf einem Server ausserhalb der Schweiz ist der Demo-Modus erzwungen. Für den Endtest mit echtem Zugang gibt es den

@@ -44,7 +44,7 @@ export type PluginEndpoint = {
     host?: string;
     params?: PluginEndpointParam[];
     /** Beispiel-Body (API-Tester: vorausgefüllt, «Beispiel einfügen») */
-    body?: Record<string, unknown>;
+    body?: Record<string, unknown> | unknown[];
     /** Mögliche Felder des Bodys mit Beispielwert (API-Tester: «Mögliche Werte») */
     fields?: {
         name: string;

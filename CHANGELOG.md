@@ -17,6 +17,12 @@ laufend unter **Unveröffentlicht**. Ab 0.32.0 entsteht eine Version nur bei ein
 
 ### Neu
 
+- **DeepSign: alle Endpunkte (#85):** Alle 53 Endpunkte der DeepSign-API im Plugin und im API-Tester, je mit
+  Beispielwerten, Feldern und Demo-Antwort (Umschläge, Gruppen und Reihenfolge, Anhänge, Hash- und Datei-Signatur,
+  Siegel, Unterschrift als Bild); Aktionen «Siegel anzeigen» und «Identifikation anzeigen». Versand an die echte API
+  angepasst (`signeeType`, `fileSignatureFields`, Position ab links unten, `visualSignatureRequirement`, Zurückziehen
+  mit `sendMail`, Download über `files[].fileUrl`). Der API-Tester zeigt Binärdaten als Grösse und erlaubt Listen
+  als Body.
 - **DeepSign-Endtest (#84):** Schalter «Endtest» erlaubt echte Aufrufe an DeepSign auch auf dem Testserver (sonst
   Demo-Modus erzwungen); der API-Tester lädt bei Endpunkten mit Datei ein Dokument hoch (multipart).
 - **Unterschriften (#38–#43):** Kern-Schnittstelle «Unterschriften» (Aufträge, Status je Person, Ereignisse an das

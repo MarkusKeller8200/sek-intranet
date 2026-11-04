@@ -6,7 +6,7 @@ use App\Support\SimplePdf;
 
 /**
  * Monatsrapport als PDF auf dem Server (#43): Einträge, Summen und unten zwei Unterschriftsfelder
- * (Mitarbeiter:in, Schulleitung). Die Positionen der Felder gehen an den Anbieter (DeepSign: autographPosition).
+ * (Mitarbeiter:in, Schulleitung). Die Positionen der Felder gehen an den Anbieter (Punkte ab links unten, wie PDF).
  */
 final class MonatsblattPdf
 {
@@ -94,7 +94,8 @@ final class MonatsblattPdf
         $pdf->rect($x, $top + 6, $breite, $hoehe, 0.4);
         $pdf->text($x, $top + $hoehe + 20, $rolle.': '.SimplePdf::fit($name, $breite - 70, 9), 9);
 
-        return ['pageNumber' => $pdf->page(), 'x' => $x, 'y' => $top + 6, 'width' => $breite, 'height' => $hoehe];
+        // DeepSign misst ab der linken unteren Ecke der Seite (Punkte), SimplePdf ab oben
+        return ['pageNumber' => $pdf->page(), 'x' => $x, 'y' => round(SimplePdf::HEIGHT - ($top + 6) - $hoehe, 2), 'width' => $breite, 'height' => $hoehe];
     }
 
     private static function kopf(SimplePdf $pdf, string $titel, string $person, ?string $visiertVon, ?string $visiertAm): float

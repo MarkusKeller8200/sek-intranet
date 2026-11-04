@@ -41,7 +41,8 @@ class PluginDeepsignTest extends TestCase
     public function test_manifest_with_examples_for_every_parameter(): void
     {
         $manifest = app(PluginManager::class)->manifest('deepsign');
-        $this->assertCount(19, $manifest->endpoints());
+        $this->assertCount(54, $manifest->endpoints(), '53 Endpunkte aus dem Swagger von DeepSign plus users/me beim Anmeldedienst');
+        $this->assertSame([], array_values(array_filter($manifest->endpoints(), fn (array $e): bool => ($e['status'] ?? '') !== 'full')));
         $this->assertSame('oauth2_password', $manifest->auth()['type']);
         $this->assertEqualsCanonicalizing(['username', 'password', 'client_id', 'client_secret'], $manifest->secretKeys());
 
@@ -54,7 +55,8 @@ class PluginDeepsignTest extends TestCase
             foreach ($endpoint['params'] ?? [] as $param) {
                 $this->assertTrue(isset($param['default']) || isset($param['example']), "{$endpoint['id']}: {$param['name']} ohne Beispiel");
             }
-            if (in_array($endpoint['method'], ['POST', 'PUT'], true) && $endpoint['id'] !== 'scan-predefined') {
+            $onlyFile = isset($endpoint['file']) && ! isset($endpoint['file']['data']);
+            if (in_array($endpoint['method'], ['POST', 'PUT'], true) && ! $onlyFile) {
                 $this->assertArrayHasKey('body', $endpoint, "{$endpoint['id']}: Beispiel-Body fehlt");
             }
         }
@@ -66,7 +68,7 @@ class PluginDeepsignTest extends TestCase
         $body = $spec['paths']['/documents/{documentId}/signees']['post']['requestBody']['content']['application/json'];
 
         $this->assertSame('anna.muster@sekbuelach.example', $body['example']['email']);
-        $this->assertSame(['email'], $body['schema']['required']);
+        $this->assertSame(['signeeType', 'fileSignatureFields'], $body['schema']['required']);
         $this->assertSame(['timestamp', 'advanced', 'qualified'], $spec['paths']['/documents/file']['post']['requestBody']['content']['application/json']['schema']['properties']['signatureMode']['enum']);
         $this->assertSame(Plugin::DEMO_DOCUMENT, $spec['paths']['/documents/{documentId}']['get']['parameters'][0]['example']);
     }
@@ -99,7 +101,7 @@ class PluginDeepsignTest extends TestCase
         Http::fake();
         $this->enable(['demo' => true]);
         $this->signInAs('admin');
-        $body = '{"email": "keine-adresse", "signOrder": 0}';
+        $body = '{"signeeType": "sign", "email": "keine-adresse", "signOrder": 0, "fileSignatureFields": {}}';
 
         $this->postJson('/plugins/deepsign/api', ['endpoint' => 'signee-add', 'params' => ['documentId' => Plugin::DEMO_DOCUMENT], 'body' => $body])
             ->assertJsonPath('status', 'error');
@@ -107,7 +109,7 @@ class PluginDeepsignTest extends TestCase
         $this->enable(['demo' => true], allowWrite: true);
         $this->postJson('/plugins/deepsign/api', ['endpoint' => 'signee-add', 'params' => ['documentId' => Plugin::DEMO_DOCUMENT], 'body' => $body])
             ->assertJsonPath('http_status', 400);
-        $this->postJson('/plugins/deepsign/api', ['endpoint' => 'signee-add', 'params' => ['documentId' => Plugin::DEMO_DOCUMENT], 'body' => '{"email": "eva.fiktiv@sekbuelach.example"}'])
+        $this->postJson('/plugins/deepsign/api', ['endpoint' => 'signee-add', 'params' => ['documentId' => Plugin::DEMO_DOCUMENT], 'body' => '{"signeeType": "sign", "email": "eva.fiktiv@sekbuelach.example", "fileSignatureFields": {}}'])
             ->assertJsonPath('http_status', 201);
         $this->postJson('/plugins/deepsign/api', ['endpoint' => 'document-start', 'params' => ['documentId' => Plugin::DEMO_DOCUMENT], 'body' => '{}'])
             ->assertJsonPath('http_status', 204);
@@ -259,5 +261,61 @@ class PluginDeepsignTest extends TestCase
         // Endpunkte ohne Datei nehmen keine an
         $other = (string) json_encode(['endpoint' => 'overview', 'params' => []]);
         $this->post('/plugins/deepsign/api', ['payload' => $other, 'file_upload' => $pdf], ['Accept' => 'application/json'])->assertStatus(422);
+    }
+
+    public function test_demo_answers_every_endpoint(): void
+    {
+        Http::fake();
+        $this->enable(['demo' => true], allowWrite: true);
+        $this->signInAs('admin');
+        $manifest = app(PluginManager::class)->manifest('deepsign');
+
+        foreach ($manifest->endpoints() as $endpoint) {
+            $params = [];
+            foreach ($endpoint['params'] ?? [] as $param) {
+                $params[$param['name']] = (string) ($param['example'] ?? $param['default'] ?? '');
+            }
+            $body = isset($endpoint['body']) ? (string) json_encode($endpoint['body']) : null;
+            $answer = $this->postJson('/plugins/deepsign/api', ['endpoint' => $endpoint['id'], 'params' => $params, 'body' => $body])->json();
+            $this->assertNotSame(501, $answer['http_status'] ?? null, "{$endpoint['id']} im Demo-Modus nicht simuliert");
+            $this->assertLessThan(500, (int) ($answer['http_status'] ?? 500), "{$endpoint['id']}: ".($answer['message'] ?? ''));
+        }
+        Http::assertNothingSent();
+    }
+
+    public function test_real_send_uses_file_signature_fields_and_bottom_left_position(): void
+    {
+        Http::fake([
+            self::TOKEN_URL => Http::response(['access_token' => 'token-abc-123456', 'expires_in' => 300]),
+            'api.sign.deepbox.swiss/api/v1/documents/file' => Http::response(['documentId' => 'doc-1', 'documentStatus' => 'draft', 'files' => [['fileId' => 'file-1', 'fileName' => 'a.pdf', 'fileUrl' => 'https://x.example/f']]], 201),
+            'api.sign.deepbox.swiss/api/v1/documents/doc-1/signees' => Http::response(['signeeId' => 'signee-1'], 201),
+        ]);
+        $this->realAccount();
+        app(PluginManager::class)->saveSettings('deepsign', ['_allow_write' => true]);
+        $ctx = app(PluginManager::class)->context('deepsign', null);
+
+        $sent = (new Plugin)->signatureSend($ctx, [
+            'title' => 'Monatsrapport (erfunden)', 'file_name' => 'a.pdf', 'comment' => null,
+            'signees' => [['email' => 'anna.muster@sekbuelach.example', 'order' => 0, 'position' => ['pageNumber' => 1, 'x' => 42, 'y' => 95, 'width' => 240, 'height' => 60]]],
+            'observers' => [],
+        ], "%PDF-1.4\n%%EOF", null);
+
+        $this->assertSame(['provider_id' => 'doc-1', 'signee_ids' => ['signee-1']], $sent);
+        Http::assertSent(fn (Request $r): bool => str_ends_with($r->url(), '/documents/doc-1/signees')
+            && $r['signeeType'] === 'sign'
+            && $r['fileSignatureFields'] === ['file-1' => ['autographPositions' => [['pageNumber' => 1, 'x' => 42, 'y' => 95, 'width' => 240, 'height' => 60]]]]);
+    }
+
+    public function test_seal_and_identification_actions_in_demo(): void
+    {
+        Http::fake();
+        $this->enable(['demo' => true]);
+        $this->signInAs('admin');
+
+        $this->postJson('/plugins/deepsign/aktion/seals', ['options' => []])->assertOk()->assertJsonPath('rows.0.key', 'siegel-schulverwaltung');
+        $this->postJson('/plugins/deepsign/aktion/authority', ['options' => ['signatureMode' => 'qualified']])->assertOk()
+            ->assertJsonPath('rows.0.service', 'MobileID')
+            ->assertJsonPath('rows.1.available', 'nein');
+        Http::assertNothingSent();
     }
 }

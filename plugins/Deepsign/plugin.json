@@ -1,11 +1,11 @@
 {
     "id": "deepsign",
     "name": "DeepSign",
-    "version": "0.4",
+    "version": "0.5",
     "api": 1,
     "category": "other",
     "author": "SekBülach Intranet",
-    "description": "Elektronische Unterschrift mit DeepSign (DeepCloud AG, Schweiz): Dokumente hochladen, Unterzeichnende festlegen, starten, Status abfragen, erinnern und zurückziehen. Mit Demo-Modus (simulierte Antworten), solange kein Zugang vorhanden ist.",
+    "description": "Elektronische Unterschrift mit DeepSign (DeepCloud AG, Schweiz): alle 53 Endpunkte der DeepSign-API im API-Tester (Dokumente, Umschläge, Unterzeichnende, Gruppen und Reihenfolge, Beobachtende, Anhänge, Hash- und Datei-Signatur, Siegel), Anbieter für die Schnittstelle «Unterschriften». Mit Demo-Modus.",
     "data_notice": "Dokumente zur Unterschrift (z. B. Monatsrapporte) und E-Mail-Adressen der Unterzeichnenden sind Personendaten. Auf dem Testserver nur im Demo-Modus; echte Dokumente erst auf dem Schweizer Server und nach den Abklärungen mit DeepCloud (#36). DeepSign löscht unterschriebene Dokumente nach 14 Tagen.",
     "service": {
         "name": "DeepSign API",
@@ -30,9 +30,53 @@
                 "path": "/users/me",
                 "host": "account",
                 "label": "Service-Benutzer (wer bin ich, Firmen)",
-                "status": "partial",
+                "status": "full",
                 "use": "Verbindung testen",
                 "note": "Nur Produktion dokumentiert (deepcloud.swiss/api/v1/users/me); liefert die Firmen (companies, group_id)."
+            },
+            {
+                "id": "user",
+                "method": "GET",
+                "path": "/users/me",
+                "label": "DeepSign-Benutzer (Profil, Speicher)",
+                "status": "full",
+                "params": [
+                    {
+                        "name": "includeCompanyDisabledStorage",
+                        "example": "false",
+                        "help": "true: auch Firmen ohne DeepSign-Speicher anzeigen."
+                    }
+                ]
+            },
+            {
+                "id": "user-update",
+                "method": "PUT",
+                "path": "/users/me",
+                "label": "DeepSign-Benutzer ändern (Ort, Zusatztext)",
+                "status": "full",
+                "danger": true,
+                "test": false,
+                "body": {
+                    "location": "Bülach",
+                    "optionalText": "Schulverwaltung"
+                },
+                "fields": [
+                    {
+                        "name": "location",
+                        "type": "string",
+                        "example": "Bülach"
+                    },
+                    {
+                        "name": "optionalText",
+                        "type": "string",
+                        "example": "Schulverwaltung"
+                    },
+                    {
+                        "name": "deepSignStorage",
+                        "type": "boolean",
+                        "example": true
+                    }
+                ]
             },
             {
                 "id": "overview",
@@ -41,7 +85,6 @@
                 "label": "Dokumente (Übersicht)",
                 "status": "full",
                 "use": "Verbindung testen, Aktion «Dokumente anzeigen»",
-                "note": "Abfragen höchstens alle 15 Minuten (Statusabfragen ausgenommen).",
                 "params": [
                     {
                         "name": "offset",
@@ -66,9 +109,15 @@
                     {
                         "name": "filterSignStatus",
                         "example": "pending",
-                        "help": "on-hold, pending, in-progress, signed, rejected"
+                        "help": "on-hold, pending, in-progress, signed, approved, obsolete, rejected"
+                    },
+                    {
+                        "name": "q",
+                        "example": "Monatsrapport",
+                        "help": "Suche im Dokumentnamen."
                     }
-                ]
+                ],
+                "note": "Abfragen höchstens alle 15 Minuten (Statusabfragen ausgenommen)."
             },
             {
                 "id": "available-modes",
@@ -79,14 +128,46 @@
                 "use": "Aktion «Signaturstufen anzeigen»"
             },
             {
+                "id": "authority-services",
+                "method": "GET",
+                "path": "/users/me/available-authority-services",
+                "label": "Identifikation (MobileID, DeepID) je Stufe",
+                "status": "full",
+                "params": [
+                    {
+                        "name": "signatureMode",
+                        "example": "advanced",
+                        "help": "timestamp, advanced oder qualified"
+                    },
+                    {
+                        "name": "jurisdiction",
+                        "example": "zertes",
+                        "help": "zertes (Schweiz) oder eidas (EU)"
+                    }
+                ]
+            },
+            {
+                "id": "seals",
+                "method": "GET",
+                "path": "/users/me/seals",
+                "label": "Siegel der Firma",
+                "status": "full",
+                "params": [
+                    {
+                        "name": "filterCompanyId",
+                        "example": "0c1d2e3f-4a5b-4c6d-8e7f-9a0b1c2d3e4f",
+                        "help": "Nur Siegel dieser Firma."
+                    }
+                ]
+            },
+            {
                 "id": "document",
                 "method": "GET",
                 "path": "/documents/{documentId}",
-                "label": "Dokumentdetails (Status, Unterzeichnende, Download-Link)",
+                "label": "Dokumentdetails (Status, Dateien, Unterzeichnende)",
                 "status": "full",
-                "test": false,
                 "use": "Status abfragen, unterschriebenes PDF abholen (#41)",
-                "note": "documentUrl gilt ca. 1 Minute und wird ohne Anmeldung abgerufen.",
+                "test": false,
                 "params": [
                     {
                         "name": "documentId",
@@ -94,105 +175,8 @@
                         "example": "3f1c2a9e-5b7d-4e2a-9c61-1d2e3f4a5b6c",
                         "help": "ID aus «Dokumente (Übersicht)» oder der Antwort beim Hochladen."
                     }
-                ]
-            },
-            {
-                "id": "document-upload",
-                "method": "POST",
-                "path": "/documents/file",
-                "label": "Dokument hochladen (Entwurf)",
-                "status": "partial",
-                "danger": true,
-                "test": false,
-                "use": "Dokument zur Unterschrift senden (#39)",
-                "note": "multipart/form-data: Teil «data» = Body unten (JSON), Teil «file» = Dokument (PDF, DOCX oder XLSX; im Intranet bis 20 MB). Im API-Tester die Datei im Feld «Datei» wählen.",
-                "body": {
-                    "initiatorAliasName": "Sekundarschule Bülach",
-                    "sendMail": "others",
-                    "signatureMode": "timestamp",
-                    "jurisdiction": "zertes",
-                    "scanPredefined": true,
-                    "comment": "Monatsrapport Oktober 2026 (Beispiel)"
-                },
-                "fields": [
-                    {
-                        "name": "initiatorAliasName",
-                        "type": "string",
-                        "required": true,
-                        "help": "Absender in den Einladungen.",
-                        "example": "Sekundarschule Bülach"
-                    },
-                    {
-                        "name": "sendMail",
-                        "type": "string",
-                        "help": "Wer E-Mails erhält.",
-                        "choices": ["all", "others", "none"],
-                        "example": "others"
-                    },
-                    {
-                        "name": "signatureMode",
-                        "type": "string",
-                        "help": "timestamp = einfach, advanced = fortgeschritten (2FA), qualified = qualifiziert.",
-                        "choices": ["timestamp", "advanced", "qualified"],
-                        "example": "timestamp"
-                    },
-                    {
-                        "name": "jurisdiction",
-                        "type": "string",
-                        "help": "zertes = Schweiz, eidas = EU.",
-                        "choices": ["zertes", "eidas"],
-                        "example": "zertes"
-                    },
-                    {
-                        "name": "scanPredefined",
-                        "type": "boolean",
-                        "help": "Unterschriftsfelder aus Text-Mustern im PDF übernehmen.",
-                        "example": true
-                    },
-                    {
-                        "name": "comment",
-                        "type": "string",
-                        "help": "Nachricht an die Unterzeichnenden.",
-                        "example": "Bitte bis Ende Monat unterschreiben."
-                    },
-                    {
-                        "name": "companyId",
-                        "type": "string",
-                        "help": "Nur nötig, wenn der Service-Benutzer mehrere Firmen sieht.",
-                        "example": "0c1d2e3f-4a5b-4c6d-8e7f-9a0b1c2d3e4f"
-                    },
-                    {
-                        "name": "callbackUrl",
-                        "type": "string",
-                        "help": "Webhook-Adresse (#40), muss von DeepCloud erreichbar sein.",
-                        "example": "https://intranet.sekbuelach.ch/api/deepsign/callback"
-                    },
-                    {
-                        "name": "callbackEventTypes",
-                        "type": "array",
-                        "help": "Ereignisse für den Webhook.",
-                        "example": ["signee-completed", "document-completed"]
-                    }
                 ],
-                "file": {
-                    "field": "file",
-                    "data": "data",
-                    "accept": ".pdf,.docx,.xlsx"
-                }
-            },
-            {
-                "id": "scan-predefined",
-                "method": "POST",
-                "path": "/documents/file/scan-predefined",
-                "label": "PDF auf Unterschriftsfelder prüfen",
-                "status": "partial",
-                "effect": "read",
-                "test": false,
-                "note": "multipart/form-data mit dem Teil «file» (PDF); speichert nichts. Im API-Tester die Datei im Feld «Datei» wählen.",
-                "file": {
-                    "field": "file",
-                    "accept": ".pdf"
-                }
+                "note": "Dateien in «files» mit fileUrl (ca. 1 Minute gültig, ohne Anmeldung abrufbar); documentUrl ist veraltet."
             },
             {
                 "id": "document-update",
@@ -201,6 +185,7 @@
                 "label": "Dokument ändern (nur Entwurf)",
                 "status": "full",
                 "danger": true,
+                "test": false,
                 "params": [
                     {
                         "name": "documentId",
@@ -210,23 +195,152 @@
                     }
                 ],
                 "body": {
-                    "initiatorAliasName": "Sekundarschule Bülach",
+                    "documentName": "Monatsrapport Oktober 2026 – Muster Anna",
                     "comment": "Bitte bis Ende Monat unterschreiben."
                 },
                 "fields": [
                     {
-                        "name": "initiatorAliasName",
+                        "name": "documentName",
                         "type": "string",
-                        "help": "Absender in den Einladungen.",
-                        "example": "Sekundarschule Bülach"
+                        "example": "Monatsrapport Oktober 2026 – Muster Anna"
                     },
                     {
                         "name": "comment",
                         "type": "string",
-                        "help": "Nachricht an die Unterzeichnenden.",
                         "example": "Bitte bis Ende Monat unterschreiben."
+                    },
+                    {
+                        "name": "signatureMode",
+                        "type": "string",
+                        "help": "`timestamp` - Simple Electronic Signature (SES)",
+                        "choices": [
+                            "timestamp",
+                            "advanced",
+                            "qualified"
+                        ],
+                        "example": "timestamp"
+                    },
+                    {
+                        "name": "jurisdiction",
+                        "type": "string",
+                        "help": "`zertes` - Bundesgesetz über die elektronische Signatur (CH based jurisdiction)",
+                        "choices": ["zertes", "eidas"],
+                        "example": "zertes"
+                    },
+                    {
+                        "name": "requiredAuthorityService",
+                        "type": "string",
+                        "help": "Authority service used to authorize the signature.",
+                        "choices": ["ras", "did"],
+                        "example": "ras"
+                    },
+                    {
+                        "name": "initiatorAliasName",
+                        "type": "string",
+                        "help": "Custom name for the initiating User, which will be used for further interactions",
+                        "example": "Sekundarschule Bülach"
+                    },
+                    {
+                        "name": "callbackEventTypes",
+                        "type": "array",
+                        "choices": [
+                            "signee-completed",
+                            "document-completed"
+                        ],
+                        "example": [
+                            "signee-completed",
+                            "document-completed"
+                        ]
+                    },
+                    {
+                        "name": "callbackUrl",
+                        "type": "string",
+                        "help": "POST callback url. For body see schema CallbackInfo",
+                        "example": "https://intranet.sekbuelach.ch/api/signaturen/deepsign/callback"
+                    },
+                    {
+                        "name": "callbackSecret",
+                        "type": "string",
+                        "help": "Secret to calculate auth signature of the body (SHA-256 HMAC). Sent in header as X-DeepSign-Signature-256",
+                        "example": "geheimes-beispiel-secret"
+                    },
+                    {
+                        "name": "signeeAttachmentsAllowed",
+                        "type": "boolean",
+                        "example": false
+                    },
+                    {
+                        "name": "visualSignatureRequirement",
+                        "type": "string",
+                        "help": "Configure if participants can or must add a visual signature.",
+                        "choices": [
+                            "optional",
+                            "required",
+                            "prohibited"
+                        ],
+                        "example": "optional"
+                    },
+                    {
+                        "name": "lockDocument",
+                        "type": "boolean",
+                        "help": "If true, the document will be locked when completely signed.",
+                        "example": false
                     }
                 ]
+            },
+            {
+                "id": "document-delete",
+                "method": "DELETE",
+                "path": "/documents/{documentId}",
+                "label": "Löschen (nur Entwurf oder zurückgezogen)",
+                "status": "full",
+                "danger": true,
+                "test": false,
+                "params": [
+                    {
+                        "name": "documentId",
+                        "required": true,
+                        "example": "3f1c2a9e-5b7d-4e2a-9c61-1d2e3f4a5b6c",
+                        "help": "ID aus «Dokumente (Übersicht)» oder der Antwort beim Hochladen."
+                    }
+                ]
+            },
+            {
+                "id": "document-withdraw",
+                "method": "PUT",
+                "path": "/documents/{documentId}/withdraw",
+                "label": "Zurückziehen",
+                "status": "full",
+                "danger": true,
+                "test": false,
+                "params": [
+                    {
+                        "name": "documentId",
+                        "required": true,
+                        "example": "3f1c2a9e-5b7d-4e2a-9c61-1d2e3f4a5b6c",
+                        "help": "ID aus «Dokumente (Übersicht)» oder der Antwort beim Hochladen."
+                    }
+                ],
+                "body": {
+                    "sendMail": "others",
+                    "message": "Das Dokument wird neu gesendet."
+                },
+                "fields": [
+                    {
+                        "name": "sendMail",
+                        "type": "string",
+                        "required": true,
+                        "help": "Configure which participants should receive a mail from the service.",
+                        "choices": ["all", "others", "none"],
+                        "example": "others"
+                    },
+                    {
+                        "name": "message",
+                        "type": "string",
+                        "example": "Das Dokument wird neu gesendet."
+                    }
+                ],
+                "note": "Danach lässt sich das Dokument nicht neu starten, nur neu hochladen."
             },
             {
                 "id": "document-start",
@@ -235,6 +349,7 @@
                 "label": "Unterschreiben starten",
                 "status": "full",
                 "danger": true,
+                "test": false,
                 "params": [
                     {
                         "name": "documentId",
@@ -245,142 +360,6 @@
                 ],
                 "body": {},
                 "note": "Danach sind kaum noch Änderungen möglich. Antwort 204."
-            },
-            {
-                "id": "document-withdraw",
-                "method": "PUT",
-                "path": "/documents/{documentId}/withdraw",
-                "label": "Zurückziehen",
-                "status": "full",
-                "danger": true,
-                "params": [
-                    {
-                        "name": "documentId",
-                        "required": true,
-                        "example": "3f1c2a9e-5b7d-4e2a-9c61-1d2e3f4a5b6c",
-                        "help": "ID aus «Dokumente (Übersicht)» oder der Antwort beim Hochladen."
-                    }
-                ],
-                "body": {},
-                "note": "Zurückgezogene Dokumente lassen sich nicht neu starten."
-            },
-            {
-                "id": "document-delete",
-                "method": "DELETE",
-                "path": "/documents/{documentId}",
-                "label": "Löschen (nur Entwurf oder zurückgezogen)",
-                "status": "full",
-                "danger": true,
-                "params": [
-                    {
-                        "name": "documentId",
-                        "required": true,
-                        "example": "3f1c2a9e-5b7d-4e2a-9c61-1d2e3f4a5b6c",
-                        "help": "ID aus «Dokumente (Übersicht)» oder der Antwort beim Hochladen."
-                    }
-                ]
-            },
-            {
-                "id": "document-access-url",
-                "method": "POST",
-                "path": "/documents/{documentId}/document-access-url",
-                "label": "Link zum Bearbeiten in DeepSign (5 Minuten)",
-                "status": "partial",
-                "danger": true,
-                "params": [
-                    {
-                        "name": "documentId",
-                        "required": true,
-                        "example": "3f1c2a9e-5b7d-4e2a-9c61-1d2e3f4a5b6c",
-                        "help": "ID aus «Dokumente (Übersicht)» oder der Antwort beim Hochladen."
-                    }
-                ],
-                "body": {},
-                "note": "Link ohne Anmeldung mit voller Kontrolle über das Dokument – nur Administration."
-            },
-            {
-                "id": "signees",
-                "method": "GET",
-                "path": "/documents/{documentId}/signees",
-                "label": "Unterzeichnende eines Dokuments",
-                "status": "partial",
-                "test": false,
-                "params": [
-                    {
-                        "name": "documentId",
-                        "required": true,
-                        "example": "3f1c2a9e-5b7d-4e2a-9c61-1d2e3f4a5b6c",
-                        "help": "ID aus «Dokumente (Übersicht)» oder der Antwort beim Hochladen."
-                    }
-                ],
-                "note": "Aus dem Microsoft-Connector; in der API-Doku nicht beschrieben."
-            },
-            {
-                "id": "signee-add",
-                "method": "POST",
-                "path": "/documents/{documentId}/signees",
-                "label": "Unterzeichnende hinzufügen",
-                "status": "full",
-                "danger": true,
-                "params": [
-                    {
-                        "name": "documentId",
-                        "required": true,
-                        "example": "3f1c2a9e-5b7d-4e2a-9c61-1d2e3f4a5b6c",
-                        "help": "ID aus «Dokumente (Übersicht)» oder der Antwort beim Hochladen."
-                    }
-                ],
-                "body": {
-                    "email": "anna.muster@sekbuelach.example",
-                    "comment": "Bitte als Erste unterschreiben.",
-                    "signOrder": 0
-                },
-                "fields": [
-                    {
-                        "name": "email",
-                        "type": "string",
-                        "required": true,
-                        "help": "E-Mail der unterzeichnenden Person.",
-                        "example": "anna.muster@sekbuelach.example"
-                    },
-                    {
-                        "name": "signOrder",
-                        "type": "integer",
-                        "help": "Reihenfolge, ab 0; gleiche Zahl = gleichzeitig.",
-                        "example": 0
-                    },
-                    {
-                        "name": "comment",
-                        "type": "string",
-                        "help": "Nachricht an diese Person.",
-                        "example": "Bitte als Erste unterschreiben."
-                    },
-                    {
-                        "name": "language",
-                        "type": "string",
-                        "help": "Sprache der Einladung.",
-                        "choices": ["de", "fr", "it", "en"],
-                        "example": "de"
-                    },
-                    {
-                        "name": "signFieldName",
-                        "type": "string",
-                        "help": "Name eines vorhandenen Unterschriftsfelds im PDF.",
-                        "example": "Unterschrift_Mitarbeiterin"
-                    },
-                    {
-                        "name": "autographPosition",
-                        "type": "object",
-                        "help": "Position der Unterschrift (Seite, x, y, Breite, Höhe).",
-                        "example": {
-                            "pageNumber": 1,
-                            "x": 350,
-                            "y": 80,
-                            "width": 180,
-                            "height": 60
-                        }
-                    }
-                ]
             },
             {
                 "id": "signee",
@@ -411,6 +390,7 @@
                 "label": "Unterzeichnende ändern",
                 "status": "full",
                 "danger": true,
+                "test": false,
                 "params": [
                     {
                         "name": "documentId",
@@ -426,48 +406,82 @@
                     }
                 ],
                 "body": {
+                    "fileAutographPositions": {
+                        "5e6f7a8b-9c0d-4e1f-8a2b-3c4d5e6f7a8b": [
+                            {
+                                "pageNumber": 1,
+                                "x": 42,
+                                "y": 95,
+                                "width": 240,
+                                "height": 60
+                            }
+                        ]
+                    },
                     "email": "anna.muster@sekbuelach.example",
-                    "signOrder": 0,
-                    "autographPosition": {
-                        "pageNumber": 1,
-                        "x": 350,
-                        "y": 80,
-                        "width": 180,
-                        "height": 60
-                    }
+                    "signOrder": 0
                 },
                 "fields": [
                     {
-                        "name": "email",
+                        "name": "signeeType",
                         "type": "string",
-                        "help": "E-Mail der unterzeichnenden Person.",
-                        "example": "anna.muster@sekbuelach.example"
+                        "help": "Only allowed in document status DRAFT",
+                        "choices": ["sign", "approve"],
+                        "example": "sign"
                     },
                     {
-                        "name": "signOrder",
-                        "type": "integer",
-                        "help": "Reihenfolge, ab 0.",
-                        "example": 1
+                        "name": "email",
+                        "type": "string",
+                        "example": "anna.muster@sekbuelach.example"
                     },
                     {
                         "name": "comment",
                         "type": "string",
-                        "help": "Nachricht an diese Person.",
-                        "example": "Bitte nach der Schulleitung unterschreiben."
+                        "help": "Only allowed in document status DRAFT",
+                        "example": "Bitte bis Ende Monat unterschreiben."
                     },
                     {
                         "name": "autographPosition",
                         "type": "object",
-                        "help": "Position der Unterschrift (Seite, x, y, Breite, Höhe).",
+                        "help": "veraltet – Use fileAutographPositions instead.",
                         "example": {
                             "pageNumber": 1,
-                            "x": 350,
-                            "y": 80,
-                            "width": 180,
+                            "x": 42,
+                            "y": 95,
+                            "width": 240,
                             "height": 60
                         }
+                    },
+                    {
+                        "name": "fileAutographPositions",
+                        "type": "object",
+                        "required": true,
+                        "help": "Assign autographPositions for this signee to a file in the document.",
+                        "example": {
+                            "5e6f7a8b-9c0d-4e1f-8a2b-3c4d5e6f7a8b": [
+                                {
+                                    "pageNumber": 1,
+                                    "x": 42,
+                                    "y": 95,
+                                    "width": 240,
+                                    "height": 60
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "name": "language",
+                        "type": "string",
+                        "help": "Only allowed in document status DRAFT",
+                        "example": "de"
+                    },
+                    {
+                        "name": "signOrder",
+                        "type": "integer",
+                        "help": "Only allowed in document status DRAFT",
+                        "example": 0
                     }
-                ]
+                ],
+                "note": "fileAutographPositions: Schlüssel = fileId, Wert = Liste von Positionen (Punkte ab links unten); leere Liste entfernt die Positionen."
             },
             {
                 "id": "signee-delete",
@@ -476,6 +490,7 @@
                 "label": "Unterzeichnende entfernen",
                 "status": "full",
                 "danger": true,
+                "test": false,
                 "params": [
                     {
                         "name": "documentId",
@@ -492,12 +507,13 @@
                 ]
             },
             {
-                "id": "signee-resend",
-                "method": "POST",
-                "path": "/documents/{documentId}/signees/{signeeId}/resend-invitation",
-                "label": "Erinnerung senden",
+                "id": "signee-group-update",
+                "method": "PUT",
+                "path": "/documents/{documentId}/signee-groups/{signeeGroupId}",
+                "label": "Gruppe: nötige Unterschriften",
                 "status": "full",
                 "danger": true,
+                "test": false,
                 "params": [
                     {
                         "name": "documentId",
@@ -506,71 +522,212 @@
                         "help": "ID aus «Dokumente (Übersicht)» oder der Antwort beim Hochladen."
                     },
                     {
-                        "name": "signeeId",
+                        "name": "signeeGroupId",
                         "required": true,
-                        "example": "7a8b9c0d-1e2f-4a3b-8c4d-5e6f7a8b9c0d",
-                        "help": "ID aus «Unterzeichnende eines Dokuments»."
-                    }
-                ],
-                "body": {},
-                "use": "Knopf «Erinnerung senden» (#42)",
-                "note": "Antwort 204."
-            },
-            {
-                "id": "observer-add",
-                "method": "POST",
-                "path": "/documents/{documentId}/observers",
-                "label": "Beobachtende hinzufügen",
-                "status": "full",
-                "danger": true,
-                "params": [
-                    {
-                        "name": "documentId",
-                        "required": true,
-                        "example": "3f1c2a9e-5b7d-4e2a-9c61-1d2e3f4a5b6c",
-                        "help": "ID aus «Dokumente (Übersicht)» oder der Antwort beim Hochladen."
+                        "example": "1b2c3d4e-5f6a-4b7c-8d9e-0f1a2b3c4d5e",
+                        "help": "ID aus den Dokumentdetails (signeeGroups)."
                     }
                 ],
                 "body": {
-                    "email": "personal@sekbuelach.example",
-                    "comment": "Zur Kenntnis (Personalabteilung).",
-                    "isAdmin": false
+                    "requiredSignatures": 1
                 },
                 "fields": [
                     {
-                        "name": "email",
-                        "type": "string",
-                        "required": true,
-                        "help": "E-Mail der beobachtenden Person.",
-                        "example": "personal@sekbuelach.example"
+                        "name": "requiredSignatures",
+                        "type": "integer",
+                        "help": "The required number of signatures to complete the group. If set to null, every signee in the group must sign.",
+                        "example": 1
                     },
                     {
-                        "name": "comment",
-                        "type": "string",
-                        "help": "Nachricht.",
-                        "example": "Zur Kenntnis (Personalabteilung)."
-                    },
-                    {
-                        "name": "isAdmin",
-                        "type": "boolean",
-                        "help": "Darf das Dokument verwalten.",
-                        "example": false
-                    },
-                    {
-                        "name": "language",
-                        "type": "string",
-                        "choices": ["de", "fr", "it", "en"],
-                        "example": "de"
+                        "name": "requiredApprovals",
+                        "type": "integer",
+                        "help": "The required number of approvals to complete the group. If set to null, every approver in the group must approve.",
+                        "example": 0
                     }
                 ]
             },
             {
-                "id": "observer-delete",
-                "method": "DELETE",
-                "path": "/documents/{documentId}/observers/{observerId}",
-                "label": "Beobachtende entfernen",
-                "status": "partial",
+                "id": "signee-group-signature-field",
+                "method": "PUT",
+                "path": "/documents/{documentId}/signee-groups/{signeeGroupId}/files/{fileId}/signature-slots/{signatureSlot}",
+                "label": "Gruppe: Unterschriftsfeld in einer Datei",
+                "status": "full",
                 "danger": true,
+                "test": false,
+                "params": [
+                    {
+                        "name": "documentId",
+                        "required": true,
+                        "example": "3f1c2a9e-5b7d-4e2a-9c61-1d2e3f4a5b6c",
+                        "help": "ID aus «Dokumente (Übersicht)» oder der Antwort beim Hochladen."
+                    },
+                    {
+                        "name": "signeeGroupId",
+                        "required": true,
+                        "example": "1b2c3d4e-5f6a-4b7c-8d9e-0f1a2b3c4d5e",
+                        "help": "ID aus den Dokumentdetails (signeeGroups)."
+                    },
+                    {
+                        "name": "fileId",
+                        "required": true,
+                        "example": "5e6f7a8b-9c0d-4e1f-8a2b-3c4d5e6f7a8b",
+                        "help": "ID aus den Dokumentdetails (files)."
+                    },
+                    {
+                        "name": "signatureSlot",
+                        "required": true,
+                        "example": "0",
+                        "help": "Nummer des Unterschriftsfelds der Gruppe, ab 0."
+                    }
+                ],
+                "body": {
+                    "autographPositions": [
+                        {
+                            "pageNumber": 1,
+                            "x": 42,
+                            "y": 95,
+                            "width": 240,
+                            "height": 60
+                        }
+                    ]
+                },
+                "fields": [
+                    {
+                        "name": "autographPositions",
+                        "type": "array",
+                        "required": true,
+                        "help": "May be used to specify the positions of the visual signatures. If signFieldName is set, autographPositions has no effect.",
+                        "example": [
+                            {
+                                "pageNumber": 1,
+                                "x": 42,
+                                "y": 95,
+                                "width": 240,
+                                "height": 60
+                            }
+                        ]
+                    },
+                    {
+                        "name": "signFieldName",
+                        "type": "string",
+                        "help": "Name of the predefined, existing PDF signature field. Signature certificate is applied to this field. Only allowed in document status DRAFT",
+                        "example": "Unterschrift_Mitarbeiterin"
+                    }
+                ]
+            },
+            {
+                "id": "signee-group-order",
+                "method": "PUT",
+                "path": "/documents/{documentId}/signee-groups/order",
+                "label": "Gruppen: Reihenfolge",
+                "status": "full",
+                "danger": true,
+                "test": false,
+                "params": [
+                    {
+                        "name": "documentId",
+                        "required": true,
+                        "example": "3f1c2a9e-5b7d-4e2a-9c61-1d2e3f4a5b6c",
+                        "help": "ID aus «Dokumente (Übersicht)» oder der Antwort beim Hochladen."
+                    }
+                ],
+                "body": [
+                    "1b2c3d4e-5f6a-4b7c-8d9e-0f1a2b3c4d5e",
+                    "2d3e4f5a-6b7c-4d8e-9f0a-1b2c3d4e5f6a"
+                ],
+                "note": "Body: Liste der IDs in der gewünschten Reihenfolge."
+            },
+            {
+                "id": "sign-order",
+                "method": "GET",
+                "path": "/documents/{documentId}/sign-order",
+                "label": "Reihenfolge (Info)",
+                "status": "full",
+                "test": false,
+                "params": [
+                    {
+                        "name": "documentId",
+                        "required": true,
+                        "example": "3f1c2a9e-5b7d-4e2a-9c61-1d2e3f4a5b6c",
+                        "help": "ID aus «Dokumente (Übersicht)» oder der Antwort beim Hochladen."
+                    }
+                ]
+            },
+            {
+                "id": "sign-order-update",
+                "method": "PUT",
+                "path": "/documents/{documentId}/sign-order",
+                "label": "Reihenfolge festlegen",
+                "status": "full",
+                "danger": true,
+                "test": false,
+                "params": [
+                    {
+                        "name": "documentId",
+                        "required": true,
+                        "example": "3f1c2a9e-5b7d-4e2a-9c61-1d2e3f4a5b6c",
+                        "help": "ID aus «Dokumente (Übersicht)» oder der Antwort beim Hochladen."
+                    }
+                ],
+                "body": [
+                    [
+                        "7a8b9c0d-1e2f-4a3b-8c4d-5e6f7a8b9c0d"
+                    ],
+                    [
+                        "8b9c0d1e-2f3a-4b4c-9d5e-6f7a8b9c0d1e"
+                    ]
+                ],
+                "note": "Body: Liste von Gruppen; jede Gruppe ist eine Liste von signeeIds, die gleichzeitig unterschreiben."
+            },
+            {
+                "id": "sign-order-delete",
+                "method": "DELETE",
+                "path": "/documents/{documentId}/sign-order",
+                "label": "Reihenfolge aufheben (alle gleichzeitig)",
+                "status": "full",
+                "danger": true,
+                "test": false,
+                "params": [
+                    {
+                        "name": "documentId",
+                        "required": true,
+                        "example": "3f1c2a9e-5b7d-4e2a-9c61-1d2e3f4a5b6c",
+                        "help": "ID aus «Dokumente (Übersicht)» oder der Antwort beim Hochladen."
+                    }
+                ]
+            },
+            {
+                "id": "sign-order-initiator",
+                "method": "PUT",
+                "path": "/documents/{documentId}/sign-order/{signOrderType}",
+                "label": "Absender:in zuerst oder zuletzt",
+                "status": "full",
+                "danger": true,
+                "test": false,
+                "params": [
+                    {
+                        "name": "documentId",
+                        "required": true,
+                        "example": "3f1c2a9e-5b7d-4e2a-9c61-1d2e3f4a5b6c",
+                        "help": "ID aus «Dokumente (Übersicht)» oder der Antwort beim Hochladen."
+                    },
+                    {
+                        "name": "signOrderType",
+                        "required": true,
+                        "example": "first",
+                        "help": "first oder last: Gruppe der Absenderin bzw. des Absenders an den Anfang oder ans Ende."
+                    }
+                ],
+                "body": {}
+            },
+            {
+                "id": "observer-update",
+                "method": "PUT",
+                "path": "/documents/{documentId}/observers/{observerId}",
+                "label": "Beobachtende ändern",
+                "status": "full",
+                "danger": true,
+                "test": false,
                 "params": [
                     {
                         "name": "documentId",
@@ -585,7 +742,1490 @@
                         "help": "ID aus den Dokumentdetails (observers)."
                     }
                 ],
-                "note": "Aus dem Microsoft-Connector; in der API-Doku nicht beschrieben."
+                "body": {
+                    "email": "anna.muster@sekbuelach.example",
+                    "comment": "Bitte bis Ende Monat unterschreiben.",
+                    "isAdmin": false
+                },
+                "fields": [
+                    {
+                        "name": "email",
+                        "type": "string",
+                        "help": "May only be null in document status DRAFT",
+                        "example": "anna.muster@sekbuelach.example"
+                    },
+                    {
+                        "name": "comment",
+                        "type": "string",
+                        "example": "Bitte bis Ende Monat unterschreiben."
+                    },
+                    {
+                        "name": "language",
+                        "type": "string",
+                        "example": "de"
+                    },
+                    {
+                        "name": "isAdmin",
+                        "type": "boolean",
+                        "example": false
+                    }
+                ]
+            },
+            {
+                "id": "observer-delete",
+                "method": "DELETE",
+                "path": "/documents/{documentId}/observers/{observerId}",
+                "label": "Beobachtende entfernen",
+                "status": "full",
+                "danger": true,
+                "test": false,
+                "params": [
+                    {
+                        "name": "documentId",
+                        "required": true,
+                        "example": "3f1c2a9e-5b7d-4e2a-9c61-1d2e3f4a5b6c",
+                        "help": "ID aus «Dokumente (Übersicht)» oder der Antwort beim Hochladen."
+                    },
+                    {
+                        "name": "observerId",
+                        "required": true,
+                        "example": "c4d5e6f7-8a9b-4c0d-9e1f-2a3b4c5d6e7f",
+                        "help": "ID aus den Dokumentdetails (observers)."
+                    }
+                ]
+            },
+            {
+                "id": "file",
+                "method": "GET",
+                "path": "/documents/{documentId}/files/{fileId}",
+                "label": "Eine Datei des Dokuments (Download-Link)",
+                "status": "full",
+                "test": false,
+                "params": [
+                    {
+                        "name": "documentId",
+                        "required": true,
+                        "example": "3f1c2a9e-5b7d-4e2a-9c61-1d2e3f4a5b6c",
+                        "help": "ID aus «Dokumente (Übersicht)» oder der Antwort beim Hochladen."
+                    },
+                    {
+                        "name": "fileId",
+                        "required": true,
+                        "example": "5e6f7a8b-9c0d-4e1f-8a2b-3c4d5e6f7a8b",
+                        "help": "ID aus den Dokumentdetails (files)."
+                    }
+                ]
+            },
+            {
+                "id": "file-update",
+                "method": "PUT",
+                "path": "/documents/{documentId}/files/{fileId}",
+                "label": "Datei umbenennen",
+                "status": "full",
+                "danger": true,
+                "test": false,
+                "params": [
+                    {
+                        "name": "documentId",
+                        "required": true,
+                        "example": "3f1c2a9e-5b7d-4e2a-9c61-1d2e3f4a5b6c",
+                        "help": "ID aus «Dokumente (Übersicht)» oder der Antwort beim Hochladen."
+                    },
+                    {
+                        "name": "fileId",
+                        "required": true,
+                        "example": "5e6f7a8b-9c0d-4e1f-8a2b-3c4d5e6f7a8b",
+                        "help": "ID aus den Dokumentdetails (files)."
+                    }
+                ],
+                "body": {
+                    "fileName": "Monatsrapport-2026-10.pdf"
+                },
+                "fields": [
+                    {
+                        "name": "fileName",
+                        "type": "string",
+                        "example": "Monatsrapport-2026-10.pdf"
+                    }
+                ]
+            },
+            {
+                "id": "file-delete",
+                "method": "DELETE",
+                "path": "/documents/{documentId}/files/{fileId}",
+                "label": "Datei entfernen (Umschlag)",
+                "status": "full",
+                "danger": true,
+                "test": false,
+                "params": [
+                    {
+                        "name": "documentId",
+                        "required": true,
+                        "example": "3f1c2a9e-5b7d-4e2a-9c61-1d2e3f4a5b6c",
+                        "help": "ID aus «Dokumente (Übersicht)» oder der Antwort beim Hochladen."
+                    },
+                    {
+                        "name": "fileId",
+                        "required": true,
+                        "example": "5e6f7a8b-9c0d-4e1f-8a2b-3c4d5e6f7a8b",
+                        "help": "ID aus den Dokumentdetails (files)."
+                    }
+                ]
+            },
+            {
+                "id": "file-order",
+                "method": "PUT",
+                "path": "/documents/{documentId}/files/order",
+                "label": "Dateien: Reihenfolge",
+                "status": "full",
+                "danger": true,
+                "test": false,
+                "params": [
+                    {
+                        "name": "documentId",
+                        "required": true,
+                        "example": "3f1c2a9e-5b7d-4e2a-9c61-1d2e3f4a5b6c",
+                        "help": "ID aus «Dokumente (Übersicht)» oder der Antwort beim Hochladen."
+                    }
+                ],
+                "body": [
+                    "5e6f7a8b-9c0d-4e1f-8a2b-3c4d5e6f7a8b",
+                    "6f7a8b9c-0d1e-4f2a-8b3c-4d5e6f7a8b9c"
+                ],
+                "note": "Body: Liste der IDs in der gewünschten Reihenfolge."
+            },
+            {
+                "id": "attachment-update",
+                "method": "PUT",
+                "path": "/documents/{documentId}/attachments/{attachmentId}",
+                "label": "Anhang umbenennen",
+                "status": "full",
+                "danger": true,
+                "test": false,
+                "params": [
+                    {
+                        "name": "documentId",
+                        "required": true,
+                        "example": "3f1c2a9e-5b7d-4e2a-9c61-1d2e3f4a5b6c",
+                        "help": "ID aus «Dokumente (Übersicht)» oder der Antwort beim Hochladen."
+                    },
+                    {
+                        "name": "attachmentId",
+                        "required": true,
+                        "example": "9a0b1c2d-3e4f-4a5b-8c6d-7e8f9a0b1c2d",
+                        "help": "ID aus «Anhänge eines Dokuments»."
+                    }
+                ],
+                "body": {
+                    "name": "Beilage Spesen.pdf"
+                },
+                "fields": [
+                    {
+                        "name": "name",
+                        "type": "string",
+                        "example": "Beilage Spesen.pdf"
+                    }
+                ]
+            },
+            {
+                "id": "attachment-delete",
+                "method": "DELETE",
+                "path": "/documents/{documentId}/attachments/{attachmentId}",
+                "label": "Anhang entfernen",
+                "status": "full",
+                "danger": true,
+                "test": false,
+                "params": [
+                    {
+                        "name": "documentId",
+                        "required": true,
+                        "example": "3f1c2a9e-5b7d-4e2a-9c61-1d2e3f4a5b6c",
+                        "help": "ID aus «Dokumente (Übersicht)» oder der Antwort beim Hochladen."
+                    },
+                    {
+                        "name": "attachmentId",
+                        "required": true,
+                        "example": "9a0b1c2d-3e4f-4a5b-8c6d-7e8f9a0b1c2d",
+                        "help": "ID aus «Anhänge eines Dokuments»."
+                    }
+                ]
+            },
+            {
+                "id": "attachment-order",
+                "method": "PUT",
+                "path": "/documents/{documentId}/attachments/order",
+                "label": "Anhänge: Reihenfolge",
+                "status": "full",
+                "danger": true,
+                "test": false,
+                "params": [
+                    {
+                        "name": "documentId",
+                        "required": true,
+                        "example": "3f1c2a9e-5b7d-4e2a-9c61-1d2e3f4a5b6c",
+                        "help": "ID aus «Dokumente (Übersicht)» oder der Antwort beim Hochladen."
+                    }
+                ],
+                "body": [
+                    "9a0b1c2d-3e4f-4a5b-8c6d-7e8f9a0b1c2d",
+                    "0b1c2d3e-4f5a-4b6c-8d7e-8f9a0b1c2d3e"
+                ],
+                "note": "Body: Liste der IDs in der gewünschten Reihenfolge."
+            },
+            {
+                "id": "signature-preview",
+                "method": "POST",
+                "path": "/users/me/signature/preview",
+                "label": "Vorschau der eigenen Unterschrift",
+                "status": "full",
+                "effect": "read",
+                "test": false,
+                "body": {
+                    "sizeFactor": 1,
+                    "location": "Bülach",
+                    "optionalText": "Schulverwaltung"
+                },
+                "fields": [
+                    {
+                        "name": "sizeFactor",
+                        "type": "number",
+                        "example": 1
+                    },
+                    {
+                        "name": "optionalText",
+                        "type": "string",
+                        "example": "Schulverwaltung"
+                    },
+                    {
+                        "name": "location",
+                        "type": "string",
+                        "example": "Bülach"
+                    }
+                ],
+                "file": {
+                    "field": "autograph",
+                    "data": "data",
+                    "accept": ".png,.jpg,.jpeg"
+                },
+                "note": "multipart/form-data: Teil «data» (JSON) und optional «autograph» (Bild); liefert die Vorschau als Bild."
+            },
+            {
+                "id": "autograph-update",
+                "method": "POST",
+                "path": "/users/me/autograph",
+                "label": "Eigene Unterschrift (Bild) hochladen",
+                "status": "full",
+                "danger": true,
+                "test": false,
+                "file": {
+                    "field": "autograph",
+                    "accept": ".png,.jpg,.jpeg"
+                },
+                "note": "multipart/form-data mit dem Teil «autograph» (Bild)."
+            },
+            {
+                "id": "autograph-delete",
+                "method": "DELETE",
+                "path": "/users/me/autograph",
+                "label": "Eigene Unterschrift (Bild) löschen",
+                "status": "full",
+                "danger": true,
+                "test": false
+            },
+            {
+                "id": "hash-sign",
+                "method": "POST",
+                "path": "/service/hash/sign",
+                "label": "Hash unterschreiben (ohne Dokument)",
+                "status": "full",
+                "danger": true,
+                "test": false,
+                "body": {
+                    "authorityService": "ras",
+                    "hashes": [
+                        {
+                            "hashId": "rapport-2026-10",
+                            "digestValue": "q83vEjRWEjRWEjRWEjRWEjRWEjRWEjRWEjRWEjRWEjQ=",
+                            "digestAlgorithm": "SHA-256"
+                        }
+                    ],
+                    "jurisdiction": "zertes",
+                    "signatureMode": "timestamp",
+                    "phoneNumber": "+41790000000",
+                    "documentName": "Monatsrapport Oktober 2026 – Muster Anna"
+                },
+                "fields": [
+                    {
+                        "name": "hashes",
+                        "type": "array",
+                        "required": true,
+                        "example": [
+                            {
+                                "hashId": "rapport-2026-10",
+                                "digestValue": "q83vEjRWEjRWEjRWEjRWEjRWEjRWEjRWEjRWEjRWEjQ=",
+                                "digestAlgorithm": "SHA-256"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "companyId",
+                        "type": "string",
+                        "example": "0c1d2e3f-4a5b-4c6d-8e7f-9a0b1c2d3e4f"
+                    },
+                    {
+                        "name": "signatureMode",
+                        "type": "string",
+                        "required": true,
+                        "help": "`timestamp` - Simple Electronic Signature (SES)",
+                        "choices": [
+                            "timestamp",
+                            "advanced",
+                            "qualified"
+                        ],
+                        "example": "timestamp"
+                    },
+                    {
+                        "name": "jurisdiction",
+                        "type": "string",
+                        "required": true,
+                        "help": "`zertes` - Bundesgesetz über die elektronische Signatur (CH based jurisdiction)",
+                        "choices": ["zertes", "eidas"],
+                        "example": "zertes"
+                    },
+                    {
+                        "name": "authorityService",
+                        "type": "string",
+                        "required": true,
+                        "help": "Authority service used to authorize the signature.",
+                        "choices": ["ras", "did"],
+                        "example": "ras"
+                    },
+                    {
+                        "name": "phoneNumber",
+                        "type": "string",
+                        "help": "Phone number of the signee, required for signing with authorityService=ras.",
+                        "example": "+41790000000"
+                    },
+                    {
+                        "name": "language",
+                        "type": "string",
+                        "help": "For HashSignAccepted.otpCallbackUrl with authorityService=ras.",
+                        "example": "de"
+                    },
+                    {
+                        "name": "didIdentityId",
+                        "type": "string",
+                        "help": "DeepID identityId, required for signing with authorityService=did.",
+                        "example": "0a1b2c3d-demo-identity"
+                    },
+                    {
+                        "name": "documentName",
+                        "type": "string",
+                        "help": "Document name to be displayed on the signature authorization.",
+                        "example": "Monatsrapport Oktober 2026 – Muster Anna"
+                    },
+                    {
+                        "name": "signatureProfile",
+                        "type": "string",
+                        "help": "pades-baseline-lt - Generate a PAdES Baseline LT (Long-Term) signature. The revocation information (RI) comes separate.",
+                        "choices": [
+                            "pades-baseline-lt",
+                            "pades-baseline-t-embedded-ri",
+                            "plain-pkcs1"
+                        ],
+                        "example": "pades-baseline-lt"
+                    }
+                ],
+                "note": "Unterschreibt Hashwerte im Namen des Service-Benutzers (MobileID bzw. DeepID); Antwort 202 mit hashKey."
+            },
+            {
+                "id": "hash-seal",
+                "method": "POST",
+                "path": "/service/hash/seal",
+                "label": "Hash versiegeln",
+                "status": "full",
+                "danger": true,
+                "test": false,
+                "body": {
+                    "hashes": [
+                        {
+                            "hashId": "rapport-2026-10",
+                            "digestValue": "q83vEjRWEjRWEjRWEjRWEjRWEjRWEjRWEjRWEjRWEjQ=",
+                            "digestAlgorithm": "SHA-256"
+                        }
+                    ],
+                    "sealId": "2c3d4e5f-6a7b-4c8d-9e0f-1a2b3c4d5e6f"
+                },
+                "fields": [
+                    {
+                        "name": "hashes",
+                        "type": "array",
+                        "required": true,
+                        "example": [
+                            {
+                                "hashId": "rapport-2026-10",
+                                "digestValue": "q83vEjRWEjRWEjRWEjRWEjRWEjRWEjRWEjRWEjRWEjQ=",
+                                "digestAlgorithm": "SHA-256"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "sealId",
+                        "type": "string",
+                        "required": true,
+                        "example": "2c3d4e5f-6a7b-4c8d-9e0f-1a2b3c4d5e6f"
+                    },
+                    {
+                        "name": "signatureProfile",
+                        "type": "string",
+                        "help": "pades-baseline-lt - Generate a PAdES Baseline LT (Long-Term) signature. The revocation information (RI) comes separate.",
+                        "choices": [
+                            "pades-baseline-lt",
+                            "pades-baseline-t-embedded-ri",
+                            "plain-pkcs1"
+                        ],
+                        "example": "pades-baseline-lt"
+                    }
+                ]
+            },
+            {
+                "id": "file-sign",
+                "method": "POST",
+                "path": "/service/file/sign",
+                "label": "Datei selbst unterschreiben (Service)",
+                "status": "full",
+                "danger": true,
+                "test": false,
+                "body": {
+                    "authorityService": "ras",
+                    "jurisdiction": "zertes",
+                    "signatureMode": "timestamp",
+                    "phoneNumber": "+41790000000",
+                    "displayText": "Muster Anna",
+                    "autographPosition": {
+                        "pageNumber": 1,
+                        "x": 42,
+                        "y": 95,
+                        "width": 240,
+                        "height": 60
+                    }
+                },
+                "fields": [
+                    {
+                        "name": "companyId",
+                        "type": "string",
+                        "example": "0c1d2e3f-4a5b-4c6d-8e7f-9a0b1c2d3e4f"
+                    },
+                    {
+                        "name": "initiatorAliasName",
+                        "type": "string",
+                        "help": "Alias name for the initiating User, which will be used for further interactions",
+                        "example": "Sekundarschule Bülach"
+                    },
+                    {
+                        "name": "autographPosition",
+                        "type": "object",
+                        "example": {
+                            "pageNumber": 1,
+                            "x": 42,
+                            "y": 95,
+                            "width": 240,
+                            "height": 60
+                        }
+                    },
+                    {
+                        "name": "signatureMode",
+                        "type": "string",
+                        "required": true,
+                        "help": "`timestamp` - Simple Electronic Signature (SES)",
+                        "choices": [
+                            "timestamp",
+                            "advanced",
+                            "qualified"
+                        ],
+                        "example": "timestamp"
+                    },
+                    {
+                        "name": "jurisdiction",
+                        "type": "string",
+                        "required": true,
+                        "help": "`zertes` - Bundesgesetz über die elektronische Signatur (CH based jurisdiction)",
+                        "choices": ["zertes", "eidas"],
+                        "example": "zertes"
+                    },
+                    {
+                        "name": "authorityService",
+                        "type": "string",
+                        "required": true,
+                        "help": "Authority service used to authorize the signature.",
+                        "choices": ["ras", "did"],
+                        "example": "ras"
+                    },
+                    {
+                        "name": "phoneNumber",
+                        "type": "string",
+                        "help": "Phone number of the signee, required for signing with authorityService=ras.",
+                        "example": "+41790000000"
+                    },
+                    {
+                        "name": "language",
+                        "type": "string",
+                        "help": "For FileSignAccepted.otpCallbackUrl with authorityService=ras.",
+                        "example": "de"
+                    },
+                    {
+                        "name": "didIdentityId",
+                        "type": "string",
+                        "help": "DeepID identityId, required for signing with authorityService=did.",
+                        "example": "0a1b2c3d-demo-identity"
+                    },
+                    {
+                        "name": "displayText",
+                        "type": "string",
+                        "help": "DisplayText is required when a visual signature will be applied to the document.",
+                        "example": "Muster Anna"
+                    },
+                    {
+                        "name": "scanPredefinedSignees",
+                        "type": "boolean",
+                        "help": "Scan the document for predefined data. Multiple signature fields are not accepted.",
+                        "example": false
+                    },
+                    {
+                        "name": "signatureProfile",
+                        "type": "string",
+                        "help": "pades-baseline-lt - Generate a PAdES Baseline LT (Long-Term) signature. The revocation information (RI) comes separate.",
+                        "choices": [
+                            "pades-baseline-lt",
+                            "pades-baseline-t-embedded-ri",
+                            "plain-pkcs1"
+                        ],
+                        "example": "pades-baseline-lt"
+                    },
+                    {
+                        "name": "lockDocument",
+                        "type": "boolean",
+                        "help": "If true, the document will be locked after signing.",
+                        "example": false
+                    }
+                ],
+                "file": {
+                    "field": "file",
+                    "data": "data",
+                    "accept": ".pdf"
+                },
+                "note": "Unterschreibt sofort im Namen des Service-Benutzers; Antwort 201 = unterschriebene Datei, 202 = Freigabe nötig (fileKey, otpCallbackUrl)."
+            },
+            {
+                "id": "file-seal",
+                "method": "POST",
+                "path": "/service/file/seal",
+                "label": "Datei versiegeln (Firmensiegel)",
+                "status": "full",
+                "danger": true,
+                "test": false,
+                "body": {
+                    "acceptSealIds": [
+                        "2c3d4e5f-6a7b-4c8d-9e0f-1a2b3c4d5e6f"
+                    ],
+                    "sealId": "2c3d4e5f-6a7b-4c8d-9e0f-1a2b3c4d5e6f",
+                    "autographPosition": {
+                        "pageNumber": 1,
+                        "x": 42,
+                        "y": 95,
+                        "width": 240,
+                        "height": 60
+                    }
+                },
+                "fields": [
+                    {
+                        "name": "companyId",
+                        "type": "string",
+                        "example": "0c1d2e3f-4a5b-4c6d-8e7f-9a0b1c2d3e4f"
+                    },
+                    {
+                        "name": "sealId",
+                        "type": "string",
+                        "example": "2c3d4e5f-6a7b-4c8d-9e0f-1a2b3c4d5e6f"
+                    },
+                    {
+                        "name": "sealKey",
+                        "type": "string",
+                        "example": "siegel-schulverwaltung"
+                    },
+                    {
+                        "name": "autographPosition",
+                        "type": "object",
+                        "example": {
+                            "pageNumber": 1,
+                            "x": 42,
+                            "y": 95,
+                            "width": 240,
+                            "height": 60
+                        }
+                    },
+                    {
+                        "name": "scanPredefined",
+                        "type": "boolean",
+                        "help": "Scan the document for predefined data. Multiple seal signature fields are not accepted.",
+                        "example": true
+                    },
+                    {
+                        "name": "acceptSealIds",
+                        "type": "array",
+                        "required": true,
+                        "help": "Allowed sealIds of a seal used for sealing. Since the client needs a right-management for seals, this property allows to set the sealIds. The sealId of the seal found by pattern or provided by sealKey/sealId are checked ",
+                        "example": [
+                            "2c3d4e5f-6a7b-4c8d-9e0f-1a2b3c4d5e6f"
+                        ]
+                    },
+                    {
+                        "name": "signatureProfile",
+                        "type": "string",
+                        "help": "pades-baseline-lt - Generate a PAdES Baseline LT (Long-Term) signature. The revocation information (RI) comes separate.",
+                        "choices": [
+                            "pades-baseline-lt",
+                            "pades-baseline-t-embedded-ri",
+                            "plain-pkcs1"
+                        ],
+                        "example": "pades-baseline-lt"
+                    },
+                    {
+                        "name": "lockDocument",
+                        "type": "boolean",
+                        "help": "If true, the document will be locked after sealing.",
+                        "example": false
+                    }
+                ],
+                "file": {
+                    "field": "file",
+                    "data": "data",
+                    "accept": ".pdf"
+                }
+            },
+            {
+                "id": "file-seal-xml",
+                "method": "POST",
+                "path": "/service/file/seal/xml",
+                "label": "XML versiegeln (XAdES)",
+                "status": "full",
+                "danger": true,
+                "test": false,
+                "body": {
+                    "acceptSealIds": [
+                        "2c3d4e5f-6a7b-4c8d-9e0f-1a2b3c4d5e6f"
+                    ],
+                    "signatureLocationPlacement": "last",
+                    "xmlSignatureMode": "baseline-b",
+                    "sealId": "2c3d4e5f-6a7b-4c8d-9e0f-1a2b3c4d5e6f"
+                },
+                "fields": [
+                    {
+                        "name": "companyId",
+                        "type": "string",
+                        "example": "0c1d2e3f-4a5b-4c6d-8e7f-9a0b1c2d3e4f"
+                    },
+                    {
+                        "name": "sealId",
+                        "type": "string",
+                        "example": "2c3d4e5f-6a7b-4c8d-9e0f-1a2b3c4d5e6f"
+                    },
+                    {
+                        "name": "sealKey",
+                        "type": "string",
+                        "example": "siegel-schulverwaltung"
+                    },
+                    {
+                        "name": "acceptSealIds",
+                        "type": "array",
+                        "required": true,
+                        "help": "Allowed sealIds of a seal used for sealing. Since the client needs a right-management for seals, this property allows to set the sealIds. The sealId of the seal found by pattern or provided by sealKey/sealId are checked ",
+                        "example": [
+                            "2c3d4e5f-6a7b-4c8d-9e0f-1a2b3c4d5e6f"
+                        ]
+                    },
+                    {
+                        "name": "xmlSignatureMode",
+                        "type": "string",
+                        "required": true,
+                        "help": "`baseline-b` - XAdES Baseline B Signature",
+                        "choices": [
+                            "baseline-b",
+                            "baseline-t",
+                            "baseline-lt"
+                        ],
+                        "example": "baseline-b"
+                    },
+                    {
+                        "name": "signUriReferences",
+                        "type": "array",
+                        "help": "List of uri references to be signed. If null, empty or not given the whole xml will be signed.",
+                        "example": ["#toSignElement"]
+                    },
+                    {
+                        "name": "signatureLocation",
+                        "type": "string",
+                        "help": "Parent XPath. Use \"//*[name()='namespace:prefix']\". Only one match allowed. \"//namespace:prefix\" is not supported.",
+                        "example": "//*[name()='ds:Signature']"
+                    },
+                    {
+                        "name": "signatureLocationPlacement",
+                        "type": "string",
+                        "required": true,
+                        "help": "signatureLocation is required for this to have an impact",
+                        "choices": ["first", "last", "after"],
+                        "example": "last"
+                    }
+                ],
+                "file": {
+                    "field": "file",
+                    "data": "data",
+                    "accept": ".xml"
+                }
+            },
+            {
+                "id": "signees",
+                "method": "GET",
+                "path": "/documents/{documentId}/signees",
+                "label": "Unterzeichnende eines Dokuments",
+                "status": "full",
+                "test": false,
+                "params": [
+                    {
+                        "name": "documentId",
+                        "required": true,
+                        "example": "3f1c2a9e-5b7d-4e2a-9c61-1d2e3f4a5b6c",
+                        "help": "ID aus «Dokumente (Übersicht)» oder der Antwort beim Hochladen."
+                    }
+                ]
+            },
+            {
+                "id": "signee-add",
+                "method": "POST",
+                "path": "/documents/{documentId}/signees",
+                "label": "Unterzeichnende hinzufügen",
+                "status": "full",
+                "danger": true,
+                "test": false,
+                "params": [
+                    {
+                        "name": "documentId",
+                        "required": true,
+                        "example": "3f1c2a9e-5b7d-4e2a-9c61-1d2e3f4a5b6c",
+                        "help": "ID aus «Dokumente (Übersicht)» oder der Antwort beim Hochladen."
+                    }
+                ],
+                "body": {
+                    "fileSignatureFields": {
+                        "5e6f7a8b-9c0d-4e1f-8a2b-3c4d5e6f7a8b": {
+                            "autographPositions": [
+                                {
+                                    "pageNumber": 1,
+                                    "x": 42,
+                                    "y": 95,
+                                    "width": 240,
+                                    "height": 60
+                                }
+                            ]
+                        }
+                    },
+                    "signeeType": "sign",
+                    "email": "anna.muster@sekbuelach.example",
+                    "signOrder": 0,
+                    "language": "de",
+                    "comment": "Bitte bis Ende Monat unterschreiben."
+                },
+                "fields": [
+                    {
+                        "name": "signeeType",
+                        "type": "string",
+                        "required": true,
+                        "help": "Value other than `sign` is only allowed in document status `draft`",
+                        "choices": ["sign", "approve"],
+                        "example": "sign"
+                    },
+                    {
+                        "name": "email",
+                        "type": "string",
+                        "help": "May only be null in document status `draft`",
+                        "example": "anna.muster@sekbuelach.example"
+                    },
+                    {
+                        "name": "comment",
+                        "type": "string",
+                        "example": "Bitte bis Ende Monat unterschreiben."
+                    },
+                    {
+                        "name": "autographPosition",
+                        "type": "object",
+                        "help": "veraltet – Use fileSignatureFields instead.",
+                        "example": {
+                            "pageNumber": 1,
+                            "x": 42,
+                            "y": 95,
+                            "width": 240,
+                            "height": 60
+                        }
+                    },
+                    {
+                        "name": "signFieldName",
+                        "type": "string",
+                        "help": "veraltet – Use fileSignatureFields instead.",
+                        "example": "Unterschrift_Mitarbeiterin"
+                    },
+                    {
+                        "name": "fileSignatureFields",
+                        "type": "object",
+                        "required": true,
+                        "help": "Assign a SignatureField for this signee to a file in the document/envelope.",
+                        "example": {
+                            "5e6f7a8b-9c0d-4e1f-8a2b-3c4d5e6f7a8b": {
+                                "autographPositions": [
+                                    {
+                                        "pageNumber": 1,
+                                        "x": 42,
+                                        "y": 95,
+                                        "width": 240,
+                                        "height": 60
+                                    }
+                                ]
+                            }
+                        }
+                    },
+                    {
+                        "name": "language",
+                        "type": "string",
+                        "help": "Only allowed in document status `draft`",
+                        "example": "de"
+                    },
+                    {
+                        "name": "signOrder",
+                        "type": "integer",
+                        "help": "Only considered in document status `draft`",
+                        "example": 0
+                    }
+                ],
+                "note": "Pflicht: signeeType und fileSignatureFields – Schlüssel ist die fileId aus files[] der Dokumentdetails, Position in Punkten ab der linken unteren Ecke der Seite."
+            },
+            {
+                "id": "signee-resend",
+                "method": "POST",
+                "path": "/documents/{documentId}/signees/{signeeId}/resend-invitation",
+                "label": "Erinnerung senden",
+                "status": "full",
+                "use": "Knopf «Erinnerung senden» (#42)",
+                "danger": true,
+                "test": false,
+                "params": [
+                    {
+                        "name": "documentId",
+                        "required": true,
+                        "example": "3f1c2a9e-5b7d-4e2a-9c61-1d2e3f4a5b6c",
+                        "help": "ID aus «Dokumente (Übersicht)» oder der Antwort beim Hochladen."
+                    },
+                    {
+                        "name": "signeeId",
+                        "required": true,
+                        "example": "7a8b9c0d-1e2f-4a3b-8c4d-5e6f7a8b9c0d",
+                        "help": "ID aus «Unterzeichnende eines Dokuments»."
+                    }
+                ],
+                "body": {}
+            },
+            {
+                "id": "observer-add",
+                "method": "POST",
+                "path": "/documents/{documentId}/observers",
+                "label": "Beobachtende hinzufügen",
+                "status": "full",
+                "danger": true,
+                "test": false,
+                "params": [
+                    {
+                        "name": "documentId",
+                        "required": true,
+                        "example": "3f1c2a9e-5b7d-4e2a-9c61-1d2e3f4a5b6c",
+                        "help": "ID aus «Dokumente (Übersicht)» oder der Antwort beim Hochladen."
+                    }
+                ],
+                "body": {
+                    "email": "anna.muster@sekbuelach.example",
+                    "comment": "Bitte bis Ende Monat unterschreiben.",
+                    "isAdmin": false,
+                    "language": "de"
+                },
+                "fields": [
+                    {
+                        "name": "email",
+                        "type": "string",
+                        "help": "May only be null in document status `draft`",
+                        "example": "anna.muster@sekbuelach.example"
+                    },
+                    {
+                        "name": "comment",
+                        "type": "string",
+                        "example": "Bitte bis Ende Monat unterschreiben."
+                    },
+                    {
+                        "name": "language",
+                        "type": "string",
+                        "example": "de"
+                    },
+                    {
+                        "name": "isAdmin",
+                        "type": "boolean",
+                        "example": false
+                    }
+                ]
+            },
+            {
+                "id": "file-add",
+                "method": "POST",
+                "path": "/documents/{documentId}/files",
+                "label": "Datei hinzufügen (Umschlag)",
+                "status": "full",
+                "danger": true,
+                "test": false,
+                "params": [
+                    {
+                        "name": "documentId",
+                        "required": true,
+                        "example": "3f1c2a9e-5b7d-4e2a-9c61-1d2e3f4a5b6c",
+                        "help": "ID aus «Dokumente (Übersicht)» oder der Antwort beim Hochladen."
+                    }
+                ],
+                "body": {
+                    "scanPredefined": true
+                },
+                "fields": [
+                    {
+                        "name": "scanPredefined",
+                        "type": "boolean",
+                        "help": "Scan the file for predefined data. Only Signees, Approvers and Observers are considered.",
+                        "example": true
+                    }
+                ],
+                "file": {
+                    "field": "file",
+                    "data": "data",
+                    "accept": ".pdf,.docx,.xlsx"
+                }
+            },
+            {
+                "id": "document-access-url",
+                "method": "POST",
+                "path": "/documents/{documentId}/document-access-url",
+                "label": "Link zum Bearbeiten in DeepSign (5 Minuten)",
+                "status": "full",
+                "danger": true,
+                "test": false,
+                "params": [
+                    {
+                        "name": "documentId",
+                        "required": true,
+                        "example": "3f1c2a9e-5b7d-4e2a-9c61-1d2e3f4a5b6c",
+                        "help": "ID aus «Dokumente (Übersicht)» oder der Antwort beim Hochladen."
+                    }
+                ],
+                "body": {},
+                "note": "Antwort ist die Adresse als Text: Link ohne Anmeldung mit voller Kontrolle über das Dokument – nur Administration."
+            },
+            {
+                "id": "attachments",
+                "method": "GET",
+                "path": "/documents/{documentId}/attachments",
+                "label": "Anhänge eines Dokuments",
+                "status": "full",
+                "test": false,
+                "params": [
+                    {
+                        "name": "documentId",
+                        "required": true,
+                        "example": "3f1c2a9e-5b7d-4e2a-9c61-1d2e3f4a5b6c",
+                        "help": "ID aus «Dokumente (Übersicht)» oder der Antwort beim Hochladen."
+                    }
+                ]
+            },
+            {
+                "id": "attachment-add",
+                "method": "POST",
+                "path": "/documents/{documentId}/attachments",
+                "label": "Anhang hinzufügen",
+                "status": "full",
+                "danger": true,
+                "test": false,
+                "params": [
+                    {
+                        "name": "documentId",
+                        "required": true,
+                        "example": "3f1c2a9e-5b7d-4e2a-9c61-1d2e3f4a5b6c",
+                        "help": "ID aus «Dokumente (Übersicht)» oder der Antwort beim Hochladen."
+                    }
+                ],
+                "file": {
+                    "field": "file"
+                },
+                "note": "multipart/form-data mit dem Teil «file»."
+            },
+            {
+                "id": "document-upload",
+                "method": "POST",
+                "path": "/documents/file",
+                "label": "Dokument hochladen (Entwurf)",
+                "status": "full",
+                "use": "Dokument zur Unterschrift senden (#39)",
+                "danger": true,
+                "test": false,
+                "body": {
+                    "sendMail": "others",
+                    "visualSignatureRequirement": "optional",
+                    "documentName": "Monatsrapport Oktober 2026 – Muster Anna",
+                    "initiatorAliasName": "Sekundarschule Bülach",
+                    "signatureMode": "timestamp",
+                    "jurisdiction": "zertes",
+                    "comment": "Bitte bis Ende Monat unterschreiben.",
+                    "scanPredefined": true,
+                    "signWithin": 30,
+                    "sendReminderMail": 7
+                },
+                "fields": [
+                    {
+                        "name": "documentName",
+                        "type": "string",
+                        "example": "Monatsrapport Oktober 2026 – Muster Anna"
+                    },
+                    {
+                        "name": "companyId",
+                        "type": "string",
+                        "example": "0c1d2e3f-4a5b-4c6d-8e7f-9a0b1c2d3e4f"
+                    },
+                    {
+                        "name": "applyCompanySettingsDefaults",
+                        "type": "boolean",
+                        "help": "If true, applies the default values from the company settings. signatureMode/jurisdiction",
+                        "example": false
+                    },
+                    {
+                        "name": "signatureMode",
+                        "type": "string",
+                        "help": "`timestamp` - Simple Electronic Signature (SES)",
+                        "choices": [
+                            "timestamp",
+                            "advanced",
+                            "qualified"
+                        ],
+                        "example": "timestamp"
+                    },
+                    {
+                        "name": "jurisdiction",
+                        "type": "string",
+                        "help": "`zertes` - Bundesgesetz über die elektronische Signatur (CH based jurisdiction)",
+                        "choices": ["zertes", "eidas"],
+                        "example": "zertes"
+                    },
+                    {
+                        "name": "initiatorAliasName",
+                        "type": "string",
+                        "help": "Alias name for the initiating User, which will be used for further interactions",
+                        "example": "Sekundarschule Bülach"
+                    },
+                    {
+                        "name": "sendMail",
+                        "type": "string",
+                        "required": true,
+                        "help": "Configure which participants should receive a mail from the service.",
+                        "choices": ["all", "others", "none"],
+                        "example": "others"
+                    },
+                    {
+                        "name": "signWithin",
+                        "type": "integer",
+                        "help": "Set duration in days within the signees have to sign the document (default = 30)",
+                        "example": 30
+                    },
+                    {
+                        "name": "sendReminderMail",
+                        "type": "integer",
+                        "help": "Set interval in days for sending reminder mails (off = 0, default = 7)",
+                        "example": 7
+                    },
+                    {
+                        "name": "comment",
+                        "type": "string",
+                        "example": "Bitte bis Ende Monat unterschreiben."
+                    },
+                    {
+                        "name": "requiredAuthorityService",
+                        "type": "string",
+                        "help": "Authority service used to authorize the signature.",
+                        "choices": ["ras", "did"],
+                        "example": "ras"
+                    },
+                    {
+                        "name": "addInitiatorAsSignee",
+                        "type": "boolean",
+                        "help": "Add the initiator as signee (except when scanPredefinedData is true and signees are found)",
+                        "example": false
+                    },
+                    {
+                        "name": "scanPredefined",
+                        "type": "boolean",
+                        "help": "Scan the document for predefined data.",
+                        "example": true
+                    },
+                    {
+                        "name": "callbackEventTypes",
+                        "type": "array",
+                        "choices": [
+                            "signee-completed",
+                            "document-completed"
+                        ],
+                        "example": [
+                            "signee-completed",
+                            "document-completed"
+                        ]
+                    },
+                    {
+                        "name": "callbackUrl",
+                        "type": "string",
+                        "help": "POST callback url. For body see schema CallbackInfo",
+                        "example": "https://intranet.sekbuelach.ch/api/signaturen/deepsign/callback"
+                    },
+                    {
+                        "name": "callbackSecret",
+                        "type": "string",
+                        "help": "Secret to calculate auth signature of the body (SHA-256 HMAC). Sent in header as X-DeepSign-Signature-256",
+                        "example": "geheimes-beispiel-secret"
+                    },
+                    {
+                        "name": "envelopeAllowed",
+                        "type": "boolean",
+                        "help": "Indicates whether this document can become an envelope by adding additional files.",
+                        "example": false
+                    },
+                    {
+                        "name": "signeeAttachmentsAllowed",
+                        "type": "boolean",
+                        "example": false
+                    },
+                    {
+                        "name": "autographRequired",
+                        "type": "boolean",
+                        "example": false
+                    },
+                    {
+                        "name": "visualSignatureRequirement",
+                        "type": "string",
+                        "required": true,
+                        "help": "Configure if participants can or must add a visual signature.",
+                        "choices": [
+                            "optional",
+                            "required",
+                            "prohibited"
+                        ],
+                        "example": "optional"
+                    },
+                    {
+                        "name": "externalReference",
+                        "type": "string",
+                        "help": "A identifier provided by third-party services to reference a specific document within their systems.",
+                        "example": "intranet:zeiterfassung:2026-10"
+                    },
+                    {
+                        "name": "externalData",
+                        "type": "string",
+                        "help": "Additional data provided by third-party services that is associated with the document.",
+                        "example": "{\"modul\":\"zeiterfassung\"}"
+                    },
+                    {
+                        "name": "lockDocument",
+                        "type": "boolean",
+                        "help": "If true, the document will be locked when completely signed.",
+                        "example": false
+                    },
+                    {
+                        "name": "signatureProfile",
+                        "type": "string",
+                        "help": "pades-baseline-lt - Generate a PAdES Baseline LT (Long-Term) signature. The revocation information (RI) comes separate.",
+                        "choices": [
+                            "pades-baseline-lt",
+                            "pades-baseline-t-embedded-ri",
+                            "plain-pkcs1"
+                        ],
+                        "example": "pades-baseline-lt"
+                    }
+                ],
+                "file": {
+                    "field": "file",
+                    "data": "data",
+                    "accept": ".pdf,.docx,.xlsx"
+                },
+                "note": "multipart/form-data: Teil «data» = Body (JSON), Teil «file» = Dokument (PDF, DOCX oder XLSX; im Intranet bis 20 MB). Pflicht: sendMail, visualSignatureRequirement."
+            },
+            {
+                "id": "scan-predefined",
+                "method": "POST",
+                "path": "/documents/file/scan-predefined",
+                "label": "PDF auf Unterschriftsfelder prüfen",
+                "status": "full",
+                "effect": "read",
+                "test": false,
+                "file": {
+                    "field": "file",
+                    "accept": ".pdf"
+                },
+                "note": "multipart/form-data mit dem Teil «file» (PDF); speichert nichts."
+            },
+            {
+                "id": "document-deepbox",
+                "method": "POST",
+                "path": "/documents/deepbox",
+                "label": "Dokument aus DeepBox übernehmen",
+                "status": "full",
+                "danger": true,
+                "test": false,
+                "body": {
+                    "deepboxDocumentId": "7f8e9d0c-demo-deepbox",
+                    "sendMail": "others",
+                    "visualSignatureRequirement": "optional",
+                    "documentName": "Monatsrapport Oktober 2026 – Muster Anna",
+                    "initiatorAliasName": "Sekundarschule Bülach",
+                    "signatureMode": "timestamp",
+                    "jurisdiction": "zertes"
+                },
+                "fields": [
+                    {
+                        "name": "documentName",
+                        "type": "string",
+                        "example": "Monatsrapport Oktober 2026 – Muster Anna"
+                    },
+                    {
+                        "name": "deepboxDocumentId",
+                        "type": "string",
+                        "required": true,
+                        "example": "7f8e9d0c-demo-deepbox"
+                    },
+                    {
+                        "name": "applyCompanySettingsDefaults",
+                        "type": "boolean",
+                        "help": "If true, applies the default values from the company settings. signatureMode/jurisdiction",
+                        "example": false
+                    },
+                    {
+                        "name": "signatureMode",
+                        "type": "string",
+                        "help": "`timestamp` - Simple Electronic Signature (SES)",
+                        "choices": [
+                            "timestamp",
+                            "advanced",
+                            "qualified"
+                        ],
+                        "example": "timestamp"
+                    },
+                    {
+                        "name": "jurisdiction",
+                        "type": "string",
+                        "help": "`zertes` - Bundesgesetz über die elektronische Signatur (CH based jurisdiction)",
+                        "choices": ["zertes", "eidas"],
+                        "example": "zertes"
+                    },
+                    {
+                        "name": "initiatorAliasName",
+                        "type": "string",
+                        "help": "Alias name for the initiating User, which will be used for further interactions",
+                        "example": "Sekundarschule Bülach"
+                    },
+                    {
+                        "name": "sendMail",
+                        "type": "string",
+                        "required": true,
+                        "help": "Configure which participants should receive a mail from the service.",
+                        "choices": ["all", "others", "none"],
+                        "example": "others"
+                    },
+                    {
+                        "name": "signWithin",
+                        "type": "integer",
+                        "help": "Set duration in days within the signees have to sign the document (default = 30)",
+                        "example": 30
+                    },
+                    {
+                        "name": "sendReminderMail",
+                        "type": "integer",
+                        "help": "Set interval in days for sending reminder mails (off = 0, default = 7)",
+                        "example": 7
+                    },
+                    {
+                        "name": "comment",
+                        "type": "string",
+                        "example": "Bitte bis Ende Monat unterschreiben."
+                    },
+                    {
+                        "name": "requiredAuthorityService",
+                        "type": "string",
+                        "help": "Authority service used to authorize the signature.",
+                        "choices": ["ras", "did"],
+                        "example": "ras"
+                    },
+                    {
+                        "name": "addInitiatorAsSignee",
+                        "type": "boolean",
+                        "help": "Add the initiator as signee (except when scanPredefinedData is true and signees are found)",
+                        "example": false
+                    },
+                    {
+                        "name": "scanPredefined",
+                        "type": "boolean",
+                        "help": "Scan the document for predefined data.",
+                        "example": true
+                    },
+                    {
+                        "name": "callbackEventTypes",
+                        "type": "array",
+                        "choices": [
+                            "signee-completed",
+                            "document-completed"
+                        ],
+                        "example": [
+                            "signee-completed",
+                            "document-completed"
+                        ]
+                    },
+                    {
+                        "name": "callbackUrl",
+                        "type": "string",
+                        "help": "POST callback url. For body see schema CallbackInfo",
+                        "example": "https://intranet.sekbuelach.ch/api/signaturen/deepsign/callback"
+                    },
+                    {
+                        "name": "callbackSecret",
+                        "type": "string",
+                        "help": "Secret to calculate auth signature of the body (SHA-256 HMAC). Sent in header as X-DeepSign-Signature-256",
+                        "example": "geheimes-beispiel-secret"
+                    },
+                    {
+                        "name": "signeeAttachmentsAllowed",
+                        "type": "boolean",
+                        "example": false
+                    },
+                    {
+                        "name": "autographRequired",
+                        "type": "boolean",
+                        "example": false
+                    },
+                    {
+                        "name": "visualSignatureRequirement",
+                        "type": "string",
+                        "required": true,
+                        "help": "Configure if participants can or must add a visual signature.",
+                        "choices": [
+                            "optional",
+                            "required",
+                            "prohibited"
+                        ],
+                        "example": "optional"
+                    },
+                    {
+                        "name": "externalReference",
+                        "type": "string",
+                        "help": "A identifier provided by third-party services to reference a specific document within their systems.",
+                        "example": "intranet:zeiterfassung:2026-10"
+                    },
+                    {
+                        "name": "externalData",
+                        "type": "string",
+                        "help": "Additional data provided by third-party services that is associated with the document.",
+                        "example": "{\"modul\":\"zeiterfassung\"}"
+                    },
+                    {
+                        "name": "lockDocument",
+                        "type": "boolean",
+                        "help": "If true, the document will be locked when completely signed.",
+                        "example": false
+                    },
+                    {
+                        "name": "signatureProfile",
+                        "type": "string",
+                        "help": "pades-baseline-lt - Generate a PAdES Baseline LT (Long-Term) signature. The revocation information (RI) comes separate.",
+                        "choices": [
+                            "pades-baseline-lt",
+                            "pades-baseline-t-embedded-ri",
+                            "plain-pkcs1"
+                        ],
+                        "example": "pades-baseline-lt"
+                    }
+                ]
+            },
+            {
+                "id": "hash-status",
+                "method": "GET",
+                "path": "/service/hash/{hashKey}/status",
+                "label": "Hash: Status",
+                "status": "full",
+                "test": false,
+                "params": [
+                    {
+                        "name": "hashKey",
+                        "required": true,
+                        "example": "6d7e8f9a-0b1c-4d2e-8f3a-4b5c6d7e8f9a",
+                        "help": "hashKey aus der Antwort von «Hash unterschreiben»."
+                    }
+                ]
+            },
+            {
+                "id": "file-status",
+                "method": "GET",
+                "path": "/service/file/{fileKey}/status",
+                "label": "Datei-Unterschrift: Status",
+                "status": "full",
+                "test": false,
+                "params": [
+                    {
+                        "name": "fileKey",
+                        "required": true,
+                        "example": "6d7e8f9a-0b1c-4d2e-8f3a-4b5c6d7e8f9a",
+                        "help": "fileKey aus der Antwort von «Datei unterschreiben»."
+                    }
+                ]
+            },
+            {
+                "id": "file-download",
+                "method": "GET",
+                "path": "/service/file/{fileKey}/download",
+                "label": "Unterschriebene Datei herunterladen (Service)",
+                "status": "full",
+                "test": false,
+                "params": [
+                    {
+                        "name": "fileKey",
+                        "required": true,
+                        "example": "6d7e8f9a-0b1c-4d2e-8f3a-4b5c6d7e8f9a",
+                        "help": "fileKey aus der Antwort von «Datei unterschreiben»."
+                    }
+                ],
+                "note": "Liefert die unterschriebene Datei (Binärdaten)."
+            },
+            {
+                "id": "attachment-download-url",
+                "method": "GET",
+                "path": "/documents/{documentId}/attachments/{attachmentId}/download-url",
+                "label": "Anhang: Download-Link",
+                "status": "full",
+                "test": false,
+                "params": [
+                    {
+                        "name": "documentId",
+                        "required": true,
+                        "example": "3f1c2a9e-5b7d-4e2a-9c61-1d2e3f4a5b6c",
+                        "help": "ID aus «Dokumente (Übersicht)» oder der Antwort beim Hochladen."
+                    },
+                    {
+                        "name": "attachmentId",
+                        "required": true,
+                        "example": "9a0b1c2d-3e4f-4a5b-8c6d-7e8f9a0b1c2d",
+                        "help": "ID aus «Anhänge eines Dokuments»."
+                    }
+                ]
             }
         ],
         "hosts": {
@@ -613,8 +2253,14 @@
             "label": "Umgebung",
             "default": "https://deepcloud.swiss",
             "choices": [
-                ["https://deepcloud.swiss", "Produktion (deepcloud.swiss)"],
-                ["https://int.deepcloud.swiss", "Test (int.deepcloud.swiss)"]
+                [
+                    "https://deepcloud.swiss",
+                    "Produktion (deepcloud.swiss)"
+                ],
+                [
+                    "https://int.deepcloud.swiss",
+                    "Test (int.deepcloud.swiss)"
+                ]
             ],
             "help": "Anmeldung und Erstellen des Service-Benutzers (DeepAdmin) in dieser Umgebung."
         },
@@ -669,8 +2315,14 @@
             "label": "Signaturstufe (Vorgabe)",
             "default": "timestamp",
             "choices": [
-                ["timestamp", "Einfach (Zeitstempel)"],
-                ["advanced", "Fortgeschritten (2FA)"],
+                [
+                    "timestamp",
+                    "Einfach (Zeitstempel)"
+                ],
+                [
+                    "advanced",
+                    "Fortgeschritten (2FA)"
+                ],
                 ["qualified", "Qualifiziert"]
             ],
             "help": "Entscheid offen (#36)."
@@ -707,9 +2359,18 @@
                     "choices": [
                         ["", "alle"],
                         ["draft", "Entwurf"],
-                        ["in-progress", "in Arbeit"],
-                        ["signed", "unterschrieben"],
-                        ["withdrawn", "zurückgezogen"],
+                        [
+                            "in-progress",
+                            "in Arbeit"
+                        ],
+                        [
+                            "signed",
+                            "unterschrieben"
+                        ],
+                        [
+                            "withdrawn",
+                            "zurückgezogen"
+                        ],
                         ["rejected", "abgelehnt"]
                     ]
                 }
@@ -721,6 +2382,37 @@
             "kind": "read",
             "description": "Welche Signaturstufen und Rechtsräume das Konto nutzen kann.",
             "options": []
+        },
+        {
+            "id": "seals",
+            "label": "Siegel anzeigen",
+            "kind": "read",
+            "description": "Firmensiegel, die der Service-Benutzer verwenden darf (für das Versiegeln von Dokumenten).",
+            "options": []
+        },
+        {
+            "id": "authority",
+            "label": "Identifikation anzeigen",
+            "kind": "read",
+            "description": "Welche Identifikation (MobileID, DeepID) für eine Signaturstufe möglich ist.",
+            "options": [
+                {
+                    "key": "signatureMode",
+                    "type": "select",
+                    "label": "Signaturstufe",
+                    "default": "advanced",
+                    "choices": [
+                        [
+                            "advanced",
+                            "Fortgeschritten (2FA)"
+                        ],
+                        [
+                            "qualified",
+                            "Qualifiziert"
+                        ]
+                    ]
+                }
+            ]
         }
     ],
     "events": []

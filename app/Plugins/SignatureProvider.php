@@ -8,6 +8,8 @@ namespace App\Plugins;
  *
  * Status (vereinheitlicht): entwurf, versendet, teilweise, unterschrieben, abgelehnt, zurueckgezogen.
  * Status je Person: wartet (Reihenfolge), offen, unterschrieben, abgelehnt.
+ * Position eines Unterschriftsfelds: {pageNumber (ab 1), x, y, width, height} in Punkten (72 dpi), x/y = linke untere
+ * Ecke des Felds, gemessen ab der linken unteren Ecke der Seite (wie im PDF).
  */
 interface SignatureProvider
 {
