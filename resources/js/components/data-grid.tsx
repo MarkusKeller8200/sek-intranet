@@ -7,6 +7,7 @@ import {
     Columns3,
     Download,
     GripVertical,
+    LayoutList,
     Layers,
     ListChecks,
     Loader2,
@@ -17,6 +18,7 @@ import {
     Redo2,
     RotateCcw,
     Search,
+    Table2,
     Undo2,
     X,
 } from 'lucide-react';
@@ -159,6 +161,7 @@ export default function DataGrid<T extends GridRow>({
     onAddRow,
     toolbar,
     extraExports = [],
+    renderCard,
 }: {
     data: T[];
     columns: GridColumn<T>[];
@@ -195,6 +198,12 @@ export default function DataGrid<T extends GridRow>({
         label: string;
         run: (ids: string[], columns: string[]) => void;
     }[];
+    /**
+     * Kachelansicht (#88): eine Kachel je Zeile, einspaltig. Mit dieser Angabe erscheint der Umschalter
+     * Tabelle | Kacheln (je Browser gemerkt). Suche, Filter, Sortierung, Gruppierung, Auswahl und Export gelten
+     * auch für die Kacheln.
+     */
+    renderCard?: (row: T) => ReactNode;
 }) {
     const byId = useMemo(
         () => new Map(columns.map((c) => [c.id as string, c])),
@@ -222,6 +231,28 @@ export default function DataGrid<T extends GridRow>({
         ...loadState(storageKey),
     }));
     const [rows, setRows] = useState<T[]>(data);
+    const layoutKey = `${storageKey}.layout`;
+    const [layout, setLayoutState] = useState<'table' | 'cards'>(() => {
+        if (!renderCard) {
+            return 'table';
+        }
+        try {
+            return window.localStorage.getItem(layoutKey) === 'cards'
+                ? 'cards'
+                : 'table';
+        } catch {
+            return 'table';
+        }
+    });
+    const setLayout = (value: 'table' | 'cards') => {
+        setLayoutState(value);
+        try {
+            window.localStorage.setItem(layoutKey, value);
+        } catch {
+            // ohne Speicher gilt die Wahl bis zum Neuladen
+        }
+    };
+    const cards = renderCard !== undefined && layout === 'cards';
     const [views, setViews] = useState<SavedView[]>(initialViews);
     const [selected, setSelected] = useState<Set<string>>(() => new Set());
     const [collapsed, setCollapsed] = useState<Set<string>>(() => new Set());
@@ -1450,6 +1481,40 @@ export default function DataGrid<T extends GridRow>({
                     />
                 </div>
 
+                {renderCard && (
+                    <div
+                        className="flex items-center rounded-md border p-0.5"
+                        role="group"
+                        aria-label="Ansicht"
+                    >
+                        {(
+                            [
+                                ['table', Table2, 'Tabelle'],
+                                ['cards', LayoutList, 'Kacheln'],
+                            ] as const
+                        ).map(([value, Icon, label]) => (
+                            <button
+                                key={value}
+                                type="button"
+                                onClick={() => setLayout(value)}
+                                aria-pressed={layout === value}
+                                title={label}
+                                className={cn(
+                                    'flex items-center gap-1.5 rounded px-2 py-1 text-xs',
+                                    layout === value
+                                        ? 'bg-primary text-primary-foreground'
+                                        : 'hover:bg-accent',
+                                )}
+                            >
+                                <Icon className="size-3.5" aria-hidden />
+                                <span className="hidden sm:inline">
+                                    {label}
+                                </span>
+                            </button>
+                        ))}
+                    </div>
+                )}
+
                 {gridId && (
                     <ViewsMenu
                         grid={gridId}
@@ -1848,8 +1913,51 @@ export default function DataGrid<T extends GridRow>({
                 />
             )}
 
+            {cards && renderCard && (
+                <CardList
+                    items={items}
+                    columns={columns}
+                    sorting={sorting}
+                    grouping={grouping}
+                    onSort={(id, desc) =>
+                        patch({ sorting: id ? [{ id, desc }] : [] })
+                    }
+                    onGroup={(id) => patch({ grouping: id })}
+                    collapsed={collapsed}
+                    onToggleGroup={(key) =>
+                        setCollapsed((current) => {
+                            const next = new Set(current);
+                            if (next.has(key)) {
+                                next.delete(key);
+                            } else {
+                                next.add(key);
+                            }
+
+                            return next;
+                        })
+                    }
+                    selectable={selectable}
+                    selected={selected}
+                    onSelect={(id, value) =>
+                        setSelected((current) => {
+                            const next = new Set(current);
+                            if (value) {
+                                next.add(id);
+                            } else {
+                                next.delete(id);
+                            }
+
+                            return next;
+                        })
+                    }
+                    renderCard={renderCard}
+                    emptyText={emptyText}
+                />
+            )}
+
             {/* Tabelle: eigener Scrollbereich, Kopfzeile und fixierte Spalten bleiben stehen */}
             <div
+                hidden={cards}
                 ref={gridRef}
                 role="grid"
                 aria-rowcount={navRows.length}
@@ -2355,13 +2463,151 @@ export default function DataGrid<T extends GridRow>({
                 </table>
             </div>
 
-            <p className="text-xs text-muted-foreground">
+            <p className="text-xs text-muted-foreground" hidden={cards}>
                 {canEdit
                     ? 'Zelle anklicken, dann tippen oder Enter · Enter/Tab speichert und springt weiter · Esc bricht ab · Umschalt+Pfeil markiert · Ctrl+C/Ctrl+V (auch aus Excel) · Entf leert · Ctrl+Z/Ctrl+Y · '
                     : 'Pfeiltasten wählen Zellen · Ctrl+C kopiert · '}
                 Spaltenkopf ziehen = verschieben, Rand ziehen = Breite,
                 Doppelklick = automatisch.
             </p>
+        </div>
+    );
+}
+
+/**
+ * Kachelansicht (#88): einspaltige Liste mit Sortieren und Gruppieren (gleicher Zustand wie die Tabelle),
+ * Gruppen auf- und zuklappbar, Auswahl je Kachel.
+ */
+function CardList<T extends GridRow>({
+    items,
+    columns,
+    sorting,
+    grouping,
+    onSort,
+    onGroup,
+    collapsed,
+    onToggleGroup,
+    selectable,
+    selected,
+    onSelect,
+    renderCard,
+    emptyText,
+}: {
+    items: Item<T>[];
+    columns: GridColumn<T>[];
+    sorting: { id: string; desc: boolean }[];
+    grouping: string | null;
+    onSort: (id: string | null, desc: boolean) => void;
+    onGroup: (id: string | null) => void;
+    collapsed: Set<string>;
+    onToggleGroup: (key: string) => void;
+    selectable: boolean;
+    selected: Set<string>;
+    onSelect: (id: string, value: boolean) => void;
+    renderCard: (row: T) => ReactNode;
+    emptyText: string;
+}) {
+    const sort = sorting[0] ?? null;
+
+    return (
+        <div className="grid gap-2">
+            <div className="flex flex-wrap items-center gap-2 text-sm">
+                <label className="flex items-center gap-1.5">
+                    <span className="text-muted-foreground">Sortieren</span>
+                    <select
+                        className="h-8 rounded-md border border-input bg-background px-2 text-sm"
+                        value={sort?.id ?? ''}
+                        onChange={(e) =>
+                            onSort(e.target.value || null, sort?.desc ?? false)
+                        }
+                    >
+                        <option value="">wie erfasst</option>
+                        {columns.map((c) => (
+                            <option key={c.id as string} value={c.id as string}>
+                                {c.title}
+                            </option>
+                        ))}
+                    </select>
+                </label>
+                {sort && (
+                    <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => onSort(sort.id, !sort.desc)}
+                        aria-label={sort.desc ? 'Absteigend' : 'Aufsteigend'}
+                        title={sort.desc ? 'Absteigend' : 'Aufsteigend'}
+                    >
+                        {sort.desc ? <ArrowDown /> : <ArrowUp />}
+                    </Button>
+                )}
+                <label className="flex items-center gap-1.5">
+                    <span className="text-muted-foreground">Gruppieren</span>
+                    <select
+                        className="h-8 rounded-md border border-input bg-background px-2 text-sm"
+                        value={grouping ?? ''}
+                        onChange={(e) => onGroup(e.target.value || null)}
+                    >
+                        <option value="">keine</option>
+                        {columns.map((c) => (
+                            <option key={c.id as string} value={c.id as string}>
+                                {c.title}
+                            </option>
+                        ))}
+                    </select>
+                </label>
+            </div>
+
+            <ul className="grid max-h-[calc(100vh-15rem)] gap-2 overflow-auto pr-1" aria-label="Kacheln">
+                {items.map((item) =>
+                    item.kind === 'group' ? (
+                        <li key={`g-${item.key}`} className="pt-2 first:pt-0">
+                            <button
+                                type="button"
+                                onClick={() => onToggleGroup(item.key)}
+                                aria-expanded={!collapsed.has(item.key)}
+                                className="flex w-full items-center gap-2 rounded-md bg-muted px-2 py-1 text-left text-sm font-medium"
+                            >
+                                {collapsed.has(item.key) ? (
+                                    <ChevronRight className="size-4" />
+                                ) : (
+                                    <ChevronDown className="size-4" />
+                                )}
+                                <span className="truncate">{item.label}</span>
+                                <span className="text-xs text-muted-foreground tabular-nums">
+                                    {item.count}
+                                </span>
+                            </button>
+                        </li>
+                    ) : (
+                        <li
+                            key={item.row.id}
+                            className={cn(
+                                'flex items-start gap-2 rounded-lg border bg-card p-2.5',
+                                selected.has(item.row.id) && 'border-primary ring-1 ring-primary',
+                            )}
+                        >
+                            {selectable && (
+                                <Checkbox
+                                    className="mt-1"
+                                    aria-label="Auswählen"
+                                    checked={selected.has(item.row.id)}
+                                    onCheckedChange={(c: boolean | 'indeterminate') =>
+                                        onSelect(item.row.id, c === true)
+                                    }
+                                />
+                            )}
+                            <div className="min-w-0 flex-1">
+                                {renderCard(item.row)}
+                            </div>
+                        </li>
+                    ),
+                )}
+                {items.length === 0 && (
+                    <li className="rounded-lg border px-3 py-10 text-center text-sm text-muted-foreground">
+                        {emptyText}
+                    </li>
+                )}
+            </ul>
         </div>
     );
 }

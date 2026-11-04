@@ -159,5 +159,9 @@
     ],
     "Alle auswählen": ["Select all", "Alli uswähle"],
     "Auswählen": ["Select", "Uswähle"],
-    "Übernehmen": ["Apply", "Übernäh"]
+    "Übernehmen": ["Apply", "Übernäh"],
+    "wie erfasst": ["as entered", "wie erfasst"],
+    "Absteigend": ["Descending", "Abschtiigend"],
+    "Aufsteigend": ["Ascending", "Ufschtiigend"],
+    "keine": ["none", "keini"]
 }

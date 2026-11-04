@@ -1,7 +1,6 @@
 import { usePage } from '@inertiajs/react';
-import { ChevronsDownUp, ChevronsUpDown } from 'lucide-react';
+import { ChevronsDownUp, ChevronsUpDown, ListCollapse } from 'lucide-react';
 import { groupContainsCurrent, groupIsOpen } from '@/components/nav-modules';
-import { Checkbox } from '@/components/ui/checkbox';
 import { useSidebar } from '@/components/ui/sidebar';
 import { useCurrentUrl } from '@/hooks/use-current-url';
 import { setAllGroups, setSingleOpen, useNavGroups } from '@/lib/nav-groups';
@@ -35,7 +34,7 @@ export default function NavGroupControls({
     const Icon = collapse ? ChevronsDownUp : ChevronsUpDown;
 
     return (
-        <div className={cn('flex items-center gap-2', className)}>
+        <div className={cn('flex items-center gap-1', className)}>
             <button
                 type="button"
                 onClick={() => setAllGroups(keys, !collapse, isMobile)}
@@ -46,28 +45,33 @@ export default function NavGroupControls({
             >
                 <Icon className="size-4" aria-hidden />
             </button>
-            <label
-                className="flex cursor-pointer items-center gap-1.5 text-[10px] leading-tight text-muted-foreground"
-                title="Aufklappen eines Menüs klappt alle anderen zu"
+            {/* «Nur ein Menü offen» als Umschalter mit Symbol (wenig Platz) */}
+            <button
+                type="button"
+                aria-pressed={single}
+                aria-label="Nur ein Menü offen"
+                title="Nur ein Menü offen: Aufklappen eines Menüs klappt alle anderen zu"
+                onClick={() =>
+                    setSingleOpen(
+                        !single,
+                        keys,
+                        groups.find((g) =>
+                            groupContainsCurrent(g, isCurrentOrParentUrl),
+                        )?.key ??
+                            openKeys[0] ??
+                            null,
+                        isMobile,
+                    )
+                }
+                className={cn(
+                    'inline-flex size-6 shrink-0 items-center justify-center rounded-md transition-colors focus-visible:ring-2 focus-visible:ring-sidebar-ring focus-visible:outline-none',
+                    single
+                        ? 'bg-sidebar-primary text-sidebar-primary-foreground'
+                        : 'text-muted-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground',
+                )}
             >
-                <Checkbox
-                    checked={single}
-                    onCheckedChange={(c: boolean | 'indeterminate') =>
-                        setSingleOpen(
-                            c === true,
-                            keys,
-                            groups.find((g) =>
-                                groupContainsCurrent(g, isCurrentOrParentUrl),
-                            )?.key ??
-                                openKeys[0] ??
-                                null,
-                            isMobile,
-                        )
-                    }
-                    className="size-3.5"
-                />
-                Nur ein Menü offen
-            </label>
+                <ListCollapse className="size-4" aria-hidden />
+            </button>
         </div>
     );
 }

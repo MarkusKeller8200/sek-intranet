@@ -19,9 +19,13 @@ laufend unter **Unveröffentlicht**. Ab 0.32.0 entsteht eine Version nur bei ein
 
 ### Neu
 
-- **Menüs zuklappen (#87):** Unter dem Logo links neben dem Vermerk ein kleiner Knopf, der alle Hauptmenüs zu- bzw.
-  aufklappt, und die Checkbox «Nur ein Menü offen»: Aufklappen eines Menüs klappt dann alle anderen zu (gilt für
-  diesen Browser).
+- **Glossar als Kacheln (#88):** Umschalter Tabelle | Kacheln (je Browser gemerkt). Kacheln einspaltig und kompakt:
+  Abkürzung, Bezeichnung, Labels, gekürzte Kurzbeschreibung (ganz im Tooltip), Status, Link zur Quelle. Suche,
+  Filter, Sortierung, Gruppierung, Auswahl, Löschen und Export gelten auch für die Kacheln. Allgemein in der
+  Datentabelle (`renderCard`), für andere Tabellen nutzbar.
+- **Menüs zuklappen (#87):** Unter dem Logo links neben dem Vermerk zwei kleine Symbole: alle Hauptmenüs zu- bzw.
+  aufklappen und «Nur ein Menü offen» (Umschalter; Aufklappen eines Menüs klappt dann alle anderen zu). Gilt für
+  diesen Browser.
 - **Dokument zur Unterschrift senden (#86):** Dialog auf Verwaltung → Unterschriften und Aktion im Plugin DeepSign:
   PDF wählen, Unterzeichnende in Reihenfolge oder gleichzeitig, zur Kenntnis an, Nachricht – startet den
   Signaturprozess; das unterschriebene PDF wird abgelegt und ist herunterladbar. Plugin-Seite mit Link zur

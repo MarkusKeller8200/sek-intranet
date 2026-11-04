@@ -11,6 +11,7 @@ import {
 import { useMemo, useRef, useState } from 'react';
 import { toast } from 'sonner';
 import DataGrid from '@/components/data-grid';
+import GlossaryCard from '@/components/glossary-card';
 import GlossaryPdfDialog from '@/components/glossary-pdf-dialog';
 import GlossaryTags from '@/components/glossary-tags';
 import type {
@@ -322,6 +323,9 @@ export default function GlossaryIndex({
                         },
                     ]}
                     selectable={rechte.edit}
+                    renderCard={(r) => (
+                        <GlossaryCard row={r} colors={tagFarben} status={status} />
+                    )}
                     rowMenu={(r) => [
                         {
                             label: 'Einzelansicht öffnen',
