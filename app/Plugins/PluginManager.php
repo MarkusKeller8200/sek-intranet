@@ -294,7 +294,7 @@ final class PluginManager
         if ($file !== null && $spec === null) {
             throw new InvalidArgumentException('Dieser Endpunkt nimmt keine Datei entgegen.');
         }
-        if ($file !== null && $spec !== null) {
+        if ($file !== null) {
             $file += ['field' => (string) ($spec['field'] ?? 'file'), 'data_field' => (string) ($spec['data'] ?? 'data')];
         }
 
