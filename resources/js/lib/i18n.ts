@@ -164,7 +164,10 @@ export function translate(text: string): string | null {
  * Kurzform einer Bezeichnung für zu wenig Platz (#81), z. B. Spaltentitel «Bezeichnung offiziell» → «Bez. offiz.».
  * Katalog resources/js/i18n/short.json: «Deutscher Text»: [Deutsch, English, Züritüütsch]; null, wenn keine Kurzform.
  */
-export function shortOf(label: string, language: Language = current): string | null {
+export function shortOf(
+    label: string,
+    language: Language = current,
+): string | null {
     const forms = (shortForms as Record<string, string[]>)[keyOf(label).key];
     if (!forms) {
         return null;

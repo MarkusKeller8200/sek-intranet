@@ -1,77 +1,17 @@
 {
-    "Abkürzung": [
-        "Abk.",
-        "Abbr.",
-        "Abk."
-    ],
-    "Abkürzung offiziell": [
-        "Abk. offiz.",
-        "Off. abbr.",
-        "Abk. offiz."
-    ],
-    "Abkürzung eigene": [
-        "Abk. eigene",
-        "Own abbr.",
-        "Abk. eigeni"
-    ],
-    "Aliase offiziell": [
-        "Aliase off.",
-        "Off. aliases",
-        "Alias off."
-    ],
-    "Alias eigene": [
-        "Alias eig.",
-        "Own alias",
-        "Alias eig."
-    ],
-    "Bezeichnung offiziell": [
-        "Bez. offiz.",
-        "Off. name",
-        "Bez. offiz."
-    ],
-    "Bezeichnung eigene": [
-        "Bez. eigene",
-        "Own name",
-        "Bez. eigeni"
-    ],
-    "Kurzbeschreibung": [
-        "Kurzbeschr.",
-        "Short descr.",
-        "Churzbeschr."
-    ],
-    "Beschreibung": [
-        "Beschr.",
-        "Descr.",
-        "Beschr."
-    ],
-    "Intern genutzt in": [
-        "Genutzt in",
-        "Used in",
-        "Brucht i"
-    ],
-    "Suchbegriffe": [
-        "Suchbegr.",
-        "Search",
-        "Suechbegr."
-    ],
-    "Kategorien": [
-        "Kat.",
-        "Cat.",
-        "Kat."
-    ],
-    "Herkunft": [
-        "Herk.",
-        "Orig.",
-        "Herk."
-    ],
-    "Gültig ab": [
-        "ab",
-        "from",
-        "ab"
-    ],
-    "Gültig bis": [
-        "bis",
-        "until",
-        "bis"
-    ]
+    "Abkürzung": ["Abk.", "Abbr.", "Abk."],
+    "Abkürzung offiziell": ["Abk. offiz.", "Off. abbr.", "Abk. offiz."],
+    "Abkürzung eigene": ["Abk. eigene", "Own abbr.", "Abk. eigeni"],
+    "Aliase offiziell": ["Aliase off.", "Off. aliases", "Alias off."],
+    "Alias eigene": ["Alias eig.", "Own alias", "Alias eig."],
+    "Bezeichnung offiziell": ["Bez. offiz.", "Off. name", "Bez. offiz."],
+    "Bezeichnung eigene": ["Bez. eigene", "Own name", "Bez. eigeni"],
+    "Kurzbeschreibung": ["Kurzbeschr.", "Short descr.", "Churzbeschr."],
+    "Beschreibung": ["Beschr.", "Descr.", "Beschr."],
+    "Intern genutzt in": ["Genutzt in", "Used in", "Brucht i"],
+    "Suchbegriffe": ["Suchbegr.", "Search", "Suechbegr."],
+    "Kategorien": ["Kat.", "Cat.", "Kat."],
+    "Herkunft": ["Herk.", "Orig.", "Herk."],
+    "Gültig ab": ["ab", "from", "ab"],
+    "Gültig bis": ["bis", "until", "bis"]
 }
