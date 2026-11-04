@@ -10,8 +10,8 @@ import type { TermIndex } from '@/lib/glossary-terms';
  * Eingabefeldern, Code oder Links (die Markdown-Anzeige reicht nur reinen Text weiter).
  */
 export function TermText({ text }: { text: string }) {
-    const can = usePage<{ auth?: { can?: { viewGlossary?: boolean } } }>()
-        .props.auth?.can;
+    const can = usePage<{ auth?: { can?: { viewGlossary?: boolean } } }>().props
+        .auth?.can;
     const highlight = useTermHighlight();
     const terms = useGlossaryTerms(highlight && can?.viewGlossary === true);
 

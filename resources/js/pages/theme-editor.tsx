@@ -241,7 +241,8 @@ export default function ThemeEditor({ theme, defaults, groups }: Props) {
                                                     colors[pair.fg] ?? '',
                                                     colors[pair.bg] ?? '',
                                                 );
-                                                const ok = ratio >= (pair.min ?? 4.5);
+                                                const ok =
+                                                    ratio >= (pair.min ?? 4.5);
 
                                                 return (
                                                     <li

@@ -98,9 +98,7 @@ export default function AblaeufeGruppen({ gruppen }: { gruppen: Gruppe[] }) {
                                                 className="basis-full text-xs text-muted-foreground"
                                                 translate="no"
                                             >
-                                                <TermText
-                                                    text={g.bemerkung}
-                                                />
+                                                <TermText text={g.bemerkung} />
                                             </span>
                                         )}
                                         <span className="ml-auto flex gap-1">
