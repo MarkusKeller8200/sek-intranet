@@ -405,5 +405,12 @@
         "D Date chömed übers Plugin"
     ],
     "eingeschaltet": ["enabled", "iigschaltet"],
-    "ausgeschaltet": ["disabled", "usgschaltet"]
+    "ausgeschaltet": ["disabled", "usgschaltet"],
+    "Nur ein Menü offen": ["Only one menu open", "Nur eis Menü offe"],
+    "Aufklappen eines Menüs klappt alle anderen zu": [
+        "Opening a menu closes all others",
+        "Wänn mer es Menü uftuet, gönd alli andere zue"
+    ],
+    "Alle Menüs zuklappen": ["Collapse all menus", "Alli Menüs zueklappe"],
+    "Alle Menüs aufklappen": ["Expand all menus", "Alli Menüs uufklappe"]
 }

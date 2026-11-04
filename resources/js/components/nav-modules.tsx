@@ -1,6 +1,6 @@
 import { Link } from '@inertiajs/react';
 import { ChevronDown, ExternalLink } from 'lucide-react';
-import { Fragment, useEffect, useState } from 'react';
+import { Fragment, useEffect } from 'react';
 import {
     Collapsible,
     CollapsibleContent,
@@ -19,47 +19,54 @@ import {
 } from '@/components/ui/sidebar';
 import { useCurrentUrl } from '@/hooks/use-current-url';
 import { moduleIcon } from '@/lib/module-icons';
+import {
+    resetMobileGroups,
+    setGroupOpen,
+    useNavGroups,
+} from '@/lib/nav-groups';
 import { isColorName, palette } from '@/lib/colors';
 import { cn } from '@/lib/utils';
 import type { ModuleNavGroup, ModuleNavItem } from '@/types';
 
-const STORAGE_KEY = 'intranet.nav.groups';
-
-/** Gemerkter Zustand je Gruppe (nur in diesem Browser). */
-function readStored(): Record<string, boolean> {
-    try {
-        const raw = window.localStorage.getItem(STORAGE_KEY);
-        const parsed: unknown = raw ? JSON.parse(raw) : {};
-
-        return parsed && typeof parsed === 'object'
-            ? (parsed as Record<string, boolean>)
-            : {};
-    } catch {
-        return {};
-    }
+/** Enthält die Gruppe die aktuelle Seite (auch in einem Untermenü)? */
+export function groupContainsCurrent(
+    group: ModuleNavGroup,
+    isCurrent: (href: string) => boolean,
+): boolean {
+    return group.items.some(
+        (item) =>
+            isCurrent(item.href) ||
+            (item.children ?? []).some((c) => isCurrent(c.href)),
+    );
 }
 
-function writeStored(value: Record<string, boolean>) {
-    try {
-        window.localStorage.setItem(STORAGE_KEY, JSON.stringify(value));
-    } catch {
-        // Ohne Speicher bleibt der Zustand nur bis zum Neuladen.
-    }
+/**
+ * Ist ein Hauptmenü am Bildschirm offen? Gemerkte Wahl gilt immer; sonst offen, wenn es Umgesetztes oder die
+ * aktuelle Seite enthält.
+ */
+export function groupIsOpen(
+    group: ModuleNavGroup,
+    stored: Record<string, boolean>,
+    isCurrent: (href: string) => boolean,
+): boolean {
+    return (
+        stored[group.key] ??
+        (group.items.some((item) => !item.planned) ||
+            groupContainsCurrent(group, isCurrent))
+    );
 }
 
 export function NavModules({ groups }: { groups: ModuleNavGroup[] }) {
     const { isCurrentOrParentUrl } = useCurrentUrl();
     const { state, isMobile, openMobile, setOpenMobile, setOpen } =
         useSidebar();
-    const [stored, setStored] = useState<Record<string, boolean>>(readStored);
-    // Mobil: bei jedem Öffnen des Menüs alle Hauptmenüs eingeklappt, nicht gemerkt
-    const [mobileGroups, setMobileGroups] = useState<Record<string, boolean>>(
-        {},
-    );
+    // Gemerkter Zustand (am Bildschirm) bzw. mobil bei jedem Öffnen alle zu; siehe lib/nav-groups.ts
+    const { stored, mobile: mobileGroups } = useNavGroups();
+    const groupKeys = groups.map((g) => g.key);
 
     useEffect(() => {
         if (openMobile) {
-            setMobileGroups({});
+            resetMobileGroups();
         }
     }, [openMobile]);
 
@@ -76,34 +83,20 @@ export function NavModules({ groups }: { groups: ModuleNavGroup[] }) {
     // In der schmalen Leiste (nur Symbole) gibt es keine Gruppentitel – alles zeigen.
     const iconOnly = state === 'collapsed' && !isMobile;
 
-    const toggle = (key: string, open: boolean) => {
-        if (isMobile) {
-            setMobileGroups((current) => ({ ...current, [key]: open }));
-
-            return;
-        }
-        const next = { ...stored, [key]: open };
-        setStored(next);
-        writeStored(next);
-    };
+    const toggle = (key: string, open: boolean) =>
+        setGroupOpen(key, open, groupKeys, isMobile);
 
     return (
         <>
             {groups.map((group) => {
-                const containsCurrent = group.items.some(
-                    (item) =>
-                        isCurrentOrParentUrl(item.href) ||
-                        (item.children ?? []).some((c) =>
-                            isCurrentOrParentUrl(c.href),
-                        ),
+                const containsCurrent = groupContainsCurrent(
+                    group,
+                    isCurrentOrParentUrl,
                 );
-                // Standard: offen, wenn die Gruppe Umgesetztes enthält
-                const defaultOpen = group.items.some((item) => !item.planned);
-                // Gemerkte Wahl gilt immer – auch für die Gruppe der aktuellen Seite
                 const open = isMobile
                     ? (mobileGroups[group.key] ?? false)
                     : iconOnly ||
-                      (stored[group.key] ?? (defaultOpen || containsCurrent));
+                      groupIsOpen(group, stored, isCurrentOrParentUrl);
                 const color = isColorName(group.color)
                     ? palette[group.color]
                     : palette.slate;

@@ -19,6 +19,9 @@ laufend unter **Unveröffentlicht**. Ab 0.32.0 entsteht eine Version nur bei ein
 
 ### Neu
 
+- **Menüs zuklappen (#87):** Unter dem Logo links neben dem Vermerk ein kleiner Knopf, der alle Hauptmenüs zu- bzw.
+  aufklappt, und die Checkbox «Nur ein Menü offen»: Aufklappen eines Menüs klappt dann alle anderen zu (gilt für
+  diesen Browser).
 - **Dokument zur Unterschrift senden (#86):** Dialog auf Verwaltung → Unterschriften und Aktion im Plugin DeepSign:
   PDF wählen, Unterzeichnende in Reihenfolge oder gleichzeitig, zur Kenntnis an, Nachricht – startet den
   Signaturprozess; das unterschriebene PDF wird abgelegt und ist herunterladbar. Plugin-Seite mit Link zur
