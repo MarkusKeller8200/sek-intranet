@@ -4,10 +4,10 @@ namespace Modules\Zeiterfassung\Tests;
 
 use App\Data\Contracts\UserRepository;
 use App\Plugins\PluginManager;
+use App\Support\Notifications;
 use App\Support\Signatures;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
-use App\Support\Notifications;
 use Illuminate\Testing\TestResponse;
 use Inertia\Testing\AssertableInertia as Assert;
 use Modules\Zeiterfassung\Data\Contracts\EintragRepository;
