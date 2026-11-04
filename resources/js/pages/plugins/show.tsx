@@ -62,6 +62,7 @@ import { cn } from '@/lib/utils';
 import type {
     PluginAction,
     PluginEndpoint,
+    PluginEndpointParam,
     PluginInfo,
     PluginResult,
     PluginRun,
