@@ -58,7 +58,7 @@ export default function GlossaryShow({
                     className="self-start"
                     asChild
                 >
-                    <Link href={"/glossar"}>
+                    <Link href={'/glossar'}>
                         <ArrowLeft /> Zum Glossar
                     </Link>
                 </Button>

@@ -92,7 +92,9 @@ export default function GlossaryForm({
                     className="self-start"
                     asChild
                 >
-                    <Link href={eintrag ? `/glossar/${eintrag.id}` : '/glossar'}>
+                    <Link
+                        href={eintrag ? `/glossar/${eintrag.id}` : '/glossar'}
+                    >
                         <ArrowLeft />{' '}
                         {eintrag ? 'Zurück zum Eintrag' : 'Zum Glossar'}
                     </Link>
