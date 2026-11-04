@@ -114,8 +114,10 @@ export default function Signatures({
             (nurStatus === '' || a.status === nurStatus),
     );
 
-    const post = (url: string, data: Record<string, unknown> = {}) =>
-        router.post(url, data, { preserveScroll: true });
+    const post = (
+        url: string,
+        data: Record<string, string | number> = {},
+    ) => router.post(url, data, { preserveScroll: true });
     const oeffnen = async (id: string) => {
         const answer = await postJson<{ url?: string; message?: string }>(
             `/unterschriften/${id}/link`,
