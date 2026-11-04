@@ -45,6 +45,11 @@ Projekt: SekBülach Intranet, Prototyp. Stack und Konventionen wie IDA.
   der Geräteausgabe nie speichern.
 - Importe: Personen zuerst über die Datenherkunft (`PersonLinks`, System + ID) suchen, dann über die E-Mail;
   `PeopleImport` mit Systemschlüssel und `_external_id` verwenden.
+- **API-Tester mit Beispielwerten (alle APIs, ab 04.11.2026):** Jeder Parameter ohne Vorgabe bekommt ein
+  `example`, jeder schreibende Endpunkt einen Beispiel-Body (`body`) und, wo sinnvoll, `fields` mit Beispiel je Feld
+  (`PLUGINS.md`). Nur erfundene Werte (`…@sekbuelach.example`). IDs dürfen fehlen, wenn eine Liste sie liefert
+  (der Tester übernimmt sie aus der letzten Antwort). Gilt ebenso für die eigene REST-API (`App\Support\OpenApi`:
+  `example` je Parameter, Beispiel je Body). Vorbild: TagStudio.
 - API-Recorder (`docs/KONZEPT-API-ZU-PLUGIN.md`): Aufzeichnungen einem Plugin zuweisen; Entwürfe daraus nur als
   `partial` ins Manifest übernehmen und erst nach Abgleich mit der Hersteller-Doku `full` setzen. Dafür
   `php artisan intranet:plugin-from-openapi` verwenden (nie in Produktion). API-Ansichten nur über

@@ -1,7 +1,7 @@
 {
     "id": "inventory360",
     "name": "Inventory360",
-    "version": "1.0",
+    "version": "1.1",
     "api": 1,
     "category": "inventory",
     "author": "SekBülach Intranet",
@@ -51,10 +51,12 @@
                     },
                     {
                         "name": "discovery",
+                        "example": "0",
                         "help": "0 oder 1: mit Discovery-Daten"
                     },
                     {
                         "name": "scancodes",
+                        "example": "0",
                         "help": "0 oder 1: mit Scancodes"
                     }
                 ]
@@ -73,6 +75,7 @@
                     },
                     {
                         "name": "discovery",
+                        "example": "0",
                         "help": "0 oder 1"
                     }
                 ]
@@ -141,6 +144,7 @@
                 "params": [
                     {
                         "name": "search",
+                        "example": "Office",
                         "help": "Suchfilter"
                     }
                 ]
@@ -168,6 +172,7 @@
                 "params": [
                     {
                         "name": "search",
+                        "example": "Office",
                         "help": "Suchfilter"
                     }
                 ]
@@ -278,6 +283,7 @@
                 "params": [
                     {
                         "name": "search",
+                        "example": "Zimmer",
                         "help": "Suchfilter"
                     }
                 ]
@@ -321,6 +327,7 @@
                 "params": [
                     {
                         "name": "search",
+                        "example": "Muster",
                         "help": "Suchfilter"
                     }
                 ]
@@ -350,6 +357,7 @@
                 "params": [
                     {
                         "name": "email",
+                        "example": "anna.muster@sekbuelach.example",
                         "required": true
                     }
                 ]
@@ -364,6 +372,7 @@
                 "params": [
                     {
                         "name": "username",
+                        "example": "anna.muster",
                         "required": true
                     }
                 ]
@@ -378,6 +387,7 @@
                 "params": [
                     {
                         "name": "search",
+                        "example": "Muster",
                         "help": "Suchfilter"
                     }
                 ]

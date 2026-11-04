@@ -1,6 +1,7 @@
 # Konzept: Plugin DeepSign (elektronische Unterschrift)
 
-Stand 03.11.2026, noch nicht umgesetzt. Meilenstein «DeepSign – Integration». Quelle:
+Stand 04.11.2026: Plugin-Grundgerüst mit Anmeldung, Demo-Modus und API-Tester umgesetzt (#37); Schnittstelle
+«Unterschriften», Webhook und Abholen folgen (#38–#43). Meilenstein «DeepSign – Integration». Quelle:
 [DeepSign API Reference](https://apidocs.deepcloud.swiss/deepsign-api-docs/index.html), Swagger unter
 `https://api.sign.deepbox.swiss/swagger-ui/index.html`.
 
@@ -62,6 +63,17 @@ DeepSign (api.sign.deepbox.swiss)
 - **Service-Benutzer mit Passwort:** Anmeldung mit Benutzername/Passwort des Service-Benutzers plus Partner-Client.
   Alle vier Werte als `password`-Einstellung (verschlüsselt, nie anzeigen oder protokollieren).
 - **Kein Testsystem dokumentiert.** Ein Demo-Modus mit simulierten Antworten ist nötig.
+
+## Umsetzung (#37)
+
+- `plugins/Deepsign/plugin.json`: 18 Endpunkte, alle mit Beispielwerten; offiziell beschriebene als `full`, aus dem
+  Microsoft-Connector bzw. ohne Doku (Unterzeichnende auflisten, Beobachtende entfernen, Bearbeiten-Link) als
+  `partial`. Hochladen und «PDF prüfen» brauchen multipart/form-data – im API-Tester nur im Demo-Modus.
+- Anmeldung `oauth2_password` gegen `deepcloud.swiss/auth/realms/sso/…/token` mit Service-Benutzer und Partner-Client;
+  alle vier Werte verschlüsselt, Token bis kurz vor Ablauf zwischengespeichert.
+- **Demo-Modus** (`App\Plugins\DemoResponder`): feste Demo-Dokumente und -Unterzeichnende, Fehler wie bei DeepSign
+  (404 unbekannte ID, 400 ungültige E-Mail). Auf einem Server ausserhalb der Schweiz immer eingeschaltet.
+- Aktionen «Dokumente anzeigen» und «Signaturstufen anzeigen»; Tests mit `Http::fake()` (Token, 401, 429).
 
 ## Datenschutz
 

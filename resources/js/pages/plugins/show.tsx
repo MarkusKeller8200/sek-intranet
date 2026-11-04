@@ -2,14 +2,17 @@ import { Head, Link, router, useForm } from '@inertiajs/react';
 import {
     ArrowLeft,
     BookOpen,
+    Eraser,
     ExternalLink,
     FlaskConical,
     Play,
     ShieldCheck,
     TriangleAlert,
+    Wand2,
 } from 'lucide-react';
 import { useState } from 'react';
 import type { FormEvent } from 'react';
+import ApiBodyEditor from '@/components/api-body-editor';
 import InputError from '@/components/input-error';
 import PageHeader from '@/components/page-header';
 import DataNotice from '@/components/plugins/data-notice';
@@ -51,8 +54,8 @@ import {
     TableHeader,
     TableRow,
 } from '@/components/ui/table';
-import { Textarea } from '@/components/ui/textarea';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
+import { collectIds, parseJson, pretty } from '@/lib/api-examples';
 import { formatDateTime } from '@/lib/format';
 import { postJson } from '@/lib/http';
 import { cn } from '@/lib/utils';
@@ -724,6 +727,17 @@ function EndpointsSection({
     const endpoint = endpoints.find((e) => e.id === endpointId);
     const [access, setAccess] = useState<PluginResult | null>(null);
     const [checking, setChecking] = useState(false);
+    // IDs aus der letzten Antwort (z. B. documentId aus der Übersicht) für Pfadparameter anderer Endpunkte
+    const [known, setKnown] = useState<Record<string, string>>({});
+    const idNames = [
+        ...new Set(
+            endpoints.flatMap((e) =>
+                (e.params ?? [])
+                    .filter((p) => e.path.includes(`{${p.name}}`))
+                    .map((p) => p.name),
+            ),
+        ),
+    ];
 
     const checkAccess = async () => {
         setChecking(true);
@@ -861,11 +875,38 @@ function EndpointsSection({
                     endpoint={endpoint}
                     endpoints={endpoints}
                     ready={ready}
+                    known={known}
                     onSelect={setEndpointId}
+                    onAnswer={(body) =>
+                        setKnown((k) => ({
+                            ...k,
+                            ...collectIds(parseJson(body), idNames),
+                        }))
+                    }
                 />
             )}
         </div>
     );
+}
+
+/** Startwert eines Parameters: Vorgabe, sonst ID aus der letzten Antwort (Pfad), sonst Beispiel. */
+function paramValue(
+    p: PluginEndpointParam,
+    path: string,
+    known: Record<string, string>,
+    preferExample: boolean,
+): string {
+    const isPath = path.includes(`{${p.name}}`);
+    const fallback =
+        p.default !== undefined && p.default !== null ? String(p.default) : '';
+    if (isPath && known[p.name]) {
+        return known[p.name];
+    }
+    if (preferExample && p.example !== undefined && p.example !== '') {
+        return String(p.example);
+    }
+
+    return fallback !== '' ? fallback : String(p.example ?? '');
 }
 
 function ApiTester({
@@ -873,44 +914,58 @@ function ApiTester({
     endpoint,
     endpoints,
     ready,
+    known,
     onSelect,
+    onAnswer,
 }: {
     plugin: PluginInfo;
     endpoint: PluginEndpoint;
     endpoints: PluginEndpoint[];
     ready: boolean;
+    known: Record<string, string>;
     onSelect: (id: string) => void;
+    onAnswer: (body: string) => void;
 }) {
-    const [params, setParams] = useState<Record<string, string>>(() =>
+    const fill = (preferExample: boolean) =>
         Object.fromEntries(
             (endpoint.params ?? []).map((p) => [
                 p.name,
-                p.default !== undefined && p.default !== null
-                    ? String(p.default)
-                    : '',
+                paramValue(p, endpoint.path, known, preferExample),
             ]),
-        ),
+        );
+    const [params, setParams] = useState<Record<string, string>>(() =>
+        fill(false),
     );
-    const [body, setBody] = useState(
-        endpoint.body ? JSON.stringify(endpoint.body, null, 2) : '',
-    );
+    const exampleBody = endpoint.body ? pretty(endpoint.body) : '';
+    const [body, setBody] = useState(exampleBody);
     const [result, setResult] = useState<PluginResult | null>(null);
     const [busy, setBusy] = useState(false);
     const [confirmOpen, setConfirmOpen] = useState(false);
     // Inhalt bei allem ausser GET; schreibend laut «effect» (z. B. Listen per POST sind lesend)
     const hasBody = endpoint.method.toUpperCase() !== 'GET';
     const writing = endpoint.effect ? endpoint.effect === 'write' : hasBody;
+    const hasExamples =
+        (endpoint.params ?? []).some(
+            (p) =>
+                (p.example !== undefined && p.example !== '') ||
+                (endpoint.path.includes(`{${p.name}}`) && known[p.name]),
+        ) || exampleBody !== '';
 
     const send = async () => {
         setBusy(true);
-        setResult(
-            await postJson<PluginResult>(`/plugins/${plugin.id}/api`, {
+        const answer = await postJson<PluginResult>(
+            `/plugins/${plugin.id}/api`,
+            {
                 endpoint: endpoint.id,
                 params,
                 body: hasBody ? body : null,
-            }),
+            },
         );
+        setResult(answer);
         setBusy(false);
+        if (answer.body) {
+            onAnswer(answer.body);
+        }
     };
 
     return (
@@ -956,6 +1011,11 @@ function ApiTester({
                                 >
                                     {p.name}
                                     {p.required ? ' *' : ''}
+                                    {endpoint.path.includes(`{${p.name}}`) && (
+                                        <span className="font-sans font-normal text-muted-foreground">
+                                            (Pfad)
+                                        </span>
+                                    )}
                                 </Label>
                                 <Input
                                     id={`param-${p.name}`}
@@ -979,15 +1039,51 @@ function ApiTester({
                 )}
 
                 {hasBody && (
-                    <div className="grid gap-1.5">
-                        <Label htmlFor="tester-body">Body (JSON)</Label>
-                        <Textarea
-                            id="tester-body"
-                            rows={6}
-                            className="font-mono text-xs"
-                            value={body}
-                            onChange={(e) => setBody(e.target.value)}
-                        />
+                    <ApiBodyEditor
+                        id="tester-body"
+                        value={body}
+                        onChange={setBody}
+                        example={endpoint.body}
+                        fields={endpoint.fields}
+                    />
+                )}
+
+                {(hasExamples || (endpoint.params ?? []).length > 0) && (
+                    <div className="flex flex-wrap gap-2">
+                        {hasExamples && (
+                            <Button
+                                type="button"
+                                variant="outline"
+                                size="sm"
+                                onClick={() => {
+                                    setParams(fill(true));
+                                    setBody(exampleBody);
+                                }}
+                            >
+                                <Wand2 /> Beispiel einsetzen
+                            </Button>
+                        )}
+                        <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            onClick={() => {
+                                setParams(
+                                    Object.fromEntries(
+                                        (endpoint.params ?? []).map((p) => [
+                                            p.name,
+                                            p.default !== undefined &&
+                                            p.default !== null
+                                                ? String(p.default)
+                                                : '',
+                                        ]),
+                                    ),
+                                );
+                                setBody('');
+                            }}
+                        >
+                            <Eraser /> Felder löschen
+                        </Button>
                     </div>
                 )}
 

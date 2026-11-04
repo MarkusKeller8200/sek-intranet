@@ -3,14 +3,17 @@ import {
     BookOpen,
     ChevronRight,
     Copy,
+    Eraser,
     ExternalLink,
     KeyRound,
     Play,
     Plus,
     Trash2,
+    Wand2,
 } from 'lucide-react';
 import { useState } from 'react';
 import { toast } from 'sonner';
+import ApiBodyEditor from '@/components/api-body-editor';
 import PageHeader from '@/components/page-header';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -22,7 +25,7 @@ import {
     CardTitle,
 } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
+import { collectIds, parseJson } from '@/lib/api-examples';
 import { formatDateTime } from '@/lib/format';
 import { postJson } from '@/lib/http';
 import { palette } from '@/lib/colors';
@@ -33,8 +36,25 @@ type Parameter = {
     in: 'query' | 'path';
     description?: string;
     required?: boolean;
+    /** Beispielwert, im Tester vorausgefüllt */
+    example?: unknown;
     schema?: { type?: string; enum?: string[]; default?: unknown };
 };
+
+/** IDs aus der letzten Antwort (z. B. «id» aus der Personenliste) für Pfadparameter anderer Endpunkte. */
+let lastIds: Record<string, string> = {};
+
+/** Startwert: ID aus der letzten Antwort (Pfad), sonst Beispiel, sonst Vorgabe. */
+function startValue(p: Parameter): string {
+    if (p.in === 'path' && lastIds[p.name]) {
+        return lastIds[p.name];
+    }
+    if (p.example !== undefined && p.example !== null) {
+        return String(p.example);
+    }
+
+    return p.schema?.default !== undefined ? String(p.schema.default) : '';
+}
 
 type Operation = {
     tags?: string[];
@@ -339,10 +359,12 @@ function Endpoint({
     const example =
         operation.requestBody?.content?.['application/json']?.example;
     const [open, setOpen] = useState(false);
-    const [values, setValues] = useState<Record<string, string>>({});
-    const [body, setBody] = useState(
-        example === undefined ? '' : JSON.stringify(example, null, 2),
-    );
+    const fill = () =>
+        Object.fromEntries(parameters.map((p) => [p.name, startValue(p)]));
+    const exampleBody =
+        example === undefined ? '' : JSON.stringify(example, null, 2);
+    const [values, setValues] = useState<Record<string, string>>(fill);
+    const [body, setBody] = useState(exampleBody);
     const [result, setResult] = useState<Result | null>(null);
     const [busy, setBusy] = useState(false);
 
@@ -415,6 +437,7 @@ function Endpoint({
                 ms: Math.round(performance.now() - started),
                 body: pretty,
             });
+            lastIds = { ...lastIds, ...collectIds(parseJson(raw), ['id']) };
         } catch (e) {
             setResult({
                 status: 0,
@@ -520,18 +543,39 @@ function Endpoint({
                     )}
 
                     {method !== 'get' && method !== 'delete' && (
-                        <label className="grid gap-1 text-sm">
-                            Body (JSON)
-                            <Textarea
-                                rows={Math.min(
-                                    14,
-                                    Math.max(4, body.split('\n').length + 1),
-                                )}
-                                className="font-mono text-xs"
-                                value={body}
-                                onChange={(e) => setBody(e.target.value)}
-                            />
-                        </label>
+                        <ApiBodyEditor
+                            id={`body-${method}-${path}`}
+                            value={body}
+                            onChange={setBody}
+                            example={example}
+                        />
+                    )}
+
+                    {(parameters.length > 0 || exampleBody !== '') && (
+                        <div className="flex flex-wrap gap-2">
+                            <Button
+                                type="button"
+                                variant="outline"
+                                size="sm"
+                                onClick={() => {
+                                    setValues(fill());
+                                    setBody(exampleBody);
+                                }}
+                            >
+                                <Wand2 /> Beispiel einsetzen
+                            </Button>
+                            <Button
+                                type="button"
+                                variant="outline"
+                                size="sm"
+                                onClick={() => {
+                                    setValues({});
+                                    setBody('');
+                                }}
+                            >
+                                <Eraser /> Felder löschen
+                            </Button>
+                        </div>
                     )}
 
                     <div className="flex flex-wrap items-center gap-2">

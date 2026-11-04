@@ -34,7 +34,7 @@ class PluginIntegrationsTest extends TestCase
     {
         $manager = app(PluginManager::class);
 
-        $this->assertSame(['entra', 'epost', 'escola', 'ida', 'inventory360', 'jamf', 'lmvz'], array_keys($manager->all()));
+        $this->assertSame(['deepsign', 'entra', 'epost', 'escola', 'ida', 'inventory360', 'jamf', 'lmvz'], array_keys($manager->all()));
         $this->assertSame([], $manager->loadErrors());
     }
 

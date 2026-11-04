@@ -40,6 +40,7 @@ final class ManifestOpenApi
                 'tags' => [self::STATUS_LABELS[$status] ?? $status],
                 'deprecated' => $status === 'planned' ? true : null,
                 'parameters' => self::parameters($path, $endpoint),
+                'requestBody' => self::requestBody($endpoint),
                 'responses' => ['200' => ['description' => 'OK']],
                 'servers' => $hostUrl !== null ? [['url' => $hostUrl]] : null,
             ], fn (mixed $v): bool => $v !== null && $v !== []);
@@ -70,6 +71,49 @@ final class ManifestOpenApi
         }
 
         return $spec;
+    }
+
+    /**
+     * Body mit Beispiel (endpoints[].body) und Feldern (endpoints[].fields) – Scalar füllt «Test Request» damit vor.
+     *
+     * @param  array<string, mixed>  $endpoint
+     * @return array<string, mixed>|null
+     */
+    private static function requestBody(array $endpoint): ?array
+    {
+        $fields = is_array($endpoint['fields'] ?? null) ? $endpoint['fields'] : [];
+        if (! is_array($endpoint['body'] ?? null) && $fields === []) {
+            return null;
+        }
+
+        $properties = [];
+        $required = [];
+        foreach ($fields as $field) {
+            if (! is_array($field) || ! is_string($field['name'] ?? null)) {
+                continue;
+            }
+            $properties[$field['name']] = array_filter([
+                'type' => is_string($field['type'] ?? null) ? $field['type'] : 'string',
+                'description' => is_string($field['help'] ?? null) ? $field['help'] : null,
+                'enum' => is_array($field['choices'] ?? null) ? array_values($field['choices']) : null,
+                'example' => $field['example'] ?? null,
+            ], fn (mixed $v): bool => $v !== null);
+            if (($field['required'] ?? false) === true) {
+                $required[] = $field['name'];
+            }
+        }
+
+        $schema = array_filter([
+            'type' => 'object',
+            'properties' => $properties === [] ? null : $properties,
+            'required' => $required === [] ? null : $required,
+        ], fn (mixed $v): bool => $v !== null);
+        $body = is_array($endpoint['body'] ?? null) ? $endpoint['body'] : null;
+
+        return ['content' => ['application/json' => array_filter([
+            'schema' => $schema,
+            'example' => $body === [] ? new \stdClass : $body,
+        ], fn (mixed $v): bool => $v !== null)]];
     }
 
     /**

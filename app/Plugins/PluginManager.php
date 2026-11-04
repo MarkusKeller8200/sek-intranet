@@ -115,7 +115,8 @@ final class PluginManager
         $secretKeys = $this->manifest($id)->secretKeys();
         $isSet = fn (string $key): bool => in_array($key, $secretKeys, true)
             ? ($state['secrets'][$key] ?? '') !== ''
-            : ($state['settings'][$key] ?? '') !== '' && ($state['settings'][$key] ?? null) !== null;
+            // ausgeschalteter Schalter («check» = false) gilt als nicht gesetzt (z. B. required_unless: demo)
+            : ! in_array($state['settings'][$key] ?? null, ['', null, false], true);
 
         foreach ($this->manifest($id)->settings() as $setting) {
             if (($setting['required'] ?? false) !== true) {
@@ -198,7 +199,13 @@ final class PluginManager
             }
         }
 
-        return new PluginContext($this->manifest($id), $state['settings'], $secrets, $state['allow_write'], $user, $this->users);
+        $ctx = new PluginContext($this->manifest($id), $state['settings'], $secrets, $state['allow_write'], $user, $this->users);
+        $plugin = $this->all()[$id]['plugin'] ?? null;
+        if ($plugin instanceof DemoResponder && $plugin->demoActive($ctx)) {
+            $ctx->useDemo($plugin);
+        }
+
+        return $ctx;
     }
 
     /**

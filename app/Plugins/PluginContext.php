@@ -4,6 +4,7 @@ namespace App\Plugins;
 
 use App\Auth\IntranetUser;
 use App\Data\Contracts\UserRepository;
+use GuzzleHttp\Psr7\Response as Psr7Response;
 use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Http\Client\RequestException;
 use Illuminate\Http\Client\Response;
@@ -20,11 +21,14 @@ use RuntimeException;
  * - call(): einen im Manifest beschriebenen Endpunkt aufrufen
  * - log(): Zeile ins Lauf-Protokoll (Zugangsdaten werden geschwärzt)
  * - users(): Personen des Intranets (für Übernahmen)
+ * - demo(): true, wenn das Plugin simulierte Antworten liefert (DemoResponder) – dann geht nichts an den Dienst
  */
 final class PluginContext
 {
     /** @var list<string> */
     private array $lines = [];
+
+    private ?DemoResponder $demo = null;
 
     /**
      * @param  array<string, mixed>  $settings
@@ -51,6 +55,19 @@ final class PluginContext
         $value = $this->secrets[$key] ?? null;
 
         return $value === null || $value === '' ? null : $value;
+    }
+
+    /**
+     * Demo-Modus einschalten (PluginManager, wenn das Plugin DemoResponder umsetzt und demoActive() gilt).
+     */
+    public function useDemo(DemoResponder $responder): void
+    {
+        $this->demo = $responder;
+    }
+
+    public function demo(): bool
+    {
+        return $this->demo !== null;
     }
 
     public function users(): UserRepository
@@ -162,14 +179,32 @@ final class PluginContext
             }
         }
 
+        $pathParams = [];
         foreach ($params as $name => $value) {
             if (str_contains($path, '{'.$name.'}')) {
                 $path = str_replace('{'.$name.'}', rawurlencode((string) $value), $path);
             }
         }
+        foreach ($definitions as $param) {
+            $name = (string) $param['name'];
+            if (str_contains((string) $endpoint['path'], '{'.$name.'}')) {
+                $value = $params[$name] ?? ($param['default'] ?? null);
+                $pathParams[$name] = is_scalar($value) ? (string) $value : '';
+            }
+        }
 
         if (preg_match('/\{[a-z0-9_]+\}/i', $path) === 1) {
             throw new InvalidArgumentException("Pfadparameter fehlt: {$path}");
+        }
+
+        if ($this->demo !== null) {
+            $this->log("{$method} {$path} (Demo-Modus, nichts an den Dienst gesendet)");
+            $answer = $this->demo->demoResponse($endpoint, $pathParams, $query, $body, $this);
+            $json = array_key_exists('json', $answer) ? (string) json_encode($answer['json'], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) : '';
+            $response = new Response(new Psr7Response($answer['status'], $json === '' ? [] : ['Content-Type' => 'application/json'], $json));
+            $this->log("→ HTTP {$response->status()} (Demo)");
+
+            return $response;
         }
 
         $this->log("{$method} {$path}");

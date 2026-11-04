@@ -22,7 +22,7 @@ final class OpenApi
             ],
         ];
         $paging = [
-            ['name' => 'limit', 'in' => 'query', 'description' => 'Anzahl (1–1000, Standard 100)', 'schema' => ['type' => 'integer', 'default' => 100]],
+            ['name' => 'limit', 'in' => 'query', 'description' => 'Anzahl (1–1000, Standard 100)', 'example' => 10, 'schema' => ['type' => 'integer', 'default' => 100]],
             ['name' => 'offset', 'in' => 'query', 'description' => 'Ab Eintrag (für Seiten)', 'schema' => ['type' => 'integer', 'default' => 0]],
         ];
         $errors = [
@@ -63,9 +63,9 @@ final class OpenApi
                         'tags' => ['Personen'], 'summary' => 'Personen auflisten',
                         'description' => 'Sortiert nach Nachname. Ohne Administration nur aktive Personen und ohne Admin-Felder.',
                         'parameters' => [
-                            ['name' => 'search', 'in' => 'query', 'description' => 'Suche in Name, E-Mail, Funktion, Kürzel', 'schema' => ['type' => 'string']],
+                            ['name' => 'search', 'in' => 'query', 'description' => 'Suche in Name, E-Mail, Funktion, Kürzel', 'example' => 'Muster', 'schema' => ['type' => 'string']],
                             ['name' => 'school', 'in' => 'query', 'description' => 'Schulhaus', 'schema' => ['type' => 'string', 'enum' => array_keys((array) config('intranet.schools'))]],
-                            ['name' => 'active', 'in' => 'query', 'description' => 'Nur aktive (true) oder inaktive (false)', 'schema' => ['type' => 'boolean']],
+                            ['name' => 'active', 'in' => 'query', 'description' => 'Nur aktive (true) oder inaktive (false)', 'example' => 'true', 'schema' => ['type' => 'boolean']],
                             ['name' => 'person_type', 'in' => 'query', 'description' => 'Personenart (Schüler:innen und Eltern nur mit Recht «view-students»)', 'schema' => ['type' => 'string', 'enum' => array_keys((array) config('intranet.person_types'))]],
                             ...$paging,
                         ],

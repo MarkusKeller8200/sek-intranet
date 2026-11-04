@@ -9,6 +9,17 @@ laufend unter **Unveröffentlicht**. Ab 0.32.0 entsteht eine Version nur bei ein
 
 ## [Unveröffentlicht]
 
+### Neu
+
+- **Plugin DeepSign (#37):** Elektronische Unterschrift mit DeepSign (DeepCloud): Anmeldung mit Service-Benutzer und
+  Partner-Client (verschlüsselt), Verbindung testen, Dokumente und Signaturstufen anzeigen, API-Tester mit
+  18 Endpunkten. **Demo-Modus** mit simulierten Antworten, solange kein Zugang vorhanden ist (auf dem Testserver
+  immer). Neue Kern-Schnittstelle `DemoResponder` für Plugins mit Demo-Modus.
+- **API-Tester mit Beispielwerten (#82):** Parameter und Body sind vorausgefüllt; «Beispiel einsetzen», «Felder
+  löschen», IDs aus der letzten Antwort für Pfadparameter, «Mögliche Werte» mit «Einfügen», «Formatieren» und
+  laufender JSON-Prüfung – in allen Plugins und im Tester der eigenen REST-API. Die API-Ansicht (Scalar) zeigt
+  Beispiele und Felder des Bodys. Beispielwerte in ePost, Inventory360 und LMVZ ergänzt.
+
 ## [0.34.0] – 2026-11-04
 
 ### Für Mitarbeitende

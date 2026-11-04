@@ -1,7 +1,7 @@
 {
     "id": "epost",
     "name": "ePost (Schweizerische Post)",
-    "version": "0.2",
+    "version": "0.3",
     "api": 1,
     "category": "communication",
     "author": "SekBülach Intranet",
@@ -287,13 +287,16 @@
                     },
                     {
                         "name": "read-status",
+                        "example": "UNREAD",
                         "help": "READ oder UNREAD"
                     },
                     {
-                        "name": "from-date"
+                        "name": "from-date",
+                        "example": "2026-10-01"
                     },
                     {
-                        "name": "to-date"
+                        "name": "to-date",
+                        "example": "2026-10-31"
                     },
                     {
                         "name": "letter-folder"
@@ -564,7 +567,10 @@
                     "https://api-test.klara-epost.tech",
                     "Test (api-test.klara-epost.tech)"
                 ],
-                ["https://api.epost.ch", "Produktion (api.epost.ch)"]
+                [
+                    "https://api.epost.ch",
+                    "Produktion (api.epost.ch)"
+                ]
             ],
             "help": "Im Prototyp nur die Testumgebung verwenden."
         },

@@ -23,6 +23,7 @@ export type PluginEndpointParam = {
     name: string;
     default?: string | number | null;
     required?: boolean;
+    /** Beispielwert, im API-Tester vorausgefüllt */
     example?: string;
     help?: string;
 };
@@ -42,7 +43,19 @@ export type PluginEndpoint = {
     /** Schlüssel aus service.hosts (weitere Adresse des Herstellers) */
     host?: string;
     params?: PluginEndpointParam[];
+    /** Beispiel-Body (API-Tester: vorausgefüllt, «Beispiel einfügen») */
     body?: Record<string, unknown>;
+    /** Mögliche Felder des Bodys mit Beispielwert (API-Tester: «Mögliche Werte») */
+    fields?: {
+        name: string;
+        type?: string;
+        required?: boolean;
+        help?: string;
+        example?: unknown;
+        choices?: string[];
+    }[];
+    /** false = nicht in «Zugriff prüfen» */
+    test?: boolean;
 };
 
 export type PluginAction = {

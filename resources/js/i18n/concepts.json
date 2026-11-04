@@ -3203,5 +3203,22 @@
     ],
     "Mehrere Bedeutungen": ["Several meanings", "Mehreri Bedütige"],
     "Im Glossar öffnen": ["Open in glossary", "Im Glossar uftue"],
-    "historisch": ["historical", "historisch"]
+    "historisch": ["historical", "historisch"],
+    "Alle Werte einfügen": ["Insert all values", "Alli Wärt iifüege"],
+    "Formatieren": ["Format", "Formatiere"],
+    "Mögliche Werte": ["Possible values", "Möglechi Wärt"],
+    "Beispiel": ["Example", "Biispiel"],
+    "Aktion": ["Action", "Aktion"],
+    "Leer – es wird kein Inhalt gesendet.": [
+        "Empty – no content is sent.",
+        "Leer – es wird kein Inhalt gschickt."
+    ],
+    "Gültiges JSON.": ["Valid JSON.", "Gültigs JSON."],
+    "Erwartet wird ein JSON-Objekt.": [
+        "A JSON object is expected.",
+        "Erwartet wird es JSON-Objekt."
+    ],
+    "Beispiel einsetzen": ["Use example", "Biispiel iisetze"],
+    "Felder löschen": ["Clear fields", "Fälder lösche"],
+    "(Pfad)": ["(path)", "(Pfad)"]
 }

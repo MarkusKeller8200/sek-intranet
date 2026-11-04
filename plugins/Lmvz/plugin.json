@@ -1,7 +1,7 @@
 {
     "id": "lmvz",
     "name": "LMVZ – Lehrmittelverlag Zürich (inoffiziell)",
-    "version": "0.1",
+    "version": "0.2",
     "api": 1,
     "category": "school",
     "author": "SekBülach Intranet",
@@ -322,7 +322,8 @@
                         "name": "ulmUserId"
                     },
                     {
-                        "name": "userName"
+                        "name": "userName",
+                        "example": "anna.muster"
                     }
                 ]
             },
