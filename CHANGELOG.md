@@ -9,6 +9,8 @@ laufend unter **Unveröffentlicht**. Ab 0.32.0 entsteht eine Version nur bei ein
 
 ## [Unveröffentlicht]
 
+## [0.34.0] – 2026-11-04
+
 ### Für Mitarbeitende
 
 - Anmeldung neu mit Rolle und 8-stelligem PIN statt gemeinsamem Passwort; neue Rollen Schüler:in, Eltern und
