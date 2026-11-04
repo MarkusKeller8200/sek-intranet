@@ -26,6 +26,7 @@ use App\Http\Controllers\PersonController;
 use App\Http\Controllers\PersonLinkController;
 use App\Http\Controllers\PluginController;
 use App\Http\Controllers\RoleConceptController;
+use App\Http\Controllers\SignatureController;
 use App\Http\Controllers\ThemeController;
 use App\Http\Controllers\VersionController;
 use Illuminate\Support\Facades\Route;
@@ -193,6 +194,19 @@ Route::middleware('auth')->group(function () {
         Route::post('glossar/auswahl-loeschen', [GlossaryController::class, 'destroyMany'])->name('glossary.destroy-many');
         Route::delete('glossar/{id}', [GlossaryController::class, 'destroy'])->name('glossary.destroy');
     });
+    // Unterschriften (#42)
+    Route::middleware('can:manage-signatures')->group(function () {
+        Route::get('unterschriften', [SignatureController::class, 'index'])->name('signatures.index');
+        Route::post('unterschriften/aktualisieren', [SignatureController::class, 'refreshAll'])->middleware('throttle:10,1')->name('signatures.refresh-all');
+        Route::post('unterschriften/{id}/aktualisieren', [SignatureController::class, 'refresh'])->middleware('throttle:30,1')->name('signatures.refresh');
+        Route::post('unterschriften/{id}/starten', [SignatureController::class, 'start'])->name('signatures.start');
+        Route::post('unterschriften/{id}/erinnern', [SignatureController::class, 'remind'])->middleware('throttle:20,1')->name('signatures.remind');
+        Route::post('unterschriften/{id}/zurueckziehen', [SignatureController::class, 'withdraw'])->name('signatures.withdraw');
+        Route::post('unterschriften/{id}/demo', [SignatureController::class, 'simulate'])->name('signatures.simulate');
+        Route::post('unterschriften/{id}/link', [SignatureController::class, 'access'])->middleware('throttle:10,1')->name('signatures.access');
+        Route::delete('unterschriften/{id}', [SignatureController::class, 'destroy'])->name('signatures.destroy');
+    });
+
     Route::middleware('can:view-glossary')->group(function () {
         Route::get('glossar', [GlossaryController::class, 'index'])->name('glossary.index');
         Route::post('glossar/export', [GlossaryController::class, 'export'])->middleware('throttle:30,1')->name('glossary.export');

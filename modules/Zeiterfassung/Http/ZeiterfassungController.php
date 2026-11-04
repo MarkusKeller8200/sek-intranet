@@ -8,6 +8,7 @@ use App\Support\Notifications;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
@@ -16,7 +17,9 @@ use InvalidArgumentException;
 use Modules\Zeiterfassung\Data\Contracts\EintragRepository;
 use Modules\Zeiterfassung\Data\Contracts\MonatRepository;
 use Modules\Zeiterfassung\Kategorien;
+use Modules\Zeiterfassung\Unterschriften;
 use Modules\Zeiterfassung\Zeitkonto;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 /**
  * Eigene Zeiterfassung: Einträge eines Monats erfassen, löschen und den Monat zum Visum einreichen.
@@ -44,7 +47,33 @@ class ZeiterfassungController extends Controller
             'kategorien' => Kategorien::all(),
             'person' => ['name' => $this->name($person)],
             'darfVisum' => Gate::allows('visum-zeiterfassung'),
+            'unterschrift' => self::unterschrift($person, $monat, $this->monate->status($person, $monat)),
         ]);
+    }
+
+    /**
+     * Unterschriebener Monatsrapport (#43): nur für die Person selbst oder mit Recht visum-zeiterfassung.
+     */
+    public function unterschriftPdf(Request $request, string $person, string $monat): StreamedResponse
+    {
+        abort_unless($person === self::person($request) || Gate::allows('visum-zeiterfassung'), 403);
+        $monat = self::monatAus($monat);
+        $pfad = $this->monate->status($person, $monat)['unterschrift_pdf'] ?? null;
+        abort_unless(is_string($pfad) && $pfad === Unterschriften::datei($person, $monat) && Storage::disk('local')->exists($pfad), 404);
+
+        return Storage::disk('local')->download($pfad, "Monatsrapport-{$monat}-unterschrieben.pdf", ['Content-Type' => 'application/pdf']);
+    }
+
+    /**
+     * @param  array<string, mixed>  $status
+     * @return array{status: mixed, pdf: string|null}
+     */
+    private static function unterschrift(string $person, string $monat, array $status): array
+    {
+        return [
+            'status' => $status['unterschrift_status'] ?? null,
+            'pdf' => isset($status['unterschrift_pdf']) ? "/zeiterfassung/unterschrift/{$person}/{$monat}" : null,
+        ];
     }
 
     public function store(Request $request): RedirectResponse

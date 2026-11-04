@@ -3,6 +3,10 @@
 namespace Modules\Zeiterfassung\Tests;
 
 use App\Data\Contracts\UserRepository;
+use App\Plugins\PluginManager;
+use App\Support\Signatures;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Storage;
 use App\Support\Notifications;
 use Illuminate\Testing\TestResponse;
 use Inertia\Testing\AssertableInertia as Assert;
@@ -128,5 +132,56 @@ class ZeiterfassungTest extends TestCase
         $this->signInAs('lehrperson');
         $this->delete('/zeiterfassung/eintraege/'.$eintrag['id'])->assertRedirect();
         $this->assertSame($lp->getAuthIdentifier(), $eintrag['person_id']);
+    }
+
+    public function test_signed_month_report_via_signatures(): void
+    {
+        Http::fake();
+        Storage::fake('local');
+        $manager = app(PluginManager::class);
+        $manager->saveSettings('deepsign', ['demo' => true, '_allow_write' => true]);
+        $manager->setEnabled('deepsign', true);
+
+        $lp = $this->signInAs('lehrperson');
+        $id = (string) $lp->getAuthIdentifier();
+        $this->erfassen()->assertRedirect();
+        $this->post('/zeiterfassung/einreichen', ['monat' => self::MONAT])->assertRedirect();
+
+        $this->signInAs('schulleitung');
+        // erst nach dem Visum
+        $this->post("/zeiterfassung/visum/{$id}/unterschrift", ['monat' => self::MONAT, 'reihenfolge' => 'person_zuerst']);
+        $this->assertSame([], app(Signatures::class)->all());
+        $this->post("/zeiterfassung/visum/{$id}/visieren", ['monat' => self::MONAT])->assertRedirect();
+        $this->post("/zeiterfassung/visum/{$id}/unterschrift", ['monat' => self::MONAT, 'reihenfolge' => 'person_zuerst', 'beobachtende' => 'personal@sekbuelach.example'])->assertRedirect();
+
+        $auftrag = app(Signatures::class)->all()[0];
+        $this->assertSame('versendet', $auftrag['status']);
+        $this->assertSame('zeiterfassung', $auftrag['module']);
+        $this->assertSame([0, 1], array_column($auftrag['signees'], 'order'));
+        $this->assertSame(1, $auftrag['signees'][0]['position']['pageNumber'] ?? null, 'Unterschriftsfeld aus dem PDF');
+        $this->get("/zeiterfassung/visum/{$id}?monat=".self::MONAT)->assertInertia(fn (Assert $page) => $page
+            ->where('unterschrift.status', 'versendet')
+            ->where('unterschrift.auftrag.signees.0.status', 'offen'));
+        // kein zweiter Auftrag, solange einer läuft
+        $this->post("/zeiterfassung/visum/{$id}/unterschrift", ['monat' => self::MONAT, 'reihenfolge' => 'gleichzeitig']);
+        $this->assertCount(1, app(Signatures::class)->all());
+
+        // Demo: beide unterschreiben → PDF bei der Person
+        $this->signInAs('admin');
+        $this->post("/unterschriften/{$auftrag['id']}/demo")->assertRedirect();
+        $this->post("/unterschriften/{$auftrag['id']}/demo")->assertRedirect();
+        $this->assertSame('unterschrieben', app(Signatures::class)->find((string) $auftrag['id'])['status'] ?? null);
+
+        $this->signInAs('lehrperson');
+        $this->get('/zeiterfassung?monat='.self::MONAT)->assertInertia(fn (Assert $page) => $page
+            ->where('unterschrift.status', 'unterschrieben')
+            ->where('unterschrift.pdf', "/zeiterfassung/unterschrift/{$id}/".self::MONAT));
+        $pdf = $this->get("/zeiterfassung/unterschrift/{$id}/".self::MONAT)->assertOk()->streamedContent();
+        $this->assertStringStartsWith('%PDF', $pdf);
+        $this->assertStringContainsString('Monatsrapport Oktober 2026', $pdf);
+
+        // andere Personen ohne Visum-Recht nicht
+        $this->signInAs('redaktion');
+        $this->get("/zeiterfassung/unterschrift/{$id}/".self::MONAT)->assertForbidden();
     }
 }

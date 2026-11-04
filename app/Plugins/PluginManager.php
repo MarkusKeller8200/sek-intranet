@@ -209,6 +209,39 @@ final class PluginManager
     }
 
     /**
+     * Anbieter für Unterschriften (#38): erstes eingeschaltetes, eingerichtetes Plugin mit SignatureProvider.
+     *
+     * @return array{id: string, name: string, plugin: SignatureProvider}|null
+     */
+    public function signatureProvider(): ?array
+    {
+        foreach ($this->all() as $id => $entry) {
+            if ($entry['plugin'] instanceof SignatureProvider && $this->state((string) $id)['enabled'] && $this->isConfigured((string) $id)) {
+                return ['id' => (string) $id, 'name' => $entry['manifest']->name(), 'plugin' => $entry['plugin']];
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Code eines Kern-Diensts mit dem Kontext eines Plugins ausführen (Lauf wird protokolliert, Fehler weitergereicht).
+     *
+     * @param  callable(PluginContext): mixed  $callback
+     */
+    public function runWith(string $id, ?IntranetUser $user, string $label, callable $callback): mixed
+    {
+        $out = null;
+        $this->guarded($id, $user, $label, function (PluginContext $ctx) use (&$out, $callback, $label): array {
+            $out = $callback($ctx);
+
+            return ['ok' => true, 'status' => 'success', 'message' => $label];
+        }, true);
+
+        return $out;
+    }
+
+    /**
      * @return array<string, mixed>
      */
     public function test(string $id, ?IntranetUser $user): array

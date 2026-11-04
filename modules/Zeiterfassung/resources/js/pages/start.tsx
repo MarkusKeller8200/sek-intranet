@@ -1,5 +1,5 @@
 import { Head, Link, router, useForm } from '@inertiajs/react';
-import { ClipboardCheck, Lock, Printer, Send } from 'lucide-react';
+import { ClipboardCheck, Download, Lock, Printer, Send } from 'lucide-react';
 import type { FormEvent } from 'react';
 import FormField from '@/components/form-field';
 import PageHeader from '@/components/page-header';
@@ -17,8 +17,15 @@ import { NativeSelect } from '@/components/ui/native-select';
 import EintraegeTabelle from '../components/eintraege-tabelle';
 import MonatNavigation from '../components/monat-navigation';
 import StatusBadge from '../components/status-badge';
+import { UnterschriftBadge } from '../components/unterschrift';
 import { druckeMonatsblatt } from '../lib/monatsblatt';
-import type { Eintrag, Kategorien, Status, Summen } from '../lib/types';
+import type {
+    Eintrag,
+    Kategorien,
+    Status,
+    Summen,
+    Unterschrift,
+} from '../lib/types';
 import { monatName } from '../lib/types';
 
 type Props = {
@@ -29,6 +36,7 @@ type Props = {
     kategorien: Kategorien;
     person: { name: string };
     darfVisum: boolean;
+    unterschrift: Unterschrift;
 };
 
 /** Eigene Zeiterfassung eines Monats: erfassen, Übersicht, einreichen, Monatsblatt als PDF. */
@@ -128,6 +136,21 @@ export default function ZeiterfassungStart(props: Props) {
                             <span translate="no">{status.bemerkung}</span>
                         </AlertDescription>
                     </Alert>
+                )}
+                {props.unterschrift.status && (
+                    <div className="flex flex-wrap items-center gap-3 text-sm">
+                        <span>Elektronische Unterschrift:</span>
+                        <UnterschriftBadge
+                            status={props.unterschrift.status}
+                        />
+                        {props.unterschrift.pdf && (
+                            <Button asChild variant="outline" size="sm">
+                                <a href={props.unterschrift.pdf}>
+                                    <Download /> Unterschriebenes PDF
+                                </a>
+                            </Button>
+                        )}
+                    </div>
                 )}
                 {gesperrt && (
                     <Alert>

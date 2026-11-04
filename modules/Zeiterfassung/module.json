@@ -1,9 +1,9 @@
 {
     "key": "zeiterfassung",
     "name": "Zeiterfassung",
-    "version": "0.1.0",
+    "version": "0.2.0",
     "core": ">=0.32.0",
-    "description": "Arbeitszeit, Tätigkeiten, Projekte und Abwesenheiten pro Monat erfassen; Monatsvisum durch die Schulleitung, Export für die Lohnbuchhaltung und Monatsblatt als PDF.",
+    "description": "Arbeitszeit, Tätigkeiten, Projekte und Abwesenheiten pro Monat erfassen; Monatsvisum durch die Schulleitung, Export für die Lohnbuchhaltung und Monatsblatt als PDF; visierte Monatsrapporte elektronisch unterschreiben (DeepSign).",
     "aktiv": true,
     "datenklasse": "vertraulich",
     "db_schema": "zeit",
@@ -54,7 +54,11 @@
                     "required": true,
                     "label": "Person"
                 },
-                "datum": { "type": "date", "required": true, "label": "Datum" },
+                "datum": {
+                    "type": "date",
+                    "required": true,
+                    "label": "Datum"
+                },
                 "monat": {
                     "type": "string",
                     "required": true,
@@ -99,7 +103,11 @@
                     "required": false,
                     "label": "Projekt / Einsatz"
                 },
-                "notiz": { "type": "text", "required": false, "label": "Notiz" }
+                "notiz": {
+                    "type": "text",
+                    "required": false,
+                    "label": "Notiz"
+                }
             }
         },
         "zeit_monate": {
@@ -153,6 +161,35 @@
                     "type": "text",
                     "required": false,
                     "label": "Bemerkung Schulleitung"
+                },
+                "unterschrift_status": {
+                    "type": "enum",
+                    "values": {
+                        "versendet": "Zur Unterschrift",
+                        "teilweise": "Teilweise unterschrieben",
+                        "unterschrieben": "Unterschrieben",
+                        "abgelehnt": "Abgelehnt",
+                        "zurueckgezogen": "Zurückgezogen",
+                        "abgelaufen": "Abgelaufen",
+                        "entwurf": "Entwurf"
+                    },
+                    "required": false,
+                    "label": "Unterschrift (Status)"
+                },
+                "unterschrift_id": {
+                    "type": "string",
+                    "required": false,
+                    "label": "Unterschrift: Auftrag (signature_requests)"
+                },
+                "unterschrift_at": {
+                    "type": "datetime",
+                    "required": false,
+                    "label": "Unterschrieben am"
+                },
+                "unterschrift_pdf": {
+                    "type": "string",
+                    "required": false,
+                    "label": "Unterschriebenes PDF (Ablage des Moduls)"
                 }
             }
         }
@@ -161,9 +198,14 @@
         "sendet": [
             "zeit.monat_eingereicht",
             "zeit.monat_visiert",
-            "zeit.monat_zurueck"
+            "zeit.monat_zurueck",
+            "zeit.monat_unterschrieben"
         ],
-        "empfaengt": []
+        "empfaengt": [
+            "signatur.unterschrieben",
+            "signatur.abgeschlossen",
+            "signatur.abgelehnt"
+        ]
     },
-    "plugins": []
+    "plugins": ["deepsign"]
 }

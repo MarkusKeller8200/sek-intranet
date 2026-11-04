@@ -6,7 +6,11 @@ use App\Plugins\ActionResult;
 use App\Plugins\BasePlugin;
 use App\Plugins\DemoResponder;
 use App\Plugins\PluginContext;
+use App\Plugins\SignatureProvider;
 use Illuminate\Http\Client\Response;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Str;
 use RuntimeException;
 use Throwable;
 
@@ -21,7 +25,7 @@ use Throwable;
  * Server ausserhalb der Schweiz (INTRANET_SERVER_IN_SWITZERLAND=false) immer eingeschaltet – dort dürfen keine
  * echten Dokumente an DeepSign gehen.
  */
-class Plugin extends BasePlugin implements DemoResponder
+class Plugin extends BasePlugin implements DemoResponder, SignatureProvider
 {
     /** Feste IDs der Demo-Daten (auch Beispielwerte im API-Tester). */
     public const DEMO_DOCUMENT = '3f1c2a9e-5b7d-4e2a-9c61-1d2e3f4a5b6c';
@@ -205,6 +209,10 @@ class Plugin extends BasePlugin implements DemoResponder
     public function demoResponse(array $endpoint, array $pathParams, array $query, ?array $body, PluginContext $ctx): array
     {
         $doc = $pathParams['documentId'] ?? null;
+        // Aufträge der Schnittstelle «Unterschriften»: Zustand im Cache (siehe demoStateResponse)
+        if ($endpoint['id'] === 'document-upload' || ($doc !== null && self::demoState($doc) !== null)) {
+            return self::demoStateResponse((string) $endpoint['id'], $doc, $pathParams, $body, $ctx);
+        }
         if ($doc !== null && $doc !== self::DEMO_DOCUMENT && ! str_starts_with($doc, 'demo-')) {
             return self::demoError(404, 'Document not found (Demo-Modus kennt nur '.self::DEMO_DOCUMENT.').');
         }
@@ -225,9 +233,6 @@ class Plugin extends BasePlugin implements DemoResponder
                 'qualified' => ['zertes' => ['ras', 'did'], 'eidas' => ['ras', 'did']],
             ]],
             'document' => ['status' => 200, 'json' => self::demoDocument(self::demoStatusOf((string) $doc), $ctx, null, (string) $doc)],
-            'document-upload' => trim((string) ($body['initiatorAliasName'] ?? '')) === ''
-                ? self::demoError(400, 'initiatorAliasName is required.')
-                : ['status' => 201, 'json' => self::demoDocument('draft', $ctx, $body, 'demo-'.substr(hash('sha256', (string) json_encode($body)), 0, 12))],
             'scan-predefined' => ['status' => 200, 'json' => ['signatureMode' => 'timestamp', 'jurisdiction' => 'zertes', 'signatureFields' => [
                 ['signFieldName' => 'Unterschrift_Mitarbeiterin', 'signatureType' => 'signature', 'email' => 'anna.muster@sekbuelach.example', 'signOrder' => 0,
                     'autographPosition' => ['pageNumber' => 1, 'x' => 350, 'y' => 80, 'width' => 180, 'height' => 60]],
@@ -248,6 +253,420 @@ class Plugin extends BasePlugin implements DemoResponder
             'document-update', 'document-start', 'document-withdraw', 'document-delete', 'signee-resend', 'observer-delete' => ['status' => 204],
             default => self::demoError(501, 'Im Demo-Modus nicht simuliert.'),
         };
+    }
+
+    // ---------- Demo-Zustand (Aufträge der Schnittstelle «Unterschriften») ----------
+
+    private const DEMO_CACHE = 'deepsign-demo:';
+
+    /**
+     * @return array<string, mixed>|null
+     */
+    private static function demoState(string $id): ?array
+    {
+        $state = Cache::get(self::DEMO_CACHE.$id);
+
+        return is_array($state) ? $state : null;
+    }
+
+    /**
+     * @param  array<string, mixed>  $state
+     */
+    private static function saveDemoState(array $state): void
+    {
+        Cache::put(self::DEMO_CACHE.$state['documentId'], $state, now()->addDays(14));
+    }
+
+    /**
+     * Simulierter Ablauf wie bei DeepSign: Entwurf → Unterzeichnende → Start → je Reihenfolge unterschreiben.
+     *
+     * @param  array<string, string>  $pathParams
+     * @param  array<string, mixed>|null  $body
+     * @return array{status: int, json?: mixed}
+     */
+    private static function demoStateResponse(string $endpoint, ?string $doc, array $pathParams, ?array $body, PluginContext $ctx): array
+    {
+        if ($endpoint === 'document-upload') {
+            if (trim((string) ($body['initiatorAliasName'] ?? '')) === '') {
+                return self::demoError(400, 'initiatorAliasName is required.');
+            }
+            $file = is_array($body['_file'] ?? null) ? $body['_file'] : [];
+            $id = 'demo-'.Str::lower((string) Str::uuid());
+            $state = [
+                'documentId' => $id,
+                'documentName' => (string) ($file['name'] ?? 'Dokument.pdf'),
+                'documentMimeType' => 'application/pdf',
+                'documentStatus' => 'draft',
+                'signatureMode' => (string) ($body['signatureMode'] ?? $ctx->setting('signature_mode', 'timestamp')),
+                'jurisdiction' => (string) ($body['jurisdiction'] ?? $ctx->setting('jurisdiction', 'zertes')),
+                'comment' => (string) ($body['comment'] ?? ''),
+                'initiatorDisplayName' => (string) $body['initiatorAliasName'],
+                'creationTime' => now()->toIso8601String(),
+                'startTime' => null,
+                'completionTime' => null,
+                'signees' => [],
+                'observers' => [],
+            ];
+            self::saveDemoState($state);
+            if (is_string($file['contents'] ?? null)) {
+                Cache::put(self::DEMO_CACHE.'file:'.$id, $file['contents'], now()->addDays(14));
+            }
+
+            return ['status' => 201, 'json' => self::demoStateJson($state)];
+        }
+
+        $state = self::demoState((string) $doc) ?? [];
+        $signees = (array) ($state['signees'] ?? []);
+        $draft = ($state['documentStatus'] ?? '') === 'draft';
+        $signeeId = $pathParams['signeeId'] ?? null;
+        $signeeIndex = null;
+        foreach ($signees as $i => $s) {
+            if (is_array($s) && $s['signeeId'] === $signeeId) {
+                $signeeIndex = $i;
+            }
+        }
+        if ($signeeId !== null && $signeeIndex === null) {
+            return self::demoError(404, 'Signee not found.');
+        }
+
+        switch ($endpoint) {
+            case 'document':
+                return ['status' => 200, 'json' => self::demoStateJson($state)];
+            case 'signees':
+                return ['status' => 200, 'json' => $signees];
+            case 'signee':
+                return ['status' => 200, 'json' => $signeeIndex === null ? null : $signees[$signeeIndex]];
+            case 'signee-add':
+                if (! $draft) {
+                    return self::demoError(409, 'Document is not a draft.');
+                }
+                if (! filter_var((string) ($body['email'] ?? ''), FILTER_VALIDATE_EMAIL)) {
+                    return self::demoError(400, 'email is invalid.');
+                }
+                $signee = [
+                    'signeeId' => 'demo-'.Str::lower(Str::random(12)), 'documentId' => $doc, 'email' => (string) $body['email'],
+                    'signOrder' => (int) ($body['signOrder'] ?? 0), 'signStatus' => 'on-hold', 'signedTime' => null, 'language' => 'de',
+                    'initiatorComment' => (string) ($body['comment'] ?? ''), 'autographPosition' => $body['autographPosition'] ?? null,
+                ];
+                $state['signees'] = [...$signees, $signee];
+                self::saveDemoState($state);
+
+                return ['status' => 201, 'json' => $signee];
+            case 'observer-add':
+                $observer = ['observerId' => 'demo-'.Str::lower(Str::random(12)), 'documentId' => $doc, 'email' => (string) ($body['email'] ?? ''), 'isAdmin' => (bool) ($body['isAdmin'] ?? false)];
+                $state['observers'] = [...(array) ($state['observers'] ?? []), $observer];
+                self::saveDemoState($state);
+
+                return ['status' => 201, 'json' => $observer];
+            case 'document-start':
+                if (! $draft || $signees === []) {
+                    return self::demoError(409, 'Document must be a draft with signees.');
+                }
+                $state['documentStatus'] = 'in-progress';
+                $state['startTime'] = now()->toIso8601String();
+                self::saveDemoState(self::demoAdvanceOrder($state));
+
+                return ['status' => 204];
+            case 'document-withdraw':
+                $state['documentStatus'] = 'withdrawn';
+                self::saveDemoState($state);
+
+                return ['status' => 204];
+            case 'document-delete':
+                if (! in_array($state['documentStatus'] ?? '', ['draft', 'withdrawn'], true)) {
+                    return self::demoError(409, 'Only drafts or withdrawn documents can be deleted.');
+                }
+                Cache::forget(self::DEMO_CACHE.$doc);
+                Cache::forget(self::DEMO_CACHE.'file:'.$doc);
+
+                return ['status' => 204];
+            case 'document-access-url':
+                return ['status' => 200, 'json' => ['url' => 'https://app.deepsign.swiss/demo/'.$doc, 'validUntil' => now()->addMinutes(5)->toIso8601String()]];
+            case 'signee-resend':
+            case 'document-update':
+            case 'signee-delete':
+            case 'observer-delete':
+                return ['status' => 204];
+            default:
+                return self::demoError(501, 'Im Demo-Modus nicht simuliert.');
+        }
+    }
+
+    /**
+     * Nach Start bzw. einer Unterschrift: die nächste Reihenfolge-Gruppe ist an der Reihe, sonst fertig.
+     *
+     * @param  array<string, mixed>  $state
+     * @return array<string, mixed>
+     */
+    private static function demoAdvanceOrder(array $state): array
+    {
+        $signees = array_values(array_filter((array) $state['signees'], 'is_array'));
+        $open = array_filter($signees, fn (array $s): bool => $s['signStatus'] !== 'signed');
+        if ($open === []) {
+            $state['documentStatus'] = 'signed';
+            $state['completionTime'] = now()->toIso8601String();
+
+            return $state;
+        }
+        $next = min(array_map(fn (array $s): int => (int) $s['signOrder'], $open));
+        foreach ($signees as $i => $s) {
+            if ($s['signStatus'] !== 'signed') {
+                $signees[$i]['signStatus'] = (int) $s['signOrder'] === $next ? 'pending' : 'on-hold';
+            }
+        }
+        $state['signees'] = $signees;
+
+        return $state;
+    }
+
+    /**
+     * @param  array<string, mixed>  $state
+     * @return array<string, mixed>
+     */
+    private static function demoStateJson(array $state): array
+    {
+        $signees = array_values(array_filter((array) ($state['signees'] ?? []), 'is_array'));
+        $status = (string) ($state['documentStatus'] ?? 'draft');
+
+        return [
+            'documentId' => $state['documentId'] ?? null,
+            'documentName' => $state['documentName'] ?? null,
+            'documentMimeType' => 'application/pdf',
+            // Im echten Betrieb ca. 1 Minute gültig, ohne Anmeldung abrufbar
+            'documentUrl' => $status === 'signed' ? 'https://api.sign.deepbox.swiss/demo/download/'.$state['documentId'] : null,
+            'documentStatus' => $status,
+            'signStatus' => match (true) {
+                $status === 'signed' => 'signed',
+                $status === 'draft' => 'pending',
+                count(array_filter($signees, fn (array $s): bool => $s['signStatus'] === 'signed')) > 0 => 'in-progress',
+                default => 'pending',
+            },
+            'signatureMode' => $state['signatureMode'] ?? 'timestamp',
+            'jurisdiction' => $state['jurisdiction'] ?? 'zertes',
+            'comment' => $state['comment'] ?? '',
+            'initiatorDisplayName' => $state['initiatorDisplayName'] ?? '',
+            'creationTime' => $state['creationTime'] ?? null,
+            'startTime' => $state['startTime'] ?? null,
+            'completionTime' => $state['completionTime'] ?? null,
+            'signees' => $signees,
+            'observers' => array_values((array) ($state['observers'] ?? [])),
+        ];
+    }
+
+    // ---------- Schnittstelle «Unterschriften» (App\Support\Signatures) ----------
+
+    public function signatureSend(PluginContext $ctx, array $request, string $pdf, ?array $callback): array
+    {
+        $data = array_filter([
+            'initiatorAliasName' => (string) $ctx->setting('initiator_alias', 'Sekundarschule Bülach'),
+            'sendMail' => 'others',
+            'signatureMode' => (string) $ctx->setting('signature_mode', 'timestamp'),
+            'jurisdiction' => (string) $ctx->setting('jurisdiction', 'zertes'),
+            'comment' => $request['comment'] ?? null,
+            'companyId' => $ctx->setting('company_id'),
+        ], fn (mixed $v): bool => $v !== null && $v !== '');
+        if ($callback !== null) {
+            $data += [
+                'callbackUrl' => $callback['url'],
+                'callbackSecret' => $callback['secret'],
+                'callbackEventTypes' => ['signee-completed', 'document-completed'],
+            ];
+        }
+
+        $upload = $ctx->call('document-upload', [], $data, ['name' => $request['file_name'], 'contents' => $pdf]);
+        $documentId = $upload->json('documentId');
+        if (! $upload->successful() || ! is_string($documentId) || $documentId === '') {
+            throw new RuntimeException(self::failure($upload));
+        }
+
+        try {
+            $ids = [];
+            foreach ($request['signees'] as $signee) {
+                $added = $ctx->call('signee-add', ['documentId' => $documentId], array_filter([
+                    'email' => $signee['email'],
+                    'signOrder' => $signee['order'],
+                    'language' => 'de',
+                    'autographPosition' => $signee['position'] ?? null,
+                ], fn (mixed $v): bool => $v !== null));
+                $signeeId = $added->json('signeeId');
+                if (! $added->successful() || ! is_string($signeeId)) {
+                    throw new RuntimeException('Unterzeichnende «'.$signee['email'].'»: '.self::failure($added));
+                }
+                $ids[] = $signeeId;
+            }
+            foreach ($request['observers'] as $email) {
+                $observer = $ctx->call('observer-add', ['documentId' => $documentId], ['email' => $email, 'isAdmin' => false, 'language' => 'de']);
+                if (! $observer->successful()) {
+                    throw new RuntimeException('Beobachtende «'.$email.'»: '.self::failure($observer));
+                }
+            }
+        } catch (RuntimeException $e) {
+            // Entwurf wieder entfernen, damit bei DeepSign nichts liegen bleibt
+            $ctx->call('document-delete', ['documentId' => $documentId]);
+
+            throw $e;
+        }
+
+        return ['provider_id' => $documentId, 'signee_ids' => $ids];
+    }
+
+    public function signatureStart(PluginContext $ctx, string $providerId): void
+    {
+        self::expect($ctx->call('document-start', ['documentId' => $providerId], []));
+    }
+
+    public function signatureStatus(PluginContext $ctx, string $providerId): array
+    {
+        $response = $ctx->call('document', ['documentId' => $providerId]);
+        if (! $response->successful()) {
+            throw new RuntimeException(self::failure($response));
+        }
+
+        $signees = [];
+        $anySigned = false;
+        foreach ((array) $response->json('signees') as $s) {
+            if (! is_array($s)) {
+                continue;
+            }
+            $status = match ((string) ($s['signStatus'] ?? '')) {
+                'signed' => 'unterschrieben',
+                'rejected' => 'abgelehnt',
+                'on-hold' => 'wartet',
+                default => 'offen',
+            };
+            $anySigned = $anySigned || $status === 'unterschrieben';
+            $signees[] = [
+                'email' => (string) ($s['email'] ?? ''),
+                'status' => $status,
+                'signed_at' => is_string($s['signedTime'] ?? null) ? $s['signedTime'] : null,
+                'provider_id' => (string) ($s['signeeId'] ?? ''),
+            ];
+        }
+
+        $status = match ((string) $response->json('documentStatus')) {
+            'draft' => 'entwurf',
+            'signed' => 'unterschrieben',
+            'withdrawn' => 'zurueckgezogen',
+            'rejected' => 'abgelehnt',
+            default => $anySigned ? 'teilweise' : 'versendet',
+        };
+
+        return ['status' => $status, 'signees' => $signees];
+    }
+
+    public function signatureDownload(PluginContext $ctx, string $providerId): ?string
+    {
+        if ($ctx->demo()) {
+            $file = Cache::get(self::DEMO_CACHE.'file:'.$providerId);
+
+            return is_string($file) ? $file : null;
+        }
+
+        $details = $ctx->call('document', ['documentId' => $providerId]);
+        $url = $details->json('documentUrl');
+        if (! $details->successful() || ! is_string($url) || ! str_starts_with($url, 'https://')) {
+            return null;
+        }
+        // documentUrl gilt ca. 1 Minute und wird ohne Anmeldung abgerufen (kein Authorization-Header)
+        $ctx->log('GET documentUrl (ohne Anmeldung)');
+        $file = Http::connectTimeout(5)->timeout(60)->get($url);
+        $ctx->log("→ HTTP {$file->status()}");
+
+        return $file->successful() ? $file->body() : null;
+    }
+
+    public function signatureRemind(PluginContext $ctx, string $providerId, string $signeeId): void
+    {
+        self::expect($ctx->call('signee-resend', ['documentId' => $providerId, 'signeeId' => $signeeId], []));
+    }
+
+    public function signatureWithdraw(PluginContext $ctx, string $providerId): void
+    {
+        self::expect($ctx->call('document-withdraw', ['documentId' => $providerId], []));
+    }
+
+    public function signatureDelete(PluginContext $ctx, string $providerId): void
+    {
+        self::expect($ctx->call('document-delete', ['documentId' => $providerId]));
+    }
+
+    public function signatureAccessUrl(PluginContext $ctx, string $providerId): ?string
+    {
+        $response = $ctx->call('document-access-url', ['documentId' => $providerId], []);
+        if (! $response->successful()) {
+            throw new RuntimeException(self::failure($response));
+        }
+        foreach (['url', 'documentAccessUrl', 'accessUrl'] as $key) {
+            $url = $response->json($key);
+            if (is_string($url) && str_starts_with($url, 'https://')) {
+                return $url;
+            }
+        }
+
+        return null;
+    }
+
+    public function signatureVerifyCallback(array $headers, string $raw, string $secret): bool
+    {
+        $value = null;
+        foreach ($headers as $name => $v) {
+            if (strtolower((string) $name) === 'x-deepsign-signature-256') {
+                $value = is_array($v) ? ($v[0] ?? null) : $v;
+            }
+        }
+        if (! is_string($value) || $value === '' || $secret === '') {
+            return false;
+        }
+        $value = trim($value);
+        if (str_starts_with(strtolower($value), 'sha256=')) {
+            $value = substr($value, 7);
+        }
+        $hex = hash_hmac('sha256', $raw, $secret);
+        $b64 = base64_encode((string) hex2bin($hex));
+
+        return hash_equals($hex, strtolower($value)) || hash_equals($b64, $value);
+    }
+
+    public function signatureCallbackId(string $raw): ?string
+    {
+        $json = json_decode($raw, true);
+        if (! is_array($json)) {
+            return null;
+        }
+        foreach ([$json, $json['document'] ?? null, $json['data'] ?? null] as $part) {
+            if (is_array($part) && is_string($part['documentId'] ?? null) && $part['documentId'] !== '') {
+                return $part['documentId'];
+            }
+        }
+
+        return null;
+    }
+
+    public function signatureSimulate(PluginContext $ctx, string $providerId): bool
+    {
+        $state = self::demoState($providerId);
+        if (! $ctx->demo() || $state === null || ($state['documentStatus'] ?? '') !== 'in-progress') {
+            return false;
+        }
+        $signees = array_values(array_filter((array) $state['signees'], 'is_array'));
+        foreach ($signees as $i => $s) {
+            if ($s['signStatus'] === 'pending') {
+                $signees[$i]['signStatus'] = 'signed';
+                $signees[$i]['signedTime'] = now()->toIso8601String();
+                break;
+            }
+        }
+        $state['signees'] = $signees;
+        self::saveDemoState(self::demoAdvanceOrder($state));
+
+        return true;
+    }
+
+    private static function expect(Response $response): void
+    {
+        if (! $response->successful()) {
+            throw new RuntimeException(self::failure($response));
+        }
     }
 
     /**

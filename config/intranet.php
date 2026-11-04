@@ -327,6 +327,13 @@ return [
     // (IDA ADR-005: produktiv Infomaniak). Auf dem Hostinger-Prototyp: false.
     'server_in_switzerland' => (bool) env('INTRANET_SERVER_IN_SWITZERLAND', false),
 
+    // Unterschriften (#38–#43): Webhook nur, wenn der Server von aussen ohne Seitenpasswort erreichbar ist
+    'signatures' => [
+        'webhook' => (bool) env('INTRANET_SIGNATURE_WEBHOOK', env('INTRANET_SERVER_IN_SWITZERLAND', false)),
+        'poll_minutes' => 15,
+        'fetch_warning_hours' => 24,
+    ],
+
     // Gemeinsames Passwort vor der ganzen Seite (HTTP Basic Auth).
     // Leer = keine Sperre. Benutzername leer = beliebiger Benutzername.
     'access' => [
@@ -433,6 +440,7 @@ return [
         'view-glossary' => ['label' => 'Glossar ansehen', 'roles' => ['admin', 'schulleitung', 'verwaltung', 'ict', 'redaktion', 'lehrperson', 'mitarbeitende', 'schueler', 'eltern', 'extern']],
         'edit-glossary' => ['label' => 'Glossar pflegen (eigene Abkürzungen und Bezeichnungen, Listen, Import)', 'roles' => ['admin', 'schulleitung', 'verwaltung']],
         'edit-glossary-official' => ['label' => 'Offizielle Begriffe im Glossar ändern', 'roles' => ['admin']],
+        'manage-signatures' => ['label' => 'Unterschriften: Übersicht, erinnern, zurückziehen (Personalabteilung)', 'roles' => ['admin', 'verwaltung']],
         'view-students' => ['label' => 'Schüler:innen und Eltern sehen', 'roles' => ['admin', 'schulleitung', 'verwaltung', 'ict', 'lehrperson']],
         'use-gui' => ['label' => 'GUI-Prototypen ansehen und Wünsche erfassen', 'roles' => ['admin', 'schulleitung', 'ict', 'redaktion']],
         'review-gui' => ['label' => 'GUI-Prototypen prüfen und freigeben', 'roles' => ['admin', 'schulleitung']],
@@ -746,6 +754,13 @@ return [
                     'icon' => 'UsersRound',
                     'description' => 'Portal für Anliegen von Eltern und Erziehungsberechtigten.',
                     'embed' => ['url' => 'https://sekbuelach.atlassian.net/servicedesk/customer/portal/3', 'open' => 'both'],
+                ],
+                'unterschriften' => [
+                    'title' => 'Unterschriften',
+                    'icon' => 'Signature',
+                    'href' => '/unterschriften',
+                    'can' => 'manage-signatures',
+                    'description' => 'Elektronische Unterschriften (DeepSign): offene und abgeschlossene Aufträge, erinnern, zurückziehen.',
                 ],
             ],
         ],
@@ -1171,6 +1186,31 @@ return [
                 'created_by' => ['type' => 'ref', 'references' => 'users', 'required' => false, 'label' => 'Ausgelöst von'],
                 'read_at' => ['type' => 'datetime', 'required' => false, 'label' => 'Gelesen am'],
                 'sent_at' => ['type' => 'datetime', 'required' => true, 'label' => 'Gesendet am'],
+            ],
+        ],
+        'signature_requests' => [
+            'label' => 'System: Unterschriften',
+            'description' => 'Aufträge zur elektronischen Unterschrift (Schnittstelle «Unterschriften», Anbieter z. B. DeepSign): auslösendes Modul, Bezug, Unterzeichnende mit Status. Das PDF liegt nicht hier, sondern beim Modul.',
+            'fields' => [
+                'module' => ['type' => 'string', 'required' => true, 'label' => 'Auslösendes Modul (Schlüssel)'],
+                'reference' => ['type' => 'string', 'required' => true, 'label' => 'Bezug im Modul (z. B. person:<id>:2026-10)'],
+                'title' => ['type' => 'string', 'required' => true, 'label' => 'Titel'],
+                'file_name' => ['type' => 'string', 'required' => true, 'label' => 'Dateiname'],
+                'provider' => ['type' => 'string', 'required' => true, 'label' => 'Anbieter (Plugin)'],
+                'provider_id' => ['type' => 'string', 'required' => false, 'label' => 'ID beim Anbieter'],
+                'status' => ['type' => 'enum', 'values' => ['entwurf' => 'Entwurf', 'versendet' => 'versendet', 'teilweise' => 'teilweise unterschrieben', 'unterschrieben' => 'unterschrieben', 'abgelehnt' => 'abgelehnt', 'zurueckgezogen' => 'zurückgezogen', 'abgelaufen' => 'abgelaufen', 'fehler' => 'Fehler'], 'required' => true, 'label' => 'Status'],
+                'signees' => ['type' => 'json', 'required' => true, 'label' => 'Unterzeichnende [{person_id, name, email, order, status, signed_at, provider_id}]'],
+                'observers' => ['type' => 'json', 'required' => false, 'label' => 'Beobachtende (E-Mail)'],
+                'comment' => ['type' => 'text', 'required' => false, 'label' => 'Nachricht an die Unterzeichnenden'],
+                'callback_secret' => ['type' => 'string', 'required' => true, 'label' => 'Geheimnis für den Webhook (verschlüsselt)'],
+                'created_by' => ['type' => 'ref', 'references' => 'users', 'required' => false, 'label' => 'Ausgelöst von'],
+                'sent_at' => ['type' => 'datetime', 'required' => false, 'label' => 'Versendet am'],
+                'completed_at' => ['type' => 'datetime', 'required' => false, 'label' => 'Abgeschlossen am'],
+                'fetched_at' => ['type' => 'datetime', 'required' => false, 'label' => 'Unterschriebenes PDF abgeholt am'],
+                'last_checked_at' => ['type' => 'datetime', 'required' => false, 'label' => 'Status zuletzt abgefragt'],
+                'warned_at' => ['type' => 'datetime', 'required' => false, 'label' => 'Warnung «nicht abgeholt» gesendet'],
+                'withdrawn_by' => ['type' => 'ref', 'references' => 'users', 'required' => false, 'label' => 'Zurückgezogen von'],
+                'error' => ['type' => 'text', 'required' => false, 'label' => 'Fehler beim Senden'],
             ],
         ],
         'themes' => [

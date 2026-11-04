@@ -10,8 +10,15 @@ import { Textarea } from '@/components/ui/textarea';
 import EintraegeTabelle from '../components/eintraege-tabelle';
 import MonatNavigation from '../components/monat-navigation';
 import StatusBadge from '../components/status-badge';
+import UnterschriftKarte from '../components/unterschrift';
 import { druckeMonatsblatt } from '../lib/monatsblatt';
-import type { Eintrag, Kategorien, Status, Summen } from '../lib/types';
+import type {
+    Eintrag,
+    Kategorien,
+    Status,
+    Summen,
+    Unterschrift,
+} from '../lib/types';
 
 type Props = {
     monat: string;
@@ -21,6 +28,7 @@ type Props = {
     summen: Summen;
     kategorien: Kategorien;
     visiertVon: string | null;
+    unterschrift: Unterschrift;
 };
 
 /** Monatsblatt einer Person für das Visum: visieren oder mit Bemerkung zurückgeben. */
@@ -99,6 +107,15 @@ export default function ZeiterfassungPerson(props: Props) {
                             <span translate="no">{status.bemerkung}</span>
                         </AlertDescription>
                     </Alert>
+                )}
+                {(status.status === 'visiert' ||
+                    props.unterschrift.status) && (
+                    <UnterschriftKarte
+                        personId={person.id}
+                        monat={monat}
+                        visiert={status.status === 'visiert'}
+                        unterschrift={props.unterschrift}
+                    />
                 )}
                 <Card>
                     <CardContent>

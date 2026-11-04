@@ -28,4 +28,10 @@ php artisan intranet:seed --no-interaction --no-ansi
 
 chown -R www-data:www-data storage bootstrap/cache
 
+# Zeitplan im Hintergrund (z. B. Abfrage der Unterschriften alle 15 Minuten, routes/console.php).
+# Ausschalten mit INTRANET_SCHEDULER=false. Läuft als www-data, Ausgabe in die Container-Logs.
+if [ "${INTRANET_SCHEDULER:-true}" = "true" ]; then
+    su -s /bin/sh www-data -c "php artisan schedule:work --no-ansi" > /proc/1/fd/1 2>&1 &
+fi
+
 exec "$@"

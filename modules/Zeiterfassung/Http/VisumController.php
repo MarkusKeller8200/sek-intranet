@@ -4,15 +4,21 @@ namespace Modules\Zeiterfassung\Http;
 
 use App\Data\Contracts\UserRepository;
 use App\Http\Controllers\Controller;
+use App\Auth\IntranetUser;
 use App\Support\Notifications;
+use App\Support\Signatures;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
+use Illuminate\Validation\Rule;
 use InvalidArgumentException;
+use RuntimeException;
 use Modules\Zeiterfassung\Data\Contracts\EintragRepository;
 use Modules\Zeiterfassung\Data\Contracts\MonatRepository;
 use Modules\Zeiterfassung\Kategorien;
+use Modules\Zeiterfassung\MonatsblattPdf;
+use Modules\Zeiterfassung\Unterschriften;
 use Modules\Zeiterfassung\Zeitkonto;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
@@ -27,6 +33,7 @@ class VisumController extends Controller
         private readonly MonatRepository $monate,
         private readonly UserRepository $users,
         private readonly Notifications $notifications,
+        private readonly Signatures $signatures,
     ) {}
 
     public function index(Request $request): Response
@@ -56,7 +63,91 @@ class VisumController extends Controller
             'summen' => Zeitkonto::summen($liste),
             'kategorien' => Kategorien::all(),
             'visiertVon' => isset($status['visiert_by']) ? (string) ($this->users->find((string) $status['visiert_by'])['name'] ?? '') : null,
+            'unterschrift' => $this->unterschriftInfo($person, $monat, $status),
         ]);
+    }
+
+    /**
+     * Visierten Monatsrapport zur elektronischen Unterschrift senden (#43): PDF auf dem Server, Mitarbeiter:in und
+     * Schulleitung (die angemeldete Person) in der gewählten Reihenfolge, optional Beobachtende (Personalabteilung).
+     */
+    public function unterschrift(Request $request, string $person): RedirectResponse
+    {
+        $data = $request->validate([
+            'monat' => ['required', 'string'],
+            'reihenfolge' => ['required', Rule::in(['person_zuerst', 'schulleitung_zuerst', 'gleichzeitig'])],
+            'beobachtende' => ['nullable', 'email', 'max:200'],
+        ]);
+        $monat = self::monatAus($data['monat']);
+        $status = $this->monate->status($person, $monat);
+        $user = $this->users->find($person);
+        $sl = $request->user();
+        abort_if($user === null || ! $sl instanceof IntranetUser, 404);
+        if (($status['status'] ?? null) !== 'visiert') {
+            $this->toast('Nur visierte Monate können zur Unterschrift gesendet werden.', 'error');
+
+            return back();
+        }
+        foreach ($this->signatures->forReference('zeiterfassung', Unterschriften::bezug($person, $monat)) as $auftrag) {
+            if (in_array($auftrag['status'], ['entwurf', ...Signatures::OPEN, 'unterschrieben'], true)) {
+                $this->toast('Für diesen Monat läuft bereits eine Unterschrift.', 'error');
+
+                return back();
+            }
+        }
+
+        $slName = (string) ($this->users->find((string) $sl->getAuthIdentifier())['name'] ?? $sl->name());
+        $slEmail = (string) ($this->users->find((string) $sl->getAuthIdentifier())['email'] ?? '');
+        $liste = $this->eintraege->fuerPersonMonat($person, $monat);
+        $dokument = MonatsblattPdf::erstellen((string) $user['name'], $monat, $liste, Zeitkonto::summen($liste), $slName,
+            is_string($status['visiert_at'] ?? null) ? $status['visiert_at'] : null, ['person' => (string) $user['name'], 'schulleitung' => $slName]);
+        [$ordnungPerson, $ordnungSl] = match ($data['reihenfolge']) {
+            'schulleitung_zuerst' => [1, 0],
+            'gleichzeitig' => [0, 0],
+            default => [0, 1],
+        };
+        $titel = 'Monatsrapport '.MonatsblattPdf::monatName($monat).' – '.(string) $user['name'];
+
+        try {
+            $auftrag = $this->signatures->create([
+                'module' => 'zeiterfassung',
+                'reference' => Unterschriften::bezug($person, $monat),
+                'title' => $titel,
+                'file_name' => 'Monatsrapport-'.$monat.'-'.preg_replace('/[^A-Za-z0-9]+/', '-', (string) $user['name']).'.pdf',
+                'comment' => 'Bitte den Monatsrapport '.MonatsblattPdf::monatName($monat).' unterschreiben.',
+                'signees' => [
+                    ['person_id' => $person, 'name' => (string) $user['name'], 'email' => (string) ($user['email'] ?? ''), 'order' => $ordnungPerson, 'position' => $dokument['felder']['person']],
+                    ['person_id' => (string) $sl->getAuthIdentifier(), 'name' => $slName, 'email' => $slEmail, 'order' => $ordnungSl, 'position' => $dokument['felder']['schulleitung']],
+                ],
+                'observers' => isset($data['beobachtende']) && $data['beobachtende'] !== '' ? [(string) $data['beobachtende']] : [],
+            ], $dokument['pdf'], $sl);
+        } catch (InvalidArgumentException|RuntimeException $e) {
+            $this->toast($e->getMessage(), 'error');
+
+            return back();
+        }
+
+        $this->monate->setzen($person, $monat, ['unterschrift_status' => (string) $auftrag['status'], 'unterschrift_id' => (string) $auftrag['id'], 'unterschrift_at' => null, 'unterschrift_pdf' => null]);
+        $this->notifications->toUsers([$person], 'zeit.unterschrift', "Monatsrapport {$monat} zur Unterschrift", 'Du erhältst eine E-Mail von DeepSign mit dem Link zum Unterschreiben.', "/zeiterfassung?monat={$monat}", (string) $sl->getAuthIdentifier());
+        $this->toast('Zur Unterschrift gesendet.');
+
+        return back();
+    }
+
+    /**
+     * @param  array<string, mixed>  $status
+     * @return array<string, mixed>
+     */
+    private function unterschriftInfo(string $person, string $monat, array $status): array
+    {
+        $auftraege = $this->signatures->forReference('zeiterfassung', Unterschriften::bezug($person, $monat));
+
+        return [
+            'status' => $status['unterschrift_status'] ?? null,
+            'pdf' => isset($status['unterschrift_pdf']) ? "/zeiterfassung/unterschrift/{$person}/{$monat}" : null,
+            'anbieter' => $this->signatures->provider(),
+            'auftrag' => $auftraege[0] ?? null,
+        ];
     }
 
     public function visieren(Request $request, string $person): RedirectResponse

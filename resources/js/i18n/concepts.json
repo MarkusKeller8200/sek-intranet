@@ -3220,5 +3220,91 @@
     ],
     "Beispiel einsetzen": ["Use example", "Biispiel iisetze"],
     "Felder löschen": ["Clear fields", "Fälder lösche"],
-    "(Pfad)": ["(path)", "(Pfad)"]
+    "(Pfad)": ["(path)", "(Pfad)"],
+    "Kein Anbieter eingerichtet": [
+        "No provider configured",
+        "Kein Aabieter iigrichtet"
+    ],
+    "Unter Prototyp → Plugins das Plugin DeepSign einrichten und einschalten. Für das Senden «Schreibende Aktionen erlauben» einschalten.": [
+        "Set up and enable the DeepSign plugin under Prototype → Plugins. To send, switch on «Allow write actions».",
+        "Under Prototyp → Plugins s Plugin DeepSign iirichte und iischalte. Zum Schicke «Schriibendi Aktione erlaube» iischalte."
+    ],
+    "Demo-Modus": ["Demo mode", "Demo-Modus"],
+    "Es geht nichts an DeepSign. Mit «Demo: nächste Unterschrift» lässt sich der Ablauf durchspielen.": [
+        "Nothing is sent to DeepSign. Use «Demo: next signature» to play through the process.",
+        "Es gaht nüt a DeepSign. Mit «Demo: nächschti Unterschrift» chasch de Ablauf dureschpile."
+    ],
+    "Monat": ["Month", "Monet"],
+    "Alle aktualisieren": ["Refresh all", "Alli aktualisiere"],
+    "Aufträge entstehen in den Modulen, z. B. beim Visum der Zeiterfassung.": [
+        "Requests are created in the modules, e.g. when approving time records.",
+        "Ufträg entstönd i de Modul, z. B. bim Visum vo de Ziiterfassig."
+    ],
+    "Dokument": ["Document", "Dokumänt"],
+    "Unterzeichnende": ["Signers", "Unterzeichnendi"],
+    "Zeitpunkte": ["Times", "Ziitpünkt"],
+    "noch nicht abgelegt": ["not stored yet", "nonig abgleit"],
+    "Starten": ["Start", "Starte"],
+    "Unterschriften": ["Signatures", "Unterschrifte"],
+    "Elektronische Unterschriften aus den Modulen (z. B. Monatsrapporte der Zeiterfassung).": [
+        "Electronic signatures from the modules (e.g. monthly time reports).",
+        "Elektronischi Unterschrifte us de Modul (z. B. Monetsrapport vo de Ziiterfassig)."
+    ],
+    "Keine Aufträge": ["No requests", "Kei Ufträg"],
+    "Erinnerung senden?": ["Send reminder?", "Erinnerig schicke?"],
+    "Status aktualisieren": ["Refresh status", "Status aktualisiere"],
+    "In DeepSign öffnen (Link {n} Minuten gültig, volle Kontrolle)": [
+        "Open in DeepSign (link valid {n} minutes, full control)",
+        "I DeepSign uftue (Link {n} Minute gültig, volli Kontrolle)"
+    ],
+    "In DeepSign öffnen": ["Open in DeepSign", "I DeepSign uftue"],
+    "Zurückziehen?": ["Withdraw?", "Zrugzieh?"],
+    "Niemand kann danach mehr unterschreiben. Ein zurückgezogenes Dokument lässt sich nicht neu starten, nur neu senden.": [
+        "Nobody can sign afterwards. A withdrawn document cannot be restarted, only sent again.",
+        "Nachher cha niemer meh unterschriibe. Es zruggzogenigs Dokumänt cha mer nöd neu starte, nur neu schicke."
+    ],
+    "Auftrag löschen?": ["Delete request?", "Uftrag lösche?"],
+    "Der Auftrag verschwindet aus der Übersicht (im Änderungsverlauf nachvollziehbar). Ein bereits abgelegtes PDF bleibt beim Modul.": [
+        "The request disappears from the overview (traceable in the change history). A PDF already stored stays with the module.",
+        "De Uftrag verschwindet us de Übersicht (im Änderigsverlauf nachvollziehbar). Es scho abgleits PDF bliibt bim Modul."
+    ],
+    "Kein Link erhalten.": ["No link received.", "Kei Link übercho."],
+    "Unterschriften: Übersicht, erinnern, zurückziehen (Personalabteilung)": [
+        "Signatures: overview, remind, withdraw (HR)",
+        "Unterschrifte: Übersicht, erinnere, zrugzieh (Personalabteilig)"
+    ],
+    "System: Unterschriften": ["System: signatures", "System: Unterschrifte"],
+    "Auslösendes Modul (Schlüssel)": [
+        "Triggering module (key)",
+        "Uslösends Modul (Schlüssel)"
+    ],
+    "Dateiname": ["File name", "Dateiname"],
+    "Anbieter (Plugin)": ["Provider (plugin)", "Aabieter (Plugin)"],
+    "ID beim Anbieter": ["ID at provider", "ID bim Aabieter"],
+    "Beobachtende (E-Mail)": ["Observers (email)", "Beobachtendi (E-Mail)"],
+    "Nachricht an die Unterzeichnenden": [
+        "Message to the signers",
+        "Nachricht a d Unterzeichnende"
+    ],
+    "Geheimnis für den Webhook (verschlüsselt)": [
+        "Webhook secret (encrypted)",
+        "Gheimnis für de Webhook (verschlüsslet)"
+    ],
+    "Versendet am": ["Sent on", "Verschickt am"],
+    "Abgeschlossen am": ["Completed on", "Abgschlosse am"],
+    "Unterschriebenes PDF abgeholt am": [
+        "Signed PDF fetched on",
+        "Unterschriibnigs PDF abgholt am"
+    ],
+    "Status zuletzt abgefragt": [
+        "Status last checked",
+        "Status zletscht abgfrogt"
+    ],
+    "Warnung «nicht abgeholt» gesendet": [
+        "Warning «not fetched» sent",
+        "Warnig «nöd abgholt» gschickt"
+    ],
+    "Zurückgezogen von": ["Withdrawn by", "Zrugzoge vo"],
+    "Fehler beim Senden": ["Error when sending", "Fähler bim Schicke"],
+    "Unterschrieben am": ["Signed on", "Unterschriibe am"]
 }

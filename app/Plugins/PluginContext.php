@@ -159,10 +159,14 @@ final class PluginContext
     /**
      * Endpunkt aus dem Manifest aufrufen.
      *
+     * Mit $file geht der Aufruf als multipart/form-data: Teil «file» (bzw. field) mit der Datei, Teil «data»
+     * (bzw. data_field) mit $body als JSON (z. B. DeepSign POST /documents/file).
+     *
      * @param  array<string, mixed>  $params  Pfad- ({name}) und Abfrageparameter
      * @param  array<string, mixed>|null  $body
+     * @param  array{name: string, contents: string, mime?: string, field?: string, data_field?: string}|null  $file
      */
-    public function call(string $endpointId, array $params = [], ?array $body = null): Response
+    public function call(string $endpointId, array $params = [], ?array $body = null, ?array $file = null): Response
     {
         $endpoint = $this->manifest->endpoint($endpointId)
             ?? throw new InvalidArgumentException("Unbekannter Endpunkt «{$endpointId}».");
@@ -210,7 +214,8 @@ final class PluginContext
 
         if ($this->demo !== null) {
             $this->log("{$method} {$path} (Demo-Modus, nichts an den Dienst gesendet)");
-            $answer = $this->demo->demoResponse($endpoint, $pathParams, $query, $body, $this);
+            $demoBody = $file === null ? $body : ($body ?? []) + ['_file' => ['name' => $file['name'], 'mime' => $file['mime'] ?? 'application/pdf', 'contents' => $file['contents']]];
+            $answer = $this->demo->demoResponse($endpoint, $pathParams, $query, $demoBody, $this);
             $json = array_key_exists('json', $answer) ? (string) json_encode($answer['json'], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) : '';
             $response = new Response(new Psr7Response($answer['status'], $json === '' ? [] : ['Content-Type' => 'application/json'], $json));
             $this->log("→ HTTP {$response->status()} (Demo)");
@@ -222,9 +227,17 @@ final class PluginContext
         $host = isset($endpoint['host']) ? (string) $endpoint['host'] : null;
         $request = $this->http($host)->withQueryParameters($query);
 
-        $response = $body === null
-            ? $request->send($method, $path)
-            : $request->send($method, $path, ['json' => $body]);
+        if ($file !== null) {
+            $request = $request->attach($file['field'] ?? 'file', $file['contents'], $file['name'], ['Content-Type' => $file['mime'] ?? 'application/pdf']);
+            if ($body !== null) {
+                $request = $request->attach($file['data_field'] ?? 'data', (string) json_encode($body, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES), 'data.json', ['Content-Type' => 'application/json']);
+            }
+            $response = $request->send($method, $path);
+        } else {
+            $response = $body === null
+                ? $request->send($method, $path)
+                : $request->send($method, $path, ['json' => $body]);
+        }
 
         $this->log("→ HTTP {$response->status()}");
 

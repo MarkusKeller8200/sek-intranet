@@ -75,6 +75,43 @@ DeepSign (api.sign.deepbox.swiss)
   (404 unbekannte ID, 400 ungültige E-Mail). Auf einem Server ausserhalb der Schweiz immer eingeschaltet.
 - Aktionen «Dokumente anzeigen» und «Signaturstufen anzeigen»; Tests mit `Http::fake()` (Token, 401, 429).
 
+## Umsetzung (#38–#43)
+
+**Kern-Schnittstelle «Unterschriften»** (`App\Support\Signatures`, Sammlung `signature_requests`, Recht
+`manage-signatures`):
+
+- `create()` legt den Auftrag an, lädt das PDF beim Anbieter hoch (multipart: `data` + `file`), fügt Unterzeichnende
+  in Reihenfolge (`signOrder`, Position `autographPosition`) und Beobachtende hinzu und startet ihn. Das PDF wird im
+  Kern nicht gespeichert.
+- Status: entwurf → versendet → teilweise → unterschrieben / abgelehnt / zurueckgezogen / abgelaufen (von DeepSign
+  nach 30 Tagen zurückgezogen) / fehler. Je Person: wartet (Reihenfolge), offen, unterschrieben, abgelehnt.
+- **Ereignisse an das Modul** (`Signatures::listen('<modul>', fn ($ereignis, $auftrag, $pdf) => …)` im
+  ServiceProvider des Moduls): `signatur.unterschrieben`, `signatur.abgeschlossen` (mit PDF; das Modul gibt `true`
+  zurück, wenn es abgelegt ist), `signatur.abgelehnt`.
+- Anbieter über `App\Plugins\SignatureProvider` (DeepSign setzt es um); der Kern kennt DeepSign nicht.
+- **Webhook** `POST /api/signaturen/{anbieter}/callback` (ausserhalb der Anmeldung): Signatur
+  `X-DeepSign-Signature-256` = HMAC-SHA-256 des Inhalts mit dem Geheimnis des Auftrags (hex, optional `sha256=`),
+  nur bekannte Dokument-IDs, Rate-Limit; danach fragt das Intranet den Status selbst ab. Nur aktiv mit
+  `INTRANET_SIGNATURE_WEBHOOK=true` (Vorgabe: wie `INTRANET_SERVER_IN_SWITZERLAND`).
+- **Regelmässige Abfrage** `php artisan intranet:signatures-refresh` alle 15 Minuten (`routes/console.php`, im
+  Container über `schedule:work`, ausschaltbar mit `INTRANET_SCHEDULER=false`): offene Aufträge abfragen,
+  unterschriebene sofort abholen und dem Modul übergeben. Kann ein unterschriebenes PDF 24 Stunden lang nicht
+  abgelegt werden, geht eine Benachrichtigung an `manage-signatures` (DeepSign löscht nach 14 Tagen).
+- **Seite «Unterschriften»** (Verwaltung): Filter nach Modul, Monat und Status; Erinnern, Zurückziehen, Löschen
+  (mit Rückfrage), Status aktualisieren, «In DeepSign öffnen» (nur Administration, Link 5 Minuten gültig); im
+  Demo-Modus «Demo: nächste Unterschrift». Alle Aktionen im Änderungsverlauf und im Plugin-Protokoll.
+- Für das Senden braucht DeepSign «Schreibende Aktionen erlauben».
+
+**Zeiterfassung (#43):** Nach dem Visum sendet die Schulleitung den Monatsrapport zur Unterschrift (Reihenfolge:
+Person zuerst, Schulleitung zuerst oder gleichzeitig; optional zur Kenntnis an die Personalabteilung). Das PDF
+entsteht auf dem Server (`App\Support\SimplePdf`, `Modules\Zeiterfassung\MonatsblattPdf`) mit zwei
+Unterschriftsfeldern, deren Position an DeepSign geht. Das unterschriebene PDF liegt im Speicher des Moduls und ist
+für die Person und das Visum herunterladbar.
+
+**Offen bis zum echten Zugang:** Einheit und Ursprung von `autographPosition` (Punkte ab oben links angenommen),
+genaues Format des Webhooks und der Signatur, Antwort von `document-access-url`. Im Demo-Modus ist der Ablauf
+vollständig testbar; mit echtem Zugang auf dem Schweizer Server prüfen.
+
 ## Zugang einrichten (#83)
 
 Quelle: [API Access Setup](https://apidocs.deepcloud.swiss/deepsign-api-docs/setup_overview.html).

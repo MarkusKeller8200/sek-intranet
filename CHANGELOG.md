@@ -9,7 +9,20 @@ laufend unter **Unveröffentlicht**. Ab 0.32.0 entsteht eine Version nur bei ein
 
 ## [Unveröffentlicht]
 
+### Für Mitarbeitende
+
+- [visum-zeiterfassung] Visierte Monatsrapporte lassen sich elektronisch unterschreiben (DeepSign): Das
+  unterschriebene PDF liegt danach automatisch in der Zeiterfassung der Person.
+- [manage-signatures] Verwaltung → Unterschriften: offene und abgeschlossene Unterschriften, erinnern und zurückziehen.
+
 ### Neu
+
+- **Unterschriften (#38–#43):** Kern-Schnittstelle «Unterschriften» (Aufträge, Status je Person, Ereignisse an das
+  Modul) mit DeepSign als Anbieter: PDF mit Unterzeichnenden in Reihenfolge senden und starten, Webhook mit Signatur
+  und Abfrage alle 15 Minuten (Zeitplan im Container), unterschriebenes PDF sofort abholen und beim Modul ablegen,
+  Warnung, wenn es liegen bleibt. Seite «Unterschriften» (Verwaltung) mit Erinnern, Zurückziehen, Löschen und
+  «In DeepSign öffnen». Zeiterfassung: visierten Monatsrapport als PDF zur Unterschrift senden. Der Demo-Modus
+  spielt den ganzen Ablauf durch. Einfacher PDF-Erzeuger im Kern (`SimplePdf`).
 
 - **Plugin DeepSign (#37):** Elektronische Unterschrift mit DeepSign (DeepCloud): Anmeldung mit Service-Benutzer und
   Partner-Client (verschlüsselt), Verbindung testen, Dokumente und Signaturstufen anzeigen, API-Tester mit

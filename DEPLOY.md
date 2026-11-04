@@ -145,6 +145,13 @@ Zeile in `.env` löschen, `docker compose up -d`.
 Die Daten (JSON-Dateien, Uploads, `APP_KEY`) liegen im Volume, nicht im Quellcode.
 Ein Deployment überschreibt sie nie.
 
+## Zeitplan und Webhook (Unterschriften)
+
+- Der Container startet `php artisan schedule:work` im Hintergrund (u. a. Abfrage der Unterschriften alle
+  15 Minuten). Ausschalten mit `INTRANET_SCHEDULER=false` in `.env`.
+- Webhook von DeepSign: `INTRANET_SIGNATURE_WEBHOOK=true` erst, wenn `/api/signaturen/deepsign/callback` von aussen
+  erreichbar ist (Schweizer Server). Ohne Webhook genügt die regelmässige Abfrage.
+
 ## Hinweise
 
 - Der VPS steht nicht in der Schweiz (IDA ADR-005). Nur erfundene Testdaten verwenden;

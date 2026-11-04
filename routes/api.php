@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\V1Controller;
+use App\Http\Controllers\SignatureCallbackController;
 use App\Http\Middleware\AuthenticateApiToken;
 use App\Support\OpenApi;
 use Illuminate\Support\Facades\Route;
@@ -13,6 +14,12 @@ use Illuminate\Support\Facades\Route;
 Route::get('openapi.json', fn () => response()->json(OpenApi::spec(), 200, [], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES))
     ->middleware('throttle:60,1')
     ->name('api.openapi');
+
+// Webhook der Unterschriften (#40): ohne Token, geprüft über die Signatur je Auftrag
+Route::post('signaturen/{provider}/callback', SignatureCallbackController::class)
+    ->middleware('throttle:60,1')
+    ->where('provider', '[a-z0-9-]+')
+    ->name('signatures.callback');
 
 Route::prefix('v1')->middleware([AuthenticateApiToken::class, 'throttle:120,1'])->group(function () {
     Route::get('me', [V1Controller::class, 'me'])->name('api.me');

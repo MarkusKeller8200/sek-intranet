@@ -107,5 +107,62 @@
     "Offen": ["Open", "Offe"],
     "Eingereicht": ["Submitted", "Iigräicht"],
     "Visiert": ["Approved", "Visiert"],
-    "Zurück an Person": ["Returned to person", "Zrugg a Person"]
+    "Zurück an Person": ["Returned to person", "Zrugg a Person"],
+    "Elektronische Unterschrift": [
+        "Electronic signature",
+        "Elektronischi Unterschrift"
+    ],
+    "Der visierte Monatsrapport geht als PDF an die Person und an die Schulleitung. Das unterschriebene PDF wird danach automatisch hier abgelegt.": [
+        "The approved monthly report is sent as a PDF to the person and to the school management. The signed PDF is then stored here automatically.",
+        "De visierti Monetsrapport gaht als PDF a d Person und a d Schuelleitig. S unterschriibnige PDF wird nachher automatisch da abgleit."
+    ],
+    "Unterschriebenes PDF": ["Signed PDF", "Unterschriibnigs PDF"],
+    "Kein Anbieter eingerichtet. Die Administration schaltet unter Prototyp → Plugins das Plugin DeepSign ein.": [
+        "No provider configured. The administration enables the DeepSign plugin under Prototype → Plugins.",
+        "Kein Aabieter iigrichtet. D Administration schaltet under Prototyp → Plugins s Plugin DeepSign ii."
+    ],
+    "Zuerst die Person, dann die Schulleitung": [
+        "First the person, then the school management",
+        "Zerscht d Person, dänn d Schuelleitig"
+    ],
+    "Zuerst die Schulleitung, dann die Person": [
+        "First the school management, then the person",
+        "Zerscht d Schuelleitig, dänn d Person"
+    ],
+    "Gleichzeitig": ["At the same time", "Glichziitig"],
+    "Demo-Modus: Es geht nichts an DeepSign. Die Unterschriften lassen sich unter Verwaltung → Unterschriften simulieren.": [
+        "Demo mode: nothing is sent to DeepSign. Signatures can be simulated under Administration → Signatures.",
+        "Demo-Modus: Es gaht nüt a DeepSign. D Unterschrifte chasch under Verwaltig → Unterschrifte simuliere."
+    ],
+    "Zur Unterschrift senden": [
+        "Send for signature",
+        "Zur Unterschrift schicke"
+    ],
+    "Zur Kenntnis an (optional)": [
+        "For information to (optional)",
+        "Zur Kenntnis a (optional)"
+    ],
+    "Z. B. Personalabteilung: sieht das Dokument, unterschreibt nicht.": [
+        "E.g. HR: sees the document, does not sign.",
+        "Z. B. Personalabteilig: gseht s Dokumänt, unterschriibt nöd."
+    ],
+    "Zur Unterschrift": ["For signature", "Zur Unterschrift"],
+    "Teilweise unterschrieben": ["Partly signed", "Teilwiis unterschriibe"],
+    "Elektronische Unterschrift:": [
+        "Electronic signature:",
+        "Elektronischi Unterschrift:"
+    ],
+    "Unterschrift (Status)": ["Signature (status)", "Unterschrift (Status)"],
+    "Unterschrift: Auftrag (signature_requests)": [
+        "Signature: request (signature_requests)",
+        "Unterschrift: Uftrag (signature_requests)"
+    ],
+    "Unterschriebenes PDF (Ablage des Moduls)": [
+        "Signed PDF (module storage)",
+        "Unterschriibnigs PDF (Ablag vom Modul)"
+    ],
+    "Abgelehnt": ["Rejected", "Abglehnt"],
+    "Zurückgezogen": ["Withdrawn", "Zruggzoge"],
+    "Abgelaufen": ["Expired", "Abgloffe"],
+    "Unterschrieben": ["Signed", "Unterschriibe"]
 }

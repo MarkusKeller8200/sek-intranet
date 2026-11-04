@@ -206,6 +206,14 @@ eine Einstellung `demo`). Dann geht keine Anfrage an den Dienst und keine Anmeld
 `"required_unless": "demo"` sind im Demo-Modus nicht nötig. Beispiel: DeepSign (auf einem Server ausserhalb der
 Schweiz immer im Demo-Modus).
 
+### Anbieter für Unterschriften (`App\Plugins\SignatureProvider`)
+
+Ein Plugin, das `SignatureProvider` umsetzt (DeepSign), bedient die Kern-Schnittstelle «Unterschriften»
+(`App\Support\Signatures`): senden (mit Unterzeichnenden, Reihenfolge, Position, Beobachtenden), starten, Status,
+unterschriebenes PDF, erinnern, zurückziehen, löschen, Link zum Bearbeiten, Webhook prüfen und im Demo-Modus
+«nächste Unterschrift». Es gilt das erste eingeschaltete und eingerichtete Plugin. Datei-Uploads gehen über
+`$ctx->call($endpunkt, $params, $data, ['name' => …, 'contents' => …])` als multipart/form-data.
+
 ### Links und Vorgaben
 
 - `ActionResult::ok(…)->withLink('Öffnen', 'https://…')` zeigt im Ergebnis einen Knopf, der die Adresse in einem neuen

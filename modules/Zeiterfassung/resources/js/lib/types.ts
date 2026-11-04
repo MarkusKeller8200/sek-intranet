@@ -19,6 +19,18 @@ export type Status = {
     visiert_at?: string | null;
 };
 
+/** Elektronische Unterschrift eines Monats (#43). */
+export type Unterschrift = {
+    status: string | null;
+    pdf: string | null;
+    anbieter?: { id: string; name: string; demo: boolean } | null;
+    auftrag?: {
+        id: string;
+        status: string;
+        signees: { name: string; email: string; order: number; status: string }[];
+    } | null;
+};
+
 export type Summen = {
     arbeit: number;
     abwesenheit: number;
