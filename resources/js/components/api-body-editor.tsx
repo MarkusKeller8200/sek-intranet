@@ -1,4 +1,11 @@
-import { Braces, CheckCircle2, ListPlus, Plus, TriangleAlert, Wand2 } from 'lucide-react';
+import {
+    Braces,
+    CheckCircle2,
+    ListPlus,
+    Plus,
+    TriangleAlert,
+    Wand2,
+} from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';

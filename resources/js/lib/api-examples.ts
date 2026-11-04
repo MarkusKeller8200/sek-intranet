@@ -51,12 +51,24 @@ export type JsonState = { ok: boolean; empty: boolean; message: string };
 /** Body prüfen: leer, gültiges JSON-Objekt oder Fehler mit Meldung. */
 export function jsonState(text: string): JsonState {
     if (text.trim() === '') {
-        return { ok: true, empty: true, message: 'Leer – es wird kein Inhalt gesendet.' };
+        return {
+            ok: true,
+            empty: true,
+            message: 'Leer – es wird kein Inhalt gesendet.',
+        };
     }
     try {
         const value: unknown = JSON.parse(text);
-        if (value === null || typeof value !== 'object' || Array.isArray(value)) {
-            return { ok: false, empty: false, message: 'Erwartet wird ein JSON-Objekt.' };
+        if (
+            value === null ||
+            typeof value !== 'object' ||
+            Array.isArray(value)
+        ) {
+            return {
+                ok: false,
+                empty: false,
+                message: 'Erwartet wird ein JSON-Objekt.',
+            };
         }
 
         return { ok: true, empty: false, message: 'Gültiges JSON.' };
@@ -76,7 +88,9 @@ function parseObject(text: string): Record<string, unknown> | null {
     try {
         const value: unknown = JSON.parse(text);
 
-        return value !== null && typeof value === 'object' && !Array.isArray(value)
+        return value !== null &&
+            typeof value === 'object' &&
+            !Array.isArray(value)
             ? (value as Record<string, unknown>)
             : null;
     } catch {
@@ -138,7 +152,9 @@ export function collectIds(
 
             return;
         }
-        for (const [key, v] of Object.entries(value as Record<string, unknown>)) {
+        for (const [key, v] of Object.entries(
+            value as Record<string, unknown>,
+        )) {
             if (
                 wanted.has(key) &&
                 !(key in found) &&
