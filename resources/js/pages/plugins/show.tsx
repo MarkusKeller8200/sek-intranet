@@ -1048,7 +1048,9 @@ function ApiTester({
                             id="tester-file"
                             type="file"
                             accept={endpoint.file.accept}
-                            onChange={(e) => setFile(e.target.files?.[0] ?? null)}
+                            onChange={(e) =>
+                                setFile(e.target.files?.[0] ?? null)
+                            }
                         />
                         <p className="text-xs text-muted-foreground">
                             Die Datei geht als eigener Teil (multipart) mit, der
