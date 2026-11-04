@@ -315,7 +315,7 @@ final class Signatures
             'title' => mb_substr($title, 0, 200),
             'file_name' => preg_replace('/[^\w.\- ]+/u', '_', $fileName) ?: 'Dokument.pdf',
             'comment' => $comment !== null && trim($comment) !== '' ? mb_substr(trim($comment), 0, 1000) : null,
-            'signees' => array_values(array_map(fn (array $s, int $i): array => ['name' => $s['name'], 'email' => $s['email'], 'order' => $parallel ? 0 : $i], $signees, array_keys($signees))),
+            'signees' => array_map(fn (array $s, int $i): array => ['name' => $s['name'], 'email' => $s['email'], 'order' => $parallel ? 0 : $i], $signees, array_keys($signees)),
             'observers' => $observers,
         ], $pdf, $by);
     }
@@ -346,7 +346,7 @@ final class Signatures
      *
      * @param  array<string, mixed>  $request
      */
-    public function manualEvent(string $event, array $request, ?string $pdf): ?bool
+    public function manualEvent(string $event, array $request, ?string $pdf): bool
     {
         if ($event !== 'signatur.abgeschlossen') {
             return true;
