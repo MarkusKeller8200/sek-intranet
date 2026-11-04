@@ -118,16 +118,16 @@ Quelle: OpenAPI-Beschreibung von DeepSign (Swagger `api.sign.deepbox.swiss/swagg
 Markus übergeben). Alle 53 stehen im Plugin (Status «umgesetzt»), dazu `users/me` beim Anmeldedienst – je mit
 Beispielwerten, Feldern («Mögliche Werte») und Demo-Antwort:
 
-| Bereich | Endpunkte |
-| --- | --- |
-| Konto | DeepSign-Benutzer lesen/ändern, Siegel, Identifikation je Stufe, Signaturstufen, Unterschrift (Bild) hochladen/löschen, Vorschau |
-| Dokumente | Übersicht (mit Suche `q`), hochladen (Datei oder DeepBox), Details, ändern, starten, zurückziehen, löschen, Link zum Bearbeiten, PDF prüfen |
-| Umschlag (mehrere Dateien) | Datei hinzufügen, lesen, umbenennen, entfernen, Reihenfolge |
-| Unterzeichnende | auflisten, hinzufügen, lesen, ändern, entfernen, erinnern |
-| Gruppen und Reihenfolge | Gruppe (nötige Unterschriften), Unterschriftsfeld je Datei, Reihenfolge der Gruppen, Reihenfolge lesen/festlegen/aufheben, Absender:in zuerst/zuletzt |
-| Beobachtende | hinzufügen, ändern, entfernen |
-| Anhänge | auflisten, hinzufügen, umbenennen, entfernen, Reihenfolge, Download-Link |
-| Service | Hash unterschreiben/versiegeln, Datei unterschreiben/versiegeln, XML versiegeln (XAdES), Status, Download |
+| Bereich                    | Endpunkte                                                                                                                                             |
+| -------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Konto                      | DeepSign-Benutzer lesen/ändern, Siegel, Identifikation je Stufe, Signaturstufen, Unterschrift (Bild) hochladen/löschen, Vorschau                      |
+| Dokumente                  | Übersicht (mit Suche `q`), hochladen (Datei oder DeepBox), Details, ändern, starten, zurückziehen, löschen, Link zum Bearbeiten, PDF prüfen           |
+| Umschlag (mehrere Dateien) | Datei hinzufügen, lesen, umbenennen, entfernen, Reihenfolge                                                                                           |
+| Unterzeichnende            | auflisten, hinzufügen, lesen, ändern, entfernen, erinnern                                                                                             |
+| Gruppen und Reihenfolge    | Gruppe (nötige Unterschriften), Unterschriftsfeld je Datei, Reihenfolge der Gruppen, Reihenfolge lesen/festlegen/aufheben, Absender:in zuerst/zuletzt |
+| Beobachtende               | hinzufügen, ändern, entfernen                                                                                                                         |
+| Anhänge                    | auflisten, hinzufügen, umbenennen, entfernen, Reihenfolge, Download-Link                                                                              |
+| Service                    | Hash unterschreiben/versiegeln, Datei unterschreiben/versiegeln, XML versiegeln (XAdES), Status, Download                                             |
 
 **Geklärt durch die Beschreibung** (vorher offen):
 
