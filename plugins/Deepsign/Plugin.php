@@ -117,6 +117,7 @@ class Plugin extends BasePlugin implements DemoResponder, SignatureProvider
         return match ($action) {
             'service-user' => $this->serviceUser($ctx),
             'send' => $this->send($ctx, $options),
+            'prepare' => $this->prepare($ctx, $options),
             'documents' => $this->documents($ctx, (string) ($options['status'] ?? '')),
             'modes' => $this->modes($ctx),
             'seals' => $this->seals($ctx),
@@ -167,6 +168,75 @@ class Plugin extends BasePlugin implements DemoResponder, SignatureProvider
         ], array_map(fn (array $s): array => [
             'order' => (int) $s['order'] + 1, 'name' => (string) $s['name'], 'email' => (string) $s['email'], 'status' => (string) $s['status'],
         ], array_values(array_filter((array) $request['signees'], 'is_array'))));
+    }
+
+    /**
+     * Angaben beim Hochladen (Titel, Absender, Signaturstufe, Rechtsraum aus den Einstellungen).
+     *
+     * @return array<string, mixed>
+     */
+    private static function uploadData(PluginContext $ctx, string $title, ?string $comment): array
+    {
+        return array_filter([
+            'documentName' => $title,
+            'initiatorAliasName' => (string) $ctx->setting('initiator_alias', 'Sekundarschule Bülach'),
+            'sendMail' => 'others',
+            'visualSignatureRequirement' => 'optional',
+            'signatureMode' => (string) $ctx->setting('signature_mode', 'timestamp'),
+            'jurisdiction' => (string) $ctx->setting('jurisdiction', 'zertes'),
+            'comment' => $comment,
+            'companyId' => $ctx->setting('company_id'),
+        ], fn (mixed $v): bool => $v !== null && $v !== '');
+    }
+
+    /**
+     * Signaturprozess auf der DeepSign-Seite (#95): PDF als Entwurf hochladen (oder bestehendes Dokument), dann
+     * POST /documents/{documentId}/document-access-url – kurzlebiger Link, auf dem Unterzeichnende, Felder und
+     * Start bei DeepSign gesetzt werden.
+     *
+     * @param  array<string, mixed>  $options
+     */
+    private function prepare(PluginContext $ctx, array $options): ActionResult
+    {
+        $documentId = trim((string) ($options['documentId'] ?? ''));
+        $file = $options['file'] ?? null;
+        $title = '';
+        if ($documentId === '') {
+            if (! $file instanceof UploadedFile || ! $file->isValid()) {
+                return ActionResult::warning('Bitte ein PDF wählen (oder die ID eines bestehenden Dokuments angeben).');
+            }
+            if ($file->getSize() > 20 * 1024 * 1024) {
+                return ActionResult::warning('Das PDF ist grösser als 20 MB.');
+            }
+            if (strtolower($file->getClientOriginalExtension()) !== 'pdf') {
+                return ActionResult::warning('Nur PDF-Dateien.');
+            }
+            $title = trim((string) ($options['title'] ?? '')) ?: pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
+            $comment = is_string($options['comment'] ?? null) && trim($options['comment']) !== '' ? trim($options['comment']) : null;
+            $upload = $ctx->call('document-upload', [], self::uploadData($ctx, $title, $comment), ['name' => $file->getClientOriginalName(), 'contents' => (string) $file->get()]);
+            $id = $upload->json('documentId');
+            if (! $upload->successful() || ! is_string($id) || $id === '') {
+                throw new RuntimeException(self::failure($upload));
+            }
+            $documentId = $id;
+        }
+
+        $url = $this->signatureAccessUrl($ctx, $documentId);
+        if ($url === null) {
+            return ActionResult::warning('DeepSign hat keinen Link geliefert. Das Dokument (ID '.$documentId.') liegt als Entwurf bei DeepSign.');
+        }
+
+        return ActionResult::table(($ctx->demo() ? 'Demo-Modus: ' : '')
+            .($title !== '' ? '«'.$title.'» ist als Entwurf bei DeepSign. ' : '')
+            .'Auf der DeepSign-Seite Unterzeichnende und Unterschriftsfelder festlegen und den Prozess starten. '
+            .'Der Link gilt nur wenige Minuten und gibt volle Kontrolle über das Dokument – nicht weitergeben. '
+            .'Das unterschriebene PDF später mit «Dokumente ablegen» übernehmen.', [
+                ['key' => 'what', 'label' => 'Angabe'],
+                ['key' => 'value', 'label' => 'Wert'],
+            ], [
+                ['what' => 'Dokument-ID', 'value' => $documentId],
+                ['what' => 'Signaturstufe', 'value' => (string) $ctx->setting('signature_mode', 'timestamp')],
+            ])->withLink('In DeepSign öffnen', $url);
     }
 
     /**
@@ -745,16 +815,7 @@ class Plugin extends BasePlugin implements DemoResponder, SignatureProvider
 
     public function signatureSend(PluginContext $ctx, array $request, string $pdf, ?array $callback): array
     {
-        $data = array_filter([
-            'documentName' => $request['title'],
-            'initiatorAliasName' => (string) $ctx->setting('initiator_alias', 'Sekundarschule Bülach'),
-            'sendMail' => 'others',
-            'visualSignatureRequirement' => 'optional',
-            'signatureMode' => (string) $ctx->setting('signature_mode', 'timestamp'),
-            'jurisdiction' => (string) $ctx->setting('jurisdiction', 'zertes'),
-            'comment' => $request['comment'] ?? null,
-            'companyId' => $ctx->setting('company_id'),
-        ], fn (mixed $v): bool => $v !== null && $v !== '');
+        $data = self::uploadData($ctx, $request['title'], $request['comment'] ?? null);
         $callback = self::webhook($ctx, $callback);
         if ($callback !== null) {
             $data += [

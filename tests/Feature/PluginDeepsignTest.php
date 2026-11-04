@@ -329,6 +329,7 @@ class PluginDeepsignTest extends TestCase
         $this->get('/plugins/deepsign')->assertOk()->assertInertia(fn (Assert $page) => $page
             ->where('plugin.service.swagger', 'https://api.sign.deepbox.swiss/swagger-ui/index.html?configUrl=/api-docs/swagger-config'));
     }
+
     public function test_webhook_setting_url_and_probe(): void
     {
         $this->enable(['demo' => true, 'webhook' => true, 'webhook_url' => 'https://intranet.sekbuelach.example/']);
@@ -405,6 +406,27 @@ class PluginDeepsignTest extends TestCase
         $this->get('/dokumente')->assertInertia(fn (Assert $page) => $page
             ->where('documents', fn ($docs): bool => collect($docs)->firstWhere('id', $doc['id']) === null));
         $this->get('/dokumente/'.$doc['id'].'/download')->assertNotFound();
+        Http::assertNothingSent();
+    }
+
+    public function test_prepare_uploads_draft_and_opens_deepsign_page(): void
+    {
+        Http::fake();
+        $this->enable(['demo' => true], allowWrite: true);
+        $this->signInAs('admin');
+        $file = UploadedFile::fake()->createWithContent('Vereinbarung.pdf', "%PDF-1.4\n%%EOF");
+
+        $this->post('/plugins/deepsign/aktion/prepare', ['payload' => (string) json_encode(['options' => ['title' => '']]), 'file_file' => $file], ['Accept' => 'application/json'])
+            ->assertOk()
+            ->assertJsonPath('links.0.label', 'In DeepSign öffnen')
+            ->assertJsonPath('links.0.url', fn (string $url): bool => str_starts_with($url, 'https://app.deepsign.swiss/demo/'))
+            ->assertJsonPath('message', fn (string $m): bool => str_contains($m, '«Vereinbarung» ist als Entwurf bei DeepSign'));
+
+        // bestehendes Dokument ohne Hochladen; ohne Datei und ID ein Hinweis
+        $this->postJson('/plugins/deepsign/aktion/prepare', ['options' => ['documentId' => Plugin::DEMO_DOCUMENT]])->assertOk()
+            ->assertJsonPath('links.0.url', 'https://app.deepsign.swiss/demo/'.Plugin::DEMO_DOCUMENT);
+        $this->postJson('/plugins/deepsign/aktion/prepare', ['options' => []])->assertOk()
+            ->assertJsonPath('status', 'warning');
         Http::assertNothingSent();
     }
 }

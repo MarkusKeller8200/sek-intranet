@@ -1,7 +1,7 @@
 {
     "id": "deepsign",
     "name": "DeepSign",
-    "version": "0.7",
+    "version": "0.8",
     "api": 1,
     "category": "other",
     "author": "SekBülach Intranet",
@@ -2332,6 +2332,38 @@
             ]
         },
         {
+            "id": "prepare",
+            "label": "Signaturprozess auf der DeepSign-Seite",
+            "kind": "write",
+            "description": "PDF als Entwurf zu DeepSign hochladen und die DeepSign-Seite öffnen (POST /documents/{documentId}/document-access-url): dort Unterzeichnende und Unterschriftsfelder festlegen und den Prozess starten. Mit Dokument-ID wird ein bestehendes Dokument geöffnet.",
+            "confirm": "Das Dokument geht als Entwurf an DeepSign. Der Link öffnet es mit voller Kontrolle (wenige Minuten gültig) – nicht weitergeben.",
+            "options": [
+                {
+                    "key": "file",
+                    "type": "file",
+                    "label": "Dokument (PDF)",
+                    "accept": ".pdf"
+                },
+                {
+                    "key": "title",
+                    "type": "text",
+                    "label": "Titel",
+                    "help": "Leer = Dateiname."
+                },
+                {
+                    "key": "comment",
+                    "type": "textarea",
+                    "label": "Nachricht an die Unterzeichnenden"
+                },
+                {
+                    "key": "documentId",
+                    "type": "text",
+                    "label": "Oder: ID eines bestehenden Dokuments (ohne Hochladen)",
+                    "placeholder": "3f1c2a9e-5b7d-4e2a-9c61-1d2e3f4a5b6c"
+                }
+            ]
+        },
+        {
             "id": "documents",
             "label": "Dokumente anzeigen",
             "kind": "read",
@@ -2383,7 +2415,10 @@
                     "label": "Sichtbar für",
                     "default": "verwaltung",
                     "choices": [
-                        ["verwaltung", "nur Verwaltung (Recht «Unterschriften verwalten»)"],
+                        [
+                            "verwaltung",
+                            "nur Verwaltung (Recht «Unterschriften verwalten»)"
+                        ],
                         ["alle", "alle mit Zugang zu «Dokumente & Links»"]
                     ]
                 }

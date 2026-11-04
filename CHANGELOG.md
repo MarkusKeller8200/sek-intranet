@@ -21,6 +21,9 @@ laufend unter **Unveröffentlicht**. Ab 0.32.0 entsteht eine Version nur bei ein
 
 ### Neu
 
+- **DeepSign: Signaturprozess auf der DeepSign-Seite (#95):** Aktion lädt ein PDF als Entwurf hoch und öffnet die
+  DeepSign-Seite (`document-access-url`), um dort Unterzeichnende und Felder festzulegen und zu starten; auch für
+  bestehende Dokumente (ID).
 - **Glossar-Kacheln konfigurierbar (#90):** Die Spaltenauswahl bestimmt, welche Angaben die Kachel zeigt – alle
   Angaben möglich, Wichtiges oben, Weniger wichtiges unten; ausgeblendete Angaben brauchen keinen Platz. Sortieren
   und Gruppieren über die bestehenden Knöpfe der Tabelle (gleicher Zustand für Tabelle und Kacheln); die eigene

@@ -277,6 +277,7 @@ class GlossaryTest extends TestCase
         $this->get('/glossar/doppelte')->assertForbidden();
         $this->get('/glossar/neu')->assertForbidden();
     }
+
     public function test_active_flag_hides_entries_for_viewers_and_from_terms(): void
     {
         $vsa = $this->entry('VSA');
