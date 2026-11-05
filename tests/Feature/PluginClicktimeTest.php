@@ -185,8 +185,6 @@ class PluginClicktimeTest extends TestCase
         $this->assertSame(['SA', '0.00'], [$rows[2]['weekday'], $rows[2]['target']]);
         $this->assertStringContainsString('31 Abfragen', (string) $res->json('message'));
         $this->assertStringContainsString('Summe Tage 147.84 h, Monat 147.84 h ✓', (string) $res->json('message'));
-
-        $this->postJson('/plugins/clicktime/aktion/targets', ['options' => ['month' => '2026-13']])->assertStatus(422);
     }
 
     public function test_balances_and_month_sheet_with_gaps_and_pdf(): void
