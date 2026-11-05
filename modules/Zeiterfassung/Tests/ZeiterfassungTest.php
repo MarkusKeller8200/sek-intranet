@@ -204,7 +204,7 @@ class ZeiterfassungTest extends TestCase
         $this->get('/zeiterfassung?monat='.self::MONAT)->assertInertia(fn (Assert $page) => $page
             ->where('kategorien.buchungsarten.homeoffice.name', 'Homeoffice')
             ->where('summen.buchungsarten.unfall', 8.4)
-            ->where('summen.buchungsarten.homeoffice', 4.0)
+            ->where('summen.buchungsarten.homeoffice', 4)
             ->where('summen.buchungsarten.krankheit', 4.2)
             ->where('eintraege', fn ($e): bool => collect($e)->pluck('buchungsart')->sort()->values()->all() === ['homeoffice', 'krankheit', 'unfall']));
 
