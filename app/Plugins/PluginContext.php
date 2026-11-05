@@ -249,7 +249,8 @@ final class PluginContext
             $path .= (str_contains($path, '?') ? '&' : '?').implode('&', $parts);
             $query = [];
         }
-        $request = $this->http($host)->withQueryParameters($query);
+        // Leere «query»-Option würde bei Guzzle die Abfrage im Pfad ersetzen
+        $request = $query === [] ? $this->http($host) : $this->http($host)->withQueryParameters($query);
 
         if ($file !== null) {
             $request = $request->attach($file['field'] ?? 'file', $file['contents'], $file['name'], ['Content-Type' => $file['mime'] ?? 'application/pdf']);
