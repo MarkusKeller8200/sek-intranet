@@ -44,18 +44,21 @@ export default function PersonalDataUnlock({
             <div className="flex flex-wrap items-center gap-3 rounded-lg border border-destructive/40 bg-destructive/5 p-3 text-sm">
                 <LockKeyholeOpen className="size-4 shrink-0 text-destructive" />
                 <p className="min-w-0 flex-1">
-                    <strong>Personendaten freigeschaltet bis {until}</strong>{' '}
-                    – {data.endpoints} Endpunkte mit Personendaten gehen
-                    echt an den Dienst. Nur für den Test, danach sperren.
+                    <strong>Personendaten freigeschaltet bis {until}</strong> –{' '}
+                    {data.endpoints} Endpunkte mit Personendaten gehen echt an
+                    den Dienst. Nur für den Test, danach sperren.
                 </p>
                 {data.canUnlock && (
                     <Button
                         variant="outline"
                         size="sm"
                         onClick={() =>
-                            router.delete(`/plugins/${pluginId}/personendaten`, {
-                                preserveScroll: true,
-                            })
+                            router.delete(
+                                `/plugins/${pluginId}/personendaten`,
+                                {
+                                    preserveScroll: true,
+                                },
+                            )
                         }
                     >
                         <LockKeyhole /> Wieder sperren
