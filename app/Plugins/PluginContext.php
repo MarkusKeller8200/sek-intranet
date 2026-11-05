@@ -387,7 +387,8 @@ final class PluginContext
         } else {
             $form = [
                 'grant_type' => 'client_credentials',
-                'client_id' => (string) $this->setting((string) ($auth['client_id_setting'] ?? 'client_id'), ''),
+                // client_id als Einstellung oder als Zugangsdatum (Typ password, z. B. ClickTime)
+                'client_id' => (string) ($this->setting((string) ($auth['client_id_setting'] ?? 'client_id')) ?? $this->secret((string) ($auth['client_id_setting'] ?? 'client_id')) ?? ''),
                 'client_secret' => $this->required((string) ($auth['client_secret_setting'] ?? 'client_secret')),
             ];
         }
