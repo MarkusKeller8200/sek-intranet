@@ -5,7 +5,6 @@ namespace Tests\Feature;
 use App\Data\Contracts\DocumentRepository;
 use App\Data\Contracts\UserRepository;
 use App\Data\Store\JsonStore;
-use App\Data\Store\JsonStore;
 use App\Plugins\PersonalDataUnlock;
 use App\Plugins\PluginManager;
 use App\Support\PersonLinks;
