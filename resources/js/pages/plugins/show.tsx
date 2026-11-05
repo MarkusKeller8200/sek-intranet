@@ -16,6 +16,8 @@ import ApiBodyEditor from '@/components/api-body-editor';
 import InputError from '@/components/input-error';
 import PageHeader from '@/components/page-header';
 import DataNotice from '@/components/plugins/data-notice';
+import PersonalDataUnlock from '@/components/plugins/personal-data-unlock';
+import type { PersonalData } from '@/components/plugins/personal-data-unlock';
 import PluginFields, {
     initialValues,
 } from '@/components/plugins/plugin-fields';
@@ -95,6 +97,7 @@ export default function PluginShow({
     runs,
     serverInSwitzerland,
     recordings = [],
+    personalData,
 }: {
     plugin: PluginInfo;
     values: FieldValues;
@@ -102,6 +105,7 @@ export default function PluginShow({
     runs: PluginRun[];
     serverInSwitzerland: boolean;
     recordings?: Recording[];
+    personalData?: PersonalData;
 }) {
     const [section, setSection] = useState<Section>('settings');
     const [testResult, setTestResult] = useState<PluginResult | null>(null);
@@ -236,6 +240,15 @@ export default function PluginShow({
                 {!serverInSwitzerland && (
                     <DataNotice notice={plugin.data_notice} />
                 )}
+
+                {!serverInSwitzerland &&
+                    personalData &&
+                    personalData.endpoints > 0 && (
+                        <PersonalDataUnlock
+                            pluginId={plugin.id}
+                            data={personalData}
+                        />
+                    )}
 
                 {testResult && (
                     <PluginResultView key={testRun} result={testResult} />

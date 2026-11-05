@@ -25,6 +25,9 @@ laufend unter **Unveröffentlicht**. Ab 0.32.0 entsteht eine Version nur bei ein
 - **ClickTime: Änderungen nach dem Monatsabschluss (#97):** «Monat abschliessen» hält den Stand der Buchungen fest,
   «Änderungen seit Abschluss» zeigt neu / geändert (alt → neu) / gelöscht und schickt auf Wunsch einen Hinweis an
   Verwaltung und Vorgesetzte. Im Demo-Modus simuliert ClickTime nach dem Abschluss eine Korrektur.
+- **Personendaten für Tests freischalten:** Auf einem Server ausserhalb der Schweiz kann die Administration die
+  gesperrten Personendaten-Endpunkte eines Plugins mit dem Admin-PIN für 60 Minuten freischalten (Karte auf der
+  Plugin-Seite, «Wieder sperren»). Freischalten und Sperren stehen im Änderungsverlauf; der PIN wird nur geprüft.
 - **Plugins allgemein:** Mehrfache Abfrageparameter (`params[].repeat`, z. B. `filters=…&filters=…`) und Sperre für
   Personendaten ausserhalb der Schweiz (`endpoints[].personal_data`, auch im Endtest).
 

@@ -5,11 +5,15 @@ namespace Tests\Feature;
 use App\Data\Contracts\DocumentRepository;
 use App\Data\Contracts\UserRepository;
 use App\Data\Store\JsonStore;
+use App\Data\Store\JsonStore;
+use App\Plugins\PersonalDataUnlock;
 use App\Plugins\PluginManager;
 use App\Support\PersonLinks;
+use App\Support\RolePins;
 use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
+use Inertia\Testing\AssertableInertia as Assert;
 use Plugins\Clicktime\Months;
 use Plugins\Clicktime\Plugin;
 use RuntimeException;
@@ -230,5 +234,41 @@ class PluginClicktimeTest extends TestCase
         $new = ['number' => '3', 'day' => '2026-10-03'] + $a;
         $diff = Months::diff(['1' => ['1' => $a, '2' => $b]], ['1' => ['1' => $changed, '3' => $new]]);
         $this->assertSame(['geändert', 'gelöscht', 'neu'], array_column($diff, 'change'));
+    }
+
+    public function test_personal_data_unlocked_for_test_with_admin_pin(): void
+    {
+        Http::fake([
+            self::TOKEN_URL => Http::response(['access_token' => 'token-abc-123456', 'expires_in' => 3600]),
+            self::API.'/*' => Http::response([['employee_no' => 1, 'first_name' => 'Andrea', 'last_name' => 'Muster']]),
+        ]);
+        app(RolePins::class)->set('admin', '24681357', null);
+        $this->realAccount(swiss: false, endtest: true);
+        $ctx = fn () => app(PluginManager::class)->context('clicktime', null);
+
+        // nur die Administration; falscher PIN wird abgewiesen
+        $this->signInAs('ict');
+        $this->post('/plugins/clicktime/personendaten', ['pin' => '24681357'])->assertForbidden();
+        $this->signInAs('admin');
+        $this->get('/plugins/clicktime')->assertInertia(fn (Assert $page) => $page
+            ->where('personalData.until', null)->where('personalData.canUnlock', true)->where('personalData.endpoints', 38));
+        $this->post('/plugins/clicktime/personendaten', ['pin' => '11112222'])->assertSessionHasErrors('pin');
+        $this->assertFalse(app(PersonalDataUnlock::class)->active('clicktime'));
+
+        // richtiger PIN: befristet freigeschaltet, Aufruf geht an ClickTime, im Änderungsverlauf festgehalten
+        $this->post('/plugins/clicktime/personendaten', ['pin' => '24681357'])->assertSessionHasNoErrors()->assertRedirect();
+        $this->assertSame(200, $ctx()->call('employees')->status());
+        Http::assertSent(fn (Request $r): bool => str_ends_with($r->url(), '/employees'));
+        $this->assertNotNull(collect(app(JsonStore::class)->all('audit_log'))->firstWhere('source', 'Plugin: Personendaten für Test freigeschaltet'));
+        $this->assertStringNotContainsString('24681357', (string) json_encode(app(JsonStore::class)->all('audit_log')));
+
+        // nach Ablauf bzw. Sperren wieder gesperrt
+        $this->travel(61)->minutes();
+        $this->assertFalse(app(PersonalDataUnlock::class)->active('clicktime'));
+        $this->travelBack();
+        $this->post('/plugins/clicktime/personendaten', ['pin' => '24681357']);
+        $this->delete('/plugins/clicktime/personendaten')->assertRedirect();
+        $this->expectException(RuntimeException::class);
+        $ctx()->call('employees');
     }
 }

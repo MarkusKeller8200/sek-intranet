@@ -207,7 +207,8 @@ Mehrfache Abfrageparameter und Personendaten:
   im Code auch als Liste.
 - `endpoints[].personal_data: true` – der Endpunkt liefert oder ändert Personendaten. Auf einem Server ausserhalb der
   Schweiz (`INTRANET_SERVER_IN_SWITZERLAND=false`) lehnt der Kern echte Aufrufe ab, auch im Endtest; der Demo-Modus
-  bleibt möglich.
+  bleibt möglich. Für einen Test kann die Administration sie auf der Plugin-Seite mit dem Admin-PIN für 60 Minuten
+  freischalten (`App\Plugins\PersonalDataUnlock`, im Änderungsverlauf).
 
 ### Demo-Modus (`App\Plugins\DemoResponder`)
 

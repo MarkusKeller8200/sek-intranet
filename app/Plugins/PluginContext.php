@@ -231,8 +231,13 @@ final class PluginContext
         }
 
         // Personendaten (endpoints[].personal_data) nur auf dem Schweizer Server – auch nicht im Endtest
+        // Ausnahme: für einen Test mit dem Admin-PIN befristet freigeschaltet (PersonalDataUnlock)
+        if (($endpoint['personal_data'] ?? false) === true && ! (bool) config('intranet.server_in_switzerland')
+            && ! app(PersonalDataUnlock::class)->active($this->manifest->id())) {
+            throw new RuntimeException('«'.(string) ($endpoint['label'] ?? $endpointId).'» liefert Personendaten: echte Aufrufe erst auf dem Schweizer Server (hier nur Demo-Modus, Endtest ohne Personendaten oder befristet mit dem Admin-PIN freigeschaltet).');
+        }
         if (($endpoint['personal_data'] ?? false) === true && ! (bool) config('intranet.server_in_switzerland')) {
-            throw new RuntimeException('«'.(string) ($endpoint['label'] ?? $endpointId).'» liefert Personendaten: echte Aufrufe erst auf dem Schweizer Server (hier nur Demo-Modus oder Endtest ohne Personendaten).');
+            $this->log('Personendaten-Endpunkt mit Admin-PIN-Freischaltung (Test).');
         }
 
         $this->log("{$method} {$path}");

@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Auth\IntranetUser;
+use App\Plugins\PersonalDataUnlock;
 use App\Plugins\PluginManager;
 use App\Support\ApiDocs;
+use App\Support\RolePins;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -49,7 +51,7 @@ class PluginController extends Controller
         ]);
     }
 
-    public function show(string $id, ApiDocs $docs): Response
+    public function show(Request $request, string $id, ApiDocs $docs): Response
     {
         $manifest = $this->plugins->manifest($id);
         $state = $this->plugins->state($id);
@@ -77,7 +79,39 @@ class PluginController extends Controller
                 'operations' => $docs->compare($doc),
             ], $docs->forPlugin($id)),
             'serverInSwitzerland' => (bool) config('intranet.server_in_switzerland'),
+            // Personendaten-Endpunkte ausserhalb der Schweiz: befristete Freischaltung mit dem Admin-PIN
+            'personalData' => [
+                'endpoints' => count(array_filter($manifest->endpoints(), fn (array $e): bool => ($e['personal_data'] ?? false) === true)),
+                'until' => app(PersonalDataUnlock::class)->until($id),
+                'minutes' => PersonalDataUnlock::MINUTES,
+                'canUnlock' => $this->user($request)?->hasRole(RolePins::ADMIN) === true,
+            ],
         ]);
+    }
+
+    /** Personendaten für einen Test freischalten (Admin-PIN, befristet). */
+    public function unlockPersonal(Request $request, string $id): RedirectResponse
+    {
+        $this->plugins->manifest($id);
+        $user = $this->user($request);
+        abort_if($user === null, 403);
+        $pin = (string) $request->input('pin', '');
+        try {
+            $until = app(PersonalDataUnlock::class)->unlock($id, $pin, $user);
+        } catch (RuntimeException $e) {
+            return back()->withErrors(['pin' => $e->getMessage()]);
+        }
+        $this->toast('Personendaten für den Test freigeschaltet bis '.date('H:i', (int) strtotime($until)).'.');
+
+        return back();
+    }
+
+    public function lockPersonal(Request $request, string $id): RedirectResponse
+    {
+        app(PersonalDataUnlock::class)->lock($id, $this->user($request));
+        $this->toast('Personendaten wieder gesperrt.');
+
+        return back();
     }
 
     public function toggle(Request $request, string $id): RedirectResponse

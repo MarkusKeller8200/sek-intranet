@@ -1172,6 +1172,9 @@
     "Zuerst einschalten": ["Switch on first", "Zersch iischalte"],
     "Zuerst einrichten": ["Set up first", "Zersch iirichte"],
     "Verbindung testen": ["Test connection", "Verbindig teschte"],
+    "Wieder sperren": ["Lock again", "Wider sperre"],
+    "Für Test freischalten": ["Unlock for testing", "Für Test freischalte"],
+    "Admin-PIN": ["Admin PIN", "Admin-PIN"],
     "Alle Verbindungen testen": [
         "Test all connections",
         "Alli Verbindige teschte"
