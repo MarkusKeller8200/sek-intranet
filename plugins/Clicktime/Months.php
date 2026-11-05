@@ -76,19 +76,25 @@ final class Months
 
     /**
      * @param  array<string, mixed>  $row
-     * @return array{number: string, day: string, time_from: string, time_to: string, hours: float, type: string, activity: string}
+     * @return array{number: string, day: string, time_from: string, time_to: string, hours: float, type: string, type_name: string, category: string, activity: string}
      */
     public static function normalize(array $row): array
     {
         $day = substr((string) ($row['day'] ?? $row['date'] ?? ''), 0, 10);
+        // Echte Antwort (05.11.2026): entry_type_name {de, en}, entry_type_number meist null, entry_type_type
+        // (WORK, HOLIDAYS, COMPENSATION …), Abwesenheiten und Pausenkorrekturen ohne Zeiten, Pause mit negativen Stunden
+        $number = $row['entry_type_number'] ?? $row['entry_type'] ?? null;
+        $name = self::text($row['entry_type_name'] ?? '');
 
         return [
-            'number' => (string) ($row['number'] ?? $row['entry_number'] ?? ($row['employee_no'] ?? '').'-'.$day.'-'.($row['time_from'] ?? '')),
+            'number' => (string) ($row['number'] ?? ($row['employee_no'] ?? '').'-'.$day.'-'.($row['time_from'] ?? '')),
             'day' => $day,
             'time_from' => substr((string) ($row['time_from'] ?? ''), 0, 5),
             'time_to' => substr((string) ($row['time_to'] ?? ''), 0, 5),
             'hours' => round((float) ($row['hours'] ?? 0), 2),
-            'type' => (string) ($row['entry_type_number'] ?? $row['entry_type'] ?? $row['entry_number'] ?? ''),
+            'type' => $number !== null && $number !== '' ? (string) $number : $name,
+            'type_name' => $name !== '' ? $name : (string) ($number ?? ''),
+            'category' => (string) ($row['entry_type_type'] ?? ''),
             'activity' => (string) ($row['activity_number'] ?? ''),
         ];
     }
@@ -287,7 +293,7 @@ final class Months
     {
         $time = ($e['time_from'] ?? '') !== '' ? " {$e['time_from']}–{$e['time_to']}" : '';
 
-        return self::hours((float) ($e['hours'] ?? 0)).' h'.$time.' (Art '.($e['type'] ?? '?').')';
+        return self::hours((float) ($e['hours'] ?? 0)).' h'.$time.' ('.(string) ($e['type_name'] ?? $e['type'] ?? '?').')';
     }
 
     public static function hours(float $h): string
@@ -337,7 +343,7 @@ final class Months
                 if ($e !== []) {
                     $pdf->text(130, $y, ($e['time_from'] ?? '') !== '' ? "{$e['time_from']}–{$e['time_to']}" : '', 9);
                     $pdf->textRight(300, $y, self::hours((float) $e['hours']), 9);
-                    $pdf->text(320, $y, (string) $e['type'], 9);
+                    $pdf->text(320, $y, SimplePdf::fit((string) ($e['type_name'] ?? $e['type']), 55, 9), 9);
                 }
                 $note = $holidays[$day] ?? (in_array($day, $gaps, true) ? 'keine Buchung' : '');
                 $pdf->text(380, $y, $note, 9);

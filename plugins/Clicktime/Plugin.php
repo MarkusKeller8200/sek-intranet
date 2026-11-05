@@ -345,7 +345,7 @@ class Plugin extends BasePlugin implements DemoResponder
                         'day' => date('d.m.Y', $t),
                         'time' => ($e['time_from'] ?? '') !== '' ? $e['time_from'].'–'.$e['time_to'] : '',
                         'hours' => $e !== [] ? Months::hours((float) $e['hours']) : '',
-                        'type' => (string) ($e['type'] ?? ''),
+                        'type' => (string) ($e['type_name'] ?? $e['type'] ?? ''),
                         'note' => $note,
                     ];
                 }
@@ -688,8 +688,11 @@ class Plugin extends BasePlugin implements DemoResponder
                 $workday++;
                 $entry = [
                     'number' => $no * 100000 + (int) date('md', $t), 'employee_no' => $no, 'day' => date('Y-m-d', $t),
-                    'time_from' => '07:30:00', 'time_to' => '16:24:00', 'hours' => 8.4, 'entry_type_number' => 1000,
-                    'activity_number' => 2000, 'source' => 'PC', 'notes' => null, 'deleted' => false,
+                    'time_from' => '07:30:00', 'time_to' => '16:24:00', 'hours' => 8.4, 'time_zone' => 'Europe/Zurich',
+                    // wie die echte Antwort: Nummer leer, Name mehrsprachig, Kategorie in entry_type_type
+                    'entry_type_number' => null, 'entry_type_name' => ['de' => 'Arbeitszeit', 'en' => 'Working hours'],
+                    'entry_type_short' => null, 'entry_type_type' => 'WORK', 'activity_number' => null, 'source' => 'PC',
+                    'notes' => null, 'deleted' => false, 'approval_status' => null, 'last_update' => date('Y-m-d H:i:s', $t + 64800),
                 ];
                 if ($workday === 3 && ! ($corrected && $no === 1)) {
                     continue;

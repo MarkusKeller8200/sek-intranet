@@ -27,7 +27,9 @@ laufend unter **Unveröffentlicht**. Ab 0.32.0 entsteht eine Version nur bei ein
   Verwaltung und Vorgesetzte. Im Demo-Modus simuliert ClickTime nach dem Abschluss eine Korrektur.
 - **ClickTime: Kumulative im echten Aufbau:** Die Antwort liefert je Person `cumulative_values` mit Name der
   Buchungsart; die Nummer ist meist leer (nur gesetzt, wenn in ClickTime eine Lohnart-Nummer hinterlegt ist). Summen
-  im Monatsblatt werden jetzt danach gelesen (Plugin 0.2.1).
+  im Monatsblatt werden jetzt danach gelesen (Plugin 0.2.1). Buchungen ebenso: Buchungsart über den Namen
+  (`entry_type_name`) und die Kategorie (`entry_type_type`), Pausenkorrekturen mit negativen Stunden, gelöschte
+  Buchungen werden übersprungen (Plugin 0.2.2).
 - **Personendaten für Tests freischalten:** Auf einem Server ausserhalb der Schweiz kann die Administration die
   gesperrten Personendaten-Endpunkte eines Plugins mit dem Admin-PIN für 60 Minuten freischalten (Karte auf der
   Plugin-Seite, «Wieder sperren»). Freischalten und Sperren stehen im Änderungsverlauf; der PIN wird nur geprüft.

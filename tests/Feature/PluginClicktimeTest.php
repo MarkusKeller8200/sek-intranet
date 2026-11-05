@@ -180,6 +180,7 @@ class PluginClicktimeTest extends TestCase
         $one = $this->postJson('/plugins/clicktime/aktion/month', ['options' => ['month' => '2026-10', 'person' => 'daniel.probe@sekbuelach.example']])->assertOk();
         $this->assertStringContainsString('1 Arbeitstage ohne Buchung', (string) $one->json('message'));
         $this->assertContains(['day' => '05.10.2026', 'time' => '', 'hours' => '', 'type' => '', 'note' => 'keine Buchung'], $one->json('rows'));
+        $this->assertSame('Arbeitszeit', $one->json('rows.0.type'));
 
         // alle: Übersicht, PDF je Person nur einmal abgelegt
         $all = $this->postJson('/plugins/clicktime/aktion/month', ['options' => ['month' => '2026-10', 'pdf' => true]])->assertOk();
@@ -219,7 +220,7 @@ class PluginClicktimeTest extends TestCase
         $this->assertSame('geändert', $changes['01.10.2026']);
         $this->assertSame('neu', $changes['05.10.2026']);
         $this->assertSame('gelöscht', $changes['30.10.2026']);
-        $this->assertContains('8.40 h 07:30–16:24 (Art 1000)', array_column($result->json('rows'), 'before'));
+        $this->assertContains('8.40 h 07:30–16:24 (Arbeitszeit)', array_column($result->json('rows'), 'before'));
         $this->assertGreaterThan(0, count(app(JsonStore::class)->all('notifications')));
 
         // erneuter Abschluss: keine Änderungen mehr
@@ -272,5 +273,31 @@ class PluginClicktimeTest extends TestCase
         $this->delete('/plugins/clicktime/personendaten')->assertRedirect();
         $this->expectException(RuntimeException::class);
         $ctx()->call('employees');
+    }
+
+    public function test_entries_in_real_format(): void
+    {
+        // Aufbau wie die echte Antwort (05.11.2026), erfundene Werte: Nummer leer, Name mehrsprachig, Pause negativ,
+        // gelöschte Buchungen in der Liste
+        $rows = [
+            ['number' => 1, 'employee_no' => 9, 'day' => '2026-10-01', 'time_from' => '07:35:00', 'time_to' => '18:18:00', 'hours' => 10.716666666666667,
+                'entry_type_number' => null, 'entry_type_name' => ['de' => 'Arbeitszeit', 'en' => 'Working hours'], 'entry_type_type' => 'WORK', 'deleted' => false],
+            ['number' => 2, 'employee_no' => 9, 'day' => '2026-10-01', 'time_from' => null, 'time_to' => null, 'hours' => -0.5,
+                'entry_type_number' => null, 'entry_type_name' => ['de' => 'Pause'], 'entry_type_short' => 'PP', 'entry_type_type' => 'WORK', 'deleted' => false],
+            ['number' => 3, 'employee_no' => 9, 'day' => '2026-10-02', 'time_from' => null, 'time_to' => null, 'hours' => 8.4,
+                'entry_type_number' => null, 'entry_type_name' => ['de' => 'Ferien', 'en' => 'Holidays'], 'entry_type_type' => 'HOLIDAYS', 'deleted' => true],
+        ];
+        $a = Months::normalize($rows[0]);
+        $this->assertSame(['1', '2026-10-01', '07:35', '18:18', 10.72, 'Arbeitszeit', 'Arbeitszeit', 'WORK'], [$a['number'], $a['day'], $a['time_from'], $a['time_to'], $a['hours'], $a['type'], $a['type_name'], $a['category']]);
+        $this->assertSame(-0.5, Months::normalize($rows[1])['hours']);
+        $this->assertSame('-0.50 h (Pause)', Months::describe(Months::normalize($rows[1])));
+
+        Http::fake([
+            self::TOKEN_URL => Http::response(['access_token' => 'token-abc-123456', 'expires_in' => 3600]),
+            self::API.'/entries*' => Http::response($rows),
+        ]);
+        $this->realAccount();
+        $entries = (new Months(app(PluginManager::class)->context('clicktime', null)))->entries('2026-10');
+        $this->assertSame(['1', '2'], array_map('strval', array_keys($entries['9'])), 'gelöschte Buchung fehlt');
     }
 }
