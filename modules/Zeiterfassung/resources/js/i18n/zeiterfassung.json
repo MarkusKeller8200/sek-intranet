@@ -80,6 +80,14 @@
     "Ist": ["Actual", "Ist"],
     "Delta": ["Difference", "Differänz"],
     "Notizen": ["Notes", "Notize"],
+    "Buchungen anzeigen": ["Show bookings", "Buechige aazeige"],
+    "Buchungen ausblenden": ["Hide bookings", "Buechige uusblände"],
+    "Alle aufklappen": ["Expand all", "Alli uufklappe"],
+    "Alle zuklappen": ["Collapse all", "Alli zueklappe"],
+    "Pro Tag das Total; aufklappen zeigt die einzelnen Buchungen.": [
+        "Total per day; expand to see the individual bookings.",
+        "Pro Tag s Total; uufklappe zeigt di einzelne Buechige."
+    ],
     "Kategorie": ["Category", "Kategorie"],
     "Zeit": ["Time", "Ziit"],
     "Person": ["Person", "Person"],

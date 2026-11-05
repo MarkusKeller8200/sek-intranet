@@ -42,6 +42,8 @@ type Props = {
     status: Status;
     summen: Summen;
     kategorien: Kategorien;
+    /** Feiertage des Monats (#102): Datum → Name */
+    feiertage?: Record<string, string>;
     person: { name: string };
     darfVisum: boolean;
     unterschrift: Unterschrift;
@@ -145,7 +147,7 @@ export default function ZeiterfassungStart(props: Props) {
     return (
         <>
             <Head title="Zeiterfassung" />
-            <div className="flex max-w-5xl flex-1 flex-col gap-6 p-4 md:p-6">
+            <div className="flex w-full flex-1 flex-col gap-6 p-4 md:p-6">
                 <PageHeader
                     title="Zeiterfassung"
                     description="Arbeitszeit, Tätigkeiten, Projekte und Abwesenheiten mit Buchungsart erfassen. Am Monatsende einreichen – die Schulleitung visiert."
@@ -452,6 +454,8 @@ export default function ZeiterfassungStart(props: Props) {
                     </CardHeader>
                     <CardContent>
                         <EintraegeTabelle
+                            monat={monat}
+                            feiertage={props.feiertage}
                             eintraege={eintraege}
                             summen={summen}
                             kategorien={kategorien}

@@ -20,6 +20,7 @@ use InvalidArgumentException;
 use Modules\Zeiterfassung\Buchungsarten;
 use Modules\Zeiterfassung\Data\Contracts\EintragRepository;
 use Modules\Zeiterfassung\Data\Contracts\MonatRepository;
+use Modules\Zeiterfassung\Feiertage;
 use Modules\Zeiterfassung\Kategorien;
 use Modules\Zeiterfassung\Unterschriften;
 use Modules\Zeiterfassung\Zeitkonto;
@@ -51,6 +52,7 @@ class ZeiterfassungController extends Controller
             'monat' => $monat,
             'eintraege' => self::mitBuchungsart($liste),
             'status' => $this->monate->status($person, $monat),
+            'feiertage' => Feiertage::monat($monat),
             'summen' => Zeitkonto::summen($liste),
             'kategorien' => Kategorien::all() + ['buchungsarten' => $this->buchungsarten->liste()],
             'person' => ['name' => $this->name($person)],

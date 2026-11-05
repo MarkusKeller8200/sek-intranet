@@ -12,6 +12,7 @@ use Illuminate\Testing\TestResponse;
 use Inertia\Testing\AssertableInertia as Assert;
 use Modules\Zeiterfassung\Buchungsarten;
 use Modules\Zeiterfassung\Data\Contracts\EintragRepository;
+use Modules\Zeiterfassung\Feiertage;
 use Modules\Zeiterfassung\Zeitkonto;
 use Tests\TestCase;
 
@@ -133,6 +134,19 @@ class ZeiterfassungTest extends TestCase
         $this->signInAs('lehrperson');
         $this->delete('/zeiterfassung/eintraege/'.$eintrag['id'])->assertRedirect();
         $this->assertSame($lp->getAuthIdentifier(), $eintrag['person_id']);
+    }
+
+    public function test_public_holidays_zurich_for_day_totals(): void
+    {
+        $this->assertSame(['2026-04-03' => 'Karfreitag', '2026-04-06' => 'Ostermontag'], Feiertage::monat('2026-04'));
+        $this->assertSame(['2027-03-26' => 'Karfreitag', '2027-03-29' => 'Ostermontag'], Feiertage::monat('2027-03'));
+        $this->assertSame('Auffahrt', Feiertage::jahr(2026)['2026-05-14']);
+        $this->assertSame('Pfingstmontag', Feiertage::jahr(2026)['2026-05-25']);
+        $this->assertCount(10, Feiertage::jahr(2026));
+
+        $this->signInAs('lehrperson');
+        $this->get('/zeiterfassung?monat=2026-08')->assertOk()->assertInertia(fn (Assert $page) => $page
+            ->where('feiertage', ['2026-08-01' => 'Bundesfeier']));
     }
 
     public function test_edit_own_entries_but_not_from_external_systems(): void

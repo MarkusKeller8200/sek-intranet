@@ -1,4 +1,5 @@
-import { Pencil, Trash2 } from 'lucide-react';
+import { ChevronDown, ChevronRight, Pencil, Trash2 } from 'lucide-react';
+import { Fragment, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import {
     Table,
@@ -8,6 +9,7 @@ import {
     TableHeader,
     TableRow,
 } from '@/components/ui/table';
+import { cn } from '@/lib/utils';
 import type { Eintrag, Kategorien, Summen } from '../lib/types';
 import {
     buchungsartName,
@@ -17,39 +19,84 @@ import {
     kurzDatum,
     notizen,
     stunden,
+    tageImMonat,
+    tagesZeit,
+    wochenende,
     wochentag,
     zeitraum,
 } from '../lib/types';
 
-/** Einträge eines Monats mit Summen je Kategorie. */
+type Aktionen = {
+    /** nur für Einträge aus dem Intranet; aus Fremdsystemen nur löschen */
+    onEdit?: (e: Eintrag) => void;
+    onDelete?: (e: Eintrag) => void;
+};
+
+/**
+ * Einträge eines Monats (#102): je Tag eine Totalzeile (Wochenende und Feiertage anders eingefärbt), aufklappbar zu
+ * den einzelnen Buchungen in kleiner Schrift; darunter die Summen.
+ */
 export default function EintraegeTabelle({
+    monat,
     eintraege,
     summen,
     kategorien,
+    feiertage = {},
     onEdit,
     onDelete,
-}: {
+}: Aktionen & {
+    monat: string;
     eintraege: Eintrag[];
     summen: Summen;
     kategorien: Kategorien;
-    /** nur für Einträge aus dem Intranet; aus Fremdsystemen nur löschen (#102) */
-    onEdit?: (e: Eintrag) => void;
-    onDelete?: (e: Eintrag) => void;
+    /** Datum → Name des Feiertags */
+    feiertage?: Record<string, string>;
 }) {
-    if (eintraege.length === 0) {
-        return (
-            <p className="text-sm text-muted-foreground">
-                Für diesen Monat gibt es noch keine Einträge.
-            </p>
-        );
+    const [offen, setOffen] = useState<Set<string>>(new Set());
+    const proTag = new Map<string, Eintrag[]>();
+    for (const e of eintraege) {
+        proTag.set(e.datum, [...(proTag.get(e.datum) ?? []), e]);
     }
+    const tage = tageImMonat(monat);
+    const mitBuchungen = tage.filter((t) => proTag.has(t));
+    const alleOffen =
+        mitBuchungen.length > 0 && mitBuchungen.every((t) => offen.has(t));
+    const aktionen = Boolean(onEdit || onDelete);
+
+    const umschalten = (tag: string) => {
+        const neu = new Set(offen);
+        if (neu.has(tag)) {
+            neu.delete(tag);
+        } else {
+            neu.add(tag);
+        }
+        setOffen(neu);
+    };
+    const alle = () => setOffen(alleOffen ? new Set() : new Set(mitBuchungen));
 
     return (
         <div className="grid gap-4">
+            <div className="flex flex-wrap items-center justify-between gap-2">
+                <p className="text-sm text-muted-foreground">
+                    {eintraege.length === 0
+                        ? 'Für diesen Monat gibt es noch keine Einträge.'
+                        : 'Pro Tag das Total; aufklappen zeigt die einzelnen Buchungen.'}
+                </p>
+                <Button
+                    variant="outline"
+                    size="sm"
+                    disabled={mitBuchungen.length === 0}
+                    onClick={alle}
+                >
+                    {alleOffen ? <ChevronDown /> : <ChevronRight />}
+                    {alleOffen ? 'Alle zuklappen' : 'Alle aufklappen'}
+                </Button>
+            </div>
             <div className="overflow-x-auto rounded-md border">
                 <Table>
                     <TableHeader>
                         <TableRow>
+                            <TableHead className="w-10" />
                             <TableHead>Tag</TableHead>
                             <TableHead>Datum</TableHead>
                             <TableHead>Buchungsart</TableHead>
@@ -60,92 +107,31 @@ export default function EintraegeTabelle({
                             <TableHead className="text-right">Delta</TableHead>
                             <TableHead>Herkunft</TableHead>
                             <TableHead>Notizen</TableHead>
-                            {(onEdit || onDelete) && (
-                                <TableHead className="w-20" />
-                            )}
+                            {aktionen && <TableHead className="w-20" />}
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        {eintraege.map((e) => (
-                            <TableRow key={e.id}>
-                                <TableCell className="font-medium">
-                                    {wochentag(e.datum)}
-                                </TableCell>
-                                <TableCell
-                                    className="whitespace-nowrap tabular-nums"
-                                    translate="no"
-                                >
-                                    {kurzDatum(e.datum)}
-                                </TableCell>
-                                <TableCell>
-                                    {buchungsartName(
-                                        kategorien,
-                                        e.buchungsart,
-                                    ) ||
-                                        (e.art === 'abwesenheit'
-                                            ? 'Abwesenheit'
-                                            : 'Arbeit')}
-                                </TableCell>
-                                <TableCell>
-                                    {e.art === 'abwesenheit'
-                                        ? '–'
-                                        : kategorieName(
-                                              kategorien,
-                                              e.kategorie,
-                                          )}
-                                </TableCell>
-                                <TableCell
-                                    className="whitespace-nowrap tabular-nums"
-                                    translate="no"
-                                >
-                                    {zeitraum(e)}
-                                </TableCell>
-                                <TableCell className="text-right text-muted-foreground">
-                                    –
-                                </TableCell>
-                                <TableCell
-                                    className="text-right tabular-nums"
-                                    translate="no"
-                                >
-                                    {hhmm(e.stunden)}
-                                </TableCell>
-                                <TableCell className="text-right text-muted-foreground">
-                                    –
-                                </TableCell>
-                                <TableCell>
-                                    {herkunft(e.quelle)}
-                                </TableCell>
-                                <TableCell
-                                    className="text-muted-foreground"
-                                    translate="no"
-                                >
-                                    {notizen(e)}
-                                </TableCell>
-                                {(onEdit || onDelete) && (
-                                    <TableCell className="whitespace-nowrap text-right">
-                                        {onEdit && !e.quelle && (
-                                            <Button
-                                                variant="ghost"
-                                                size="icon"
-                                                aria-label="Eintrag bearbeiten"
-                                                onClick={() => onEdit(e)}
-                                            >
-                                                <Pencil />
-                                            </Button>
-                                        )}
-                                        {onDelete && (
-                                            <Button
-                                                variant="ghost"
-                                                size="icon"
-                                                aria-label="Eintrag löschen"
-                                                onClick={() => onDelete(e)}
-                                            >
-                                                <Trash2 />
-                                            </Button>
-                                        )}
-                                    </TableCell>
-                                )}
-                            </TableRow>
+                        {tage.map((tag) => (
+                            <Fragment key={tag}>
+                                <TagesZeile
+                                    tag={tag}
+                                    liste={proTag.get(tag) ?? []}
+                                    feiertag={feiertage[tag]}
+                                    auf={offen.has(tag)}
+                                    aktionen={aktionen}
+                                    onToggle={() => umschalten(tag)}
+                                />
+                                {offen.has(tag) &&
+                                    (proTag.get(tag) ?? []).map((e) => (
+                                        <BuchungsZeile
+                                            key={e.id}
+                                            e={e}
+                                            kategorien={kategorien}
+                                            onEdit={onEdit}
+                                            onDelete={onDelete}
+                                        />
+                                    ))}
+                            </Fragment>
                         ))}
                     </TableBody>
                 </Table>
@@ -193,5 +179,141 @@ export default function EintraegeTabelle({
                 </div>
             </dl>
         </div>
+    );
+}
+
+/** Totalzeile eines Tages: Ist-Summe, erste bis letzte Zeit, Feiertag; Wochenende und Feiertage anders eingefärbt. */
+function TagesZeile({
+    tag,
+    liste,
+    feiertag,
+    auf,
+    aktionen,
+    onToggle,
+}: {
+    tag: string;
+    liste: Eintrag[];
+    feiertag?: string;
+    auf: boolean;
+    aktionen: boolean;
+    onToggle: () => void;
+}) {
+    const frei = Boolean(feiertag) || wochenende(tag);
+    const ist = liste.reduce((s, e) => s + e.stunden, 0);
+
+    return (
+        <TableRow
+            className={cn(
+                'font-medium',
+                frei
+                    ? 'bg-warning-soft hover:bg-warning-soft'
+                    : 'bg-secondary/60 hover:bg-secondary',
+            )}
+        >
+            <TableCell className="py-1">
+                {liste.length > 0 && (
+                    <Button
+                        variant="ghost"
+                        size="icon"
+                        className="size-7"
+                        aria-expanded={auf}
+                        aria-label={
+                            auf ? 'Buchungen ausblenden' : 'Buchungen anzeigen'
+                        }
+                        onClick={onToggle}
+                    >
+                        {auf ? <ChevronDown /> : <ChevronRight />}
+                    </Button>
+                )}
+            </TableCell>
+            <TableCell>{wochentag(tag)}</TableCell>
+            <TableCell className="tabular-nums" translate="no">
+                {kurzDatum(tag)}
+            </TableCell>
+            <TableCell colSpan={2} translate="no">
+                {feiertag ?? ''}
+            </TableCell>
+            <TableCell
+                className="whitespace-nowrap tabular-nums"
+                translate="no"
+            >
+                {tagesZeit(liste)}
+            </TableCell>
+            <TableCell className="text-right text-muted-foreground">
+                –
+            </TableCell>
+            <TableCell className="text-right tabular-nums" translate="no">
+                {liste.length > 0 ? hhmm(ist) : ''}
+            </TableCell>
+            <TableCell className="text-right text-muted-foreground">
+                –
+            </TableCell>
+            <TableCell colSpan={aktionen ? 3 : 2} />
+        </TableRow>
+    );
+}
+
+/** Einzelne Buchung (aufgeklappt) in kleiner Schrift. */
+function BuchungsZeile({
+    e,
+    kategorien,
+    onEdit,
+    onDelete,
+}: Aktionen & { e: Eintrag; kategorien: Kategorien }) {
+    const name =
+        buchungsartName(kategorien, e.buchungsart) ||
+        (e.art === 'abwesenheit' ? 'Abwesenheit' : 'Arbeit');
+
+    return (
+        <TableRow className="text-xs [&>td]:py-1">
+            <TableCell colSpan={3} />
+            <TableCell>{name}</TableCell>
+            <TableCell>
+                {e.art === 'abwesenheit'
+                    ? '–'
+                    : kategorieName(kategorien, e.kategorie)}
+            </TableCell>
+            <TableCell
+                className="whitespace-nowrap tabular-nums"
+                translate="no"
+            >
+                {zeitraum(e)}
+            </TableCell>
+            <TableCell />
+            <TableCell className="text-right tabular-nums" translate="no">
+                {hhmm(e.stunden)}
+            </TableCell>
+            <TableCell />
+            <TableCell>{herkunft(e.quelle)}</TableCell>
+            <TableCell className="text-muted-foreground" translate="no">
+                {notizen(e)}
+            </TableCell>
+            {(onEdit || onDelete) && (
+                <TableCell className="text-right whitespace-nowrap">
+                    {onEdit && !e.quelle && (
+                        <Button
+                            variant="ghost"
+                            size="icon"
+                            className="size-7"
+                            aria-label="Eintrag bearbeiten"
+                            onClick={() => onEdit(e)}
+                        >
+                            <Pencil />
+                        </Button>
+                    )}
+                    {onDelete && (
+                        <Button
+                            variant="ghost"
+                            size="icon"
+                            className="size-7"
+                            aria-label="Eintrag löschen"
+                            onClick={() => onDelete(e)}
+                        >
+                            <Trash2 />
+                        </Button>
+                    )}
+                </TableCell>
+            )}
+        </TableRow>
     );
 }

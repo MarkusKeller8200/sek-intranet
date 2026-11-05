@@ -27,6 +27,8 @@ type Props = {
     status: Status;
     summen: Summen;
     kategorien: Kategorien;
+    /** Feiertage des Monats (#102): Datum → Name */
+    feiertage?: Record<string, string>;
     visiertVon: string | null;
     unterschrift: Unterschrift;
 };
@@ -47,7 +49,7 @@ export default function ZeiterfassungPerson(props: Props) {
     return (
         <>
             <Head title={`Zeiterfassung ${person.name}`} />
-            <div className="flex max-w-5xl flex-1 flex-col gap-6 p-4 md:p-6">
+            <div className="flex w-full flex-1 flex-col gap-6 p-4 md:p-6">
                 <PageHeader
                     title={person.name}
                     description="Monatsblatt für das Visum"
@@ -119,6 +121,8 @@ export default function ZeiterfassungPerson(props: Props) {
                 <Card>
                     <CardContent>
                         <EintraegeTabelle
+                            monat={monat}
+                            feiertage={props.feiertage}
                             eintraege={eintraege}
                             summen={summen}
                             kategorien={kategorien}

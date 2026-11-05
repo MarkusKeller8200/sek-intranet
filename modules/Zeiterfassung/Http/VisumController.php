@@ -17,6 +17,7 @@ use InvalidArgumentException;
 use Modules\Zeiterfassung\Buchungsarten;
 use Modules\Zeiterfassung\Data\Contracts\EintragRepository;
 use Modules\Zeiterfassung\Data\Contracts\MonatRepository;
+use Modules\Zeiterfassung\Feiertage;
 use Modules\Zeiterfassung\Kategorien;
 use Modules\Zeiterfassung\MonatsblattPdf;
 use Modules\Zeiterfassung\Unterschriften;
@@ -63,6 +64,7 @@ class VisumController extends Controller
             'person' => ['id' => $person, 'name' => (string) ($user['name'] ?? ''), 'email' => (string) ($user['email'] ?? '')],
             'eintraege' => ZeiterfassungController::mitBuchungsart($liste),
             'status' => $status,
+            'feiertage' => Feiertage::monat($monat),
             'summen' => Zeitkonto::summen($liste),
             'kategorien' => Kategorien::all() + ['buchungsarten' => $this->buchungsarten->liste()],
             'visiertVon' => isset($status['visiert_by']) ? (string) ($this->users->find((string) $status['visiert_by'])['name'] ?? '') : null,

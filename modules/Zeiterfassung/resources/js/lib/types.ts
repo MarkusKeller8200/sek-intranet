@@ -118,6 +118,37 @@ export function wochentag(datum: string): string {
     return WOCHENTAGE[new Date(y, m - 1, d).getDay()] ?? '';
 }
 
+/** Samstag oder Sonntag. */
+export function wochenende(datum: string): boolean {
+    const tag = wochentag(datum);
+
+    return tag === 'SA' || tag === 'SO';
+}
+
+/** Alle Tage eines Monats «JJJJ-MM» als «JJJJ-MM-TT». */
+export function tageImMonat(monat: string): string[] {
+    const [y, m] = monat.split('-').map(Number);
+    const tage: string[] = [];
+    for (let d = 1; d <= new Date(y, m, 0).getDate(); d++) {
+        tage.push(`${monat}-${String(d).padStart(2, '0')}`);
+    }
+
+    return tage;
+}
+
+/** Erste bis letzte Zeit eines Tages, z. B. «07:30 – 16:24»; ohne Zeiten leer. */
+export function tagesZeit(
+    liste: { beginn?: string | null; ende?: string | null }[],
+): string {
+    const beginn = liste.flatMap((e) => (e.beginn ? [e.beginn] : []));
+    const ende = liste.flatMap((e) => (e.ende ? [e.ende] : []));
+    if (beginn.length === 0) {
+        return '';
+    }
+
+    return `${beginn.sort()[0]} – ${ende.sort().reverse()[0] ?? ''}`;
+}
+
 /** Datum als «TT.MM.», z. B. «01.10.». */
 export function kurzDatum(datum: string): string {
     const [, m, d] = datum.split('-');

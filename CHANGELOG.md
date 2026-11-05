@@ -13,14 +13,16 @@ laufend unter **Unveröffentlicht**. Ab 0.32.0 entsteht eine Version nur bei ein
 
 - In der Zeiterfassung wählt man neu eine Buchungsart, z. B. Arbeitszeit, Homeoffice, Ferien, Krankheit oder Unfall.
   Bisherige Einträge erhalten sie automatisch.
-- Die Tabelle der Zeiterfassung zeigt neu Wochentag, Datum, Zeit von–bis und die Stunden in Stunden:Minuten.
-  Selbst erfasste Einträge lassen sich bearbeiten.
+- Die Zeiterfassung zeigt neu pro Tag eine Totalzeile mit Wochentag und Stunden:Minuten; Wochenende und Feiertage
+  sind farbig. Aufklappen zeigt die einzelnen Buchungen. Selbst erfasste Einträge lassen sich bearbeiten.
 
 ### Neu
 
 - **Zeiterfassung: neue Tabelle und Einträge bearbeiten (#102):** Spalten Tag (MO–SO), Datum (TT.MM.), Buchungsart,
   Kategorie, Zeit «HH:MM – HH:MM (−Pause min)», Soll, Ist (HH:MM), Delta, Herkunft (Intranet/ClickTime), Notizen.
-  Soll und Delta vorerst «–» (Quelle der Sollzeit offen). Einträge aus dem Intranet bearbeiten (Stift, Formular oben)
+  Alle Tage des Monats mit Tagestotal (leicht eingefärbt; Samstag, Sonntag und Feiertage Kanton Zürich in anderer
+  Farbe, `Feiertage`), einzeln oder «Alle aufklappen» zu den Buchungen in kleiner Schrift; Tabelle nutzt die ganze
+  Breite. Soll und Delta vorerst «–» (Quelle der Sollzeit offen). Einträge aus dem Intranet bearbeiten (Stift, Formular oben)
   und löschen, Einträge aus Fremdsystemen nur löschen (`PUT zeiterfassung/eintraege/{id}`). Modul 0.5.0.
 - **ClickTime: Monat in die Zeiterfassung übernehmen (#101):** Aktion «In Zeiterfassung übernehmen» (Vorschau oder
   Übernehmen) und Knopf «Aus ClickTime übernehmen» in der eigenen Zeiterfassung (Administration; Mitarbeitende per
