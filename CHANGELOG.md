@@ -9,7 +9,21 @@ laufend unter **Unveröffentlicht**. Ab 0.32.0 entsteht eine Version nur bei ein
 
 ## [Unveröffentlicht]
 
+### Für Mitarbeitende
+
+- In der Zeiterfassung wählt man neu eine Buchungsart, z. B. Arbeitszeit, Homeoffice, Ferien, Krankheit oder Unfall.
+  Bisherige Einträge erhalten sie automatisch.
+
 ### Neu
+
+- **Zeiterfassung: Buchungsart je Eintrag (#99):** Buchungsarten wie in ClickTime (Arbeitszeit, Homeoffice, Ferien,
+  Krankheit, Unfall, Kompensation, Weiterbildung, Militär/Zivilschutz, bezahlte/unbezahlte Absenz), unter Visum →
+  «Buchungsarten» pflegbar. Summen, Monatsblatt und Export nach Buchungsart. Modul Zeiterfassung 0.3.0.
+- **ClickTime: Abgleich mit der eigenen Zeiterfassung (#100):** Mapping-Tabelle «Buchungsart ClickTime =
+  Buchungsart Zeiterfassung» in den Plugin-Einstellungen (Vorgabe nach den Buchungsarten der Schule, Pause, «nicht
+  übernehmen»), Aktion «Buchungsarten zuordnen» (Vorschlag aus ClickTime, Übernehmen ergänzt die Tabelle) und «Mit
+  Zeiterfassung vergleichen» (je Person und Tag: gleich, Abweichung, nur ClickTime, nur Zeiterfassung). Plugin 0.3.
+
 
 - **Plugin ClickTime (#29):** Neues Plugin für die Zeiterfassung ClickTime (API V3): Anmeldung mit client_id und
   client_secret (Token 1 Stunde), Kundennummer, alle 51 Endpunkte im API-Tester mit Beispielwerten (aus der

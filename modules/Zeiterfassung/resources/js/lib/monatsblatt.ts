@@ -1,6 +1,6 @@
 // i18n: nicht übersetzen – Monatsblatt für die Ablage (Deutsch)
 import type { Eintrag, Kategorien, Status, Summen } from './types';
-import { kategorieName, monatName } from './types';
+import { buchungsartName, kategorieName, monatName } from './types';
 
 const esc = (s: string) =>
     s
@@ -32,20 +32,24 @@ export function druckeMonatsblatt(opts: {
             (
                 e,
             ) => `<tr><td>${esc(new Date(e.datum).toLocaleDateString('de-CH'))}</td>
-<td>${e.art === 'abwesenheit' ? 'Abwesenheit' : 'Arbeit'}</td>
-<td>${esc(kategorieName(kategorien, e.kategorie))}</td>
+<td>${esc(buchungsartName(kategorien, e.buchungsart) || (e.art === 'abwesenheit' ? 'Abwesenheit' : 'Arbeit'))}</td>
+<td>${e.art === 'abwesenheit' ? '' : esc(kategorieName(kategorien, e.kategorie))}</td>
 <td>${esc(e.beginn ?? '')}${e.ende ? `–${esc(e.ende)}` : ''}</td>
 <td class="r">${e.pause_min ?? ''}</td>
 <td class="r">${e.stunden.toFixed(2)}</td>
 <td>${esc(e.projekt ?? '')}</td></tr>`,
         )
         .join('');
-    const kat = Object.entries(summen.kategorien)
-        .map(
-            ([k, h]) =>
-                `<tr><td>${esc(kategorieName(kategorien, k))}</td><td class="r">${h.toFixed(2)}</td></tr>`,
-        )
-        .join('');
+    const zeile = (name: string, h: number) =>
+        `<tr><td>${esc(name)}</td><td class="r">${h.toFixed(2)}</td></tr>`;
+    const kat = [
+        ...Object.entries(summen.buchungsarten ?? {}).map(([k, h]) =>
+            zeile(buchungsartName(kategorien, k), h),
+        ),
+        ...Object.entries(summen.kategorien).map(([k, h]) =>
+            zeile(kategorieName(kategorien, k), h),
+        ),
+    ].join('');
     const html = `<!doctype html><html lang="de-CH"><head><meta charset="utf-8">
 <title>Zeiterfassung ${esc(monat)} – ${esc(person)}</title>
 <style>
@@ -59,7 +63,7 @@ th{background:#f2f4f6}.r{text-align:right}
 </style></head><body>
 <h1>Zeiterfassung ${esc(monatName(monat))}</h1>
 <p>${esc(person)} · Status: ${esc(STATUS[status.status] ?? status.status)}${opts.visiertVon ? ` (${esc(opts.visiertVon)})` : ''}</p>
-<table><thead><tr><th>Datum</th><th>Art</th><th>Kategorie</th><th>Zeit</th><th class="r">Pause</th><th class="r">Stunden</th><th>Projekt</th></tr></thead>
+<table><thead><tr><th>Datum</th><th>Buchungsart</th><th>Kategorie</th><th>Zeit</th><th class="r">Pause</th><th class="r">Stunden</th><th>Projekt</th></tr></thead>
 <tbody>${zeilen || '<tr><td colspan="7">Keine Einträge</td></tr>'}</tbody></table>
 <table style="width:50%"><thead><tr><th>Kategorie</th><th class="r">Stunden</th></tr></thead><tbody>${kat}
 <tr><th>Arbeit</th><th class="r">${summen.arbeit.toFixed(2)}</th></tr>

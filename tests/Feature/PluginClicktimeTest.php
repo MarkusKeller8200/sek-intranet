@@ -13,6 +13,7 @@ use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Testing\AssertableInertia as Assert;
+use Modules\Zeiterfassung\Data\Contracts\EintragRepository;
 use Plugins\Clicktime\Months;
 use Plugins\Clicktime\Plugin;
 use RuntimeException;
@@ -299,5 +300,57 @@ class PluginClicktimeTest extends TestCase
         $this->realAccount();
         $entries = (new Months(app(PluginManager::class)->context('clicktime', null)))->entries('2026-10');
         $this->assertSame(['1', '2'], array_map('strval', array_keys($entries['9'])), 'gelöschte Buchung fehlt');
+    }
+
+    public function test_mapping_suggestions_are_saved(): void
+    {
+        Http::fake();
+        $this->enable(['demo' => true, 'mapping' => "Arbeitszeit = arbeitszeit\nSollzeit = -"], allowWrite: true);
+        $this->signInAs('admin');
+
+        $rows = collect($this->postJson('/plugins/clicktime/aktion/mapping', ['options' => []])->assertOk()->json('rows'))->keyBy('name');
+        $this->assertSame('zugeordnet', $rows['Arbeitszeit']['status']);
+        $this->assertSame('Vorschlag', $rows['Ferien']['status']);
+        $this->assertSame('Ferien', $rows['Ferien']['suggest']);
+        $this->assertSame('Pause des Tages', $rows['Pause']['suggest']);
+        $this->assertSame('nicht übernehmen', $rows['Sollzeit']['current']);
+
+        $this->postJson('/plugins/clicktime/aktion/mapping', ['options' => [], 'apply' => true, 'selected' => ['ferien', 'pause']])->assertOk()
+            ->assertJsonPath('message', fn (string $m): bool => str_starts_with($m, '2 Buchungsarten zugeordnet'));
+        $mapping = (string) app(PluginManager::class)->state('clicktime')['settings']['mapping'];
+        $this->assertStringContainsString('Ferien = ferien', $mapping);
+        $this->assertStringContainsString('Pause = pause', $mapping);
+        $this->assertStringContainsString('Arbeitszeit = arbeitszeit', $mapping);
+        $this->assertTrue(app(PluginManager::class)->state('clicktime')['settings']['demo'], 'übrige Einstellungen bleiben');
+    }
+
+    public function test_compare_with_own_time_tracking(): void
+    {
+        Http::fake();
+        $this->enable(['demo' => true]);
+        $this->signInAs('admin');
+        $daniel = collect(app(UserRepository::class)->all())->firstWhere('email', 'daniel.probe@sekbuelach.example');
+        app(PersonLinks::class)->recordSync((string) $daniel['id'], 'clicktime', 'source', '3');
+        $eintraege = app(EintragRepository::class);
+        foreach ([['2026-10-01', 'arbeitszeit', 'arbeit', 8.4], ['2026-10-02', 'arbeitszeit', 'arbeit', 6.0], ['2026-10-05', 'ferien', 'abwesenheit', 8.4]] as [$tag, $b, $art, $h]) {
+            $eintraege->create(['person_id' => (string) $daniel['id'], 'datum' => $tag, 'monat' => '2026-10', 'art' => $art, 'buchungsart' => $b,
+                'kategorie' => $art === 'arbeit' ? 'unterricht' : 'ferien', 'stunden' => $h]);
+        }
+
+        $result = $this->postJson('/plugins/clicktime/aktion/compare', ['options' => ['month' => '2026-10', 'person' => '3', 'all' => true]])->assertOk();
+        $status = array_column($result->json('rows'), 'status', 'day');
+        $this->assertSame('gleich', $status['01.10.2026']);
+        $this->assertSame('Abweichung', $status['02.10.2026']);
+        $this->assertSame('nur Zeiterfassung', $status['05.10.2026']);
+        $this->assertSame('nur ClickTime', $status['06.10.2026']);
+        $this->assertStringContainsString('1 Tage gleich, 1 mit Abweichung', (string) $result->json('message'));
+        $row = collect($result->json('rows'))->firstWhere('day', '02.10.2026');
+        $this->assertSame('Arbeitszeit 8.40', $row['clicktime']);
+        $this->assertSame('Arbeitszeit 6.00', $row['own']);
+
+        // Person ohne Zuordnung wird gemeldet
+        $this->postJson('/plugins/clicktime/aktion/compare', ['options' => ['month' => '2026-10', 'person' => '4']])->assertOk()
+            ->assertJsonPath('message', fn (string $m): bool => str_contains($m, 'Ohne Intranet-Person') && str_contains($m, 'Eva Fiktiv'));
+        Http::assertNothingSent();
     }
 }

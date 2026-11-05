@@ -10,7 +10,7 @@ import {
 } from '@/components/ui/table';
 import { formatDate } from '@/lib/format';
 import type { Eintrag, Kategorien, Summen } from '../lib/types';
-import { kategorieName, stunden } from '../lib/types';
+import { buchungsartName, kategorieName, stunden } from '../lib/types';
 
 /** Einträge eines Monats mit Summen je Kategorie. */
 export default function EintraegeTabelle({
@@ -39,7 +39,7 @@ export default function EintraegeTabelle({
                     <TableHeader>
                         <TableRow>
                             <TableHead>Datum</TableHead>
-                            <TableHead>Art</TableHead>
+                            <TableHead>Buchungsart</TableHead>
                             <TableHead>Kategorie</TableHead>
                             <TableHead>Zeit</TableHead>
                             <TableHead className="text-right">
@@ -56,12 +56,18 @@ export default function EintraegeTabelle({
                                     {formatDate(e.datum)}
                                 </TableCell>
                                 <TableCell>
-                                    {e.art === 'abwesenheit'
-                                        ? 'Abwesenheit'
-                                        : 'Arbeit'}
+                                    {buchungsartName(
+                                        kategorien,
+                                        e.buchungsart,
+                                    ) ||
+                                        (e.art === 'abwesenheit'
+                                            ? 'Abwesenheit'
+                                            : 'Arbeit')}
                                 </TableCell>
                                 <TableCell>
-                                    {kategorieName(kategorien, e.kategorie)}
+                                    {e.art === 'abwesenheit'
+                                        ? '–'
+                                        : kategorieName(kategorien, e.kategorie)}
                                 </TableCell>
                                 <TableCell
                                     className="whitespace-nowrap"
@@ -106,6 +112,17 @@ export default function EintraegeTabelle({
                 </Table>
             </div>
             <dl className="grid gap-x-6 gap-y-1 text-sm sm:grid-cols-2">
+                {Object.entries(summen.buchungsarten ?? {}).map(([k, h]) => (
+                    <div
+                        key={`b-${k}`}
+                        className="flex justify-between gap-4 border-b py-1"
+                    >
+                        <dt>{buchungsartName(kategorien, k)}</dt>
+                        <dd className="tabular-nums" translate="no">
+                            {stunden(h)}
+                        </dd>
+                    </div>
+                ))}
                 {Object.entries(summen.kategorien).map(([k, h]) => (
                     <div
                         key={k}

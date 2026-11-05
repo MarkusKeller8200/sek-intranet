@@ -21,18 +21,20 @@ final class MonatsblattPdf
 
     /**
      * @param  list<array<string, mixed>>  $eintraege
-     * @param  array{arbeit: float, abwesenheit: float, total: float, kategorien: array<string, float>, projekte: array<string, float>}  $summen
+     * @param  array{arbeit: float, abwesenheit: float, total: float, kategorien: array<string, float>, projekte: array<string, float>, buchungsarten?: array<string, float>}  $summen
      * @param  array{person: string, schulleitung: string}  $unterzeichnende
+     * @param  array<string, string>  $buchungsarten  Schlüssel → Bezeichnung (#99)
      * @return array{pdf: string, felder: array{person: array{pageNumber: int, x: float, y: float, width: float, height: float}, schulleitung: array{pageNumber: int, x: float, y: float, width: float, height: float}}}
      */
-    public static function erstellen(string $person, string $monat, array $eintraege, array $summen, ?string $visiertVon, ?string $visiertAm, array $unterzeichnende): array
+    public static function erstellen(string $person, string $monat, array $eintraege, array $summen, ?string $visiertVon, ?string $visiertAm, array $unterzeichnende, array $buchungsarten = []): array
     {
+        $buchungsarten += array_map(fn (array $b): string => $b['name'], Buchungsarten::VORGABE);
         $titel = 'Monatsrapport '.self::monatName($monat);
         $pdf = new SimplePdf("{$titel} – {$person}");
         $y = self::kopf($pdf, $titel, $person, $visiertVon, $visiertAm);
 
-        // Spalten: Datum, Art, Kategorie, Zeit, Pause, Stunden, Projekt
-        $spalten = [[self::LEFT, 'Datum'], [100, 'Art'], [160, 'Kategorie'], [300, 'Zeit'], [370, 'Pause'], [410, 'Stunden'], [462, 'Projekt']];
+        // Spalten: Datum, Buchungsart, Kategorie, Zeit, Pause, Stunden, Projekt
+        $spalten = [[self::LEFT, 'Datum'], [100, 'Buchungsart'], [160, 'Kategorie'], [300, 'Zeit'], [370, 'Pause'], [410, 'Stunden'], [462, 'Projekt']];
         $y = self::tabellenkopf($pdf, $spalten, $y);
         foreach ($eintraege as $e) {
             if ($y > self::BOTTOM - 14) {
@@ -41,8 +43,9 @@ final class MonatsblattPdf
             }
             $zeit = trim((string) ($e['beginn'] ?? '').(isset($e['ende']) && $e['ende'] !== '' ? '–'.$e['ende'] : ''));
             $pdf->text(self::LEFT, $y, self::datum((string) $e['datum']), 8.5);
-            $pdf->text(100, $y, ($e['art'] ?? '') === 'abwesenheit' ? 'Abwesenheit' : 'Arbeit', 8.5);
-            $pdf->text(160, $y, SimplePdf::fit(Kategorien::label((string) $e['kategorie']), 135, 8.5), 8.5);
+            $b = Buchungsarten::von($e);
+            $pdf->text(100, $y, SimplePdf::fit($buchungsarten[$b] ?? $b, 56, 8.5), 8.5);
+            $pdf->text(160, $y, ($e['art'] ?? '') === 'abwesenheit' ? '' : SimplePdf::fit(Kategorien::label((string) $e['kategorie']), 135, 8.5), 8.5);
             $pdf->text(300, $y, $zeit, 8.5);
             $pdf->textRight(395, $y, isset($e['pause_min']) ? (string) $e['pause_min'] : '', 8.5);
             $pdf->textRight(450, $y, number_format((float) $e['stunden'], 2, '.', "'"), 8.5);
@@ -61,6 +64,11 @@ final class MonatsblattPdf
         }
         $pdf->line(self::LEFT, $y - 4, self::RIGHT, $y - 4);
         $y += 10;
+        foreach ($summen['buchungsarten'] ?? [] as $b => $h) {
+            $pdf->text(300, $y, SimplePdf::fit($buchungsarten[$b] ?? (string) $b, 100, 8.5), 8.5);
+            $pdf->textRight(450, $y, number_format($h, 2, '.', "'").' h', 8.5);
+            $y += 12;
+        }
         foreach (['Arbeit' => $summen['arbeit'], 'Abwesenheit' => $summen['abwesenheit'], 'Total' => $summen['total']] as $label => $h) {
             $pdf->text(300, $y, $label, 9, $label === 'Total');
             $pdf->textRight(450, $y, number_format($h, 2, '.', "'").' h', 9, $label === 'Total');

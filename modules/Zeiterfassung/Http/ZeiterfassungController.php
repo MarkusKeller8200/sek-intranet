@@ -14,6 +14,7 @@ use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 use Inertia\Response;
 use InvalidArgumentException;
+use Modules\Zeiterfassung\Buchungsarten;
 use Modules\Zeiterfassung\Data\Contracts\EintragRepository;
 use Modules\Zeiterfassung\Data\Contracts\MonatRepository;
 use Modules\Zeiterfassung\Kategorien;
@@ -31,6 +32,7 @@ class ZeiterfassungController extends Controller
         private readonly MonatRepository $monate,
         private readonly Notifications $notifications,
         private readonly UserRepository $users,
+        private readonly Buchungsarten $buchungsarten,
     ) {}
 
     public function index(Request $request): Response
@@ -41,10 +43,10 @@ class ZeiterfassungController extends Controller
 
         return Inertia::render('Zeiterfassung::start', [
             'monat' => $monat,
-            'eintraege' => $liste,
+            'eintraege' => self::mitBuchungsart($liste),
             'status' => $this->monate->status($person, $monat),
             'summen' => Zeitkonto::summen($liste),
-            'kategorien' => Kategorien::all(),
+            'kategorien' => Kategorien::all() + ['buchungsarten' => $this->buchungsarten->liste()],
             'person' => ['name' => $this->name($person)],
             'darfVisum' => Gate::allows('visum-zeiterfassung'),
             'unterschrift' => self::unterschrift($person, $monat, $this->monate->status($person, $monat)),
@@ -81,8 +83,10 @@ class ZeiterfassungController extends Controller
         $person = self::person($request);
         $data = $request->validate([
             'datum' => ['required', 'date_format:Y-m-d'],
-            'art' => ['required', Rule::in(['arbeit', 'abwesenheit'])],
-            'kategorie' => ['required', 'string'],
+            // Buchungsart (#99); ohne Angabe wie bisher aus Art und Kategorie
+            'buchungsart' => ['nullable', 'string', Rule::in(array_keys($this->buchungsarten->liste(true)))],
+            'art' => ['nullable', Rule::in(['arbeit', 'abwesenheit'])],
+            'kategorie' => ['nullable', 'string'],
             'beginn' => ['nullable', 'date_format:H:i'],
             'ende' => ['nullable', 'date_format:H:i', 'required_with:beginn'],
             'pause_min' => ['nullable', 'integer', 'min:0', 'max:480'],
@@ -91,13 +95,20 @@ class ZeiterfassungController extends Controller
             'notiz' => ['nullable', 'string', 'max:500'],
         ], [
             'datum.required' => 'Bitte ein Datum wählen.',
+            'buchungsart.in' => 'Bitte eine Buchungsart aus der Liste wählen.',
             'stunden.required_without' => 'Beginn und Ende oder die Anzahl Stunden angeben.',
             'ende.required_with' => 'Bitte das Ende angeben.',
         ]);
 
-        $liste = $data['art'] === 'arbeit' ? Kategorien::ARBEIT : Kategorien::ABWESENHEIT;
-        if (! array_key_exists($data['kategorie'], $liste)) {
-            throw ValidationException::withMessages(['kategorie' => 'Bitte eine passende Kategorie wählen.']);
+        // Art aus der Buchungsart; Abwesenheiten ohne eigene Kategorie (für Summen und Export wie bisher)
+        $buchungsart = $data['buchungsart'] ?? Buchungsarten::von(['art' => $data['art'] ?? 'arbeit', 'kategorie' => $data['kategorie'] ?? '']);
+        $art = $this->buchungsarten->liste()[$buchungsart]['art'] ?? (($data['art'] ?? 'arbeit') === 'abwesenheit' ? 'abwesenheit' : 'arbeit');
+        if (($data['buchungsart'] ?? null) === null && $art === 'abwesenheit' && ! array_key_exists((string) ($data['kategorie'] ?? ''), Kategorien::ABWESENHEIT)) {
+            throw ValidationException::withMessages(['buchungsart' => 'Bitte eine Buchungsart wählen.']);
+        }
+        $kategorie = $art === 'abwesenheit' ? (($data['buchungsart'] ?? null) === null ? (string) $data['kategorie'] : Buchungsarten::kategorieFuer($buchungsart)) : (string) ($data['kategorie'] ?? '');
+        if ($art === 'arbeit' && ! array_key_exists($kategorie, Kategorien::ARBEIT)) {
+            throw ValidationException::withMessages(['kategorie' => 'Bitte eine Kategorie (Tätigkeit) wählen.']);
         }
         $monat = substr($data['datum'], 0, 7);
         $this->entsperrt($person, $monat);
@@ -115,8 +126,9 @@ class ZeiterfassungController extends Controller
             'person_id' => $person,
             'datum' => $data['datum'],
             'monat' => $monat,
-            'art' => $data['art'],
-            'kategorie' => $data['kategorie'],
+            'art' => $art,
+            'buchungsart' => $buchungsart,
+            'kategorie' => $kategorie,
             'beginn' => $data['beginn'] ?? null,
             'ende' => $data['ende'] ?? null,
             'pause_min' => isset($data['pause_min']) ? (int) $data['pause_min'] : null,
@@ -165,6 +177,17 @@ class ZeiterfassungController extends Controller
         $this->toast('Monat eingereicht – die Schulleitung ist benachrichtigt.');
 
         return back();
+    }
+
+    /**
+     * Einträge mit Buchungsart (ältere aus Art und Kategorie).
+     *
+     * @param  list<array<string, mixed>>  $liste
+     * @return list<array<string, mixed>>
+     */
+    public static function mitBuchungsart(array $liste): array
+    {
+        return array_map(fn (array $e): array => ['buchungsart' => Buchungsarten::von($e)] + $e, $liste);
     }
 
     private function entsperrt(string $person, string $monat): void

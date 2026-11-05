@@ -10,9 +10,11 @@ use App\Support\Signatures;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 use Inertia\Response;
 use InvalidArgumentException;
+use Modules\Zeiterfassung\Buchungsarten;
 use Modules\Zeiterfassung\Data\Contracts\EintragRepository;
 use Modules\Zeiterfassung\Data\Contracts\MonatRepository;
 use Modules\Zeiterfassung\Kategorien;
@@ -34,6 +36,7 @@ class VisumController extends Controller
         private readonly UserRepository $users,
         private readonly Notifications $notifications,
         private readonly Signatures $signatures,
+        private readonly Buchungsarten $buchungsarten,
     ) {}
 
     public function index(Request $request): Response
@@ -58,10 +61,10 @@ class VisumController extends Controller
         return Inertia::render('Zeiterfassung::person', [
             'monat' => $monat,
             'person' => ['id' => $person, 'name' => (string) ($user['name'] ?? ''), 'email' => (string) ($user['email'] ?? '')],
-            'eintraege' => $liste,
+            'eintraege' => ZeiterfassungController::mitBuchungsart($liste),
             'status' => $status,
             'summen' => Zeitkonto::summen($liste),
-            'kategorien' => Kategorien::all(),
+            'kategorien' => Kategorien::all() + ['buchungsarten' => $this->buchungsarten->liste()],
             'visiertVon' => isset($status['visiert_by']) ? (string) ($this->users->find((string) $status['visiert_by'])['name'] ?? '') : null,
             'unterschrift' => $this->unterschriftInfo($person, $monat, $status),
         ]);
@@ -100,7 +103,8 @@ class VisumController extends Controller
         $slEmail = (string) ($this->users->find((string) $sl->getAuthIdentifier())['email'] ?? '');
         $liste = $this->eintraege->fuerPersonMonat($person, $monat);
         $dokument = MonatsblattPdf::erstellen((string) $user['name'], $monat, $liste, Zeitkonto::summen($liste), $slName,
-            is_string($status['visiert_at'] ?? null) ? $status['visiert_at'] : null, ['person' => (string) $user['name'], 'schulleitung' => $slName]);
+            is_string($status['visiert_at'] ?? null) ? $status['visiert_at'] : null, ['person' => (string) $user['name'], 'schulleitung' => $slName],
+            array_map(fn (array $b): string => $b['name'], $this->buchungsarten->liste()));
         [$ordnungPerson, $ordnungSl] = match ($data['reihenfolge']) {
             'schulleitung_zuerst' => [1, 0],
             'gleichzeitig' => [0, 0],
@@ -185,6 +189,36 @@ class VisumController extends Controller
         return back();
     }
 
+    /** Buchungsarten pflegen (#99). */
+    public function buchungsarten(): Response
+    {
+        return Inertia::render('Zeiterfassung::buchungsarten', [
+            'buchungsarten' => array_map(fn (string $key, array $b): array => ['key' => $key] + $b, array_keys($this->buchungsarten->liste()), $this->buchungsarten->liste()),
+            'arten' => Buchungsarten::ARTEN,
+        ]);
+    }
+
+    public function buchungsartenSpeichern(Request $request): RedirectResponse
+    {
+        $data = $request->validate([
+            'zeilen' => ['required', 'array', 'max:60'],
+            'zeilen.*.key' => ['nullable', 'string', 'max:40', 'regex:/^[a-z0-9_]*$/'],
+            'zeilen.*.name' => ['nullable', 'string', 'max:60'],
+            'zeilen.*.art' => ['required', Rule::in(array_keys(Buchungsarten::ARTEN))],
+            'zeilen.*.aktiv' => ['boolean'],
+        ]);
+        try {
+            $this->buchungsarten->speichern(array_map(fn (array $z): array => [
+                'key' => $z['key'] ?? null, 'name' => (string) ($z['name'] ?? ''), 'art' => (string) $z['art'], 'aktiv' => (bool) ($z['aktiv'] ?? true),
+            ], array_values((array) $data['zeilen'])));
+        } catch (InvalidArgumentException $e) {
+            throw ValidationException::withMessages(['zeilen' => $e->getMessage()]);
+        }
+        $this->toast('Buchungsarten gespeichert.');
+
+        return back();
+    }
+
     /**
      * CSV für die Lohnbuchhaltung (Excel Schweiz: Semikolon, UTF-8 mit BOM).
      * art=summen (Standard): eine Zeile je Person mit Stunden je Kategorie; art=details: alle Einträge.
@@ -196,22 +230,25 @@ class VisumController extends Controller
         $nurVisiert = $request->query('nur_visiert', '1') === '1';
         $personen = array_filter($this->uebersicht($monat), fn (array $p): bool => ! $nurVisiert || $p['status'] === 'visiert');
         $kategorien = Kategorien::ARBEIT + Kategorien::ABWESENHEIT;
+        $buchungsarten = array_map(fn (array $b): string => $b['name'], $this->buchungsarten->liste());
 
         $rows = [];
         if ($details) {
-            $rows[] = ['Person', 'E-Mail', 'Monat', 'Status', 'Datum', 'Art', 'Kategorie', 'Beginn', 'Ende', 'Pause (min)', 'Stunden', 'Projekt'];
+            $rows[] = ['Person', 'E-Mail', 'Monat', 'Status', 'Datum', 'Art', 'Buchungsart', 'Kategorie', 'Beginn', 'Ende', 'Pause (min)', 'Stunden', 'Projekt'];
             foreach ($personen as $p) {
                 foreach ($this->eintraege->fuerPersonMonat($p['id'], $monat) as $e) {
                     $rows[] = [$p['name'], $p['email'], $monat, Kategorien::STATUS[$p['status']] ?? $p['status'], (string) $e['datum'], $e['art'] === 'abwesenheit' ? 'Abwesenheit' : 'Arbeit',
-                        Kategorien::label((string) $e['kategorie']), (string) ($e['beginn'] ?? ''), (string) ($e['ende'] ?? ''), (string) ($e['pause_min'] ?? ''), self::zahl((float) $e['stunden']), (string) ($e['projekt'] ?? '')];
+                        $buchungsarten[Buchungsarten::von($e)] ?? Buchungsarten::von($e), Kategorien::label((string) $e['kategorie']), (string) ($e['beginn'] ?? ''), (string) ($e['ende'] ?? ''), (string) ($e['pause_min'] ?? ''), self::zahl((float) $e['stunden']), (string) ($e['projekt'] ?? '')];
                 }
             }
         } else {
-            $rows[] = ['Person', 'E-Mail', 'Monat', 'Status', 'Arbeit (h)', 'Abwesenheit (h)', 'Total (h)', ...array_values($kategorien)];
+            $rows[] = ['Person', 'E-Mail', 'Monat', 'Status', 'Arbeit (h)', 'Abwesenheit (h)', 'Total (h)', ...array_values($kategorien),
+                ...array_map(fn (string $n): string => "Buchungsart: {$n}", array_values($buchungsarten))];
             foreach ($personen as $p) {
                 $s = $p['summen'];
                 $rows[] = [$p['name'], $p['email'], $monat, Kategorien::STATUS[$p['status']] ?? $p['status'], self::zahl($s['arbeit']), self::zahl($s['abwesenheit']), self::zahl($s['total']),
-                    ...array_map(fn (string $k): string => self::zahl($s['kategorien'][$k] ?? 0), array_keys($kategorien))];
+                    ...array_map(fn (string $k): string => self::zahl($s['kategorien'][$k] ?? 0), array_keys($kategorien)),
+                    ...array_map(fn (string $k): string => self::zahl($s['buchungsarten'][$k] ?? 0), array_keys($buchungsarten))];
             }
         }
 

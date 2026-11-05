@@ -26,6 +26,16 @@ von dev.clicktime.ch (05.11.2026), 51 Endpunkte.
   Zeit, Stunden, Art, Tätigkeit). Hinweis an Recht `manage-signatures` und die Vorgesetzten (über die Datenherkunft).
 - Später möglich: Abschluss automatisch beim Visum der Zeiterfassung, regelmässige Prüfung.
 
+## Abgleich mit der Zeiterfassung (#99, #100)
+
+- Echte Antworten (05.11.2026): Buchungen mit `entry_type_name` {de, en}, `entry_type_number` meist leer,
+  `entry_type_type` (WORK, HOLIDAYS, COMPENSATION …), Pause als Buchung mit negativen Stunden, gelöschte Buchungen mit
+  `deleted: true`; Kumulative je Person unter `cumulative_values`.
+- Zeiterfassung: eigene Buchungsarten (Modul, Sammlung `zeit_buchungsarten`), ohne Bezug zu ClickTime.
+- Plugin: Mapping-Tabelle (Einstellung `mapping`, «Name = Schlüssel», `pause`, `-`), Vorschlag über gleichen Namen
+  bzw. Kategorie. Vergleich je Tag und Buchungsart; Pause wird von der grössten Arbeit-Buchungsart des Tages abgezogen.
+- Offen: Import ClickTime → Zeiterfassung (ClickTime-Nr. je Eintrag), Export.
+
 ## Offen (#28)
 
 - Antwortfelder aller Endpunkte (die Beschreibung enthält keine Antworten) – Demo-Daten sind geraten, nach dem ersten

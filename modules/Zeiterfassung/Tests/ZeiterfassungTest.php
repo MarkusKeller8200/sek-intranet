@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Testing\TestResponse;
 use Inertia\Testing\AssertableInertia as Assert;
+use Modules\Zeiterfassung\Buchungsarten;
 use Modules\Zeiterfassung\Data\Contracts\EintragRepository;
 use Modules\Zeiterfassung\Zeitkonto;
 use Tests\TestCase;
@@ -183,5 +184,47 @@ class ZeiterfassungTest extends TestCase
         // andere Personen ohne Visum-Recht nicht
         $this->signInAs('redaktion');
         $this->get("/zeiterfassung/unterschrift/{$id}/".self::MONAT)->assertForbidden();
+    }
+
+    public function test_booking_types_on_entries_and_maintained_list(): void
+    {
+        $this->signInAs('lehrperson');
+        // Buchungsart wählen: Art und Kategorie folgen daraus
+        $this->post('/zeiterfassung', ['datum' => self::MONAT.'-07', 'buchungsart' => 'unfall', 'stunden' => 8.4])->assertRedirect();
+        $this->post('/zeiterfassung', ['datum' => self::MONAT.'-08', 'buchungsart' => 'homeoffice', 'kategorie' => 'schule', 'beginn' => '08:00', 'ende' => '12:00'])->assertRedirect();
+        $this->post('/zeiterfassung', ['datum' => self::MONAT.'-09', 'buchungsart' => 'gibts-nicht', 'stunden' => 1])->assertSessionHasErrors('buchungsart');
+        // älterer Eintrag ohne Buchungsart: aus Art und Kategorie
+        $this->erfassen(['datum' => self::MONAT.'-12', 'art' => 'abwesenheit', 'kategorie' => 'krank', 'beginn' => null, 'ende' => null, 'stunden' => 4.2])->assertRedirect();
+
+        $unfall = collect(app(EintragRepository::class)->all())->firstWhere('datum', self::MONAT.'-07');
+        $this->assertSame(['abwesenheit', 'krank', 'unfall'], [$unfall['art'], $unfall['kategorie'], $unfall['buchungsart']]);
+        $this->assertSame('krankheit', Buchungsarten::von(['art' => 'abwesenheit', 'kategorie' => 'krank']));
+        $this->assertSame('arbeitszeit', Buchungsarten::von(['art' => 'arbeit', 'kategorie' => 'unterricht']));
+
+        $this->get('/zeiterfassung?monat='.self::MONAT)->assertInertia(fn (Assert $page) => $page
+            ->where('kategorien.buchungsarten.homeoffice.name', 'Homeoffice')
+            ->where('summen.buchungsarten.unfall', 8.4)
+            ->where('summen.buchungsarten.homeoffice', 4.0)
+            ->where('summen.buchungsarten.krankheit', 4.2)
+            ->where('eintraege', fn ($e): bool => collect($e)->pluck('buchungsart')->sort()->values()->all() === ['homeoffice', 'krankheit', 'unfall']));
+
+        // Liste pflegen: nur mit Visum-Recht; umbenennen, neue Art, deaktivieren
+        $this->get('/zeiterfassung/buchungsarten')->assertForbidden();
+        $this->signInAs('schulleitung');
+        $this->get('/zeiterfassung/buchungsarten')->assertOk()->assertInertia(fn (Assert $page) => $page
+            ->component('Zeiterfassung::buchungsarten')->has('buchungsarten', 10));
+        $zeilen = array_map(fn (string $k, array $b): array => ['key' => $k] + $b, array_keys(Buchungsarten::VORGABE), Buchungsarten::VORGABE);
+        $zeilen[1]['name'] = 'Home-Office';
+        $zeilen[9]['aktiv'] = false;
+        $zeilen[] = ['key' => '', 'name' => 'Mutterschaft', 'art' => 'abwesenheit', 'aktiv' => true];
+        $this->put('/zeiterfassung/buchungsarten', ['zeilen' => $zeilen])->assertSessionHasNoErrors();
+        $liste = app(Buchungsarten::class)->liste();
+        $this->assertSame('Home-Office', $liste['homeoffice']['name']);
+        $this->assertFalse($liste['unbezahlt']['aktiv']);
+        $this->assertSame('abwesenheit', $liste['mutterschaft']['art']);
+        $this->assertArrayNotHasKey('unbezahlt', app(Buchungsarten::class)->liste(true));
+
+        $nurAbwesenheit = [['key' => 'ferien', 'name' => 'Ferien', 'art' => 'abwesenheit', 'aktiv' => true]];
+        $this->put('/zeiterfassung/buchungsarten', ['zeilen' => $nurAbwesenheit])->assertSessionHasErrors('zeilen');
     }
 }

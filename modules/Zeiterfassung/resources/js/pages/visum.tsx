@@ -1,5 +1,5 @@
 import { Head, Link } from '@inertiajs/react';
-import { Download } from 'lucide-react';
+import { Download, ListTree } from 'lucide-react';
 import PageHeader from '@/components/page-header';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -44,6 +44,13 @@ export default function ZeiterfassungVisum({
                 <PageHeader
                     title="Zeiterfassung – Visum"
                     description="Eingereichte Monate prüfen und visieren. Der Export für die Lohnbuchhaltung enthält standardmässig nur visierte Monate."
+                    actions={
+                        <Button asChild variant="outline">
+                            <Link href="/zeiterfassung/buchungsarten">
+                                <ListTree /> Buchungsarten
+                            </Link>
+                        </Button>
+                    }
                 />
                 <div className="flex flex-wrap items-center gap-3">
                     <MonatNavigation

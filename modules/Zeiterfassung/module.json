@@ -1,9 +1,9 @@
 {
     "key": "zeiterfassung",
     "name": "Zeiterfassung",
-    "version": "0.2.1",
+    "version": "0.3.0",
     "core": ">=0.32.0",
-    "description": "Arbeitszeit, Tätigkeiten, Projekte und Abwesenheiten pro Monat erfassen; Monatsvisum durch die Schulleitung, Export für die Lohnbuchhaltung und Monatsblatt als PDF; visierte Monatsrapporte elektronisch unterschreiben (DeepSign).",
+    "description": "Arbeitszeit mit Buchungsart (Arbeitszeit, Homeoffice, Ferien, Krankheit …), Tätigkeiten, Projekte und Abwesenheiten pro Monat erfassen; Monatsvisum durch die Schulleitung, Export für die Lohnbuchhaltung und Monatsblatt als PDF; visierte Monatsrapporte elektronisch unterschreiben (DeepSign).",
     "aktiv": true,
     "datenklasse": "vertraulich",
     "db_schema": "zeit",
@@ -72,6 +72,11 @@
                     },
                     "required": true,
                     "label": "Art"
+                },
+                "buchungsart": {
+                    "type": "string",
+                    "required": false,
+                    "label": "Buchungsart (Schlüssel, fehlt = aus Art und Kategorie)"
                 },
                 "kategorie": {
                     "type": "string",
@@ -190,6 +195,36 @@
                     "type": "string",
                     "required": false,
                     "label": "Unterschriebenes PDF (Ablage des Moduls)"
+                }
+            }
+        },
+        "zeit_buchungsarten": {
+            "label": "Zeiterfassung: Buchungsarten",
+            "description": "Pflegbare Liste (id = Schlüssel): Arbeit oder Abwesenheit. Ohne gespeicherte Liste gilt die Vorgabe.",
+            "fields": {
+                "name": {
+                    "type": "string",
+                    "required": true,
+                    "label": "Bezeichnung"
+                },
+                "art": {
+                    "type": "enum",
+                    "values": {
+                        "arbeit": "Arbeit",
+                        "abwesenheit": "Abwesenheit"
+                    },
+                    "required": true,
+                    "label": "Art"
+                },
+                "aktiv": {
+                    "type": "bool",
+                    "required": true,
+                    "label": "Aktiv (zur Auswahl)"
+                },
+                "reihenfolge": {
+                    "type": "int",
+                    "required": false,
+                    "label": "Reihenfolge"
                 }
             }
         }

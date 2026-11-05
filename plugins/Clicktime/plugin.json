@@ -1,7 +1,7 @@
 {
     "id": "clicktime",
     "name": "ClickTime",
-    "version": "0.2.2",
+    "version": "0.3",
     "api": 1,
     "category": "other",
     "author": "SekBülach Intranet",
@@ -1278,6 +1278,13 @@
             "type": "url",
             "label": "Adresse für das Token",
             "default": "https://login.clicktime.ch/auth/realms/openapi/protocol/openid-connect/token"
+        },
+        {
+            "key": "mapping",
+            "type": "textarea",
+            "label": "Zuordnung der Buchungsarten (ClickTime = Zeiterfassung)",
+            "default": "Arbeitszeit = arbeitszeit\nHomeoffice = homeoffice\nFerien = ferien\nKrankheit = krankheit\nUnfall = unfall\nKompensation = kompensation\nKompensation (Minussaldo) = kompensation\nUeberzeit-Kompensation = kompensation\nWeiterbildung = weiterbildung\nMilitär/Zivilschutz = militaer\nBezahlte Absenzen = bezahlt\nunbezahlte Absenz = unbezahlt\nPause = pause\nSollzeit = -\nUeberzeit = -\nÜberzeit abgerechnet = -",
+            "help": "Eine Zeile je Buchungsart aus ClickTime: «Name = Schlüssel». Schlüssel der Buchungsart in der Zeiterfassung (Visum → Buchungsarten), «pause» = Pause des Tages, «-» = nicht übernehmen. Statt des Namens geht auch die Nummer, falls in ClickTime gesetzt. Vorschläge mit der Aktion «Buchungsarten zuordnen»."
         }
     ],
     "actions": [
@@ -1393,6 +1400,39 @@
                     "key": "notify",
                     "type": "check",
                     "label": "Hinweis an Verwaltung und Vorgesetzte senden",
+                    "default": false
+                }
+            ]
+        },
+        {
+            "id": "mapping",
+            "label": "Buchungsarten zuordnen",
+            "kind": "import",
+            "description": "Alle Buchungsarten aus ClickTime (Kumulative der letzten 12 Monate) mit der aktuellen Zuordnung zur Zeiterfassung und einem Vorschlag (gleicher Name, sonst nach Kategorie). Übernehmen ergänzt die Einstellung «Zuordnung der Buchungsarten»; ändern lässt sie sich dort von Hand.",
+            "options": []
+        },
+        {
+            "id": "compare",
+            "label": "Mit Zeiterfassung vergleichen",
+            "kind": "read",
+            "description": "Je Person und Tag: Stunden je Buchungsart in ClickTime (über die Zuordnung) gegen die eigene Zeiterfassung – gleich, Abweichung, nur ClickTime, nur Zeiterfassung. Pause wird von der Arbeit abgezogen. Es wird nichts geändert.",
+            "options": [
+                {
+                    "key": "month",
+                    "type": "text",
+                    "label": "Monat (JJJJ-MM, leer = Vormonat)",
+                    "placeholder": "2026-10"
+                },
+                {
+                    "key": "person",
+                    "type": "text",
+                    "label": "Person (E-Mail oder ClickTime-Nummer, leer = alle)",
+                    "placeholder": "andrea.muster@sekbuelach.example"
+                },
+                {
+                    "key": "all",
+                    "type": "check",
+                    "label": "Auch gleiche Tage anzeigen",
                     "default": false
                 }
             ]

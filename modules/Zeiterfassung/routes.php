@@ -16,6 +16,8 @@ Route::middleware('can:use-zeiterfassung')->group(function () {
 Route::middleware('can:visum-zeiterfassung')->group(function () {
     Route::get('zeiterfassung/visum', [VisumController::class, 'index'])->name('zeiterfassung.visum');
     Route::get('zeiterfassung/visum/export', [VisumController::class, 'export'])->name('zeiterfassung.export');
+    Route::get('zeiterfassung/buchungsarten', [VisumController::class, 'buchungsarten'])->name('zeiterfassung.buchungsarten');
+    Route::put('zeiterfassung/buchungsarten', [VisumController::class, 'buchungsartenSpeichern'])->name('zeiterfassung.buchungsarten.update');
     Route::get('zeiterfassung/visum/{person}', [VisumController::class, 'show'])->name('zeiterfassung.person');
     Route::post('zeiterfassung/visum/{person}/visieren', [VisumController::class, 'visieren'])->name('zeiterfassung.visieren');
     Route::post('zeiterfassung/visum/{person}/zurueck', [VisumController::class, 'zurueck'])->name('zeiterfassung.zurueck');

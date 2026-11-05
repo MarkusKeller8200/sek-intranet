@@ -4,6 +4,16 @@ Versionen des Moduls nach SemVer (module.json → «version»).
 
 ## [Unveröffentlicht]
 
+## [0.3.0]
+
+### Neu
+
+- **Buchungsart je Eintrag (#99):** Arbeitszeit, Homeoffice, Ferien, Krankheit, Unfall, Kompensation, Weiterbildung,
+  Militär/Zivilschutz, bezahlte und unbezahlte Absenz (Vorgabe wie in ClickTime). Die Buchungsart bestimmt Arbeit oder
+  Abwesenheit; die Kategorie (Tätigkeit) gibt es nur noch für Arbeit. Liste unter Visum → «Buchungsarten» pflegbar
+  (umbenennen, hinzufügen, deaktivieren). Ältere Einträge erhalten die Buchungsart aus Art und Kategorie. Summen,
+  Monatsblatt (Druck und PDF zur Unterschrift) und Export nach Buchungsart.
+
 ## [0.2.1]
 
 ### Geändert

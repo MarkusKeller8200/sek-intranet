@@ -39,11 +39,11 @@ final class Zeitkonto
      * Summen je Art und Kategorie.
      *
      * @param  list<array<string, mixed>>  $eintraege
-     * @return array{arbeit: float, abwesenheit: float, total: float, kategorien: array<string, float>, projekte: array<string, float>}
+     * @return array{arbeit: float, abwesenheit: float, total: float, kategorien: array<string, float>, projekte: array<string, float>, buchungsarten: array<string, float>}
      */
     public static function summen(array $eintraege): array
     {
-        $s = ['arbeit' => 0.0, 'abwesenheit' => 0.0, 'total' => 0.0, 'kategorien' => [], 'projekte' => []];
+        $s = ['arbeit' => 0.0, 'abwesenheit' => 0.0, 'total' => 0.0, 'kategorien' => [], 'projekte' => [], 'buchungsarten' => []];
         foreach ($eintraege as $e) {
             $h = (float) ($e['stunden'] ?? 0);
             $art = ($e['art'] ?? 'arbeit') === 'abwesenheit' ? 'abwesenheit' : 'arbeit';
@@ -51,6 +51,8 @@ final class Zeitkonto
             $s['total'] += $h;
             $k = (string) ($e['kategorie'] ?? '');
             $s['kategorien'][$k] = round(($s['kategorien'][$k] ?? 0) + $h, 2);
+            $b = Buchungsarten::von($e);
+            $s['buchungsarten'][$b] = round(($s['buchungsarten'][$b] ?? 0) + $h, 2);
             $p = trim((string) ($e['projekt'] ?? ''));
             if ($p !== '') {
                 $s['projekte'][$p] = round(($s['projekte'][$p] ?? 0) + $h, 2);

@@ -45,9 +45,13 @@ export default function ZeiterfassungStart(props: Props) {
     const gesperrt =
         status.status === 'eingereicht' || status.status === 'visiert';
     const heute = new Date().toISOString().slice(0, 10);
+    // Buchungsarten zur Auswahl (#99): aktive, nach Art gruppiert
+    const buchungsarten = Object.entries(kategorien.buchungsarten ?? {}).filter(
+        ([, b]) => b.aktiv,
+    );
     const form = useForm({
         datum: heute.startsWith(monat) ? heute : `${monat}-01`,
-        art: 'arbeit' as 'arbeit' | 'abwesenheit',
+        buchungsart: buchungsarten[0]?.[0] ?? 'arbeitszeit',
         kategorie: Object.keys(kategorien.arbeit)[0] ?? '',
         beginn: '',
         ende: '',
@@ -56,8 +60,8 @@ export default function ZeiterfassungStart(props: Props) {
         projekt: '',
         notiz: '',
     });
-    const liste =
-        form.data.art === 'arbeit' ? kategorien.arbeit : kategorien.abwesenheit;
+    const art =
+        kategorien.buchungsarten?.[form.data.buchungsart]?.art ?? 'arbeit';
 
     const submit = (e: FormEvent) => {
         e.preventDefault();
@@ -81,7 +85,7 @@ export default function ZeiterfassungStart(props: Props) {
             <div className="flex max-w-5xl flex-1 flex-col gap-6 p-4 md:p-6">
                 <PageHeader
                     title="Zeiterfassung"
-                    description="Arbeitszeit, Tätigkeiten, Projekte und Abwesenheiten erfassen. Am Monatsende einreichen – die Schulleitung visiert."
+                    description="Arbeitszeit, Tätigkeiten, Projekte und Abwesenheiten mit Buchungsart erfassen. Am Monatsende einreichen – die Schulleitung visiert."
                 />
                 <div className="flex flex-wrap items-center gap-3">
                     <MonatNavigation monat={monat} basis="/zeiterfassung" />
@@ -196,54 +200,78 @@ export default function ZeiterfassungStart(props: Props) {
                                         }
                                     />
                                 </FormField>
-                                <FormField id="z-art" label="Art *">
-                                    <NativeSelect
-                                        id="z-art"
-                                        value={form.data.art}
-                                        onChange={(e) => {
-                                            const art = e.target.value as
-                                                | 'arbeit'
-                                                | 'abwesenheit';
-                                            form.setData((d) => ({
-                                                ...d,
-                                                art,
-                                                kategorie:
-                                                    Object.keys(
-                                                        art === 'arbeit'
-                                                            ? kategorien.arbeit
-                                                            : kategorien.abwesenheit,
-                                                    )[0] ?? '',
-                                            }));
-                                        }}
-                                    >
-                                        <option value="arbeit">Arbeit</option>
-                                        <option value="abwesenheit">
-                                            Abwesenheit
-                                        </option>
-                                    </NativeSelect>
-                                </FormField>
                                 <FormField
-                                    id="z-kategorie"
-                                    label="Kategorie *"
-                                    error={form.errors.kategorie}
+                                    id="z-buchungsart"
+                                    label="Buchungsart *"
+                                    error={form.errors.buchungsart}
                                 >
                                     <NativeSelect
-                                        id="z-kategorie"
-                                        value={form.data.kategorie}
+                                        id="z-buchungsart"
+                                        value={form.data.buchungsart}
                                         onChange={(e) =>
                                             form.setData(
-                                                'kategorie',
+                                                'buchungsart',
                                                 e.target.value,
                                             )
                                         }
                                     >
-                                        {Object.entries(liste).map(([k, l]) => (
-                                            <option key={k} value={k}>
-                                                {l}
-                                            </option>
-                                        ))}
+                                        {(['arbeit', 'abwesenheit'] as const).map(
+                                            (gruppe) => (
+                                                <optgroup
+                                                    key={gruppe}
+                                                    label={
+                                                        gruppe === 'arbeit'
+                                                            ? 'Arbeit'
+                                                            : 'Abwesenheit'
+                                                    }
+                                                >
+                                                    {buchungsarten
+                                                        .filter(
+                                                            ([, b]) =>
+                                                                b.art ===
+                                                                gruppe,
+                                                        )
+                                                        .map(([k, b]) => (
+                                                            <option
+                                                                key={k}
+                                                                value={k}
+                                                            >
+                                                                {b.name}
+                                                            </option>
+                                                        ))}
+                                                </optgroup>
+                                            ),
+                                        )}
                                     </NativeSelect>
                                 </FormField>
+                                {art === 'arbeit' ? (
+                                    <FormField
+                                        id="z-kategorie"
+                                        label="Kategorie *"
+                                        error={form.errors.kategorie}
+                                    >
+                                        <NativeSelect
+                                            id="z-kategorie"
+                                            value={form.data.kategorie}
+                                            onChange={(e) =>
+                                                form.setData(
+                                                    'kategorie',
+                                                    e.target.value,
+                                                )
+                                            }
+                                        >
+                                            {Object.entries(
+                                                kategorien.arbeit,
+                                            ).map(([k, l]) => (
+                                                <option key={k} value={k}>
+                                                    {l}
+                                                </option>
+                                            ))}
+                                        </NativeSelect>
+                                    </FormField>
+                                ) : (
+                                    <div />
+                                )}
                                 <FormField
                                     id="z-projekt"
                                     label="Projekt / Einsatz"

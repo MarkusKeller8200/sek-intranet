@@ -3,6 +3,8 @@ export type Eintrag = {
     datum: string;
     monat: string;
     art: 'arbeit' | 'abwesenheit';
+    /** Buchungsart (#99), bei älteren Einträgen vom Server aus Art und Kategorie ergänzt */
+    buchungsart?: string;
     kategorie: string;
     beginn?: string | null;
     ende?: string | null;
@@ -42,12 +44,20 @@ export type Summen = {
     total: number;
     kategorien: Record<string, number>;
     projekte: Record<string, number>;
+    buchungsarten?: Record<string, number>;
+};
+
+export type Buchungsart = {
+    name: string;
+    art: 'arbeit' | 'abwesenheit';
+    aktiv: boolean;
 };
 
 export type Kategorien = {
     arbeit: Record<string, string>;
     abwesenheit: Record<string, string>;
     status: Record<string, string>;
+    buchungsarten?: Record<string, Buchungsart>;
 };
 
 /** «2026-11» → «November 2026» */
@@ -73,4 +83,12 @@ export function stunden(h: number): string {
 
 export function kategorieName(k: Kategorien, key: string): string {
     return k.arbeit[key] ?? k.abwesenheit[key] ?? key;
+}
+
+export function buchungsartName(k: Kategorien, key: string | undefined): string {
+    if (!key) {
+        return '';
+    }
+
+    return k.buchungsarten?.[key]?.name ?? key;
 }

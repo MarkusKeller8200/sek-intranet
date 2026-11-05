@@ -3,15 +3,19 @@
 namespace Plugins\Clicktime;
 
 use App\Data\Contracts\UserRepository;
+use App\Modules\ModuleRegistry;
 use App\Plugins\ActionResult;
 use App\Plugins\BasePlugin;
 use App\Plugins\DemoResponder;
 use App\Plugins\PluginContext;
+use App\Plugins\PluginManager;
 use App\Support\DocumentAccess;
 use App\Support\Notifications;
 use App\Support\PersonLinks;
 use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Cache;
+use Modules\Zeiterfassung\Buchungsarten;
+use Modules\Zeiterfassung\Data\Contracts\EintragRepository;
 use RuntimeException;
 
 /**
@@ -99,6 +103,8 @@ class Plugin extends BasePlugin implements DemoResponder
             'month' => $this->monthSheet($ctx, $options),
             'close' => $this->closeMonth($ctx, $options),
             'changes' => $this->changes($ctx, $options),
+            'mapping' => $this->mapping($ctx, $options),
+            'compare' => $this->compare($ctx, $options),
             default => parent::action($action, $ctx, $options),
         };
     }
@@ -524,6 +530,237 @@ class Plugin extends BasePlugin implements DemoResponder
         }
 
         return array_values(array_unique($ids));
+    }
+
+    // ---------- Abgleich mit der eigenen Zeiterfassung (#100) ----------
+
+    /**
+     * Buchungsarten der Zeiterfassung (Modul), leer wenn das Modul aus ist.
+     *
+     * @return array<string, array{name: string, art: string, aktiv: bool}>
+     */
+    private static function ownTypes(): array
+    {
+        if (! class_exists(Buchungsarten::class) || ! app(ModuleRegistry::class)->enabled('zeiterfassung')) {
+            return [];
+        }
+
+        return app(Buchungsarten::class)->liste();
+    }
+
+    /**
+     * @return array<string, array{name: string, target: string}>
+     */
+    private static function mappingOf(PluginContext $ctx): array
+    {
+        return Mapping::parse((string) $ctx->setting('mapping', Mapping::DEFAULT));
+    }
+
+    /**
+     * Mapping-Tabelle prüfen und ergänzen: alle Buchungsarten aus ClickTime (Kumulative der letzten 12 Monate, mit
+     * Kategorie aus den Buchungen des Vormonats), aktuelle Zuordnung und Vorschlag. Übernehmen schreibt die gewählten
+     * Vorschläge in die Einstellung «Zuordnung der Buchungsarten».
+     *
+     * @param  array<string, mixed>  $options
+     */
+    private function mapping(PluginContext $ctx, array $options): ActionResult
+    {
+        $own = self::ownTypes();
+        if ($own === []) {
+            return ActionResult::warning('Das Modul Zeiterfassung ist ausgeschaltet – ohne seine Buchungsarten gibt es nichts zuzuordnen.');
+        }
+        $names = [];
+        $from = date('Y-m-01', (int) strtotime('first day of -11 months'));
+        $to = date('Y-m-t');
+        foreach (self::list(self::expect($ctx->call('cumulatives', ['filters' => ["valid_from::EQ::{$from}", "valid_to::EQ::{$to}"]]))) as $row) {
+            foreach (is_array($row['cumulative_values'] ?? null) ? $row['cumulative_values'] : [] as $v) {
+                $name = self::text($v['entry_type_name'] ?? '');
+                if (is_array($v) && $name !== '') {
+                    $names[Mapping::key($name)] ??= ['name' => $name, 'number' => $v['entry_type_number'] ?? null, 'category' => null];
+                }
+            }
+        }
+        $month = Months::month('');
+        [$mFrom, $mTo] = Months::range($month);
+        foreach (self::list($ctx->call('entries', ['filters' => ["day::GE::{$mFrom}", "day::LE::{$mTo}"]])) as $e) {
+            $name = self::text($e['entry_type_name'] ?? '');
+            if ($name !== '') {
+                $names[Mapping::key($name)] ??= ['name' => $name, 'number' => $e['entry_type_number'] ?? null, 'category' => null];
+                $names[Mapping::key($name)]['category'] ??= is_string($e['entry_type_type'] ?? null) ? $e['entry_type_type'] : null;
+            }
+        }
+
+        $mapping = self::mappingOf($ctx);
+        $label = fn (?string $t): string => match (true) {
+            $t === null || $t === '' => '–',
+            $t === Mapping::PAUSE => 'Pause des Tages',
+            $t === Mapping::SKIP => 'nicht übernehmen',
+            isset($own[$t]) => $own[$t]['name'],
+            default => "«{$t}» (unbekannt)",
+        };
+        $rows = [];
+        foreach ($names as $key => $n) {
+            $current = $mapping[$key]['target'] ?? null;
+            $valid = $current !== null && ($current === Mapping::PAUSE || $current === Mapping::SKIP || isset($own[$current]));
+            $suggest = $valid ? $current : Mapping::suggest($n['name'], $n['category'], $own);
+            $rows[] = [
+                '_key' => $key,
+                '_change' => $valid ? 'gleich' : ($suggest !== null ? 'neu' : 'offen'),
+                '_target' => $suggest,
+                'name' => $n['name'],
+                'category' => (string) ($n['category'] ?? ''),
+                'current' => $label($current),
+                'suggest' => $label($suggest),
+                'status' => $valid ? 'zugeordnet' : ($suggest !== null ? 'Vorschlag' : 'von Hand zuordnen'),
+            ];
+        }
+
+        if (($options['_apply'] ?? false) === true) {
+            $selected = array_map('strval', (array) ($options['_selected'] ?? []));
+            $done = 0;
+            foreach ($rows as $r) {
+                if ($r['_change'] === 'neu' && in_array($r['_key'], $selected, true) && is_string($r['_target'])) {
+                    $mapping[$r['_key']] = ['name' => $r['name'], 'target' => $r['_target']];
+                    $done++;
+                }
+            }
+            $manager = app(PluginManager::class);
+            $manager->saveSettings($ctx->manifest->id(), ['mapping' => Mapping::format($mapping)] + $manager->state($ctx->manifest->id())['settings']);
+
+            return ActionResult::ok("{$done} Buchungsarten zugeordnet. Die Zuordnung lässt sich in den Einstellungen von Hand ändern.");
+        }
+
+        $counts = array_count_values(array_column($rows, 'status'));
+
+        return ActionResult::preview(
+            ($ctx->demo() ? 'Demo-Modus: ' : '').count($rows).' Buchungsarten in ClickTime: '.($counts['zugeordnet'] ?? 0).' zugeordnet, '
+                .($counts['Vorschlag'] ?? 0).' mit Vorschlag, '.($counts['von Hand zuordnen'] ?? 0).' von Hand zuordnen (Einstellungen).',
+            [
+                ['key' => 'name', 'label' => 'Buchungsart ClickTime'],
+                ['key' => 'category', 'label' => 'Kategorie'],
+                ['key' => 'current', 'label' => 'Zuordnung heute'],
+                ['key' => 'suggest', 'label' => 'Vorschlag'],
+                ['key' => 'status', 'label' => 'Status'],
+            ],
+            array_map(fn (array $r): array => array_diff_key($r, ['_target' => true]), $rows),
+        );
+    }
+
+    /**
+     * Vergleich je Person und Tag: Stunden je Buchungsart in ClickTime (über die Mapping-Tabelle) gegen die eigene
+     * Zeiterfassung. Pause wird von der Arbeit des Tages abgezogen. Nichts wird geändert.
+     *
+     * @param  array<string, mixed>  $options
+     */
+    private function compare(PluginContext $ctx, array $options): ActionResult
+    {
+        $own = self::ownTypes();
+        if ($own === []) {
+            return ActionResult::warning('Das Modul Zeiterfassung ist ausgeschaltet.');
+        }
+        $month = Months::month((string) ($options['month'] ?? ''));
+        $needle = trim((string) ($options['person'] ?? ''));
+        $people = $this->people($ctx, $needle);
+        $links = app(PersonLinks::class);
+        $mapping = self::mappingOf($ctx);
+        $entries = (new Months($ctx))->entries($month, $needle !== '' ? array_map('strval', array_keys($people)) : []);
+        $repo = app(EintragRepository::class);
+
+        $rows = [];
+        $unmapped = [];
+        $counts = ['gleich' => 0, 'Abweichung' => 0, 'nur ClickTime' => 0, 'nur Zeiterfassung' => 0];
+        $withoutPerson = [];
+        foreach ($people as $no => $name) {
+            $personId = $links->findPerson(self::SYSTEM, (string) $no);
+            if ($personId === null) {
+                $withoutPerson[] = $name;
+
+                continue;
+            }
+            // ClickTime: Tag → Buchungsart → Stunden
+            $ct = [];
+            $pause = [];
+            foreach ($entries[(string) $no] ?? [] as $e) {
+                $target = Mapping::target($mapping, (string) $e['type'], (string) $e['type_name']);
+                if ($target === null || ($target !== Mapping::PAUSE && $target !== Mapping::SKIP && ! isset($own[$target]))) {
+                    $unmapped[(string) $e['type_name']] = true;
+                    $target = '?'.$e['type_name'];
+                }
+                if ($target === Mapping::SKIP) {
+                    continue;
+                }
+                if ($target === Mapping::PAUSE) {
+                    $pause[$e['day']] = ($pause[$e['day']] ?? 0) + (float) $e['hours'];
+
+                    continue;
+                }
+                $ct[$e['day']][$target] = ($ct[$e['day']][$target] ?? 0) + (float) $e['hours'];
+            }
+            foreach ($pause as $day => $h) {
+                // Pause (negativ) von der grössten Arbeit-Buchungsart des Tages abziehen
+                $work = array_filter($ct[$day] ?? [], fn (string $k): bool => ($own[$k]['art'] ?? '') === 'arbeit', ARRAY_FILTER_USE_KEY);
+                arsort($work);
+                $key = (string) (array_key_first($work) ?? 'arbeitszeit');
+                $ct[$day][$key] = ($ct[$day][$key] ?? 0) + $h;
+            }
+            // Zeiterfassung
+            $mine = [];
+            foreach ($repo->fuerPersonMonat($personId, $month) as $e) {
+                $b = Buchungsarten::von($e);
+                $mine[(string) $e['datum']][$b] = ($mine[(string) $e['datum']][$b] ?? 0) + (float) $e['stunden'];
+            }
+            $days = array_unique([...array_keys($ct), ...array_keys($mine)]);
+            sort($days);
+            foreach ($days as $day) {
+                $a = array_map(fn (float $h): float => round($h, 2), $ct[$day] ?? []);
+                $b = array_map(fn (float $h): float => round($h, 2), $mine[$day] ?? []);
+                $status = match (true) {
+                    $b === [] => 'nur ClickTime',
+                    $a === [] => 'nur Zeiterfassung',
+                    self::sameHours($a, $b) => 'gleich',
+                    default => 'Abweichung',
+                };
+                $counts[$status]++;
+                if ($status === 'gleich' && ($options['all'] ?? false) !== true) {
+                    continue;
+                }
+                $describe = fn (array $x): string => implode(', ', array_map(fn (string $k, float $h): string => (str_starts_with($k, '?') ? substr($k, 1).' (nicht zugeordnet)' : ($own[$k]['name'] ?? $k)).' '.Months::hours($h), array_keys($x), $x)) ?: '–';
+                $rows[] = ['no' => (string) $no, 'name' => $name, 'day' => date('d.m.Y', (int) strtotime($day)), 'clicktime' => $describe($a), 'own' => $describe($b), 'status' => $status];
+            }
+        }
+
+        $message = ($ctx->demo() ? 'Demo-Modus: ' : '')."Monat {$month}: {$counts['gleich']} Tage gleich, {$counts['Abweichung']} mit Abweichung, "
+            ."{$counts['nur ClickTime']} nur in ClickTime, {$counts['nur Zeiterfassung']} nur in der Zeiterfassung.";
+        if ($unmapped !== []) {
+            $message .= ' Nicht zugeordnet: '.implode(', ', array_keys($unmapped)).' (Aktion «Buchungsarten zuordnen»).';
+        }
+        if ($withoutPerson !== []) {
+            $message .= ' Ohne Intranet-Person (zuerst «Mitarbeitende abgleichen»): '.implode(', ', $withoutPerson).'.';
+        }
+
+        return ActionResult::table($message, [
+            ['key' => 'no', 'label' => 'Nr.'],
+            ['key' => 'name', 'label' => 'Name'],
+            ['key' => 'day', 'label' => 'Tag'],
+            ['key' => 'clicktime', 'label' => 'ClickTime'],
+            ['key' => 'own', 'label' => 'Zeiterfassung'],
+            ['key' => 'status', 'label' => 'Status'],
+        ], $rows);
+    }
+
+    /**
+     * @param  array<string, float>  $a
+     * @param  array<string, float>  $b
+     */
+    private static function sameHours(array $a, array $b): bool
+    {
+        foreach (array_unique([...array_keys($a), ...array_keys($b)]) as $k) {
+            if (abs(($a[$k] ?? 0) - ($b[$k] ?? 0)) > 0.02) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     // ---------- Daten ----------

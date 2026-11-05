@@ -47,10 +47,6 @@
         "Enter start and end (with break) or the hours directly.",
         "Aafang und Änd (mit Pause) oder diräkt d Stunde aagäh."
     ],
-    "Arbeitszeit, Tätigkeiten, Projekte und Abwesenheiten erfassen. Am Monatsende einreichen – die Schulleitung visiert.": [
-        "Record working time, activities, projects and absences. Submit at the end of the month – the school management approves.",
-        "Arbetsziit, Tätigkeite, Projekt und Abwäseheite erfasse. Am Monetsänd iiräiche – d Schuelleitig visiert."
-    ],
     "Datum *": ["Date *", "Datum *"],
     "Art *": ["Type *", "Art *"],
     "Kategorie *": ["Category *", "Kategorie *"],
@@ -164,5 +160,17 @@
     "Abgelehnt": ["Rejected", "Abglehnt"],
     "Zurückgezogen": ["Withdrawn", "Zruggzoge"],
     "Abgelaufen": ["Expired", "Abgloffe"],
-    "Unterschrieben": ["Signed", "Unterschriibe"]
+    "Unterschrieben": ["Signed", "Unterschriibe"],
+    "Buchungsart": ["Booking type", "Buechigsart"],
+    "Buchungsart *": ["Booking type *", "Buechigsart *"],
+    "Buchungsarten": ["Booking types", "Buechigsarte"],
+    "Buchungsart hinzufügen": ["Add booking type", "Buechigsart dezuefüege"],
+    "Arten für die Zeiterfassung, z. B. Arbeitszeit, Homeoffice, Ferien, Krankheit. Die Zuordnung zu ClickTime steht im Plugin ClickTime.": [
+        "Types for time tracking, e.g. working time, home office, holidays, illness. The mapping to ClickTime is in the ClickTime plugin.",
+        "Arte für d Ziiterfassig, z. B. Arbetsziit, Homeoffice, Ferie, Chrankheit. D Zuordnig zu ClickTime staht im Plugin ClickTime."
+    ],
+    "Arbeitszeit, Tätigkeiten, Projekte und Abwesenheiten mit Buchungsart erfassen. Am Monatsende einreichen – die Schulleitung visiert.": [
+        "Record working time, activities, projects and absences with a booking type. Submit at the end of the month – the school management approves.",
+        "Arbetsziit, Tätigkeite, Projekt und Abwäseheite mit Buechigsart erfasse. Am Monetsänd iiräiche – d Schuelleitig visiert."
+    ]
 }
