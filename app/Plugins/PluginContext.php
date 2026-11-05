@@ -189,6 +189,13 @@ final class PluginContext
             }
             if (str_contains($path, '{'.$name.'}')) {
                 $path = str_replace('{'.$name.'}', rawurlencode((string) $value), $path);
+            } elseif (($param['repeat'] ?? false) === true) {
+                // Mehrfacher Parameter (z. B. ClickTime filters=a&filters=b): Liste oder Text mit «|»
+                $items = is_array($value) ? $value : explode('|', (string) $value);
+                $items = array_values(array_filter(array_map(fn (mixed $v): string => trim(is_scalar($v) ? (string) $v : ''), $items), fn (string $v): bool => $v !== ''));
+                if ($items !== []) {
+                    $query[$name] = $items;
+                }
             } else {
                 $query[$name] = $value;
             }
@@ -223,8 +230,25 @@ final class PluginContext
             return $response;
         }
 
+        // Personendaten (endpoints[].personal_data) nur auf dem Schweizer Server – auch nicht im Endtest
+        if (($endpoint['personal_data'] ?? false) === true && ! (bool) config('intranet.server_in_switzerland')) {
+            throw new RuntimeException('«'.(string) ($endpoint['label'] ?? $endpointId).'» liefert Personendaten: echte Aufrufe erst auf dem Schweizer Server (hier nur Demo-Modus oder Endtest ohne Personendaten).');
+        }
+
         $this->log("{$method} {$path}");
         $host = isset($endpoint['host']) ? (string) $endpoint['host'] : null;
+        $repeated = array_filter($query, 'is_array');
+        if ($repeated !== []) {
+            // Wiederholte Parameter ohne [] (name=a&name=b), direkt an den Pfad
+            $parts = [];
+            foreach ($query as $name => $value) {
+                foreach (is_array($value) ? $value : [$value] as $v) {
+                    $parts[] = rawurlencode((string) $name).'='.rawurlencode(is_scalar($v) ? (string) $v : '');
+                }
+            }
+            $path .= (str_contains($path, '?') ? '&' : '?').implode('&', $parts);
+            $query = [];
+        }
         $request = $this->http($host)->withQueryParameters($query);
 
         if ($file !== null) {

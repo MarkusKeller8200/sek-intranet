@@ -394,6 +394,7 @@ return [
         'jamf' => 'Jamf Pro',
         'ida' => 'IDA',
         'inventory360' => 'Inventory360',
+        'clicktime' => 'ClickTime',
         'edulog' => 'Edulog',
         'datei' => 'Datei-Import (Excel/CSV)',
         'intranet' => 'Intranet (manuell erfasst)',

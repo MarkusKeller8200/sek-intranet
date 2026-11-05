@@ -9,6 +9,20 @@ laufend unter **Unveröffentlicht**. Ab 0.32.0 entsteht eine Version nur bei ein
 
 ## [Unveröffentlicht]
 
+### Neu
+
+- **Plugin ClickTime (#29):** Neues Plugin für die Zeiterfassung ClickTime (API V3): Anmeldung mit client_id und
+  client_secret (Token 1 Stunde), Kundennummer, alle 51 Endpunkte im API-Tester mit Beispielwerten (aus der
+  OpenAPI-Beschreibung), Demo-Modus mit erfundenen Daten, «Verbindung testen» über die Abteilungen. Auf einem Server
+  ausserhalb der Schweiz nur Demo-Modus; mit «Endtest» dort nur Aufrufe ohne Personendaten.
+- **ClickTime: Mitarbeitende und Abgleich (#30):** Aktionen «Abteilungen anzeigen», «Mitarbeitende anzeigen» (mit
+  Abteilung, Vorgesetzten, Intranet-Person), «Mitarbeitende abgleichen» (Vorschau zugeordnet / neu zuordnen / ohne
+  Treffer; Übernehmen speichert nur die Datenherkunft «ClickTime», legt nichts an und löscht nichts) und «Person
+  nachschlagen» (Nummer, Abteilung, Vorgesetzte, Anstellungen, Rollen).
+- **Plugins allgemein:** Mehrfache Abfrageparameter (`params[].repeat`, z. B. `filters=…&filters=…`) und Sperre für
+  Personendaten ausserhalb der Schweiz (`endpoints[].personal_data`, auch im Endtest).
+
+
 ## [0.35.0] – 2026-11-05
 
 ### Für Mitarbeitende

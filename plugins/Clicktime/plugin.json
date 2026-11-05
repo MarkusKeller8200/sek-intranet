@@ -1,0 +1,1321 @@
+{
+    "id": "clicktime",
+    "name": "ClickTime",
+    "version": "0.1",
+    "api": 1,
+    "category": "other",
+    "author": "SekBülach Intranet",
+    "description": "Zeiterfassung ClickTime (Schweiz, API V3): Mitarbeitende, Abteilungen und Vorgesetzte, Buchungen, Kumulative, Salden, Feiertage, Spesen sowie Projekte, Kunden, Adressen und Aufträge – alle 51 Endpunkte im API-Tester mit Beispielwerten. Ergänzt die eigene Zeiterfassung, die auch ohne ClickTime funktioniert. Mit Demo-Modus.",
+    "data_notice": "Arbeitszeiten, Salden und Angaben zu Mitarbeitenden sind Personendaten. Auf einem Server ausserhalb der Schweiz nur Demo-Modus; mit «Endtest» dort nur Aufrufe ohne Personendaten (Verbindung, Abteilungen, Feiertage, Projekte). Personendaten erst auf dem Schweizer Server.",
+    "service": {
+        "name": "ClickTime API V3",
+        "home": "https://www.clicktime.ch",
+        "docs": "https://dev.clicktime.ch",
+        "auth": {
+            "type": "oauth2_client_credentials",
+            "token_url": "{token_url}",
+            "client_id_setting": "client_id",
+            "client_secret_setting": "client_secret"
+        },
+        "auth_note": "In ClickTime unter Einstellungen › OpenAPI Clients einen Client mit den nötigen Scopes anlegen (z. B. employees_read, departments_read, cumulatives_read, balances_read). client_id und client_secret werden verschlüsselt gespeichert und nie angezeigt; das Token (1 Stunde) wird zwischengespeichert.",
+        "endpoints": [
+            {
+                "id": "departments",
+                "method": "GET",
+                "path": "/departments",
+                "label": "Abteilungen",
+                "status": "full",
+                "use": "Verbindung testen, Abgleich",
+                "scope": "departments_read"
+            },
+            {
+                "id": "department-managers",
+                "method": "GET",
+                "path": "/departments/{department}/managers",
+                "label": "Vorgesetzte einer Abteilung",
+                "status": "full",
+                "use": "Vorgesetzte",
+                "scope": "departments_read",
+                "personal_data": true,
+                "params": [
+                    {
+                        "name": "department",
+                        "required": true,
+                        "example": "10",
+                        "help": "Abteilungsnummer (number)."
+                    }
+                ]
+            },
+            {
+                "id": "public-holidays",
+                "method": "GET",
+                "path": "/public-holiday-calendars",
+                "label": "Feiertagskalender",
+                "status": "full",
+                "use": "Vollständigkeit (Feiertage)",
+                "params": [
+                    {
+                        "name": "filters",
+                        "repeat": true,
+                        "example": "year::EQ::2026|active::EQ::true",
+                        "help": "Filter feld::OP::wert (OP: EQ, IN, LIKE, GE, LE); mehrere mit «|» trennen."
+                    }
+                ]
+            },
+            {
+                "id": "employees",
+                "method": "GET",
+                "path": "/employees",
+                "label": "Mitarbeitende",
+                "status": "full",
+                "use": "Abgleich",
+                "scope": "employees_read",
+                "personal_data": true,
+                "params": [
+                    {
+                        "name": "filters",
+                        "repeat": true,
+                        "example": "employee_no::IN::1,2",
+                        "help": "Filter feld::OP::wert (OP: EQ, IN, LIKE, GE, LE); mehrere mit «|» trennen."
+                    }
+                ],
+                "note": "Weitere Filter: last_name::LIKE::Muster, first_name::LIKE::Anna, birthdate::EQ::2000-01-01."
+            },
+            {
+                "id": "employee",
+                "method": "GET",
+                "path": "/employees/{employee_no}",
+                "label": "Mitarbeitende Person",
+                "status": "full",
+                "use": "Nachschlagen",
+                "scope": "employees_read",
+                "personal_data": true,
+                "params": [
+                    {
+                        "name": "employee_no",
+                        "required": true,
+                        "example": "1",
+                        "help": "Personalnummer in ClickTime (employee_no)."
+                    }
+                ]
+            },
+            {
+                "id": "employee-employments",
+                "method": "GET",
+                "path": "/employees/{employee_no}/employments",
+                "label": "Anstellungen einer Person",
+                "status": "full",
+                "scope": "employees_read",
+                "personal_data": true,
+                "params": [
+                    {
+                        "name": "employee_no",
+                        "required": true,
+                        "example": "1",
+                        "help": "Personalnummer in ClickTime (employee_no)."
+                    }
+                ],
+                "note": "Felder (Arbeitsplan, Pensum) noch nicht dokumentiert (#28)."
+            },
+            {
+                "id": "employee-permission-groups",
+                "method": "GET",
+                "path": "/employees/{employee_no}/permission-groups",
+                "label": "Berechtigungsgruppen einer Person",
+                "status": "full",
+                "scope": "employees_read",
+                "personal_data": true,
+                "params": [
+                    {
+                        "name": "employee_no",
+                        "required": true,
+                        "example": "1",
+                        "help": "Personalnummer in ClickTime (employee_no)."
+                    }
+                ]
+            },
+            {
+                "id": "employee-roles",
+                "method": "GET",
+                "path": "/employees/{employee_no}/roles",
+                "label": "Rollen einer Person",
+                "status": "full",
+                "scope": "employees_read",
+                "personal_data": true,
+                "params": [
+                    {
+                        "name": "employee_no",
+                        "required": true,
+                        "example": "1",
+                        "help": "Personalnummer in ClickTime (employee_no)."
+                    }
+                ]
+            },
+            {
+                "id": "entries",
+                "method": "GET",
+                "path": "/entries",
+                "label": "Buchungen (Zeiteinträge)",
+                "status": "full",
+                "use": "Monatsdaten",
+                "personal_data": true,
+                "params": [
+                    {
+                        "name": "filters",
+                        "repeat": true,
+                        "example": "day::GE::2026-10-01|day::LE::2026-10-31|employee_no::IN::1",
+                        "help": "Filter feld::OP::wert (OP: EQ, IN, LIKE, GE, LE); mehrere mit «|» trennen."
+                    }
+                ],
+                "note": "Höchstens ein Monat pro Abfrage. Weitere Filter: entry_type::IN::1000,2000, last_update::GE::2026-10-01_00:00:00, deleted::EQ::true, activity_number::IN::2000, source::IN::PC,A (PC = Web, A = Mobile, T = Terminal)."
+            },
+            {
+                "id": "cumulatives",
+                "method": "GET",
+                "path": "/cumulatives",
+                "label": "Kumulative (Summen je Buchungsart)",
+                "status": "full",
+                "use": "Monatsdaten",
+                "scope": "cumulatives_read",
+                "personal_data": true,
+                "params": [
+                    {
+                        "name": "filters",
+                        "repeat": true,
+                        "example": "valid_from::EQ::2026-10-01|valid_to::EQ::2026-10-31|employee_no::IN::1",
+                        "help": "Filter feld::OP::wert (OP: EQ, IN, LIKE, GE, LE); mehrere mit «|» trennen."
+                    }
+                ],
+                "note": "valid_from und valid_to sind Pflicht. entry_type 0 = Sollzeit. Weitere Filter: entry_type::IN::8000,0, department_number::IN::A10, activity_number::IN::2000."
+            },
+            {
+                "id": "balances",
+                "method": "GET",
+                "path": "/balances",
+                "label": "Salden an einem Stichtag",
+                "status": "full",
+                "use": "Monatsdaten",
+                "scope": "balances_read",
+                "personal_data": true,
+                "params": [
+                    {
+                        "name": "filters",
+                        "repeat": true,
+                        "example": "balance_at::EQ::2026-10-31|employee_no::IN::1",
+                        "help": "Filter feld::OP::wert (OP: EQ, IN, LIKE, GE, LE); mehrere mit «|» trennen."
+                    }
+                ],
+                "note": "balance_at ist Pflicht. Weitere Filter: balance_number::IN::10,20, department_number::IN::A10."
+            },
+            {
+                "id": "expenses",
+                "method": "GET",
+                "path": "/expenses",
+                "label": "Spesen",
+                "status": "full",
+                "personal_data": true,
+                "params": [
+                    {
+                        "name": "filters",
+                        "repeat": true,
+                        "example": "day::GE::2026-10-01|day::LE::2026-10-31|employee_no::IN::1",
+                        "help": "Filter feld::OP::wert (OP: EQ, IN, LIKE, GE, LE); mehrere mit «|» trennen."
+                    }
+                ],
+                "note": "Weitere Filter: entry_type::IN::2300, last_update::GE::2026-10-01_00:00:00."
+            },
+            {
+                "id": "entities",
+                "method": "GET",
+                "path": "/entities",
+                "label": "Projekte/Objekte (entities)",
+                "status": "full"
+            },
+            {
+                "id": "entity",
+                "method": "GET",
+                "path": "/entities/{entity}",
+                "label": "Projekt/Objekt",
+                "status": "full",
+                "params": [
+                    {
+                        "name": "entity",
+                        "required": true,
+                        "example": "1001",
+                        "help": "Projekt-/Objektnummer (number)."
+                    }
+                ]
+            },
+            {
+                "id": "entity-activities",
+                "method": "GET",
+                "path": "/entities/{entity}/activities",
+                "label": "Tätigkeiten eines Projekts",
+                "status": "full",
+                "params": [
+                    {
+                        "name": "entity",
+                        "required": true,
+                        "example": "1001",
+                        "help": "Projekt-/Objektnummer (number)."
+                    }
+                ]
+            },
+            {
+                "id": "entity-categories",
+                "method": "GET",
+                "path": "/entities/{entity}/categories",
+                "label": "Kategorien eines Projekts",
+                "status": "full",
+                "params": [
+                    {
+                        "name": "entity",
+                        "required": true,
+                        "example": "1001",
+                        "help": "Projekt-/Objektnummer (number)."
+                    }
+                ]
+            },
+            {
+                "id": "clients",
+                "method": "GET",
+                "path": "/clients",
+                "label": "Kunden (clients)",
+                "status": "full",
+                "params": [
+                    {
+                        "name": "filters",
+                        "repeat": true,
+                        "example": "active::EQ::true",
+                        "help": "Filter feld::OP::wert (OP: EQ, IN, LIKE, GE, LE); mehrere mit «|» trennen."
+                    }
+                ],
+                "note": "Weitere Filter: name::LIKE::Muster, full_name::LIKE::Muster Anna, number::IN::1, entities::IN::1234, last_update::GE::2026-04-01_00:00:00."
+            },
+            {
+                "id": "addresses",
+                "method": "GET",
+                "path": "/addresses",
+                "label": "Adressen",
+                "status": "full",
+                "scope": "ADDRESSES_READ",
+                "personal_data": true,
+                "params": [
+                    {
+                        "name": "filters",
+                        "repeat": true,
+                        "example": "name1::LIKE::Muster",
+                        "help": "Filter feld::OP::wert (OP: EQ, IN, LIKE, GE, LE); mehrere mit «|» trennen."
+                    }
+                ],
+                "note": "Weitere Filter: number::IN::1000,1001, first_name::LIKE::Anna, full_name::LIKE::Muster Anna, last_update::GE::2026-03-25_00:00:00."
+            },
+            {
+                "id": "address",
+                "method": "GET",
+                "path": "/addresses/{address}",
+                "label": "Adresse",
+                "status": "full",
+                "scope": "ADDRESSES_READ",
+                "personal_data": true,
+                "params": [
+                    {
+                        "name": "address",
+                        "required": true,
+                        "example": "1000",
+                        "help": "Adressnummer (number)."
+                    }
+                ]
+            },
+            {
+                "id": "orders",
+                "method": "GET",
+                "path": "/orders",
+                "label": "Aufträge",
+                "status": "full",
+                "scope": "ORDERS_READ",
+                "personal_data": true,
+                "params": [
+                    {
+                        "name": "filters",
+                        "repeat": true,
+                        "example": "valid_from::GE::2026-01-01",
+                        "help": "Filter feld::OP::wert (OP: EQ, IN, LIKE, GE, LE); mehrere mit «|» trennen."
+                    }
+                ],
+                "note": "Weitere Filter: number::IN::1000,1001, valid_to::LE::2026-12-31, last_update::GE::2026-03-25_00:00:00, custom_string_01::LIKE::'Test'."
+            },
+            {
+                "id": "order",
+                "method": "GET",
+                "path": "/orders/{order}",
+                "label": "Auftrag",
+                "status": "full",
+                "scope": "ORDERS_READ",
+                "personal_data": true,
+                "params": [
+                    {
+                        "name": "order",
+                        "required": true,
+                        "example": "1000",
+                        "help": "Auftragsnummer (number)."
+                    }
+                ]
+            },
+            {
+                "id": "order-date-groups",
+                "method": "GET",
+                "path": "/orders/{order}/order-date-groups",
+                "label": "Terminserien eines Auftrags",
+                "status": "full",
+                "scope": "ORDERS_READ",
+                "personal_data": true,
+                "params": [
+                    {
+                        "name": "order",
+                        "required": true,
+                        "example": "1000",
+                        "help": "Auftragsnummer (number)."
+                    }
+                ]
+            },
+            {
+                "id": "order-date-group",
+                "method": "GET",
+                "path": "/orders/{order}/order-date-groups/{group}",
+                "label": "Terminserie",
+                "status": "full",
+                "scope": "ORDERS_READ",
+                "personal_data": true,
+                "params": [
+                    {
+                        "name": "order",
+                        "required": true,
+                        "example": "1000",
+                        "help": "Auftragsnummer (number)."
+                    },
+                    {
+                        "name": "group",
+                        "required": true,
+                        "example": "1",
+                        "help": "ID der Terminserie."
+                    }
+                ]
+            },
+            {
+                "id": "order-dates",
+                "method": "GET",
+                "path": "/orders/{order}/order-dates",
+                "label": "Termine eines Auftrags",
+                "status": "full",
+                "scope": "ORDERS_READ",
+                "personal_data": true,
+                "params": [
+                    {
+                        "name": "order",
+                        "required": true,
+                        "example": "1000",
+                        "help": "Auftragsnummer (number)."
+                    }
+                ]
+            },
+            {
+                "id": "order-date",
+                "method": "GET",
+                "path": "/orders/{order}/order-dates/{date}",
+                "label": "Termin",
+                "status": "full",
+                "scope": "ORDERS_READ",
+                "personal_data": true,
+                "params": [
+                    {
+                        "name": "order",
+                        "required": true,
+                        "example": "1000",
+                        "help": "Auftragsnummer (number)."
+                    },
+                    {
+                        "name": "date",
+                        "required": true,
+                        "example": "1",
+                        "help": "ID des Termins."
+                    }
+                ]
+            },
+            {
+                "id": "employees-create",
+                "method": "POST",
+                "path": "/employees",
+                "label": "Mitarbeitende anlegen",
+                "status": "partial",
+                "personal_data": true,
+                "danger": true,
+                "test": false,
+                "body": [
+                    {
+                        "employee_no": 3,
+                        "first_name": "Beat",
+                        "last_name": "Beispiel",
+                        "email": "beat.beispiel@sekbuelach.example",
+                        "department_number": "SEK"
+                    }
+                ],
+                "note": "Body noch nicht dokumentiert (#28) – Beispiel geraten. Laut ClickTime nur nach Freischaltung durch den Support."
+            },
+            {
+                "id": "employees-update",
+                "method": "PUT",
+                "path": "/employees",
+                "label": "Mitarbeitende ändern (Liste)",
+                "status": "partial",
+                "personal_data": true,
+                "danger": true,
+                "test": false,
+                "body": [
+                    {
+                        "employee_no": 3,
+                        "first_name": "Beat",
+                        "last_name": "Beispiel",
+                        "email": "beat.beispiel@sekbuelach.example",
+                        "department_number": "SEK"
+                    }
+                ],
+                "note": "Body noch nicht dokumentiert (#28) – Beispiel geraten. Laut ClickTime nur nach Freischaltung durch den Support."
+            },
+            {
+                "id": "employee-update",
+                "method": "PUT",
+                "path": "/employees/{employee_no}",
+                "label": "Mitarbeitende Person ändern",
+                "status": "partial",
+                "personal_data": true,
+                "params": [
+                    {
+                        "name": "employee_no",
+                        "required": true,
+                        "example": "1",
+                        "help": "Personalnummer in ClickTime (employee_no)."
+                    }
+                ],
+                "danger": true,
+                "test": false,
+                "body": {
+                    "first_name": "Beat",
+                    "last_name": "Beispiel",
+                    "email": "beat.beispiel@sekbuelach.example"
+                },
+                "note": "Body noch nicht dokumentiert (#28) – Beispiel geraten. Laut ClickTime nur nach Freischaltung durch den Support."
+            },
+            {
+                "id": "employee-employments-update",
+                "method": "PUT",
+                "path": "/employees/{employee_no}/employments",
+                "label": "Anstellungen zuweisen (Arbeitsplan)",
+                "status": "partial",
+                "personal_data": true,
+                "params": [
+                    {
+                        "name": "employee_no",
+                        "required": true,
+                        "example": "1",
+                        "help": "Personalnummer in ClickTime (employee_no)."
+                    }
+                ],
+                "danger": true,
+                "test": false,
+                "body": [
+                    {
+                        "valid_from": "2026-08-01",
+                        "valid_to": null,
+                        "workload_percent": 80
+                    }
+                ],
+                "note": "Felder noch nicht dokumentiert (#28) – Beispiel geraten. Laut ClickTime nur nach Freischaltung durch den Support."
+            },
+            {
+                "id": "employee-permission-groups-update",
+                "method": "PUT",
+                "path": "/employees/{employee_no}/permission-groups",
+                "label": "Berechtigungsgruppen zuweisen",
+                "status": "partial",
+                "personal_data": true,
+                "params": [
+                    {
+                        "name": "employee_no",
+                        "required": true,
+                        "example": "1",
+                        "help": "Personalnummer in ClickTime (employee_no)."
+                    }
+                ],
+                "danger": true,
+                "test": false,
+                "body": [
+                    {
+                        "number": 10
+                    }
+                ],
+                "note": "Laut ClickTime nur nach Freischaltung durch den Support. Body-Format nicht dokumentiert – Beispiel geraten."
+            },
+            {
+                "id": "employee-roles-update",
+                "method": "PUT",
+                "path": "/employees/{employee_no}/roles",
+                "label": "Rollen zuweisen",
+                "status": "partial",
+                "personal_data": true,
+                "params": [
+                    {
+                        "name": "employee_no",
+                        "required": true,
+                        "example": "1",
+                        "help": "Personalnummer in ClickTime (employee_no)."
+                    }
+                ],
+                "danger": true,
+                "test": false,
+                "body": [
+                    {
+                        "number": 1
+                    }
+                ],
+                "note": "Laut ClickTime nur nach Freischaltung durch den Support. Body-Format nicht dokumentiert – Beispiel geraten."
+            },
+            {
+                "id": "entries-create",
+                "method": "POST",
+                "path": "/entries",
+                "label": "Buchungen erfassen",
+                "status": "full",
+                "personal_data": true,
+                "danger": true,
+                "test": false,
+                "body": [
+                    {
+                        "day": "2026-08-07",
+                        "time_from": "08:00:00",
+                        "time_to": "10:00:00",
+                        "time_zone": "Europe/Zurich",
+                        "hours": 2,
+                        "internal_rate": null,
+                        "external_rate": null,
+                        "entry_type_number": 1000,
+                        "entity_number": null,
+                        "division_number": null,
+                        "activity_number": null,
+                        "cost_centre_number": null,
+                        "employee_no": 1,
+                        "notes": "Erfasst aus dem Intranet (Test)",
+                        "custom_int_01": null,
+                        "custom_int_01_number": null,
+                        "custom_int_02": null,
+                        "custom_int_02_number": null,
+                        "custom_int_03": null,
+                        "custom_int_03_number": null,
+                        "custom_int_04": null,
+                        "custom_int_04_number": null,
+                        "custom_int_05": null,
+                        "custom_int_05_number": null,
+                        "custom_int_06": null,
+                        "custom_int_06_number": null,
+                        "custom_int_07": null,
+                        "custom_int_07_number": null,
+                        "custom_int_08": null,
+                        "custom_int_08_number": null,
+                        "custom_int_09": null,
+                        "custom_int_09_number": null,
+                        "custom_int_10": null,
+                        "custom_int_10_number": null,
+                        "custom_string_01": null,
+                        "custom_string_02": null,
+                        "custom_string_03": null,
+                        "custom_string_04": null,
+                        "custom_string_05": null,
+                        "custom_string_06": null,
+                        "custom_string_07": null,
+                        "custom_string_08": null,
+                        "custom_string_09": null,
+                        "custom_string_10": null
+                    }
+                ],
+                "note": "In der Feldtabelle heisst das Feld entry_number, im Beispiel entry_type_number – zu prüfen. Laut ClickTime nur nach Freischaltung durch den Support."
+            },
+            {
+                "id": "entries-update",
+                "method": "PUT",
+                "path": "/entries",
+                "label": "Buchungen ändern",
+                "status": "full",
+                "personal_data": true,
+                "danger": true,
+                "test": false,
+                "body": [
+                    {
+                        "number": 12345,
+                        "day": "2026-08-07",
+                        "time_from": "08:00:00",
+                        "time_to": "10:00:00",
+                        "time_zone": "Europe/Zurich",
+                        "hours": 2,
+                        "internal_rate": null,
+                        "external_rate": null,
+                        "entry_type_number": 1000,
+                        "entity_number": null,
+                        "division_number": null,
+                        "activity_number": null,
+                        "cost_centre_number": null,
+                        "employee_no": 1,
+                        "notes": "Erfasst aus dem Intranet (Test)",
+                        "custom_int_01": null,
+                        "custom_int_01_number": null,
+                        "custom_int_02": null,
+                        "custom_int_02_number": null,
+                        "custom_int_03": null,
+                        "custom_int_03_number": null,
+                        "custom_int_04": null,
+                        "custom_int_04_number": null,
+                        "custom_int_05": null,
+                        "custom_int_05_number": null,
+                        "custom_int_06": null,
+                        "custom_int_06_number": null,
+                        "custom_int_07": null,
+                        "custom_int_07_number": null,
+                        "custom_int_08": null,
+                        "custom_int_08_number": null,
+                        "custom_int_09": null,
+                        "custom_int_09_number": null,
+                        "custom_int_10": null,
+                        "custom_int_10_number": null,
+                        "custom_string_01": null,
+                        "custom_string_02": null,
+                        "custom_string_03": null,
+                        "custom_string_04": null,
+                        "custom_string_05": null,
+                        "custom_string_06": null,
+                        "custom_string_07": null,
+                        "custom_string_08": null,
+                        "custom_string_09": null,
+                        "custom_string_10": null
+                    }
+                ],
+                "note": "number = Buchung, die geändert wird. Feldname entry_number/entry_type_number zu prüfen. Laut ClickTime nur nach Freischaltung durch den Support."
+            },
+            {
+                "id": "entry-delete",
+                "method": "DELETE",
+                "path": "/entries/{entry}",
+                "label": "Buchung löschen",
+                "status": "full",
+                "personal_data": true,
+                "params": [
+                    {
+                        "name": "entry",
+                        "required": true,
+                        "example": "12345",
+                        "help": "Nummer der Buchung (number)."
+                    }
+                ],
+                "danger": true,
+                "test": false,
+                "note": "Laut ClickTime nur nach Freischaltung durch den Support."
+            },
+            {
+                "id": "entities-update",
+                "method": "PUT",
+                "path": "/entities",
+                "label": "Projekte anlegen/ändern",
+                "status": "full",
+                "danger": true,
+                "test": false,
+                "body": [
+                    {
+                        "number": "1002",
+                        "external_reference": "",
+                        "name": {
+                            "de": "Projekt 1002",
+                            "en": "Project 1002"
+                        },
+                        "status": "ACTIVE",
+                        "chargeable": true,
+                        "currency": "CHF",
+                        "print_language": "DE",
+                        "notes": "",
+                        "custom_string_01": "123",
+                        "custom_string_02": null,
+                        "custom_string_03": null,
+                        "custom_string_04": null,
+                        "custom_string_05": null,
+                        "custom_string_06": null,
+                        "custom_string_07": null,
+                        "custom_string_08": null,
+                        "custom_string_09": null,
+                        "custom_string_10": null
+                    }
+                ]
+            },
+            {
+                "id": "entity-activities-update",
+                "method": "PUT",
+                "path": "/entities/{entity}/activities",
+                "label": "Tätigkeiten eines Projekts setzen",
+                "status": "full",
+                "params": [
+                    {
+                        "name": "entity",
+                        "required": true,
+                        "example": "1001",
+                        "help": "Projekt-/Objektnummer (number)."
+                    }
+                ],
+                "danger": true,
+                "test": false,
+                "body": [
+                    {
+                        "number": 1002,
+                        "internal_rate": null,
+                        "external_rate": null
+                    }
+                ]
+            },
+            {
+                "id": "entity-categories-update",
+                "method": "PUT",
+                "path": "/entities/{entity}/categories",
+                "label": "Kategorien eines Projekts setzen",
+                "status": "partial",
+                "params": [
+                    {
+                        "name": "entity",
+                        "required": true,
+                        "example": "1001",
+                        "help": "Projekt-/Objektnummer (number)."
+                    }
+                ],
+                "danger": true,
+                "test": false,
+                "body": [
+                    {
+                        "number": 1002,
+                        "internal_rate": null,
+                        "external_rate": null
+                    }
+                ],
+                "note": "In der Doku zeigt die Adresse auf …/activities – Pfad zu prüfen."
+            },
+            {
+                "id": "clients-create",
+                "method": "POST",
+                "path": "/clients",
+                "label": "Kunden anlegen",
+                "status": "full",
+                "danger": true,
+                "test": false,
+                "body": [
+                    {
+                        "name": "Musterberg AG",
+                        "name2": null,
+                        "notes": null,
+                        "active": true,
+                        "number": 4,
+                        "street": "Musterstrasse 1",
+                        "street2": null,
+                        "city": "Zürich",
+                        "zip": "8000",
+                        "vat_taxation": null,
+                        "entities": ["1012"]
+                    }
+                ],
+                "note": "Laut ClickTime nur nach Freischaltung durch den Support."
+            },
+            {
+                "id": "clients-update",
+                "method": "PUT",
+                "path": "/clients",
+                "label": "Kunden ändern",
+                "status": "full",
+                "danger": true,
+                "test": false,
+                "body": [
+                    {
+                        "name": "Musterberg AG",
+                        "name2": null,
+                        "notes": null,
+                        "active": true,
+                        "number": 4,
+                        "street": "Musterstrasse 1",
+                        "street2": null,
+                        "city": "Zürich",
+                        "zip": "8000",
+                        "vat_taxation": null,
+                        "entities": ["1012"]
+                    }
+                ],
+                "note": "Laut ClickTime nur nach Freischaltung durch den Support."
+            },
+            {
+                "id": "client-delete",
+                "method": "DELETE",
+                "path": "/clients/{client}",
+                "label": "Kunde löschen",
+                "status": "full",
+                "params": [
+                    {
+                        "name": "client",
+                        "required": true,
+                        "example": "12345",
+                        "help": "Kundennummer (number)."
+                    }
+                ],
+                "danger": true,
+                "test": false,
+                "note": "Laut ClickTime nur nach Freischaltung durch den Support."
+            },
+            {
+                "id": "addresses-update",
+                "method": "PUT",
+                "path": "/addresses",
+                "label": "Adressen anlegen/ändern",
+                "status": "full",
+                "scope": "ADDRESSES_WRITE",
+                "personal_data": true,
+                "danger": true,
+                "test": false,
+                "body": [
+                    {
+                        "number": "1000",
+                        "name1": "Muster",
+                        "first_name": "Anna",
+                        "gender": "MR",
+                        "address_line_1": "Musterstrasse 1",
+                        "zip": "8000",
+                        "city": "Zürich",
+                        "country_code": "CH",
+                        "language_code": "DE",
+                        "phone1": "+41 00 000 00 00",
+                        "email1": "anna.muster@sekbuelach.example",
+                        "website1": "https://www.sekbuelach.example",
+                        "geo_latitude": 47.378344,
+                        "geo_longitude": 8.539186,
+                        "notes": "Some notes",
+                        "active": true,
+                        "address_type_codes": ["CUSTOMER"]
+                    }
+                ]
+            },
+            {
+                "id": "orders-create",
+                "method": "POST",
+                "path": "/orders",
+                "label": "Aufträge anlegen",
+                "status": "full",
+                "scope": "ORDERS_WRITE",
+                "personal_data": true,
+                "danger": true,
+                "test": false,
+                "body": [
+                    {
+                        "number": "1000",
+                        "name": "Order",
+                        "order_template_number": "1",
+                        "is_template": false,
+                        "color": "#EE0214",
+                        "valid_from": "2026-01-01",
+                        "valid_to": "2026-12-31",
+                        "address_numbers": [
+                            {
+                                "address_number": "1",
+                                "type": "CUSTOMER",
+                                "valid_from": "2026-01-01",
+                                "valid_to": "2026-12-31"
+                            }
+                        ],
+                        "employee_numbers": [
+                            {
+                                "employee_number": 1,
+                                "valid_from": "2026-01-01",
+                                "valid_to": "2026-12-31",
+                                "notes": "This is a note"
+                            }
+                        ],
+                        "resource_numbers": [
+                            {
+                                "resource_number": "1",
+                                "valid_from": "2026-01-01",
+                                "valid_to": "2026-12-31",
+                                "notes": "This is a note"
+                            }
+                        ],
+                        "generic_task_numbers": [
+                            {
+                                "generic_task_number": "1"
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "id": "orders-update",
+                "method": "PUT",
+                "path": "/orders",
+                "label": "Aufträge ändern",
+                "status": "full",
+                "scope": "ORDERS_WRITE",
+                "personal_data": true,
+                "danger": true,
+                "test": false,
+                "body": [
+                    {
+                        "number": "1000",
+                        "name": "Order",
+                        "order_template_number": "1",
+                        "is_template": false,
+                        "color": "#EE0214",
+                        "valid_from": "2026-01-01",
+                        "valid_to": "2026-12-31",
+                        "address_numbers": [
+                            {
+                                "address_number": "1",
+                                "type": "CUSTOMER",
+                                "valid_from": "2026-01-01",
+                                "valid_to": "2026-12-31"
+                            }
+                        ],
+                        "employee_numbers": [
+                            {
+                                "employee_number": 1,
+                                "valid_from": "2026-01-01",
+                                "valid_to": "2026-12-31",
+                                "notes": "This is a note"
+                            }
+                        ],
+                        "resource_numbers": [
+                            {
+                                "resource_number": "1",
+                                "valid_from": "2026-01-01",
+                                "valid_to": "2026-12-31",
+                                "notes": "This is a note"
+                            }
+                        ],
+                        "generic_task_numbers": [
+                            {
+                                "generic_task_number": "1"
+                            }
+                        ]
+                    }
+                ],
+                "note": "Listen (Adressen, Mitarbeitende, Ressourcen, Aufgaben) werden ganz ersetzt; fehlende Liste = alle entfernt."
+            },
+            {
+                "id": "order-delete",
+                "method": "DELETE",
+                "path": "/orders/{order}",
+                "label": "Auftrag löschen",
+                "status": "full",
+                "scope": "ORDERS_WRITE",
+                "personal_data": true,
+                "params": [
+                    {
+                        "name": "order",
+                        "required": true,
+                        "example": "1000",
+                        "help": "Auftragsnummer (number)."
+                    }
+                ],
+                "danger": true,
+                "test": false
+            },
+            {
+                "id": "order-date-groups-create",
+                "method": "POST",
+                "path": "/orders/{order}/order-date-groups",
+                "label": "Terminserien anlegen",
+                "status": "full",
+                "scope": "ORDERS_WRITE",
+                "personal_data": true,
+                "params": [
+                    {
+                        "name": "order",
+                        "required": true,
+                        "example": "1000",
+                        "help": "Auftragsnummer (number)."
+                    }
+                ],
+                "danger": true,
+                "test": false,
+                "body": [
+                    {
+                        "start_date": "2026-01-01",
+                        "end_date": "2026-12-31",
+                        "time_from": "08:00:00",
+                        "time_to": "17:00:00",
+                        "repeat_interval": "WEEKLY",
+                        "repeat_weekly_interval": 1,
+                        "repeat_weekly_weekdays": [1, 3, 5],
+                        "repeat_type": "UNTIL",
+                        "notes": "Some notes",
+                        "employee_numbers": [1],
+                        "resource_numbers": ["1"]
+                    }
+                ]
+            },
+            {
+                "id": "order-date-group-delete",
+                "method": "DELETE",
+                "path": "/orders/{order}/order-date-groups/{group}",
+                "label": "Terminserie löschen",
+                "status": "full",
+                "scope": "ORDERS_WRITE",
+                "personal_data": true,
+                "params": [
+                    {
+                        "name": "order",
+                        "required": true,
+                        "example": "1000",
+                        "help": "Auftragsnummer (number)."
+                    },
+                    {
+                        "name": "group",
+                        "required": true,
+                        "example": "1",
+                        "help": "ID der Terminserie."
+                    }
+                ],
+                "danger": true,
+                "test": false
+            },
+            {
+                "id": "order-dates-create",
+                "method": "POST",
+                "path": "/orders/{order}/order-dates",
+                "label": "Termine anlegen",
+                "status": "full",
+                "scope": "ORDERS_WRITE",
+                "personal_data": true,
+                "params": [
+                    {
+                        "name": "order",
+                        "required": true,
+                        "example": "1000",
+                        "help": "Auftragsnummer (number)."
+                    }
+                ],
+                "danger": true,
+                "test": false,
+                "body": [
+                    {
+                        "date": "2026-01-01",
+                        "time_from": "08:00:00",
+                        "time_to": "17:00:00",
+                        "generic_level_code": "Open",
+                        "notes": "Some notes",
+                        "employee_numbers": [1],
+                        "resource_numbers": ["1"]
+                    }
+                ]
+            },
+            {
+                "id": "order-date-update",
+                "method": "PATCH",
+                "path": "/orders/{order}/order-dates/{date}",
+                "label": "Termin ändern",
+                "status": "full",
+                "scope": "ORDERS_WRITE",
+                "personal_data": true,
+                "params": [
+                    {
+                        "name": "order",
+                        "required": true,
+                        "example": "1000",
+                        "help": "Auftragsnummer (number)."
+                    },
+                    {
+                        "name": "date",
+                        "required": true,
+                        "example": "1",
+                        "help": "ID des Termins."
+                    }
+                ],
+                "danger": true,
+                "test": false,
+                "body": {
+                    "date": "2026-01-01",
+                    "time_from": "08:00:00",
+                    "time_to": "17:00:00",
+                    "generic_level_code": "Open",
+                    "notes": "Some notes"
+                }
+            },
+            {
+                "id": "order-date-employees",
+                "method": "PATCH",
+                "path": "/orders/{order}/order-dates/{date}/employees",
+                "label": "Mitarbeitende eines Termins",
+                "status": "full",
+                "scope": "ORDERS_WRITE",
+                "personal_data": true,
+                "params": [
+                    {
+                        "name": "order",
+                        "required": true,
+                        "example": "1000",
+                        "help": "Auftragsnummer (number)."
+                    },
+                    {
+                        "name": "date",
+                        "required": true,
+                        "example": "1",
+                        "help": "ID des Termins."
+                    }
+                ],
+                "danger": true,
+                "test": false,
+                "body": {
+                    "employee_numbers_to_add": [2],
+                    "employee_numbers_to_remove": [1]
+                }
+            },
+            {
+                "id": "order-date-resources",
+                "method": "PATCH",
+                "path": "/orders/{order}/order-dates/{date}/resources",
+                "label": "Ressourcen eines Termins",
+                "status": "full",
+                "scope": "ORDERS_WRITE",
+                "personal_data": true,
+                "params": [
+                    {
+                        "name": "order",
+                        "required": true,
+                        "example": "1000",
+                        "help": "Auftragsnummer (number)."
+                    },
+                    {
+                        "name": "date",
+                        "required": true,
+                        "example": "1",
+                        "help": "ID des Termins."
+                    }
+                ],
+                "danger": true,
+                "test": false,
+                "body": {
+                    "resource_numbers_to_add": ["2"],
+                    "resource_numbers_to_remove": ["1"]
+                }
+            },
+            {
+                "id": "order-date-delete",
+                "method": "DELETE",
+                "path": "/orders/{order}/order-dates/{date}",
+                "label": "Termin löschen",
+                "status": "full",
+                "scope": "ORDERS_WRITE",
+                "personal_data": true,
+                "params": [
+                    {
+                        "name": "order",
+                        "required": true,
+                        "example": "1000",
+                        "help": "Auftragsnummer (number)."
+                    },
+                    {
+                        "name": "date",
+                        "required": true,
+                        "example": "1",
+                        "help": "ID des Termins."
+                    }
+                ],
+                "danger": true,
+                "test": false
+            }
+        ]
+    },
+    "settings": [
+        {
+            "key": "demo",
+            "type": "check",
+            "label": "Demo-Modus (erfundene Daten, nichts geht an ClickTime)",
+            "default": true,
+            "help": "Für Tests ohne Zugang und auf dem Testserver."
+        },
+        {
+            "key": "endtest",
+            "type": "check",
+            "label": "Endtest: echte Aufrufe auf diesem Server erlauben (Server ausserhalb der Schweiz)",
+            "default": false,
+            "help": "Nur Aufrufe ohne Personendaten (Verbindung, Abteilungen, Feiertage, Projekte). Mitarbeitende, Buchungen und Salden bleiben gesperrt, bis das Intranet auf dem Schweizer Server läuft. Nach dem Test wieder ausschalten."
+        },
+        {
+            "key": "customer",
+            "type": "text",
+            "label": "Kundennummer (customer)",
+            "required": true,
+            "required_unless": "demo",
+            "placeholder": "12345"
+        },
+        {
+            "key": "client_id",
+            "type": "password",
+            "label": "client_id",
+            "required": true,
+            "required_unless": "demo"
+        },
+        {
+            "key": "client_secret",
+            "type": "password",
+            "label": "client_secret",
+            "required": true,
+            "required_unless": "demo"
+        },
+        {
+            "key": "base_url",
+            "type": "url",
+            "label": "API-Adresse",
+            "default": "https://login2.clicktime.ch/api/v3/customers/{customer}",
+            "help": "{customer} wird durch die Kundennummer ersetzt."
+        },
+        {
+            "key": "token_url",
+            "type": "url",
+            "label": "Adresse für das Token",
+            "default": "https://login.clicktime.ch/auth/realms/openapi/protocol/openid-connect/token"
+        }
+    ],
+    "actions": [
+        {
+            "id": "departments",
+            "label": "Abteilungen anzeigen",
+            "kind": "read",
+            "description": "Abteilungen aus ClickTime (ohne Personendaten).",
+            "options": []
+        },
+        {
+            "id": "employees",
+            "label": "Mitarbeitende anzeigen",
+            "kind": "read",
+            "description": "Mitarbeitende mit Abteilung, Vorgesetzten und Zuordnung zu Intranet-Personen.",
+            "options": []
+        },
+        {
+            "id": "match",
+            "label": "Mitarbeitende abgleichen",
+            "kind": "import",
+            "description": "Ordnet ClickTime-Mitarbeitende Intranet-Personen zu (zuerst über die Datenherkunft, sonst über die E-Mail). Vorschau: zugeordnet, neu zuordnen, ohne Treffer. Übernehmen speichert nur die Datenherkunft – es wird nichts angelegt oder gelöscht.",
+            "options": []
+        },
+        {
+            "id": "lookup",
+            "label": "Person nachschlagen",
+            "kind": "read",
+            "description": "ClickTime-Angaben einer Person: Nummer, Abteilung, Vorgesetzte, Anstellungen, Rollen.",
+            "options": [
+                {
+                    "key": "email",
+                    "type": "text",
+                    "label": "E-Mail oder ClickTime-Nummer",
+                    "required": true,
+                    "placeholder": "anna.muster@sekbuelach.example"
+                }
+            ]
+        }
+    ]
+}

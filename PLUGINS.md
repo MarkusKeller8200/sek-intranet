@@ -200,6 +200,15 @@ plugins/
 | `widgets[].audience`         | `admin` (Standard) oder `all` – Kachel auf der Startseite, `ttl` Sekunden zwischengespeichert                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
 | `events`                     | `person.created`, `person.updated`, `person.deleted`, `announcement.created`, `event.created`, `document.created`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
 
+Mehrfache Abfrageparameter und Personendaten:
+
+- `params[].repeat: true` – der Parameter wird mehrfach gesendet (`name=a&name=b`, ohne `[]`), z. B. ClickTime
+  `filters=day::GE::2026-10-01&filters=day::LE::2026-10-31`. Im API-Tester und in `plugin.json` mit `|` getrennt,
+  im Code auch als Liste.
+- `endpoints[].personal_data: true` – der Endpunkt liefert oder ändert Personendaten. Auf einem Server ausserhalb der
+  Schweiz (`INTRANET_SERVER_IN_SWITZERLAND=false`) lehnt der Kern echte Aufrufe ab, auch im Endtest; der Demo-Modus
+  bleibt möglich.
+
 ### Demo-Modus (`App\Plugins\DemoResponder`)
 
 Ein Plugin, das `DemoResponder` umsetzt, liefert simulierte Antworten, solange `demoActive()` gilt (in der Regel
