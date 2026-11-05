@@ -22,7 +22,6 @@ laufend unter **Unveröffentlicht**. Ab 0.32.0 entsteht eine Version nur bei ein
 - **Plugins allgemein:** Mehrfache Abfrageparameter (`params[].repeat`, z. B. `filters=…&filters=…`) und Sperre für
   Personendaten ausserhalb der Schweiz (`endpoints[].personal_data`, auch im Endtest).
 
-
 ## [0.35.0] – 2026-11-05
 
 ### Für Mitarbeitende
