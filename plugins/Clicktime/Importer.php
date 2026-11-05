@@ -70,6 +70,7 @@ final class Importer
         }
 
         // Ziel-Einträge aus ClickTime
+        /** @var array<string, array<string, mixed>> $wanted */
         $wanted = [];
         $pause = [];
         foreach ($entries as $e) {
@@ -99,13 +100,13 @@ final class Importer
         foreach ($pause as $day => $hours) {
             $longest = null;
             foreach ($wanted as $nr => $w) {
-                if ($w['datum'] === $day && $w['art'] === 'arbeit' && ($longest === null || $w['stunden'] > $wanted[$longest]['stunden'])) {
+                if ($w['datum'] === $day && $w['art'] === 'arbeit' && ($longest === null || (float) $w['stunden'] > (float) $wanted[$longest]['stunden'])) {
                     $longest = $nr;
                 }
             }
             if ($longest !== null) {
                 $wanted[$longest]['pause_min'] = (int) round(-$hours * 60);
-                $wanted[$longest]['stunden'] = round($wanted[$longest]['stunden'] + $hours, 2);
+                $wanted[$longest]['stunden'] = round((float) $wanted[$longest]['stunden'] + $hours, 2);
             }
         }
 
@@ -123,13 +124,13 @@ final class Importer
             $old = $existing[$nr] ?? null;
             if ($old === null) {
                 $counts['neu']++;
-                $changes[] = ['change' => 'neu', 'day' => $w['datum'], 'before' => '–', 'after' => self::describe($w, $own)];
+                $changes[] = ['change' => 'neu', 'day' => (string) $w['datum'], 'before' => '–', 'after' => self::describe($w, $own)];
                 if ($apply) {
                     $repo->create(['person_id' => $personId, 'projekt' => null, 'quelle' => self::QUELLE, 'quelle_id' => (string) $nr] + $w);
                 }
             } elseif (self::differs($old, $w)) {
                 $counts['geändert']++;
-                $changes[] = ['change' => 'geändert', 'day' => $w['datum'], 'before' => self::describe($old, $own), 'after' => self::describe($w, $own)];
+                $changes[] = ['change' => 'geändert', 'day' => (string) $w['datum'], 'before' => self::describe($old, $own), 'after' => self::describe($w, $own)];
                 if ($apply) {
                     $repo->update((string) $old['id'], $w);
                 }
