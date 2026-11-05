@@ -184,6 +184,9 @@ class PluginClicktimeTest extends TestCase
         // alle: Übersicht, PDF je Person nur einmal abgelegt
         $all = $this->postJson('/plugins/clicktime/aktion/month', ['options' => ['month' => '2026-10', 'pdf' => true]])->assertOk();
         $this->assertCount(5, $all->json('rows'));
+        // Kumulative im Aufbau der echten Antwort (cumulative_values, Sollzeit = Nummer 0, sonst Name)
+        $this->assertSame('184.80', $all->json('rows.0.target'));
+        $this->assertStringContainsString('Ferien 8.40 h', (string) $one->json('message'));
         $this->assertStringContainsString('5 Monatsblätter', (string) $all->json('message'));
         $doc = collect(app(DocumentRepository::class)->all())->firstWhere('source', 'clicktime:monatsblatt:2026-10:3');
         $this->assertSame('monatsblaetter', $doc['category']);

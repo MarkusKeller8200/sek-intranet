@@ -25,6 +25,9 @@ laufend unter **Unveröffentlicht**. Ab 0.32.0 entsteht eine Version nur bei ein
 - **ClickTime: Änderungen nach dem Monatsabschluss (#97):** «Monat abschliessen» hält den Stand der Buchungen fest,
   «Änderungen seit Abschluss» zeigt neu / geändert (alt → neu) / gelöscht und schickt auf Wunsch einen Hinweis an
   Verwaltung und Vorgesetzte. Im Demo-Modus simuliert ClickTime nach dem Abschluss eine Korrektur.
+- **ClickTime: Kumulative im echten Aufbau:** Die Antwort liefert je Person `cumulative_values` mit Name der
+  Buchungsart; die Nummer ist meist leer (nur gesetzt, wenn in ClickTime eine Lohnart-Nummer hinterlegt ist). Summen
+  im Monatsblatt werden jetzt danach gelesen (Plugin 0.2.1).
 - **Personendaten für Tests freischalten:** Auf einem Server ausserhalb der Schweiz kann die Administration die
   gesperrten Personendaten-Endpunkte eines Plugins mit dem Admin-PIN für 60 Minuten freischalten (Karte auf der
   Plugin-Seite, «Wieder sperren»). Freischalten und Sperren stehen im Änderungsverlauf; der PIN wird nur geprüft.

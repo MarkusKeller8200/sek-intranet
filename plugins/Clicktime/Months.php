@@ -94,7 +94,7 @@ final class Months
     }
 
     /**
-     * Kumulative des Monats je Person: Art → [Name, Stunden].
+     * Kumulative des Monats je Person: Buchungsart (Nummer, sonst Name) → [Name, Stunden]. Sollzeit = Nummer 0.
      *
      * @param  list<string>  $employees
      * @return array<string, array<int|string, array{name: string, hours: float}>>
@@ -108,11 +108,24 @@ final class Months
         }
         $result = [];
         foreach (self::rows($this->expect($this->ctx->call('cumulatives', ['filters' => $filters]))) as $row) {
-            $type = (string) ($row['entry_type'] ?? $row['entry_type_number'] ?? '');
-            $result[(string) ($row['employee_no'] ?? '')][$type] = [
-                'name' => self::text($row['name'] ?? $row['entry_type_name'] ?? ($type === '0' ? 'Sollzeit' : "Art {$type}")),
-                'hours' => round((float) ($row['hours'] ?? $row['value'] ?? 0), 2),
-            ];
+            // Echte Antwort (05.11.2026): je Person {employee_no, first_name, last_name, cumulative_values: [{entry_type_name,
+            // entry_type_number (oft null, nur wenn in ClickTime eine Lohnart-Nummer gesetzt ist), hours, hours_weighted}]}
+            $values = is_array($row['cumulative_values'] ?? null) ? $row['cumulative_values'] : [$row];
+            foreach ($values as $value) {
+                if (! is_array($value)) {
+                    continue;
+                }
+                $number = $value['entry_type_number'] ?? $value['entry_type'] ?? null;
+                $name = self::text($value['entry_type_name'] ?? $value['name'] ?? '');
+                $key = $number !== null && $number !== '' ? (string) $number : $name;
+                if ($key === '') {
+                    continue;
+                }
+                $result[(string) ($row['employee_no'] ?? '')][$key] = [
+                    'name' => $name !== '' ? $name : ($key === '0' ? 'Sollzeit' : "Art {$key}"),
+                    'hours' => round((float) ($value['hours'] ?? $value['value'] ?? 0), 2),
+                ];
+            }
         }
 
         return $result;

@@ -729,11 +729,21 @@ class Plugin extends BasePlugin implements DemoResponder
      */
     private static function demoCumulatives(array $employees): array
     {
+        // Aufbau wie die echte Antwort (05.11.2026): je Person cumulative_values, Nummer meist null
+        $types = [['Arbeitszeit', null, 176.4], ['Bezahlte Absenzen', null, 0], ['Ferien', null, 8.4], ['Homeoffice', 1, 0],
+            ['Kompensation', null, 0], ['Krankheit', null, 0], ['Pause', null, -1], ['Unfall', null, 0], ['Weiterbildung', null, 0],
+            ['Sollzeit', 0, 184.8]];
         $rows = [];
         foreach ($employees as $e) {
-            foreach ([[0, 'Sollzeit', 184.8], [1000, 'Arbeitszeit', 176.4], [8000, 'Ferien', 8.4]] as [$type, $name, $hours]) {
-                $rows[] = ['employee_no' => $e['employee_no'], 'entry_type' => $type, 'name' => $name, 'hours' => $hours];
-            }
+            $rows[] = [
+                'cumulative_values' => array_map(fn (array $t): array => [
+                    'entry_type_name' => $t[0], 'entry_type_number' => $t[1], 'hours' => $t[2], 'hours_weighted' => $t[1] === 0 ? null : $t[2],
+                    'valid_from' => '2026-10-01', 'valid_to' => '2026-10-31',
+                ], $types),
+                'employee_no' => $e['employee_no'],
+                'first_name' => $e['first_name'],
+                'last_name' => $e['last_name'],
+            ];
         }
 
         return $rows;
