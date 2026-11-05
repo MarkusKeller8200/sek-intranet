@@ -1,7 +1,7 @@
 {
     "id": "clicktime",
     "name": "ClickTime",
-    "version": "0.3",
+    "version": "0.4",
     "api": 1,
     "category": "other",
     "author": "SekBülach Intranet",
@@ -1285,6 +1285,13 @@
             "label": "Zuordnung der Buchungsarten (ClickTime = Zeiterfassung)",
             "default": "Arbeitszeit = arbeitszeit\nHomeoffice = homeoffice\nFerien = ferien\nKrankheit = krankheit\nUnfall = unfall\nKompensation = kompensation\nKompensation (Minussaldo) = kompensation\nUeberzeit-Kompensation = kompensation\nWeiterbildung = weiterbildung\nMilitär/Zivilschutz = militaer\nBezahlte Absenzen = bezahlt\nunbezahlte Absenz = unbezahlt\nPause = pause\nSollzeit = -\nUeberzeit = -\nÜberzeit abgerechnet = -",
             "help": "Eine Zeile je Buchungsart aus ClickTime: «Name = Schlüssel». Schlüssel der Buchungsart in der Zeiterfassung (Visum → Buchungsarten), «pause» = Pause des Tages, «-» = nicht übernehmen. Statt des Namens geht auch die Nummer, falls in ClickTime gesetzt. Vorschläge mit der Aktion «Buchungsarten zuordnen»."
+        },
+        {
+            "key": "import_self",
+            "type": "check",
+            "label": "Mitarbeitende dürfen ihren Monat selbst aus ClickTime übernehmen",
+            "default": false,
+            "help": "Knopf «Aus ClickTime übernehmen» in der eigenen Zeiterfassung. Die Administration sieht ihn immer (zum Testen)."
         }
     ],
     "actions": [
@@ -1433,6 +1440,33 @@
                     "key": "all",
                     "type": "check",
                     "label": "Auch gleiche Tage anzeigen",
+                    "default": false
+                }
+            ]
+        },
+        {
+            "id": "import",
+            "label": "In Zeiterfassung übernehmen",
+            "kind": "read",
+            "description": "Buchungen eines Monats einer Person aus ClickTime in die eigene Zeiterfassung übernehmen: neu, geändert, in ClickTime gelöscht. Von Hand erfasste Einträge bleiben. Ohne Häkchen nur Vorschau.",
+            "options": [
+                {
+                    "key": "month",
+                    "type": "text",
+                    "label": "Monat (JJJJ-MM, leer = Vormonat)",
+                    "placeholder": "2026-10"
+                },
+                {
+                    "key": "person",
+                    "type": "text",
+                    "label": "Person (E-Mail oder ClickTime-Nummer)",
+                    "required": true,
+                    "placeholder": "andrea.muster@sekbuelach.example"
+                },
+                {
+                    "key": "apply",
+                    "type": "check",
+                    "label": "Übernehmen (sonst nur Vorschau)",
                     "default": false
                 }
             ]

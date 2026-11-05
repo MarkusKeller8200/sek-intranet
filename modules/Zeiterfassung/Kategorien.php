@@ -40,8 +40,15 @@ final class Kategorien
         'zurueck' => 'Zurück an Person',
     ];
 
+    /** Präfix für Kategorien aus ClickTime (#101): «ct:Arbeitszeit» → «Arbeitszeit (clicktime)». */
+    public const CLICKTIME = 'ct:';
+
     public static function label(string $key): string
     {
+        if (str_starts_with($key, self::CLICKTIME)) {
+            return substr($key, strlen(self::CLICKTIME)).' (clicktime)';
+        }
+
         return self::ARBEIT[$key] ?? self::ABWESENHEIT[$key] ?? $key;
     }
 

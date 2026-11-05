@@ -4,6 +4,14 @@ Versionen des Moduls nach SemVer (module.json → «version»).
 
 ## [Unveröffentlicht]
 
+## [0.4.0]
+
+### Neu
+
+- **Aus ClickTime übernehmen (#101):** Knopf in der eigenen Zeiterfassung (mit Plugin ClickTime und ClickTime-Nr. in
+  der Datenherkunft). Einträge erhalten die Herkunft (`quelle`, `quelle_id`); Kategorien aus ClickTime erscheinen als
+  «Name (clicktime)».
+
 ## [0.3.0]
 
 ### Neu

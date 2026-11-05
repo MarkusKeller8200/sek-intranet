@@ -93,7 +93,13 @@ export default function EintraegeTabelle({
                                     className="text-muted-foreground"
                                     translate="no"
                                 >
-                                    {[e.projekt, e.notiz]
+                                    {[
+                                        e.projekt,
+                                        e.notiz,
+                                        e.quelle === 'clicktime'
+                                            ? 'ClickTime'
+                                            : null,
+                                    ]
                                         .filter(Boolean)
                                         .join(' · ')}
                                 </TableCell>

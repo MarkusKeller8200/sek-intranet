@@ -1,5 +1,12 @@
 import { Head, Link, router, useForm } from '@inertiajs/react';
-import { ClipboardCheck, Download, Lock, Printer, Send } from 'lucide-react';
+import {
+    ClipboardCheck,
+    CloudDownload,
+    Download,
+    Lock,
+    Printer,
+    Send,
+} from 'lucide-react';
 import type { FormEvent } from 'react';
 import FormField from '@/components/form-field';
 import PageHeader from '@/components/page-header';
@@ -37,6 +44,8 @@ type Props = {
     person: { name: string };
     darfVisum: boolean;
     unterschrift: Unterschrift;
+    /** Knopf «Aus ClickTime übernehmen» (#101), null = nicht verfügbar */
+    clicktime?: { nr: string } | null;
 };
 
 /** Eigene Zeiterfassung eines Monats: erfassen, Übersicht, einreichen, Monatsblatt als PDF. */
@@ -135,6 +144,22 @@ export default function ZeiterfassungStart(props: Props) {
                                 >
                                     <ClipboardCheck /> Visum
                                 </Link>
+                            </Button>
+                        )}
+                        {props.clicktime && (
+                            <Button
+                                variant="outline"
+                                disabled={gesperrt}
+                                title={`ClickTime-Nr. ${props.clicktime.nr}`}
+                                onClick={() =>
+                                    router.post(
+                                        '/zeiterfassung/aus-clicktime',
+                                        { monat },
+                                        { preserveScroll: true },
+                                    )
+                                }
+                            >
+                                <CloudDownload /> Aus ClickTime übernehmen
                             </Button>
                         )}
                         <Button

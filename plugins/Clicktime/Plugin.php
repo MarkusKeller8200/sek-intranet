@@ -105,6 +105,7 @@ class Plugin extends BasePlugin implements DemoResponder
             'changes' => $this->changes($ctx, $options),
             'mapping' => $this->mapping($ctx, $options),
             'compare' => $this->compare($ctx, $options),
+            'import' => $this->import($ctx, $options),
             default => parent::action($action, $ctx, $options),
         };
     }
@@ -761,6 +762,55 @@ class Plugin extends BasePlugin implements DemoResponder
         }
 
         return true;
+    }
+
+    // ---------- Übernehmen in die Zeiterfassung (#101) ----------
+
+    /**
+     * Buchungen eines Monats einer Person in die eigene Zeiterfassung übernehmen; ohne «apply» nur Vorschau.
+     *
+     * @param  array<string, mixed>  $options
+     */
+    private function import(PluginContext $ctx, array $options): ActionResult
+    {
+        if (self::ownTypes() === []) {
+            return ActionResult::warning('Das Modul Zeiterfassung ist ausgeschaltet.');
+        }
+        $month = Months::month((string) ($options['month'] ?? ''));
+        $needle = trim((string) ($options['person'] ?? ''));
+        if ($needle === '') {
+            return ActionResult::warning('Bitte eine Person angeben (E-Mail oder ClickTime-Nummer).');
+        }
+        $people = $this->people($ctx, $needle);
+        $no = (string) array_key_first($people);
+        $personId = app(PersonLinks::class)->findPerson(self::SYSTEM, $no);
+        if ($personId === null) {
+            return ActionResult::warning("{$people[$no]} (ClickTime-Nr. {$no}) ist keiner Intranet-Person zugeordnet – zuerst «Mitarbeitende abgleichen» oder die Datenherkunft bei der Person eintragen.");
+        }
+        $apply = ($options['apply'] ?? false) === true;
+        $result = (new Importer($ctx))->run($personId, $no, $month, $apply);
+
+        return ActionResult::table(self::importMessage($ctx, $people[$no], $month, $result, $apply), [
+            ['key' => 'day', 'label' => 'Tag'],
+            ['key' => 'change', 'label' => 'Änderung'],
+            ['key' => 'before', 'label' => 'Zeiterfassung bisher'],
+            ['key' => 'after', 'label' => 'Aus ClickTime'],
+        ], array_map(fn (array $c): array => ['day' => date('d.m.Y', (int) strtotime($c['day']))] + $c, $result['changes']));
+    }
+
+    /**
+     * @param  array{changes: list<array<string, string>>, counts: array<string, int>, created_types: list<string>}  $result
+     */
+    public static function importMessage(PluginContext $ctx, string $name, string $month, array $result, bool $apply): string
+    {
+        $c = $result['counts'];
+        $message = ($ctx->demo() ? 'Demo-Modus: ' : '').($apply ? 'Übernommen' : 'Vorschau')." {$month} – {$name}: {$c['neu']} neu, {$c['geändert']} geändert, "
+            ."{$c['gelöscht']} gelöscht, {$c['unverändert']} unverändert.";
+        if ($result['created_types'] !== []) {
+            $message .= ' Neue Buchungsarten'.($apply ? '' : ' (beim Übernehmen)').': '.implode(', ', array_map(fn (string $n): string => "{$n} (clicktime)", $result['created_types'])).'.';
+        }
+
+        return $message.($apply ? '' : ' Zum Übernehmen «Übernehmen» ankreuzen.');
     }
 
     // ---------- Daten ----------

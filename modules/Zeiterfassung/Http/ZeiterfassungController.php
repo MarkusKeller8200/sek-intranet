@@ -2,9 +2,12 @@
 
 namespace Modules\Zeiterfassung\Http;
 
+use App\Auth\IntranetUser;
 use App\Data\Contracts\UserRepository;
 use App\Http\Controllers\Controller;
+use App\Plugins\PluginManager;
 use App\Support\Notifications;
+use App\Support\PersonLinks;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
@@ -20,7 +23,10 @@ use Modules\Zeiterfassung\Data\Contracts\MonatRepository;
 use Modules\Zeiterfassung\Kategorien;
 use Modules\Zeiterfassung\Unterschriften;
 use Modules\Zeiterfassung\Zeitkonto;
+use Plugins\Clicktime\Importer;
+use Plugins\Clicktime\Plugin;
 use Symfony\Component\HttpFoundation\StreamedResponse;
+use Throwable;
 
 /**
  * Eigene Zeiterfassung: Einträge eines Monats erfassen, löschen und den Monat zum Visum einreichen.
@@ -50,7 +56,54 @@ class ZeiterfassungController extends Controller
             'person' => ['name' => $this->name($person)],
             'darfVisum' => Gate::allows('visum-zeiterfassung'),
             'unterschrift' => self::unterschrift($person, $monat, $this->monate->status($person, $monat)),
+            'clicktime' => self::clicktime($request, $person),
         ]);
+    }
+
+    /**
+     * Knopf «Aus ClickTime übernehmen» (#101): nur mit eingeschaltetem Plugin, ClickTime-Nr. in der Datenherkunft und
+     * Recht (Administration; Mitarbeitende, wenn im Plugin erlaubt).
+     *
+     * @return array{nr: string}|null
+     */
+    private static function clicktime(Request $request, string $person): ?array
+    {
+        $plugins = app(PluginManager::class);
+        if (! class_exists(Importer::class) || ! isset($plugins->all()['clicktime']) || ! $plugins->state('clicktime')['enabled']) {
+            return null;
+        }
+        $nr = null;
+        foreach (app(PersonLinks::class)->all() as $link) {
+            if (($link['person_id'] ?? null) === $person && ($link['system'] ?? null) === 'clicktime' && ($link['direction'] ?? null) === 'source') {
+                $nr = (string) ($link['external_id'] ?? '');
+            }
+        }
+        $user = $request->user();
+        $allowed = ($user instanceof IntranetUser && $user->hasRole('admin'))
+            || $plugins->context('clicktime', null)->setting('import_self', false) === true;
+
+        return $nr !== null && $nr !== '' && $allowed ? ['nr' => $nr] : null;
+    }
+
+    /** Eigenen Monat aus ClickTime übernehmen (#101). */
+    public function ausClicktime(Request $request): RedirectResponse
+    {
+        $person = self::person($request);
+        $monat = self::monatAus((string) $request->input('monat'));
+        $info = self::clicktime($request, $person);
+        abort_if($info === null, 403);
+        $user = $request->user();
+        try {
+            $text = app(PluginManager::class)->runWith('clicktime', $user instanceof IntranetUser ? $user : null, 'Zeiterfassung: aus ClickTime übernehmen',
+                fn ($ctx): string => Plugin::importMessage($ctx, $this->name($person), $monat, (new Importer($ctx))->run($person, $info['nr'], $monat, true), true));
+        } catch (Throwable $e) {
+            $this->toast('Übernehmen nicht möglich: '.$e->getMessage(), 'error');
+
+            return back();
+        }
+        $this->toast((string) $text);
+
+        return back();
     }
 
     /**

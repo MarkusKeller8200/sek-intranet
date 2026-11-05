@@ -16,6 +16,12 @@ laufend unter **Unveröffentlicht**. Ab 0.32.0 entsteht eine Version nur bei ein
 
 ### Neu
 
+- **ClickTime: Monat in die Zeiterfassung übernehmen (#101):** Aktion «In Zeiterfassung übernehmen» (Vorschau oder
+  Übernehmen) und Knopf «Aus ClickTime übernehmen» in der eigenen Zeiterfassung (Administration; Mitarbeitende per
+  Plugin-Einstellung). ClickTime-Nr. über die Datenherkunft der Person. Herkunft je Eintrag verhindert Duplikate,
+  Änderungen und Löschungen in ClickTime werden nachgeführt, von Hand erfasste Einträge bleiben. Unbekannte
+  Buchungsarten werden als «Name (clicktime)» angelegt, Arbeitszeit-Kategorie «Name (clicktime)», Pause in den
+  längsten Arbeitsblock, Notizen übernommen. Modul Zeiterfassung 0.4.0, Plugin 0.4.
 - **Zeiterfassung: Buchungsart je Eintrag (#99):** Buchungsarten wie in ClickTime (Arbeitszeit, Homeoffice, Ferien,
   Krankheit, Unfall, Kompensation, Weiterbildung, Militär/Zivilschutz, bezahlte/unbezahlte Absenz), unter Visum →
   «Buchungsarten» pflegbar. Summen, Monatsblatt und Export nach Buchungsart. Modul Zeiterfassung 0.3.0.

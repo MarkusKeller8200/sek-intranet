@@ -76,7 +76,7 @@ final class Months
 
     /**
      * @param  array<string, mixed>  $row
-     * @return array{number: string, day: string, time_from: string, time_to: string, hours: float, type: string, type_name: string, category: string, activity: string}
+     * @return array{number: string, day: string, time_from: string, time_to: string, hours: float, type: string, type_name: string, category: string, activity: string, notes: string}
      */
     public static function normalize(array $row): array
     {
@@ -96,6 +96,7 @@ final class Months
             'type_name' => $name !== '' ? $name : (string) ($number ?? ''),
             'category' => (string) ($row['entry_type_type'] ?? ''),
             'activity' => (string) ($row['activity_number'] ?? ''),
+            'notes' => is_string($row['notes'] ?? null) ? trim($row['notes']) : '',
         ];
     }
 
@@ -221,7 +222,8 @@ final class Months
             'month' => $month,
             'closed_at' => now()->toIso8601String(),
             'closed_by' => $by,
-            'employees' => $entries,
+            // ohne Notizen (Datensparsamkeit)
+            'employees' => array_map(fn (array $list): array => array_map(fn (array $e): array => array_diff_key($e, ['notes' => true]), $list), $entries),
         ], JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT));
     }
 

@@ -12,6 +12,8 @@ export type Eintrag = {
     stunden: number;
     projekt?: string | null;
     notiz?: string | null;
+    /** Herkunft (#101): «clicktime» = aus ClickTime übernommen */
+    quelle?: string | null;
 };
 
 export type Status = {
@@ -82,6 +84,11 @@ export function stunden(h: number): string {
 }
 
 export function kategorieName(k: Kategorien, key: string): string {
+    // aus ClickTime übernommen (#101): «ct:Arbeitszeit» → «Arbeitszeit (clicktime)»
+    if (key.startsWith('ct:')) {
+        return `${key.slice(3)} (clicktime)`;
+    }
+
     return k.arbeit[key] ?? k.abwesenheit[key] ?? key;
 }
 

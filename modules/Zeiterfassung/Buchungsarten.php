@@ -110,6 +110,21 @@ final class Buchungsarten
     }
 
     /**
+     * Buchungsart ergänzen, falls es den Schlüssel noch nicht gibt (z. B. aus ClickTime, #101). Die bestehende Liste
+     * (oder die Vorgabe) bleibt erhalten.
+     */
+    public function hinzufuegen(string $key, string $name, string $art): void
+    {
+        $liste = $this->liste();
+        if (isset($liste[$key])) {
+            return;
+        }
+        $zeilen = array_map(fn (string $k, array $b): array => ['key' => $k, 'name' => $b['name'], 'art' => $b['art'], 'aktiv' => $b['aktiv']], array_keys($liste), $liste);
+        $zeilen[] = ['key' => $key, 'name' => $name, 'art' => $art === 'abwesenheit' ? 'abwesenheit' : 'arbeit', 'aktiv' => true];
+        $this->speichern($zeilen);
+    }
+
+    /**
      * Buchungsart eines Eintrags; ältere Einträge aus Art und Kategorie.
      *
      * @param  array<string, mixed>  $eintrag

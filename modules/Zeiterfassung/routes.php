@@ -10,6 +10,7 @@ Route::middleware('can:use-zeiterfassung')->group(function () {
     Route::post('zeiterfassung', [ZeiterfassungController::class, 'store'])->name('zeiterfassung.store');
     Route::delete('zeiterfassung/eintraege/{id}', [ZeiterfassungController::class, 'destroy'])->name('zeiterfassung.destroy');
     Route::post('zeiterfassung/einreichen', [ZeiterfassungController::class, 'einreichen'])->name('zeiterfassung.einreichen');
+    Route::post('zeiterfassung/aus-clicktime', [ZeiterfassungController::class, 'ausClicktime'])->middleware('throttle:10,1')->name('zeiterfassung.clicktime');
     Route::get('zeiterfassung/unterschrift/{person}/{monat}', [ZeiterfassungController::class, 'unterschriftPdf'])->name('zeiterfassung.unterschrift-pdf');
 });
 

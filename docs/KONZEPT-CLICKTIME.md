@@ -34,7 +34,12 @@ von dev.clicktime.ch (05.11.2026), 51 Endpunkte.
 - Zeiterfassung: eigene Buchungsarten (Modul, Sammlung `zeit_buchungsarten`), ohne Bezug zu ClickTime.
 - Plugin: Mapping-Tabelle (Einstellung `mapping`, «Name = Schlüssel», `pause`, `-`), Vorschlag über gleichen Namen
   bzw. Kategorie. Vergleich je Tag und Buchungsart; Pause wird von der grössten Arbeit-Buchungsart des Tages abgezogen.
-- Offen: Import ClickTime → Zeiterfassung (ClickTime-Nr. je Eintrag), Export.
+- Import (#101): `Plugins\Clicktime\Importer` – Einträge mit `quelle = clicktime`, `quelle_id` = ClickTime-Nr.;
+  neu/geändert/gelöscht nur für übernommene Einträge, von Hand erfasste bleiben. Unbekannte Buchungsarten →
+  `ct_<name>` «Name (clicktime)», Mapping ergänzt. Kategorie bei Arbeit `ct:<Name>`. Pause in den längsten
+  Arbeitsblock. Nur offene/zurückgegebene Monate. Knopf in der Zeiterfassung für die Administration, Mitarbeitende
+  mit Einstellung `import_self`; später Zeitplan möglich.
+- Offen: Export Zeiterfassung → ClickTime.
 
 ## Offen (#28)
 

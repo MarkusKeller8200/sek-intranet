@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Auth\IntranetUser;
 use App\Data\Contracts\DocumentRepository;
 use App\Data\Contracts\UserRepository;
 use App\Data\Store\JsonStore;
@@ -10,10 +11,14 @@ use App\Plugins\PluginManager;
 use App\Support\PersonLinks;
 use App\Support\RolePins;
 use Illuminate\Http\Client\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Testing\AssertableInertia as Assert;
+use Modules\Zeiterfassung\Buchungsarten;
 use Modules\Zeiterfassung\Data\Contracts\EintragRepository;
+use Modules\Zeiterfassung\Data\Contracts\MonatRepository;
+use Plugins\Clicktime\Importer;
 use Plugins\Clicktime\Months;
 use Plugins\Clicktime\Plugin;
 use RuntimeException;
@@ -352,5 +357,74 @@ class PluginClicktimeTest extends TestCase
         $this->postJson('/plugins/clicktime/aktion/compare', ['options' => ['month' => '2026-10', 'person' => '4']])->assertOk()
             ->assertJsonPath('message', fn (string $m): bool => str_contains($m, 'Ohne Intranet-Person') && str_contains($m, 'Eva Fiktiv'));
         Http::assertNothingSent();
+    }
+
+    public function test_import_month_into_time_tracking(): void
+    {
+        Http::fake();
+        Storage::fake('local');
+        $this->enable(['demo' => true, 'mapping' => "Pause = pause\nSollzeit = -"]);
+        $admin = $this->signInAs('admin');
+        $andrea = collect(app(UserRepository::class)->all())->firstWhere('email', 'andrea.muster@sekbuelach.example');
+        $eintraege = app(EintragRepository::class);
+        // von Hand erfasst: bleibt
+        $eintraege->create(['person_id' => (string) $andrea['id'], 'datum' => '2026-10-05', 'monat' => '2026-10', 'art' => 'arbeit', 'buchungsart' => 'arbeitszeit', 'kategorie' => 'verwaltung', 'stunden' => 2.0]);
+
+        // ohne Zuordnung: Hinweis; Knopf in der Zeiterfassung fehlt
+        $this->postJson('/plugins/clicktime/aktion/import', ['options' => ['month' => '2026-10', 'person' => '1']])->assertOk()->assertJsonPath('status', 'warning');
+        $this->get('/zeiterfassung?monat=2026-10')->assertInertia(fn (Assert $page) => $page->where('clicktime', null));
+        app(PersonLinks::class)->recordSync((string) $andrea['id'], 'clicktime', 'source', '1');
+
+        // Vorschau ändert nichts
+        $this->postJson('/plugins/clicktime/aktion/import', ['options' => ['month' => '2026-10', 'person' => '1']])->assertOk()
+            ->assertJsonPath('message', fn (string $m): bool => str_contains($m, 'Vorschau 2026-10 – Andrea Muster: 21 neu') && str_contains($m, 'Arbeitszeit (clicktime)'));
+        $this->assertCount(1, $eintraege->fuerPersonMonat((string) $andrea['id'], '2026-10'));
+
+        // Knopf in der eigenen Zeiterfassung (Administration) übernimmt
+        $this->actingAs(new IntranetUser($andrea));
+        $this->get('/zeiterfassung?monat=2026-10')->assertInertia(fn (Assert $page) => $page->where('clicktime.nr', '1'));
+        $this->post('/zeiterfassung/aus-clicktime', ['monat' => '2026-10'])->assertRedirect();
+        $liste = collect($eintraege->fuerPersonMonat((string) $andrea['id'], '2026-10'));
+        $this->assertCount(22, $liste);
+        $import = $liste->firstWhere('datum', '2026-10-01');
+        $this->assertSame(['clicktime', 'ct_arbeitszeit', 'ct:Arbeitszeit', '07:30', '16:24', 8.4], [$import['quelle'], $import['buchungsart'], $import['kategorie'], $import['beginn'], $import['ende'], $import['stunden']]);
+        $this->assertSame('Arbeitszeit (clicktime)', app(Buchungsarten::class)->liste()['ct_arbeitszeit']['name']);
+        $this->assertStringContainsString('Arbeitszeit = ct_arbeitszeit', (string) app(PluginManager::class)->state('clicktime')['settings']['mapping']);
+        $this->assertNotNull($liste->firstWhere('kategorie', 'verwaltung'), 'von Hand erfasst bleibt');
+
+        // zweites Mal: nichts doppelt; Korrektur in ClickTime (Demo nach Abschluss) wird nachgeführt
+        $this->actingAs($admin);
+        Cache::put('clicktime-demo:closed:2026-10', true, 60);
+        $this->postJson('/plugins/clicktime/aktion/import', ['options' => ['month' => '2026-10', 'person' => '1', 'apply' => true]])->assertOk()
+            ->assertJsonPath('message', fn (string $m): bool => str_contains($m, '1 neu, 1 geändert, 1 gelöscht'));
+        $this->assertCount(22, $eintraege->fuerPersonMonat((string) $andrea['id'], '2026-10'));
+        $this->assertSame(6.0, collect($eintraege->fuerPersonMonat((string) $andrea['id'], '2026-10'))->firstWhere('quelle_id', '101001')['stunden']);
+
+        // eingereichter Monat: gesperrt
+        app(MonatRepository::class)->setzen((string) $andrea['id'], '2026-10', ['status' => 'eingereicht']);
+        $this->postJson('/plugins/clicktime/aktion/import', ['options' => ['month' => '2026-10', 'person' => '1', 'apply' => true]])->assertJsonPath('status', 'error');
+        Http::assertNothingSent();
+    }
+
+    public function test_import_moves_pause_to_longest_block(): void
+    {
+        Http::fake([
+            self::TOKEN_URL => Http::response(['access_token' => 'token-abc-123456', 'expires_in' => 3600]),
+            self::API.'/entries*' => Http::response([
+                ['number' => 11, 'employee_no' => 9, 'day' => '2026-10-01', 'time_from' => '07:30:00', 'time_to' => '12:00:00', 'hours' => 4.5, 'entry_type_name' => ['de' => 'Arbeitszeit'], 'entry_type_type' => 'WORK', 'notes' => null, 'deleted' => false],
+                ['number' => 12, 'employee_no' => 9, 'day' => '2026-10-01', 'time_from' => '13:00:00', 'time_to' => '18:30:00', 'hours' => 5.5, 'entry_type_name' => ['de' => 'Arbeitszeit'], 'entry_type_type' => 'WORK', 'notes' => 'Elternabend', 'deleted' => false],
+                ['number' => 13, 'employee_no' => 9, 'day' => '2026-10-01', 'time_from' => null, 'time_to' => null, 'hours' => -0.5, 'entry_type_name' => ['de' => 'Pause'], 'entry_type_type' => 'WORK', 'notes' => 'Pausenkorrektur', 'deleted' => false],
+                ['number' => 14, 'employee_no' => 9, 'day' => '2026-10-02', 'time_from' => null, 'time_to' => null, 'hours' => 8.4, 'entry_type_name' => ['de' => 'Ferien'], 'entry_type_type' => 'HOLIDAYS', 'notes' => null, 'deleted' => false],
+            ]),
+        ]);
+        $this->realAccount();
+        $eva = collect(app(UserRepository::class)->all())->firstWhere('email', 'eva.fiktiv@sekbuelach.example');
+        $ctx = app(PluginManager::class)->context('clicktime', null);
+        (new Importer($ctx))->run((string) $eva['id'], '9', '2026-10', true);
+        $liste = collect(app(EintragRepository::class)->fuerPersonMonat((string) $eva['id'], '2026-10'))->keyBy('quelle_id');
+        $this->assertCount(3, $liste);
+        $this->assertSame([30, 5.0, 'Elternabend'], [$liste['12']['pause_min'], $liste['12']['stunden'], $liste['12']['notiz']]);
+        $this->assertNull($liste['11']['pause_min']);
+        $this->assertSame(['abwesenheit', 'ferien', 'ferien'], [$liste['14']['art'], $liste['14']['buchungsart'], $liste['14']['kategorie']]);
     }
 }
