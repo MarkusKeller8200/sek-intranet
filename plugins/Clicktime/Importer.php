@@ -48,7 +48,12 @@ final class Importer
         $mapping = Mapping::parse((string) $this->ctx->setting('mapping', Mapping::DEFAULT));
         $months = new Months($this->ctx);
         $entries = $months->entries($month, [$employeeNo])[$employeeNo] ?? [];
-        $targets = $months->targets($month, [$employeeNo])[$employeeNo] ?? [];
+        try {
+            $targets = $months->targets($month, [$employeeNo])[$employeeNo] ?? [];
+        } catch (RuntimeException) {
+            // Sollzeit fehlt (z. B. Kumulative nicht freigegeben): Buchungen trotzdem übernehmen
+            $targets = [];
+        }
         if ($apply && $targets !== []) {
             app(Sollzeiten::class)->speichern($personId, $month, $targets, self::QUELLE);
         }
