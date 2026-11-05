@@ -2,11 +2,15 @@
 
 namespace Tests\Feature;
 
+use App\Data\Contracts\DocumentRepository;
 use App\Data\Contracts\UserRepository;
+use App\Data\Store\JsonStore;
 use App\Plugins\PluginManager;
 use App\Support\PersonLinks;
 use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Storage;
+use Plugins\Clicktime\Months;
 use Plugins\Clicktime\Plugin;
 use RuntimeException;
 use Tests\TestCase;
@@ -156,5 +160,75 @@ class PluginClicktimeTest extends TestCase
             ['day' => ['GE', '2026-10-01'], 'day:LE' => ['LE', '2026-10-31'], 'employee_no' => ['IN', '1,2']],
             Plugin::filters('day::GE::2026-10-01|day::LE::2026-10-31|employee_no::IN::1,2'),
         );
+    }
+
+    public function test_balances_and_month_sheet_with_gaps_and_pdf(): void
+    {
+        Http::fake();
+        Storage::fake('local');
+        $this->enable(['demo' => true]);
+        $this->signInAs('admin');
+
+        $this->postJson('/plugins/clicktime/aktion/balances', ['options' => ['date' => '2026-10-31', 'person' => '1']])->assertOk()
+            ->assertJsonPath('rows.0.balance', 'Gleitzeit')
+            ->assertJsonPath('rows.1.value', '15.50 d');
+
+        // eine Person: Tage mit Lücke (3. Arbeitstag = Mo 05.10.2026) und Summen
+        $one = $this->postJson('/plugins/clicktime/aktion/month', ['options' => ['month' => '2026-10', 'person' => 'daniel.probe@sekbuelach.example']])->assertOk();
+        $this->assertStringContainsString('1 Arbeitstage ohne Buchung', (string) $one->json('message'));
+        $this->assertContains(['day' => '05.10.2026', 'time' => '', 'hours' => '', 'type' => '', 'note' => 'keine Buchung'], $one->json('rows'));
+
+        // alle: Übersicht, PDF je Person nur einmal abgelegt
+        $all = $this->postJson('/plugins/clicktime/aktion/month', ['options' => ['month' => '2026-10', 'pdf' => true]])->assertOk();
+        $this->assertCount(5, $all->json('rows'));
+        $this->assertStringContainsString('5 Monatsblätter', (string) $all->json('message'));
+        $doc = collect(app(DocumentRepository::class)->all())->firstWhere('source', 'clicktime:monatsblatt:2026-10:3');
+        $this->assertSame('monatsblaetter', $doc['category']);
+        $this->assertSame('manage-signatures', $doc['ability']);
+        $this->assertStringStartsWith('%PDF', (string) Storage::disk('local')->get((string) $doc['file_path']));
+        $this->postJson('/plugins/clicktime/aktion/month', ['options' => ['month' => '2026-10', 'pdf' => true]])->assertOk();
+        $this->assertCount(5, collect(app(DocumentRepository::class)->all())->filter(fn (array $d): bool => str_starts_with((string) ($d['source'] ?? ''), 'clicktime:monatsblatt:')));
+
+        $this->postJson('/plugins/clicktime/aktion/month', ['options' => ['month' => '10.2026']])->assertJsonPath('status', 'error');
+        Http::assertNothingSent();
+    }
+
+    public function test_changes_after_month_closing(): void
+    {
+        Http::fake();
+        Storage::fake('local');
+        $this->enable(['demo' => true]);
+        $this->signInAs('admin');
+
+        $this->postJson('/plugins/clicktime/aktion/changes', ['options' => ['month' => '2026-10']])->assertOk()
+            ->assertJsonPath('status', 'warning');
+        $this->postJson('/plugins/clicktime/aktion/close', ['options' => ['month' => '2026-10']])->assertOk()
+            ->assertJsonPath('rows.0.entries', '21');
+        Storage::disk('local')->assertExists('plugins/clicktime/abschluss/2026-10.json');
+
+        // Demo simuliert nach dem Abschluss eine Korrektur bei Person 1
+        $result = $this->postJson('/plugins/clicktime/aktion/changes', ['options' => ['month' => '2026-10', 'notify' => true]])->assertOk();
+        $this->assertStringContainsString('1 neu, 1 geändert, 1 gelöscht', (string) $result->json('message'));
+        $changes = array_column($result->json('rows'), 'change', 'day');
+        $this->assertSame('geändert', $changes['01.10.2026']);
+        $this->assertSame('neu', $changes['05.10.2026']);
+        $this->assertSame('gelöscht', $changes['30.10.2026']);
+        $this->assertContains('8.40 h 07:30–16:24 (Art 1000)', array_column($result->json('rows'), 'before'));
+        $this->assertGreaterThan(0, count(app(JsonStore::class)->all('notifications')));
+
+        // erneuter Abschluss: keine Änderungen mehr
+        $this->postJson('/plugins/clicktime/aktion/close', ['options' => ['month' => '2026-10']])->assertOk();
+        $this->postJson('/plugins/clicktime/aktion/changes', ['options' => ['month' => '2026-10']])->assertOk()
+            ->assertJsonPath('message', fn (string $m): bool => str_contains($m, 'keine Änderungen'));
+    }
+
+    public function test_diff_detects_new_changed_deleted(): void
+    {
+        $a = ['number' => '1', 'day' => '2026-10-01', 'time_from' => '07:30', 'time_to' => '12:00', 'hours' => 4.5, 'type' => '1000', 'activity' => ''];
+        $b = ['number' => '2', 'day' => '2026-10-02'] + $a;
+        $changed = ['hours' => 5.0] + $a;
+        $new = ['number' => '3', 'day' => '2026-10-03'] + $a;
+        $diff = Months::diff(['1' => ['1' => $a, '2' => $b]], ['1' => ['1' => $changed, '3' => $new]]);
+        $this->assertSame(['geändert', 'gelöscht', 'neu'], array_column($diff, 'change'));
     }
 }

@@ -1,7 +1,7 @@
 {
     "id": "clicktime",
     "name": "ClickTime",
-    "version": "0.1",
+    "version": "0.2",
     "api": 1,
     "category": "other",
     "author": "SekBülach Intranet",
@@ -1314,6 +1314,86 @@
                     "label": "E-Mail oder ClickTime-Nummer",
                     "required": true,
                     "placeholder": "anna.muster@sekbuelach.example"
+                }
+            ]
+        },
+        {
+            "id": "balances",
+            "label": "Salden holen",
+            "kind": "read",
+            "description": "Salden (z. B. Gleitzeit, Ferien) an einem Stichtag – eine Person oder alle.",
+            "options": [
+                {
+                    "key": "date",
+                    "type": "text",
+                    "label": "Stichtag (JJJJ-MM-TT, leer = Ende Vormonat)",
+                    "placeholder": "2026-10-31"
+                },
+                {
+                    "key": "person",
+                    "type": "text",
+                    "label": "Person (E-Mail oder ClickTime-Nummer, leer = alle)",
+                    "placeholder": "andrea.muster@sekbuelach.example"
+                }
+            ]
+        },
+        {
+            "id": "month",
+            "label": "Monatsblatt holen",
+            "kind": "read",
+            "description": "Buchungen, Summen und Salden eines Monats mit Vollständigkeitsprüfung (Arbeitstage ohne Buchung, Feiertage ausgenommen). Für eine Person die Tage, für alle eine Übersicht. Optional als PDF in «Dokumente & Links» ablegen (Kategorie «Monatsblätter», nur Verwaltung sichtbar).",
+            "options": [
+                {
+                    "key": "month",
+                    "type": "text",
+                    "label": "Monat (JJJJ-MM, leer = Vormonat)",
+                    "placeholder": "2026-10"
+                },
+                {
+                    "key": "person",
+                    "type": "text",
+                    "label": "Person (E-Mail oder ClickTime-Nummer, leer = alle)",
+                    "placeholder": "andrea.muster@sekbuelach.example"
+                },
+                {
+                    "key": "pdf",
+                    "type": "check",
+                    "label": "Monatsblätter als PDF ablegen (nur Verwaltung sichtbar)",
+                    "default": false
+                }
+            ]
+        },
+        {
+            "id": "close",
+            "label": "Monat abschliessen (Stand festhalten)",
+            "kind": "read",
+            "description": "Hält den Stand der Buchungen aller Personen für den Monat fest (Monatsabschluss im Intranet). Danach zeigt «Änderungen seit Abschluss», was nachträglich in ClickTime geändert wurde. Ein erneuter Abschluss ersetzt den Stand.",
+            "options": [
+                {
+                    "key": "month",
+                    "type": "text",
+                    "label": "Monat (JJJJ-MM, leer = Vormonat)",
+                    "placeholder": "2026-10"
+                }
+            ]
+        },
+        {
+            "id": "changes",
+            "label": "Änderungen seit Abschluss",
+            "kind": "read",
+            "description": "Vergleicht den heutigen Stand in ClickTime mit dem Abschluss: neu, geändert (alt → neu), gelöscht. Optional Hinweis an die Verwaltung und die Vorgesetzten der betroffenen Personen.",
+            "options": [
+                {
+                    "key": "month",
+                    "type": "text",
+                    "label": "Monat (JJJJ-MM, leer = Vormonat)",
+                    "placeholder": "2026-10"
+                },
+                {
+                    "key": "notify",
+                    "type": "check",
+                    "label": "Hinweis an Verwaltung und Vorgesetzte senden",
+                    "default": false
                 }
             ]
         }

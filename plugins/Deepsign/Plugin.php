@@ -919,7 +919,6 @@ class Plugin extends BasePlugin implements DemoResponder, SignatureProvider
             if (! is_string($file) && self::demoStatusOf($providerId) === 'signed') {
                 // Demo-Dokument aus der Übersicht (nicht selbst versendet): erfundenes PDF
                 $pdf = new SimplePdf('Demo – unterschriebenes Dokument');
-                $pdf->addPage();
                 $pdf->text(56, 780, 'Demo-Modus: unterschriebenes Dokument aus DeepSign', 14, true);
                 $pdf->text(56, 756, 'Dokument-ID: '.$providerId);
                 $pdf->text(56, 740, 'Erfundener Inhalt – nichts wurde an DeepSign gesendet.');

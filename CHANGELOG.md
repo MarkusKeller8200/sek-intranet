@@ -19,6 +19,12 @@ laufend unter **Unveröffentlicht**. Ab 0.32.0 entsteht eine Version nur bei ein
   Abteilung, Vorgesetzten, Intranet-Person), «Mitarbeitende abgleichen» (Vorschau zugeordnet / neu zuordnen / ohne
   Treffer; Übernehmen speichert nur die Datenherkunft «ClickTime», legt nichts an und löscht nichts) und «Person
   nachschlagen» (Nummer, Abteilung, Vorgesetzte, Anstellungen, Rollen).
+- **ClickTime: Salden und Monatsblätter (#32):** Aktionen «Salden holen» (Stichtag, eine Person oder alle) und
+  «Monatsblatt holen» (Buchungen, Summen, Salden, Arbeitstage ohne Buchung ohne Feiertage); optional je Person als
+  PDF in «Dokumente & Links» (neue Kategorie «Monatsblätter», nur Verwaltung sichtbar).
+- **ClickTime: Änderungen nach dem Monatsabschluss (#97):** «Monat abschliessen» hält den Stand der Buchungen fest,
+  «Änderungen seit Abschluss» zeigt neu / geändert (alt → neu) / gelöscht und schickt auf Wunsch einen Hinweis an
+  Verwaltung und Vorgesetzte. Im Demo-Modus simuliert ClickTime nach dem Abschluss eine Korrektur.
 - **Plugins allgemein:** Mehrfache Abfrageparameter (`params[].repeat`, z. B. `filters=…&filters=…`) und Sperre für
   Personendaten ausserhalb der Schweiz (`endpoints[].personal_data`, auch im Endtest).
 

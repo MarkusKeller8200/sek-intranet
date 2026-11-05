@@ -16,6 +16,16 @@ von dev.clicktime.ch (05.11.2026), 51 Endpunkte.
 - **Abgleich:** Datenherkunft System `clicktime`, ID = `employee_no`; sonst über die E-Mail. Es wird nichts angelegt oder
   gelöscht.
 
+## Monatsdaten und Abschluss (#32, #97)
+
+- **Monatsblatt:** `entries` (Monat), `cumulatives` (Monat), `balances` (Monatsende), `public-holiday-calendars`
+  (Jahr). Vollständigkeit: Mo–Fr ohne Buchung, Feiertage ausgenommen. PDF mit `SimplePdf`, Ablage in «Dokumente &
+  Links» (Kategorie `monatsblaetter`, Recht `manage-signatures`, Herkunft `clicktime:monatsblatt:<Monat>:<Nr.>`).
+- **Abschluss:** im Intranet (ClickTime hat keinen Abschluss-Endpunkt). Stand je Person ohne Notizen unter
+  `storage/app/private/plugins/clicktime/abschluss/<JJJJ-MM>.json`. Vergleich über die Buchungsnummer (Felder Tag,
+  Zeit, Stunden, Art, Tätigkeit). Hinweis an Recht `manage-signatures` und die Vorgesetzten (über die Datenherkunft).
+- Später möglich: Abschluss automatisch beim Visum der Zeiterfassung, regelmässige Prüfung.
+
 ## Offen (#28)
 
 - Antwortfelder aller Endpunkte (die Beschreibung enthält keine Antworten) – Demo-Daten sind geraten, nach dem ersten

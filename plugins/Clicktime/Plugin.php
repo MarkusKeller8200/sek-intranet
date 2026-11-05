@@ -7,8 +7,11 @@ use App\Plugins\ActionResult;
 use App\Plugins\BasePlugin;
 use App\Plugins\DemoResponder;
 use App\Plugins\PluginContext;
+use App\Support\DocumentAccess;
+use App\Support\Notifications;
 use App\Support\PersonLinks;
 use Illuminate\Http\Client\Response;
+use Illuminate\Support\Facades\Cache;
 use RuntimeException;
 
 /**
@@ -27,6 +30,8 @@ use RuntimeException;
 class Plugin extends BasePlugin implements DemoResponder
 {
     public const SYSTEM = 'clicktime';
+
+    private const DEMO_CACHE = 'clicktime-demo:';
 
     /** Erfundene Mitarbeitende (E-Mails wie die Demo-Personen des Intranets, Nr. 5 ohne Treffer). */
     private const DEMO_EMPLOYEES = [
@@ -90,6 +95,10 @@ class Plugin extends BasePlugin implements DemoResponder
             'employees' => $this->employees($ctx),
             'match' => $this->match($ctx, $options),
             'lookup' => $this->lookup($ctx, trim((string) ($options['email'] ?? ''))),
+            'balances' => $this->balances($ctx, $options),
+            'month' => $this->monthSheet($ctx, $options),
+            'close' => $this->closeMonth($ctx, $options),
+            'changes' => $this->changes($ctx, $options),
             default => parent::action($action, $ctx, $options),
         };
     }
@@ -254,6 +263,269 @@ class Plugin extends BasePlugin implements DemoResponder
         ], $rows);
     }
 
+    // ---------- Salden und Monatsblätter (#32) ----------
+
+    /**
+     * @param  array<string, mixed>  $options
+     */
+    private function balances(PluginContext $ctx, array $options): ActionResult
+    {
+        $at = trim((string) ($options['date'] ?? '')) ?: date('Y-m-t', (int) strtotime('first day of last month'));
+        if (preg_match('/^\d{4}-\d{2}-\d{2}$/', $at) !== 1) {
+            return ActionResult::warning('Stichtag als JJJJ-MM-TT angeben, z. B. 2026-10-31.');
+        }
+        $needle = trim((string) ($options['person'] ?? ''));
+        $people = $this->people($ctx, $needle);
+        $balances = (new Months($ctx))->balances($at, $needle !== '' ? array_map('strval', array_keys($people)) : []);
+        $rows = [];
+        foreach ($people as $no => $name) {
+            foreach ($balances[$no] ?? [] as $b) {
+                $rows[] = ['no' => $no, 'name' => $name, 'balance' => $b['name'], 'value' => Months::hours($b['value']).' '.$b['unit']];
+            }
+        }
+
+        return ActionResult::table(($ctx->demo() ? 'Demo-Modus: ' : '').'Salden am '.date('d.m.Y', (int) strtotime($at)).' für '.count($people).' Personen.', [
+            ['key' => 'no', 'label' => 'Nr.'],
+            ['key' => 'name', 'label' => 'Name'],
+            ['key' => 'balance', 'label' => 'Saldo'],
+            ['key' => 'value', 'label' => 'Wert'],
+        ], $rows);
+    }
+
+    /**
+     * Monatsblatt: für eine Person die Tage mit Buchungen, Lücken und Feiertagen; für alle eine Übersicht. Mit «pdf»
+     * wird je Person ein Monatsblatt in «Dokumente & Links» abgelegt (nur Verwaltung sichtbar).
+     *
+     * @param  array<string, mixed>  $options
+     */
+    private function monthSheet(PluginContext $ctx, array $options): ActionResult
+    {
+        $month = Months::month((string) ($options['month'] ?? ''));
+        $needle = trim((string) ($options['person'] ?? ''));
+        $people = $this->people($ctx, $needle);
+        $filter = $needle !== '' ? array_map('strval', array_keys($people)) : [];
+        $months = new Months($ctx);
+        $entries = $months->entries($month, $filter);
+        $cumulatives = $months->cumulatives($month, $filter);
+        $balances = $months->balances(Months::range($month)[1], $filter);
+        $holidays = $months->holidays((int) substr($month, 0, 4));
+
+        $stored = 0;
+        if (($options['pdf'] ?? false) === true) {
+            $store = app(DocumentAccess::class);
+            foreach ($people as $no => $name) {
+                $source = "clicktime:monatsblatt:{$month}:{$no}";
+                if ($store->bySource($source) !== null) {
+                    continue;
+                }
+                $pdf = Months::pdf($month, $name, $no, $entries[$no] ?? [], $cumulatives[$no] ?? [], $balances[$no] ?? [], $holidays, Months::gaps($month, $entries[$no] ?? [], $holidays));
+                $store->store('Monatsblatt '.date('m.Y', (int) strtotime($month.'-01')).' – '.$name, "monatsblatt-{$month}-{$no}.pdf", $pdf, 'monatsblaetter', 'manage-signatures', $source, 'Aus ClickTime.', $ctx->user);
+                $stored++;
+            }
+        }
+        $suffix = $stored > 0 ? " {$stored} Monatsblätter in «Dokumente & Links» abgelegt." : '';
+
+        if (count($people) === 1) {
+            $no = (string) array_key_first($people);
+            $gaps = Months::gaps($month, $entries[$no] ?? [], $holidays);
+            $rows = [];
+            $byDay = [];
+            foreach ($entries[$no] ?? [] as $e) {
+                $byDay[(string) $e['day']][] = $e;
+            }
+            [$from, $to] = Months::range($month);
+            for ($t = (int) strtotime($from); $t <= (int) strtotime($to); $t = (int) strtotime('+1 day', $t)) {
+                $day = date('Y-m-d', $t);
+                $note = $holidays[$day] ?? (in_array($day, $gaps, true) ? 'keine Buchung' : '');
+                foreach ($byDay[$day] ?? [[]] as $e) {
+                    if ($e === [] && $note === '') {
+                        continue;
+                    }
+                    $rows[] = [
+                        'day' => date('d.m.Y', $t),
+                        'time' => ($e['time_from'] ?? '') !== '' ? $e['time_from'].'–'.$e['time_to'] : '',
+                        'hours' => $e !== [] ? Months::hours((float) $e['hours']) : '',
+                        'type' => (string) ($e['type'] ?? ''),
+                        'note' => $note,
+                    ];
+                }
+            }
+            $sums = implode(', ', array_map(fn (array $c): string => $c['name'].' '.Months::hours($c['hours']).' h', $cumulatives[$no] ?? []));
+            $saldo = implode(', ', array_map(fn (array $b): string => $b['name'].' '.Months::hours($b['value']).' '.$b['unit'], $balances[$no] ?? []));
+
+            return ActionResult::table(($ctx->demo() ? 'Demo-Modus: ' : '')."Monatsblatt {$month} – {$people[$no]}: ".count($gaps).' Arbeitstage ohne Buchung. '
+                .($sums !== '' ? "Summen: {$sums}. " : '').($saldo !== '' ? "Salden: {$saldo}." : '').$suffix, [
+                    ['key' => 'day', 'label' => 'Tag'],
+                    ['key' => 'time', 'label' => 'Zeit'],
+                    ['key' => 'hours', 'label' => 'Stunden'],
+                    ['key' => 'type', 'label' => 'Art'],
+                    ['key' => 'note', 'label' => 'Hinweis'],
+                ], $rows);
+        }
+
+        $rows = [];
+        foreach ($people as $no => $name) {
+            $c = $cumulatives[$no] ?? [];
+            $rows[] = [
+                'no' => $no,
+                'name' => $name,
+                'hours' => Months::hours(array_sum(array_map(fn (array $e): float => (float) $e['hours'], $entries[$no] ?? []))),
+                'target' => isset($c['0']) ? Months::hours($c['0']['hours']) : '–',
+                'balances' => implode(', ', array_map(fn (array $b): string => $b['name'].' '.Months::hours($b['value']).' '.$b['unit'], $balances[$no] ?? [])),
+                'gaps' => (string) count(Months::gaps($month, $entries[$no] ?? [], $holidays)),
+            ];
+        }
+
+        return ActionResult::table(($ctx->demo() ? 'Demo-Modus: ' : '')."Monat {$month}: ".count($rows).' Personen.'.$suffix, [
+            ['key' => 'no', 'label' => 'Nr.'],
+            ['key' => 'name', 'label' => 'Name'],
+            ['key' => 'hours', 'label' => 'Gebucht (h)'],
+            ['key' => 'target', 'label' => 'Soll (h)'],
+            ['key' => 'balances', 'label' => 'Salden Monatsende'],
+            ['key' => 'gaps', 'label' => 'Tage ohne Buchung'],
+        ], $rows);
+    }
+
+    // ---------- Monatsabschluss und Änderungen (#97) ----------
+
+    /**
+     * Stand der Buchungen eines Monats festhalten (Monatsabschluss im Intranet). Ein erneuter Abschluss ersetzt den Stand.
+     *
+     * @param  array<string, mixed>  $options
+     */
+    private function closeMonth(PluginContext $ctx, array $options): ActionResult
+    {
+        $month = Months::month((string) ($options['month'] ?? ''));
+        $people = $this->people($ctx, '');
+        $entries = (new Months($ctx))->entries($month);
+        $before = Months::closing($month);
+        Months::close($month, $entries, $ctx->user !== null ? (string) $ctx->user->getAuthIdentifier() : null);
+        if ($ctx->demo()) {
+            // Demo: nach dem Abschluss simuliert die Demo eine Korrektur (geändert, nachgetragen, gelöscht)
+            Cache::put(self::DEMO_CACHE.'closed:'.$month, true, now()->addDays(7));
+        }
+        $ctx->log("Monat {$month} abgeschlossen: ".array_sum(array_map('count', $entries)).' Buchungen festgehalten.');
+
+        $rows = array_map(fn (string $no): array => [
+            'no' => $no,
+            'name' => $people[$no] ?? $no,
+            'entries' => (string) count($entries[$no] ?? []),
+            'hours' => Months::hours(array_sum(array_map(fn (array $e): float => (float) $e['hours'], $entries[$no] ?? []))),
+        ], array_keys($entries));
+
+        return ActionResult::table(($ctx->demo() ? 'Demo-Modus: ' : '')."Monat {$month} abgeschlossen".($before !== null ? ' (früherer Abschluss ersetzt)' : '')
+            .'. Änderungen danach zeigt «Änderungen seit Abschluss».', [
+                ['key' => 'no', 'label' => 'Nr.'],
+                ['key' => 'name', 'label' => 'Name'],
+                ['key' => 'entries', 'label' => 'Buchungen'],
+                ['key' => 'hours', 'label' => 'Stunden'],
+            ], $rows);
+    }
+
+    /**
+     * Änderungen seit dem Abschluss: heutiger Stand gegen den festgehaltenen (neu, geändert, gelöscht). Optional
+     * Hinweis an die Verwaltung (Recht «Unterschriften verwalten») und die Vorgesetzten der betroffenen Personen.
+     *
+     * @param  array<string, mixed>  $options
+     */
+    private function changes(PluginContext $ctx, array $options): ActionResult
+    {
+        $month = Months::month((string) ($options['month'] ?? ''));
+        $closing = Months::closing($month);
+        if ($closing === null) {
+            return ActionResult::warning("Monat {$month} ist noch nicht abgeschlossen (Aktion «Monat abschliessen»).");
+        }
+        $people = $this->people($ctx, '');
+        $changes = Months::diff($closing['employees'], (new Months($ctx))->entries($month));
+        $closedAt = date('d.m.Y H:i', (int) strtotime($closing['closed_at']));
+        if ($changes === []) {
+            return ActionResult::ok(($ctx->demo() ? 'Demo-Modus: ' : '')."Monat {$month}: keine Änderungen seit dem Abschluss am {$closedAt}.");
+        }
+
+        $notified = 0;
+        if (($options['notify'] ?? false) === true) {
+            $affected = array_values(array_unique(array_column($changes, 'employee_no')));
+            $names = implode(', ', array_map(fn (string $no): string => $people[$no] ?? $no, $affected));
+            $title = "ClickTime: Änderungen nach Abschluss {$month}";
+            $body = count($changes)." Buchungen wurden nach dem Abschluss am {$closedAt} geändert ({$names}).";
+            $notifications = app(Notifications::class);
+            $actor = $ctx->user !== null ? (string) $ctx->user->getAuthIdentifier() : null;
+            $notified += $notifications->toAbility('manage-signatures', 'clicktime.changes', $title, $body, '/plugins/clicktime', $actor);
+            $notified += $notifications->toUsers($this->managerPersons($ctx, $affected), 'clicktime.changes', $title, $body, '/plugins/clicktime', $actor);
+        }
+
+        $rows = array_map(fn (array $c): array => [
+            'no' => $c['employee_no'],
+            'name' => $people[$c['employee_no']] ?? $c['employee_no'],
+            'day' => date('d.m.Y', (int) strtotime($c['day'])),
+            'change' => $c['change'],
+            'before' => $c['before'],
+            'after' => $c['after'],
+        ], $changes);
+        $counts = array_count_values(array_column($changes, 'change'));
+
+        return ActionResult::table(($ctx->demo() ? 'Demo-Modus: ' : '')."Monat {$month}, abgeschlossen am {$closedAt}: "
+            .($counts['neu'] ?? 0).' neu, '.($counts['geändert'] ?? 0).' geändert, '.($counts['gelöscht'] ?? 0).' gelöscht.'
+            .($notified > 0 ? " Hinweis an {$notified} Personen." : ''), [
+                ['key' => 'no', 'label' => 'Nr.'],
+                ['key' => 'name', 'label' => 'Name'],
+                ['key' => 'day', 'label' => 'Tag'],
+                ['key' => 'change', 'label' => 'Änderung'],
+                ['key' => 'before', 'label' => 'Beim Abschluss'],
+                ['key' => 'after', 'label' => 'Heute'],
+            ], $rows);
+    }
+
+    /**
+     * Personen: eine (E-Mail oder Nummer) oder alle; Nr. → Name.
+     *
+     * @return array<string, string>
+     */
+    private function people(PluginContext $ctx, string $needle): array
+    {
+        $people = [];
+        foreach ($this->allEmployees($ctx) as $e) {
+            $no = (string) ($e['employee_no'] ?? '');
+            if ($no !== '' && ($needle === '' || $no === $needle || strcasecmp((string) ($e['email'] ?? ''), $needle) === 0)) {
+                $people[$no] = self::fullName($e);
+            }
+        }
+        if ($people === []) {
+            throw new RuntimeException($needle !== '' ? "«{$needle}» ist in ClickTime nicht zu finden." : 'ClickTime liefert keine Mitarbeitenden.');
+        }
+
+        return $people;
+    }
+
+    /**
+     * Intranet-Personen der Vorgesetzten (über die Abteilungen und die Datenherkunft).
+     *
+     * @param  list<string>  $employees
+     * @return list<string>
+     */
+    private function managerPersons(PluginContext $ctx, array $employees): array
+    {
+        $departments = [];
+        foreach ($this->allEmployees($ctx) as $e) {
+            if (in_array((string) ($e['employee_no'] ?? ''), $employees, true) && (string) ($e['department_number'] ?? '') !== '') {
+                $departments[(string) $e['department_number']] = true;
+            }
+        }
+        $links = app(PersonLinks::class);
+        $ids = [];
+        foreach (array_keys($departments) as $number) {
+            $response = $ctx->call('department-managers', ['department' => (string) $number]);
+            foreach ($response->successful() ? self::list($response) : [] as $m) {
+                $id = $links->findPerson(self::SYSTEM, (string) ($m['employee_no'] ?? ''));
+                if ($id !== null) {
+                    $ids[] = $id;
+                }
+            }
+        }
+
+        return array_values(array_unique($ids));
+    }
+
     // ---------- Daten ----------
 
     /**
@@ -399,26 +671,38 @@ class Plugin extends BasePlugin implements DemoResponder
     {
         $from = $filters['day'][1] ?? '2026-10-01';
         $to = $filters['day:LE'][1] ?? date('Y-m-t', (int) strtotime($from));
-        $start = strtotime($from);
+        $start = (int) strtotime($from);
         $end = min((int) strtotime($to), (int) strtotime($from.' +1 month -1 day'));
+        // Nach einem Abschluss (Demo) eine Korrektur simulieren: Person 1 – erste Buchung gekürzt, Lücke nachgetragen,
+        // letzte Buchung gelöscht
+        $corrected = Cache::get(self::DEMO_CACHE.'closed:'.substr($from, 0, 7)) === true;
         $entries = [];
-        $number = 50000;
         foreach (array_slice($employees, 0, 3) as $e) {
+            $no = (int) $e['employee_no'];
             $workday = 0;
-            for ($t = (int) $start; $t <= $end; $t += 86400) {
+            $mine = [];
+            for ($t = $start; $t <= $end; $t = (int) strtotime('+1 day', $t)) {
                 if ((int) date('N', $t) >= 6) {
                     continue;
                 }
                 $workday++;
-                if ($workday === 3) {
-                    continue;
-                }
-                $entries[] = [
-                    'number' => ++$number, 'employee_no' => $e['employee_no'], 'day' => date('Y-m-d', $t),
+                $entry = [
+                    'number' => $no * 100000 + (int) date('md', $t), 'employee_no' => $no, 'day' => date('Y-m-d', $t),
                     'time_from' => '07:30:00', 'time_to' => '16:24:00', 'hours' => 8.4, 'entry_type_number' => 1000,
                     'activity_number' => 2000, 'source' => 'PC', 'notes' => null, 'deleted' => false,
                 ];
+                if ($workday === 3 && ! ($corrected && $no === 1)) {
+                    continue;
+                }
+                if ($corrected && $no === 1 && $workday === 1) {
+                    $entry = ['time_to' => '13:30:00', 'hours' => 6.0] + $entry;
+                }
+                $mine[] = $entry;
             }
+            if ($corrected && $no === 1) {
+                array_pop($mine);
+            }
+            $entries = [...$entries, ...$mine];
         }
 
         return $entries;

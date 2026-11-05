@@ -485,6 +485,7 @@ return [
         'unterricht' => 'Unterricht',
         'links' => 'Wichtige Links',
         'unterschriften' => 'Unterschriebene Dokumente',
+        'monatsblaetter' => 'Monatsblätter',
     ],
 
     /*
@@ -1002,6 +1003,7 @@ return [
             'unterricht' => 'emerald',
             'links' => 'sky',
             'unterschriften' => 'violet',
+            'monatsblaetter' => 'teal',
         ],
     ],
 
