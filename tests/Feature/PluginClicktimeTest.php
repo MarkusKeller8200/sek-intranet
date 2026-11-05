@@ -387,7 +387,7 @@ class PluginClicktimeTest extends TestCase
         $liste = collect($eintraege->fuerPersonMonat((string) $andrea['id'], '2026-10'));
         $this->assertCount(22, $liste);
         $import = $liste->firstWhere('datum', '2026-10-01');
-        $this->assertSame(['clicktime', 'ct_arbeitszeit', 'ct:Arbeitszeit', '07:30', '16:24', 8.4], [$import['quelle'], $import['buchungsart'], $import['kategorie'], $import['beginn'], $import['ende'], $import['stunden']]);
+        $this->assertSame(['clicktime', 'ct_arbeitszeit', 'ct:Arbeitszeit', '07:30', '16:24', 8.4], [$import['quelle'], $import['buchungsart'], $import['kategorie'], $import['beginn'], $import['ende'], (float) $import['stunden']]);
         $this->assertSame('Arbeitszeit (clicktime)', app(Buchungsarten::class)->liste()['ct_arbeitszeit']['name']);
         $this->assertStringContainsString('Arbeitszeit = ct_arbeitszeit', (string) app(PluginManager::class)->state('clicktime')['settings']['mapping']);
         $this->assertNotNull($liste->firstWhere('kategorie', 'verwaltung'), 'von Hand erfasst bleibt');
@@ -398,7 +398,7 @@ class PluginClicktimeTest extends TestCase
         $this->postJson('/plugins/clicktime/aktion/import', ['options' => ['month' => '2026-10', 'person' => '1', 'apply' => true]])->assertOk()
             ->assertJsonPath('message', fn (string $m): bool => str_contains($m, '1 neu, 1 geändert, 1 gelöscht'));
         $this->assertCount(22, $eintraege->fuerPersonMonat((string) $andrea['id'], '2026-10'));
-        $this->assertSame(6.0, collect($eintraege->fuerPersonMonat((string) $andrea['id'], '2026-10'))->firstWhere('quelle_id', '101001')['stunden']);
+        $this->assertSame(6.0, (float) collect($eintraege->fuerPersonMonat((string) $andrea['id'], '2026-10'))->firstWhere('quelle_id', '101001')['stunden']);
 
         // eingereichter Monat: gesperrt
         app(MonatRepository::class)->setzen((string) $andrea['id'], '2026-10', ['status' => 'eingereicht']);
@@ -423,7 +423,7 @@ class PluginClicktimeTest extends TestCase
         (new Importer($ctx))->run((string) $eva['id'], '9', '2026-10', true);
         $liste = collect(app(EintragRepository::class)->fuerPersonMonat((string) $eva['id'], '2026-10'))->keyBy('quelle_id');
         $this->assertCount(3, $liste);
-        $this->assertSame([30, 5.0, 'Elternabend'], [$liste['12']['pause_min'], $liste['12']['stunden'], $liste['12']['notiz']]);
+        $this->assertSame([30, 5.0, 'Elternabend'], [$liste['12']['pause_min'], (float) $liste['12']['stunden'], $liste['12']['notiz']]);
         $this->assertNull($liste['11']['pause_min']);
         $this->assertSame(['abwesenheit', 'ferien', 'ferien'], [$liste['14']['art'], $liste['14']['buchungsart'], $liste['14']['kategorie']]);
     }
