@@ -1,7 +1,7 @@
 {
     "id": "clicktime",
     "name": "ClickTime",
-    "version": "0.4",
+    "version": "0.5",
     "api": 1,
     "category": "other",
     "author": "SekBülach Intranet",
@@ -1374,6 +1374,26 @@
                     "type": "check",
                     "label": "Monatsblätter als PDF ablegen (nur Verwaltung sichtbar)",
                     "default": false
+                }
+            ]
+        },
+        {
+            "id": "targets",
+            "label": "Sollzeit pro Tag",
+            "kind": "read",
+            "description": "Sollzeit jedes Tages eines Monats aus den Kumulativen (eine Abfrage je Tag, Buchungsart 0 = Sollzeit). Zur Kontrolle wird die Summe der Tage mit der Sollzeit des ganzen Monats verglichen. Es wird nichts gespeichert.",
+            "options": [
+                {
+                    "key": "month",
+                    "type": "text",
+                    "label": "Monat (JJJJ-MM, leer = Vormonat)",
+                    "placeholder": "2026-10"
+                },
+                {
+                    "key": "person",
+                    "type": "text",
+                    "label": "Person (E-Mail oder ClickTime-Nummer, leer = alle)",
+                    "placeholder": "andrea.muster@sekbuelach.example"
                 }
             ]
         },

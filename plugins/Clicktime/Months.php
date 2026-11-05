@@ -109,6 +109,18 @@ final class Months
     public function cumulatives(string $month, array $employees = []): array
     {
         [$from, $to] = self::range($month);
+
+        return $this->cumulativesBetween($from, $to, $employees);
+    }
+
+    /**
+     * Kumulative eines frei gewählten Zeitraums (auch ein einzelner Tag, #102).
+     *
+     * @param  list<string>  $employees
+     * @return array<string, array<int|string, array{name: string, hours: float}>>
+     */
+    public function cumulativesBetween(string $from, string $to, array $employees = []): array
+    {
         $filters = ["valid_from::EQ::{$from}", "valid_to::EQ::{$to}"];
         if ($employees !== []) {
             $filters[] = 'employee_no::IN::'.implode(',', $employees);
@@ -136,6 +148,25 @@ final class Months
         }
 
         return $result;
+    }
+
+    /**
+     * Sollzeit aus Kumulativen: Buchungsart Nummer 0, sonst Name «Sollzeit»/«Soll…». Null, wenn keine geliefert wird.
+     *
+     * @param  array<int|string, array{name: string, hours: float}>  $cumulatives
+     */
+    public static function target(array $cumulatives): ?float
+    {
+        if (isset($cumulatives['0'])) {
+            return $cumulatives['0']['hours'];
+        }
+        foreach ($cumulatives as $c) {
+            if (str_starts_with(mb_strtolower($c['name']), 'soll')) {
+                return $c['hours'];
+            }
+        }
+
+        return null;
     }
 
     /**

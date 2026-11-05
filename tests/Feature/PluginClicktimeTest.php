@@ -171,6 +171,24 @@ class PluginClicktimeTest extends TestCase
         );
     }
 
+    public function test_target_time_per_day_from_cumulatives(): void
+    {
+        Http::fake();
+        $this->enable(['demo' => true]);
+        $this->signInAs('admin');
+
+        // eine Abfrage je Tag (valid_from = valid_to), Sollzeit = Buchungsart 0; Kontrolle gegen den Monat
+        $res = $this->postJson('/plugins/clicktime/aktion/targets', ['options' => ['month' => '2026-10', 'person' => '3']])->assertOk();
+        $rows = $res->json('rows');
+        $this->assertCount(31, $rows);
+        $this->assertSame(['no' => '3', 'name' => 'Daniel Probe', 'weekday' => 'DO', 'day' => '01.10.', 'target' => '6.72', 'note' => ''], $rows[0]);
+        $this->assertSame(['SA', '0.00'], [$rows[2]['weekday'], $rows[2]['target']]);
+        $this->assertStringContainsString('31 Abfragen', (string) $res->json('message'));
+        $this->assertStringContainsString('Summe Tage 147.84 h, Monat 147.84 h ✓', (string) $res->json('message'));
+
+        $this->postJson('/plugins/clicktime/aktion/targets', ['options' => ['month' => '2026-13']])->assertStatus(422);
+    }
+
     public function test_balances_and_month_sheet_with_gaps_and_pdf(): void
     {
         Http::fake();

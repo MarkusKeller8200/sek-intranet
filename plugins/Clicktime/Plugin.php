@@ -101,6 +101,7 @@ class Plugin extends BasePlugin implements DemoResponder
             'lookup' => $this->lookup($ctx, trim((string) ($options['email'] ?? ''))),
             'balances' => $this->balances($ctx, $options),
             'month' => $this->monthSheet($ctx, $options),
+            'targets' => $this->targets($ctx, $options),
             'close' => $this->closeMonth($ctx, $options),
             'changes' => $this->changes($ctx, $options),
             'mapping' => $this->mapping($ctx, $options),
@@ -296,6 +297,62 @@ class Plugin extends BasePlugin implements DemoResponder
             ['key' => 'name', 'label' => 'Name'],
             ['key' => 'balance', 'label' => 'Saldo'],
             ['key' => 'value', 'label' => 'Wert'],
+        ], $rows);
+    }
+
+    /**
+     * Sollzeit pro Tag (#102): je Tag des Monats eine Abfrage der Kumulative (valid_from = valid_to = Tag), Sollzeit =
+     * Buchungsart 0. Zur Kontrolle die Summe der Tage gegen die Sollzeit des ganzen Monats.
+     *
+     * @param  array<string, mixed>  $options
+     */
+    private function targets(PluginContext $ctx, array $options): ActionResult
+    {
+        $month = Months::month((string) ($options['month'] ?? ''));
+        $needle = trim((string) ($options['person'] ?? ''));
+        $people = $this->people($ctx, $needle);
+        $filter = $needle !== '' ? array_map('strval', array_keys($people)) : [];
+        $months = new Months($ctx);
+        $holidays = $months->holidays((int) substr($month, 0, 4));
+        $weekdays = ['SO', 'MO', 'DI', 'MI', 'DO', 'FR', 'SA'];
+
+        $rows = [];
+        $sum = [];
+        [$from, $to] = Months::range($month);
+        for ($t = (int) strtotime($from); $t <= (int) strtotime($to); $t = (int) strtotime('+1 day', $t)) {
+            $day = date('Y-m-d', $t);
+            $cumulatives = $months->cumulativesBetween($day, $day, $filter);
+            foreach ($people as $no => $name) {
+                $target = Months::target($cumulatives[(string) $no] ?? []);
+                $sum[$no] = ($sum[$no] ?? 0.0) + (float) $target;
+                $rows[] = [
+                    'no' => (string) $no,
+                    'name' => $name,
+                    'weekday' => $weekdays[(int) date('w', $t)],
+                    'day' => date('d.m.', $t),
+                    'target' => $target === null ? '–' : Months::hours($target),
+                    'note' => $holidays[$day] ?? '',
+                ];
+            }
+        }
+
+        // Kontrolle: Summe der Tage = Sollzeit des Monats?
+        $monthly = $months->cumulatives($month, $filter);
+        $checks = [];
+        foreach ($people as $no => $name) {
+            $total = Months::target($monthly[(string) $no] ?? []);
+            $ok = $total !== null && abs($total - $sum[$no]) < 0.01;
+            $checks[] = "{$name}: Summe Tage ".Months::hours($sum[$no]).' h, Monat '.($total === null ? '–' : Months::hours($total)).' h'.($ok ? ' ✓' : ' – weicht ab');
+        }
+        $days = (int) date('t', (int) strtotime($from));
+
+        return ActionResult::table(($ctx->demo() ? 'Demo-Modus: ' : '')."Sollzeit pro Tag {$month} ({$days} Abfragen). ".implode('; ', $checks).'.', [
+            ['key' => 'no', 'label' => 'Nr.'],
+            ['key' => 'name', 'label' => 'Name'],
+            ['key' => 'weekday', 'label' => 'Tag'],
+            ['key' => 'day', 'label' => 'Datum'],
+            ['key' => 'target', 'label' => 'Soll (h)'],
+            ['key' => 'note', 'label' => 'Feiertag'],
         ], $rows);
     }
 
@@ -882,7 +939,7 @@ class Plugin extends BasePlugin implements DemoResponder
             'employee-permission-groups' => self::demoOne($no) + ['json' => [['number' => 10, 'name' => 'Mitarbeitende']]],
             'employee-roles' => self::demoOne($no) + ['json' => [['number' => 1, 'name' => $no === 2 ? 'Vorgesetzte' : 'Benutzer']]],
             'entries' => ['status' => 200, 'json' => self::demoEntries($filters, $employees)],
-            'cumulatives' => ['status' => 200, 'json' => self::demoCumulatives($employees)],
+            'cumulatives' => ['status' => 200, 'json' => self::demoCumulatives($employees, $filters)],
             'balances' => ['status' => 200, 'json' => self::demoBalances($employees, $filters['balance_at'][1] ?? '2026-10-31')],
             'expenses' => ['status' => 200, 'json' => []],
             'public-holidays' => ['status' => 200, 'json' => [['number' => 1, 'name' => 'Kanton Zürich', 'year' => (int) ($filters['year'][1] ?? 2026), 'active' => true, 'days' => [
@@ -1015,10 +1072,23 @@ class Plugin extends BasePlugin implements DemoResponder
 
     /**
      * @param  list<array<string, mixed>>  $employees
+     * @param  array<string, array{0: string, 1: string}>  $filters
      * @return list<array<string, mixed>>
      */
-    private static function demoCumulatives(array $employees): array
+    private static function demoCumulatives(array $employees, array $filters = []): array
     {
+        // Einzelner Tag (#102): Sollzeit Mo–Fr 8.4 h (Pensum 80 % bei Nr. 3), Wochenende und Feiertage 0
+        $from = (string) ($filters['valid_from'][1] ?? '');
+        if ($from !== '' && $from === (string) ($filters['valid_to'][1] ?? '')) {
+            $free = (int) date('N', (int) strtotime($from)) >= 6 || in_array(substr($from, 5), ['01-01', '01-02', '05-01', '08-01', '12-25', '12-26'], true);
+
+            return array_map(fn (array $e): array => [
+                'cumulative_values' => [['entry_type_name' => 'Sollzeit', 'entry_type_number' => 0, 'hours' => $free ? 0.0 : ((int) $e['employee_no'] === 3 ? 6.72 : 8.4),
+                    'hours_weighted' => null, 'valid_from' => $from, 'valid_to' => $from]],
+                'employee_no' => $e['employee_no'], 'first_name' => $e['first_name'], 'last_name' => $e['last_name'],
+            ], $employees);
+        }
+
         // Aufbau wie die echte Antwort (05.11.2026): je Person cumulative_values, Nummer meist null
         $types = [['Arbeitszeit', null, 176.4], ['Bezahlte Absenzen', null, 0], ['Ferien', null, 8.4], ['Homeoffice', 1, 0],
             ['Kompensation', null, 0], ['Krankheit', null, 0], ['Pause', null, -1], ['Unfall', null, 0], ['Weiterbildung', null, 0],
@@ -1027,7 +1097,7 @@ class Plugin extends BasePlugin implements DemoResponder
         foreach ($employees as $e) {
             $rows[] = [
                 'cumulative_values' => array_map(fn (array $t): array => [
-                    'entry_type_name' => $t[0], 'entry_type_number' => $t[1], 'hours' => $t[2], 'hours_weighted' => $t[1] === 0 ? null : $t[2],
+                    'entry_type_name' => $t[0], 'entry_type_number' => $t[1], 'hours' => $t[1] === 0 && (int) $e['employee_no'] === 3 ? round($t[2] * 0.8, 2) : $t[2], 'hours_weighted' => $t[1] === 0 ? null : $t[2],
                     'valid_from' => '2026-10-01', 'valid_to' => '2026-10-31',
                 ], $types),
                 'employee_no' => $e['employee_no'],
