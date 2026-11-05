@@ -9,6 +9,8 @@ laufend unter **Unveröffentlicht**. Ab 0.32.0 entsteht eine Version nur bei ein
 
 ## [Unveröffentlicht]
 
+## [0.35.0] – 2026-11-05
+
 ### Für Mitarbeitende
 
 - [manage-signatures] Verwaltung → Unterschriften: beliebiges PDF zur elektronischen Unterschrift senden
