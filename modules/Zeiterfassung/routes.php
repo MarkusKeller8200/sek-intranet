@@ -8,6 +8,7 @@ use Modules\Zeiterfassung\Http\ZeiterfassungController;
 Route::middleware('can:use-zeiterfassung')->group(function () {
     Route::get('zeiterfassung', [ZeiterfassungController::class, 'index'])->name('zeiterfassung.index');
     Route::post('zeiterfassung', [ZeiterfassungController::class, 'store'])->name('zeiterfassung.store');
+    Route::put('zeiterfassung/eintraege/{id}', [ZeiterfassungController::class, 'update'])->name('zeiterfassung.update');
     Route::delete('zeiterfassung/eintraege/{id}', [ZeiterfassungController::class, 'destroy'])->name('zeiterfassung.destroy');
     Route::post('zeiterfassung/einreichen', [ZeiterfassungController::class, 'einreichen'])->name('zeiterfassung.einreichen');
     Route::post('zeiterfassung/aus-clicktime', [ZeiterfassungController::class, 'ausClicktime'])->middleware('throttle:10,1')->name('zeiterfassung.clicktime');

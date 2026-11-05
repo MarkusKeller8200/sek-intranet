@@ -1,4 +1,4 @@
-import { Trash2 } from 'lucide-react';
+import { Pencil, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
     Table,
@@ -8,20 +8,32 @@ import {
     TableHeader,
     TableRow,
 } from '@/components/ui/table';
-import { formatDate } from '@/lib/format';
 import type { Eintrag, Kategorien, Summen } from '../lib/types';
-import { buchungsartName, kategorieName, stunden } from '../lib/types';
+import {
+    buchungsartName,
+    herkunft,
+    hhmm,
+    kategorieName,
+    kurzDatum,
+    notizen,
+    stunden,
+    wochentag,
+    zeitraum,
+} from '../lib/types';
 
 /** Einträge eines Monats mit Summen je Kategorie. */
 export default function EintraegeTabelle({
     eintraege,
     summen,
     kategorien,
+    onEdit,
     onDelete,
 }: {
     eintraege: Eintrag[];
     summen: Summen;
     kategorien: Kategorien;
+    /** nur für Einträge aus dem Intranet; aus Fremdsystemen nur löschen (#102) */
+    onEdit?: (e: Eintrag) => void;
     onDelete?: (e: Eintrag) => void;
 }) {
     if (eintraege.length === 0) {
@@ -38,22 +50,32 @@ export default function EintraegeTabelle({
                 <Table>
                     <TableHeader>
                         <TableRow>
+                            <TableHead>Tag</TableHead>
                             <TableHead>Datum</TableHead>
                             <TableHead>Buchungsart</TableHead>
                             <TableHead>Kategorie</TableHead>
                             <TableHead>Zeit</TableHead>
-                            <TableHead className="text-right">
-                                Stunden
-                            </TableHead>
-                            <TableHead>Projekt / Notiz</TableHead>
-                            {onDelete && <TableHead className="w-10" />}
+                            <TableHead className="text-right">Soll</TableHead>
+                            <TableHead className="text-right">Ist</TableHead>
+                            <TableHead className="text-right">Delta</TableHead>
+                            <TableHead>Herkunft</TableHead>
+                            <TableHead>Notizen</TableHead>
+                            {(onEdit || onDelete) && (
+                                <TableHead className="w-20" />
+                            )}
                         </TableRow>
                     </TableHeader>
                     <TableBody>
                         {eintraege.map((e) => (
                             <TableRow key={e.id}>
-                                <TableCell className="whitespace-nowrap">
-                                    {formatDate(e.datum)}
+                                <TableCell className="font-medium">
+                                    {wochentag(e.datum)}
+                                </TableCell>
+                                <TableCell
+                                    className="whitespace-nowrap tabular-nums"
+                                    translate="no"
+                                >
+                                    {kurzDatum(e.datum)}
                                 </TableCell>
                                 <TableCell>
                                     {buchungsartName(
@@ -73,46 +95,54 @@ export default function EintraegeTabelle({
                                           )}
                                 </TableCell>
                                 <TableCell
-                                    className="whitespace-nowrap"
+                                    className="whitespace-nowrap tabular-nums"
                                     translate="no"
                                 >
-                                    {e.beginn
-                                        ? `${e.beginn}–${e.ende ?? ''}`
-                                        : '–'}
-                                    {e.pause_min
-                                        ? ` (−${e.pause_min} min)`
-                                        : ''}
+                                    {zeitraum(e)}
+                                </TableCell>
+                                <TableCell className="text-right text-muted-foreground">
+                                    –
                                 </TableCell>
                                 <TableCell
                                     className="text-right tabular-nums"
                                     translate="no"
                                 >
-                                    {e.stunden.toFixed(2)}
+                                    {hhmm(e.stunden)}
+                                </TableCell>
+                                <TableCell className="text-right text-muted-foreground">
+                                    –
+                                </TableCell>
+                                <TableCell>
+                                    {herkunft(e.quelle)}
                                 </TableCell>
                                 <TableCell
                                     className="text-muted-foreground"
                                     translate="no"
                                 >
-                                    {[
-                                        e.projekt,
-                                        e.notiz,
-                                        e.quelle === 'clicktime'
-                                            ? 'ClickTime'
-                                            : null,
-                                    ]
-                                        .filter(Boolean)
-                                        .join(' · ')}
+                                    {notizen(e)}
                                 </TableCell>
-                                {onDelete && (
-                                    <TableCell>
-                                        <Button
-                                            variant="ghost"
-                                            size="icon"
-                                            aria-label="Eintrag löschen"
-                                            onClick={() => onDelete(e)}
-                                        >
-                                            <Trash2 />
-                                        </Button>
+                                {(onEdit || onDelete) && (
+                                    <TableCell className="whitespace-nowrap text-right">
+                                        {onEdit && !e.quelle && (
+                                            <Button
+                                                variant="ghost"
+                                                size="icon"
+                                                aria-label="Eintrag bearbeiten"
+                                                onClick={() => onEdit(e)}
+                                            >
+                                                <Pencil />
+                                            </Button>
+                                        )}
+                                        {onDelete && (
+                                            <Button
+                                                variant="ghost"
+                                                size="icon"
+                                                aria-label="Eintrag löschen"
+                                                onClick={() => onDelete(e)}
+                                            >
+                                                <Trash2 />
+                                            </Button>
+                                        )}
                                     </TableCell>
                                 )}
                             </TableRow>

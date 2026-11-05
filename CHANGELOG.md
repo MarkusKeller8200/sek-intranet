@@ -13,9 +13,15 @@ laufend unter **Unveröffentlicht**. Ab 0.32.0 entsteht eine Version nur bei ein
 
 - In der Zeiterfassung wählt man neu eine Buchungsart, z. B. Arbeitszeit, Homeoffice, Ferien, Krankheit oder Unfall.
   Bisherige Einträge erhalten sie automatisch.
+- Die Tabelle der Zeiterfassung zeigt neu Wochentag, Datum, Zeit von–bis und die Stunden in Stunden:Minuten.
+  Selbst erfasste Einträge lassen sich bearbeiten.
 
 ### Neu
 
+- **Zeiterfassung: neue Tabelle und Einträge bearbeiten (#102):** Spalten Tag (MO–SO), Datum (TT.MM.), Buchungsart,
+  Kategorie, Zeit «HH:MM – HH:MM (−Pause min)», Soll, Ist (HH:MM), Delta, Herkunft (Intranet/ClickTime), Notizen.
+  Soll und Delta vorerst «–» (Quelle der Sollzeit offen). Einträge aus dem Intranet bearbeiten (Stift, Formular oben)
+  und löschen, Einträge aus Fremdsystemen nur löschen (`PUT zeiterfassung/eintraege/{id}`). Modul 0.5.0.
 - **ClickTime: Monat in die Zeiterfassung übernehmen (#101):** Aktion «In Zeiterfassung übernehmen» (Vorschau oder
   Übernehmen) und Knopf «Aus ClickTime übernehmen» in der eigenen Zeiterfassung (Administration; Mitarbeitende per
   Plugin-Einstellung). ClickTime-Nr. über die Datenherkunft der Person. Herkunft je Eintrag verhindert Duplikate,

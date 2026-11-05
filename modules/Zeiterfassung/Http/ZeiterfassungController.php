@@ -134,6 +134,37 @@ class ZeiterfassungController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $person = self::person($request);
+        $eintrag = $this->daten($request, $person);
+        $this->eintraege->create(['person_id' => $person] + $eintrag);
+        $this->toast('Eintrag gespeichert ('.number_format((float) $eintrag['stunden'], 2, '.', "'").' h).');
+
+        return redirect('/zeiterfassung?monat='.$eintrag['monat']);
+    }
+
+    /** Eintrag ändern (#102): nur von Hand im Intranet erfasste; aus Fremdsystemen (z. B. ClickTime) nur löschen. */
+    public function update(Request $request, string $id): RedirectResponse
+    {
+        $person = self::person($request);
+        $alt = $this->eintraege->find($id);
+        abort_if($alt === null || ($alt['person_id'] ?? null) !== $person, 404);
+        if ((string) ($alt['quelle'] ?? '') !== '') {
+            throw ValidationException::withMessages(['datum' => 'Einträge aus einem Fremdsystem können nicht bearbeitet, nur gelöscht werden.']);
+        }
+        $this->entsperrt($person, (string) $alt['monat']);
+        $eintrag = $this->daten($request, $person);
+        $this->eintraege->update($id, $eintrag);
+        $this->toast('Eintrag geändert ('.number_format((float) $eintrag['stunden'], 2, '.', "'").' h).');
+
+        return redirect('/zeiterfassung?monat='.$eintrag['monat']);
+    }
+
+    /**
+     * Geprüfte Felder eines Eintrags aus dem Formular (Erfassen und Ändern).
+     *
+     * @return array<string, mixed>
+     */
+    private function daten(Request $request, string $person): array
+    {
         $data = $request->validate([
             'datum' => ['required', 'date_format:Y-m-d'],
             // Buchungsart (#99); ohne Angabe wie bisher aus Art und Kategorie
@@ -175,8 +206,7 @@ class ZeiterfassungController extends Controller
             }
         }
 
-        $this->eintraege->create([
-            'person_id' => $person,
+        return [
             'datum' => $data['datum'],
             'monat' => $monat,
             'art' => $art,
@@ -188,10 +218,7 @@ class ZeiterfassungController extends Controller
             'stunden' => $stunden,
             'projekt' => isset($data['projekt']) ? trim($data['projekt']) : null,
             'notiz' => isset($data['notiz']) ? trim($data['notiz']) : null,
-        ]);
-        $this->toast('Eintrag gespeichert ('.number_format($stunden, 2, '.', "'").' h).');
-
-        return redirect('/zeiterfassung?monat='.$monat);
+        ];
     }
 
     public function destroy(Request $request, string $id): RedirectResponse

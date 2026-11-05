@@ -83,6 +83,59 @@ export function stunden(h: number): string {
     return `${h.toFixed(2)} h`;
 }
 
+/** Stunden als «HH:MM», z. B. 8.4 → «08:24» (negativ mit «−»). */
+export function hhmm(h: number): string {
+    const min = Math.round(Math.abs(h) * 60);
+    const hh = String(Math.floor(min / 60)).padStart(2, '0');
+    const mm = String(min % 60).padStart(2, '0');
+
+    return h < 0 && min > 0 ? `−${hh}:${mm}` : `${hh}:${mm}`;
+}
+
+/** Herkunft eines Eintrags (#102): von Hand im Intranet oder aus einem Fremdsystem. */
+export function herkunft(quelle: string | null | undefined): string {
+    if (!quelle) {
+        return 'Intranet';
+    }
+
+    return quelle === 'clicktime' ? 'ClickTime' : quelle;
+}
+
+/** Notizen mit Projekt (falls erfasst), z. B. «Lager · Vorbereitung». */
+export function notizen(e: {
+    projekt?: string | null;
+    notiz?: string | null;
+}): string {
+    return [e.projekt, e.notiz].filter(Boolean).join(' · ');
+}
+
+const WOCHENTAGE = ['SO', 'MO', 'DI', 'MI', 'DO', 'FR', 'SA'];
+
+/** Wochentag als Abkürzung, z. B. «MO» (Datum «JJJJ-MM-TT», ohne Zeitzone). */
+export function wochentag(datum: string): string {
+    const [y, m, d] = datum.split('-').map(Number);
+
+    return WOCHENTAGE[new Date(y, m - 1, d).getDay()] ?? '';
+}
+
+/** Datum als «TT.MM.», z. B. «01.10.». */
+export function kurzDatum(datum: string): string {
+    const [, m, d] = datum.split('-');
+
+    return d && m ? `${d.slice(0, 2)}.${m}.` : datum;
+}
+
+/** Zeit als «07:30 – 16:24 (−30 min)»; ohne Zeiten «–». */
+export function zeitraum(e: {
+    beginn?: string | null;
+    ende?: string | null;
+    pause_min?: number | null;
+}): string {
+    const zeit = e.beginn ? `${e.beginn} – ${e.ende ?? ''}` : '–';
+
+    return e.pause_min ? `${zeit} (−${e.pause_min} min)` : zeit;
+}
+
 export function kategorieName(k: Kategorien, key: string): string {
     // aus ClickTime übernommen (#101): «ct:Arbeitszeit» → «Arbeitszeit (clicktime)»
     if (key.startsWith('ct:')) {

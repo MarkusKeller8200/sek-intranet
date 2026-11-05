@@ -7,6 +7,7 @@ import {
     Printer,
     Send,
 } from 'lucide-react';
+import { useRef, useState } from 'react';
 import type { FormEvent } from 'react';
 import FormField from '@/components/form-field';
 import PageHeader from '@/components/page-header';
@@ -69,6 +70,9 @@ export default function ZeiterfassungStart(props: Props) {
         projekt: '',
         notiz: '',
     });
+    // Eintrag bearbeiten (#102): nur von Hand erfasste, das Formular wird damit gefüllt
+    const [bearbeite, setBearbeite] = useState<string | null>(null);
+    const formularRef = useRef<HTMLDivElement>(null);
     const art =
         kategorien.buchungsarten?.[form.data.buchungsart]?.art ?? 'arbeit';
     const optionen = (['arbeit', 'abwesenheit'] as const).map((gruppe) => (
@@ -91,20 +95,51 @@ export default function ZeiterfassungStart(props: Props) {
         </option>
     ));
 
+    const leeren = () =>
+        form.reset(
+            'beginn',
+            'ende',
+            'pause_min',
+            'stunden',
+            'projekt',
+            'notiz',
+        );
+    const bearbeiten = (e: Eintrag) => {
+        setBearbeite(e.id);
+        form.clearErrors();
+        form.setData({
+            datum: e.datum,
+            buchungsart: e.buchungsart ?? form.data.buchungsart,
+            kategorie: e.art === 'arbeit' ? e.kategorie : form.data.kategorie,
+            beginn: e.beginn ?? '',
+            ende: e.ende ?? '',
+            pause_min: e.pause_min ? String(e.pause_min) : '',
+            stunden: e.beginn ? '' : String(e.stunden),
+            projekt: e.projekt ?? '',
+            notiz: e.notiz ?? '',
+        });
+        formularRef.current?.scrollIntoView({ behavior: 'smooth' });
+    };
+    const abbrechen = () => {
+        setBearbeite(null);
+        form.clearErrors();
+        leeren();
+    };
+
     const submit = (e: FormEvent) => {
         e.preventDefault();
-        form.post('/zeiterfassung', {
+        const nachher = {
             preserveScroll: true,
-            onSuccess: () =>
-                form.reset(
-                    'beginn',
-                    'ende',
-                    'pause_min',
-                    'stunden',
-                    'projekt',
-                    'notiz',
-                ),
-        });
+            onSuccess: () => {
+                setBearbeite(null);
+                leeren();
+            },
+        };
+        if (bearbeite) {
+            form.put(`/zeiterfassung/eintraege/${bearbeite}`, nachher);
+        } else {
+            form.post('/zeiterfassung', nachher);
+        }
     };
 
     return (
@@ -214,9 +249,13 @@ export default function ZeiterfassungStart(props: Props) {
                 )}
 
                 {!gesperrt && (
-                    <Card>
+                    <Card ref={formularRef}>
                         <CardHeader>
-                            <CardTitle>Eintrag erfassen</CardTitle>
+                            <CardTitle>
+                                {bearbeite
+                                    ? 'Eintrag bearbeiten'
+                                    : 'Eintrag erfassen'}
+                            </CardTitle>
                             <CardDescription>
                                 Beginn und Ende (mit Pause) oder direkt die
                                 Stunden angeben.
@@ -384,14 +423,23 @@ export default function ZeiterfassungStart(props: Props) {
                                         />
                                     </FormField>
                                 </div>
-                                <div className="flex items-end">
+                                <div className="flex items-end gap-2">
                                     <Button
                                         type="submit"
                                         disabled={form.processing}
-                                        className="w-full"
+                                        className="flex-1"
                                     >
                                         Speichern
                                     </Button>
+                                    {bearbeite && (
+                                        <Button
+                                            type="button"
+                                            variant="outline"
+                                            onClick={abbrechen}
+                                        >
+                                            Abbrechen
+                                        </Button>
+                                    )}
                                 </div>
                             </form>
                         </CardContent>
@@ -407,6 +455,7 @@ export default function ZeiterfassungStart(props: Props) {
                             eintraege={eintraege}
                             summen={summen}
                             kategorien={kategorien}
+                            onEdit={gesperrt ? undefined : bearbeiten}
                             onDelete={
                                 gesperrt
                                     ? undefined

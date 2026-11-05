@@ -135,6 +135,36 @@ class ZeiterfassungTest extends TestCase
         $this->assertSame($lp->getAuthIdentifier(), $eintrag['person_id']);
     }
 
+    public function test_edit_own_entries_but_not_from_external_systems(): void
+    {
+        $lp = $this->signInAs('lehrperson');
+        $this->erfassen()->assertRedirect();
+        $repo = app(EintragRepository::class);
+        $eintrag = $repo->all()[0];
+
+        // eigener Eintrag aus dem Intranet: ändern
+        $this->put('/zeiterfassung/eintraege/'.$eintrag['id'], ['datum' => self::MONAT.'-06', 'buchungsart' => 'arbeitszeit', 'kategorie' => 'unterricht', 'beginn' => '08:00', 'ende' => '12:00', 'pause_min' => 0, 'notiz' => 'Korrigiert'])
+            ->assertRedirect('/zeiterfassung?monat='.self::MONAT);
+        $neu = $repo->find((string) $eintrag['id']);
+        $this->assertSame(self::MONAT.'-06', $neu['datum']);
+        $this->assertSame(4.0, (float) $neu['stunden']);
+        $this->assertSame('Korrigiert', $neu['notiz']);
+        $this->assertCount(1, $repo->all());
+
+        // aus ClickTime: nicht ändern, aber löschen
+        $ct = $repo->create(['person_id' => $lp->getAuthIdentifier(), 'datum' => self::MONAT.'-07', 'monat' => self::MONAT, 'art' => 'arbeit', 'buchungsart' => 'arbeitszeit',
+            'kategorie' => 'ct:Arbeitszeit', 'beginn' => '07:30', 'ende' => '16:24', 'pause_min' => 30, 'stunden' => 8.4, 'quelle' => 'clicktime', 'quelle_id' => '1']);
+        $this->put('/zeiterfassung/eintraege/'.$ct['id'], ['datum' => self::MONAT.'-07', 'buchungsart' => 'arbeitszeit', 'kategorie' => 'unterricht', 'stunden' => 1])
+            ->assertSessionHasErrors('datum');
+        $this->assertSame(8.4, (float) $repo->find((string) $ct['id'])['stunden']);
+        $this->delete('/zeiterfassung/eintraege/'.$ct['id'])->assertRedirect();
+        $this->assertNull($repo->find((string) $ct['id']));
+
+        // fremder Eintrag: nicht gefunden
+        $this->signInAs('verwaltung');
+        $this->put('/zeiterfassung/eintraege/'.$eintrag['id'], ['datum' => self::MONAT.'-06', 'buchungsart' => 'arbeitszeit', 'kategorie' => 'unterricht', 'stunden' => 1])->assertNotFound();
+    }
+
     public function test_signed_month_report_via_signatures(): void
     {
         Http::fake();
