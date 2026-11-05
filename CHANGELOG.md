@@ -23,8 +23,6 @@ laufend unter **Unveröffentlicht**. Ab 0.32.0 entsteht eine Version nur bei ein
   Buchungsart Zeiterfassung» in den Plugin-Einstellungen (Vorgabe nach den Buchungsarten der Schule, Pause, «nicht
   übernehmen»), Aktion «Buchungsarten zuordnen» (Vorschlag aus ClickTime, Übernehmen ergänzt die Tabelle) und «Mit
   Zeiterfassung vergleichen» (je Person und Tag: gleich, Abweichung, nur ClickTime, nur Zeiterfassung). Plugin 0.3.
-
-
 - **Plugin ClickTime (#29):** Neues Plugin für die Zeiterfassung ClickTime (API V3): Anmeldung mit client_id und
   client_secret (Token 1 Stunde), Kundennummer, alle 51 Endpunkte im API-Tester mit Beispielwerten (aus der
   OpenAPI-Beschreibung), Demo-Modus mit erfundenen Daten, «Verbindung testen» über die Abteilungen. Auf einem Server
