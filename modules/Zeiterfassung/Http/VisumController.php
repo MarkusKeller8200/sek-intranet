@@ -265,7 +265,7 @@ class VisumController extends Controller
     /**
      * Personen mit Einträgen oder Status im Monat.
      *
-     * @return list<array{id: string, name: string, email: string, status: string, eintraege: int, summen: array{arbeit: float, abwesenheit: float, total: float, kategorien: array<string, float>, projekte: array<string, float>}}>
+     * @return list<array{id: string, name: string, email: string, status: string, eintraege: int, summen: array{arbeit: float, abwesenheit: float, total: float, kategorien: array<string, float>, projekte: array<string, float>, buchungsarten: array<string, float>}}>
      */
     private function uebersicht(string $monat): array
     {

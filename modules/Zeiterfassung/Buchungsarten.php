@@ -79,7 +79,7 @@ final class Buchungsarten
     public function speichern(array $zeilen): void
     {
         $neu = [];
-        foreach (array_values($zeilen) as $i => $z) {
+        foreach ($zeilen as $i => $z) {
             $name = trim((string) $z['name']);
             if ($name === '') {
                 continue;
@@ -88,7 +88,7 @@ final class Buchungsarten
             if (isset($neu[$key])) {
                 throw new InvalidArgumentException("Buchungsart «{$name}» ist doppelt.");
             }
-            $neu[$key] = ['id' => $key, 'name' => mb_substr($name, 0, 60), 'art' => ($z['art'] ?? '') === 'abwesenheit' ? 'abwesenheit' : 'arbeit',
+            $neu[$key] = ['id' => $key, 'name' => mb_substr($name, 0, 60), 'art' => $z['art'] === 'abwesenheit' ? 'abwesenheit' : 'arbeit',
                 'aktiv' => ($z['aktiv'] ?? true) !== false, 'reihenfolge' => $i];
         }
         if (array_filter($neu, fn (array $b): bool => $b['art'] === 'arbeit' && $b['aktiv']) === []) {
