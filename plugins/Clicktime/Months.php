@@ -97,7 +97,7 @@ final class Months
      * Kumulative des Monats je Person: Art → [Name, Stunden].
      *
      * @param  list<string>  $employees
-     * @return array<string, array<string, array{name: string, hours: float}>>
+     * @return array<string, array<int|string, array{name: string, hours: float}>>
      */
     public function cumulatives(string $month, array $employees = []): array
     {
@@ -286,7 +286,7 @@ final class Months
 
     /**
      * @param  array<string, array<string, mixed>>  $entries
-     * @param  array<string, array{name: string, hours: float}>  $cumulatives
+     * @param  array<int|string, array{name: string, hours: float}>  $cumulatives
      * @param  list<array{name: string, value: float, unit: string}>  $balances
      * @param  array<string, string>  $holidays
      * @param  list<string>  $gaps

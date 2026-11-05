@@ -370,7 +370,7 @@ class Plugin extends BasePlugin implements DemoResponder
                 'no' => $no,
                 'name' => $name,
                 'hours' => Months::hours(array_sum(array_map(fn (array $e): float => (float) $e['hours'], $entries[$no] ?? []))),
-                'target' => isset($c['0']) ? Months::hours($c['0']['hours']) : '–',
+                'target' => isset($c[0]) ? Months::hours($c[0]['hours']) : '–',
                 'balances' => implode(', ', array_map(fn (array $b): string => $b['name'].' '.Months::hours($b['value']).' '.$b['unit'], $balances[$no] ?? [])),
                 'gaps' => (string) count(Months::gaps($month, $entries[$no] ?? [], $holidays)),
             ];
