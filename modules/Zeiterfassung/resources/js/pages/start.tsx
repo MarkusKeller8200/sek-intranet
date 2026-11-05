@@ -62,6 +62,25 @@ export default function ZeiterfassungStart(props: Props) {
     });
     const art =
         kategorien.buchungsarten?.[form.data.buchungsart]?.art ?? 'arbeit';
+    const optionen = (['arbeit', 'abwesenheit'] as const).map((gruppe) => (
+        <optgroup
+            key={gruppe}
+            label={gruppe === 'arbeit' ? 'Arbeit' : 'Abwesenheit'}
+        >
+            {buchungsarten
+                .filter(([, b]) => b.art === gruppe)
+                .map(([k, b]) => (
+                    <option key={k} value={k}>
+                        {b.name}
+                    </option>
+                ))}
+        </optgroup>
+    ));
+    const taetigkeiten = Object.entries(kategorien.arbeit).map(([k, l]) => (
+        <option key={k} value={k}>
+            {l}
+        </option>
+    ));
 
     const submit = (e: FormEvent) => {
         e.preventDefault();
@@ -215,33 +234,7 @@ export default function ZeiterfassungStart(props: Props) {
                                             )
                                         }
                                     >
-                                        {(['arbeit', 'abwesenheit'] as const).map(
-                                            (gruppe) => (
-                                                <optgroup
-                                                    key={gruppe}
-                                                    label={
-                                                        gruppe === 'arbeit'
-                                                            ? 'Arbeit'
-                                                            : 'Abwesenheit'
-                                                    }
-                                                >
-                                                    {buchungsarten
-                                                        .filter(
-                                                            ([, b]) =>
-                                                                b.art ===
-                                                                gruppe,
-                                                        )
-                                                        .map(([k, b]) => (
-                                                            <option
-                                                                key={k}
-                                                                value={k}
-                                                            >
-                                                                {b.name}
-                                                            </option>
-                                                        ))}
-                                                </optgroup>
-                                            ),
-                                        )}
+                                        {optionen}
                                     </NativeSelect>
                                 </FormField>
                                 {art === 'arbeit' ? (
@@ -260,13 +253,7 @@ export default function ZeiterfassungStart(props: Props) {
                                                 )
                                             }
                                         >
-                                            {Object.entries(
-                                                kategorien.arbeit,
-                                            ).map(([k, l]) => (
-                                                <option key={k} value={k}>
-                                                    {l}
-                                                </option>
-                                            ))}
+                                            {taetigkeiten}
                                         </NativeSelect>
                                     </FormField>
                                 ) : (

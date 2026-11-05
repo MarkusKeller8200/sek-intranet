@@ -67,7 +67,10 @@ export default function EintraegeTabelle({
                                 <TableCell>
                                     {e.art === 'abwesenheit'
                                         ? '–'
-                                        : kategorieName(kategorien, e.kategorie)}
+                                        : kategorieName(
+                                              kategorien,
+                                              e.kategorie,
+                                          )}
                                 </TableCell>
                                 <TableCell
                                     className="whitespace-nowrap"

@@ -85,7 +85,10 @@ export function kategorieName(k: Kategorien, key: string): string {
     return k.arbeit[key] ?? k.abwesenheit[key] ?? key;
 }
 
-export function buchungsartName(k: Kategorien, key: string | undefined): string {
+export function buchungsartName(
+    k: Kategorien,
+    key: string | undefined,
+): string {
     if (!key) {
         return '';
     }
