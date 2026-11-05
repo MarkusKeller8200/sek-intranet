@@ -20,6 +20,7 @@ use Modules\Zeiterfassung\Data\Contracts\MonatRepository;
 use Modules\Zeiterfassung\Feiertage;
 use Modules\Zeiterfassung\Kategorien;
 use Modules\Zeiterfassung\MonatsblattPdf;
+use Modules\Zeiterfassung\Sollzeiten;
 use Modules\Zeiterfassung\Unterschriften;
 use Modules\Zeiterfassung\Zeitkonto;
 use RuntimeException;
@@ -65,6 +66,7 @@ class VisumController extends Controller
             'eintraege' => ZeiterfassungController::mitBuchungsart($liste),
             'status' => $status,
             'feiertage' => Feiertage::monat($monat),
+            'soll' => app(Sollzeiten::class)->monat($person, $monat),
             'summen' => Zeitkonto::summen($liste),
             'kategorien' => Kategorien::all() + ['buchungsarten' => $this->buchungsarten->liste()],
             'visiertVon' => isset($status['visiert_by']) ? (string) ($this->users->find((string) $status['visiert_by'])['name'] ?? '') : null,

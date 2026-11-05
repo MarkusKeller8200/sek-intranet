@@ -158,4 +158,7 @@ export const TOKEN_LABELS: Record<string, string> = {
     'chart-5': 'Diagramm 5',
     'term-underline': 'Punkte unter Begriffen',
     'term-underline-hover': 'Punkte unter Begriffen (darüber)',
+    'vacation-soft': 'Zeiterfassung: Ferien',
+    'compensation-soft': 'Zeiterfassung: Kompensation',
+    'sick-soft': 'Zeiterfassung: Krankheit / Unfall',
 };

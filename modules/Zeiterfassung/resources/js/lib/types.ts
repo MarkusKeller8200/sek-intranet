@@ -125,6 +125,36 @@ export function wochenende(datum: string): boolean {
     return tag === 'SA' || tag === 'SO';
 }
 
+/**
+ * Art eines Tages für die Farbe der Totalzeile (#103): Krankheit/Unfall vor Ferien vor Kompensation, sonst
+ * Wochenende oder Feiertag («frei»), sonst «normal». Erkannt an Buchungsart, Kategorie oder Name (auch «… (clicktime)»).
+ */
+export function tagesArt(
+    datum: string,
+    liste: Eintrag[],
+    k: Kategorien,
+    feiertag: boolean,
+): 'krank' | 'ferien' | 'kompensation' | 'frei' | 'normal' {
+    const texte = liste.map((e) => {
+        const name = buchungsartName(k, e.buchungsart);
+
+        return `${e.buchungsart ?? ''} ${e.kategorie} ${name}`.toLowerCase();
+    });
+    const hat = (...worte: string[]) =>
+        texte.some((t) => worte.some((w) => t.includes(w)));
+    if (hat('krank', 'unfall')) {
+        return 'krank';
+    }
+    if (hat('ferien')) {
+        return 'ferien';
+    }
+    if (hat('kompensation')) {
+        return 'kompensation';
+    }
+
+    return feiertag || wochenende(datum) ? 'frei' : 'normal';
+}
+
 /** Alle Tage eines Monats «JJJJ-MM» als «JJJJ-MM-TT». */
 export function tageImMonat(monat: string): string[] {
     const [y, m] = monat.split('-').map(Number);

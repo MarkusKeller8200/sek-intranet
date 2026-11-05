@@ -80,6 +80,10 @@
     "Ist": ["Actual", "Ist"],
     "Delta": ["Difference", "Differänz"],
     "Notizen": ["Notes", "Notize"],
+    "Delta (Ist − Soll)": [
+        "Difference (actual − target)",
+        "Differänz (Ist − Soll)"
+    ],
     "Buchungen anzeigen": ["Show bookings", "Buechige aazeige"],
     "Buchungen ausblenden": ["Hide bookings", "Buechige uusblände"],
     "Alle aufklappen": ["Expand all", "Alli uufklappe"],

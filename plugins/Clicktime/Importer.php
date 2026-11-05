@@ -8,6 +8,7 @@ use Modules\Zeiterfassung\Buchungsarten;
 use Modules\Zeiterfassung\Data\Contracts\EintragRepository;
 use Modules\Zeiterfassung\Data\Contracts\MonatRepository;
 use Modules\Zeiterfassung\Kategorien;
+use Modules\Zeiterfassung\Sollzeiten;
 use Modules\Zeiterfassung\Zeitkonto;
 use RuntimeException;
 
@@ -19,6 +20,7 @@ use RuntimeException;
  * - Buchungsart über die Mapping-Tabelle; unbekannte ClickTime-Arten werden als «Name (clicktime)» angelegt und
  *   ergänzt. Kategorie bei Arbeit: «ct:<ClickTime-Name>» (Anzeige «Name (clicktime)»).
  * - Pause (eigene Buchung, negative Stunden) → Pause des längsten Arbeitsblocks am Tag.
+ * - Sollzeit pro Tag (#103): je Tag eine Abfrage der Kumulative, gespeichert für Soll und Delta der Tagestotale.
  * - Nur Monate «offen» oder «zurück».
  */
 final class Importer
@@ -31,7 +33,7 @@ final class Importer
     public function __construct(private readonly PluginContext $ctx) {}
 
     /**
-     * @return array{changes: list<array{change: string, day: string, before: string, after: string}>, counts: array<string, int>, created_types: list<string>}
+     * @return array{changes: list<array{change: string, day: string, before: string, after: string}>, counts: array<string, int>, created_types: list<string>, targets: array{days: int, hours: float}}
      */
     public function run(string $personId, string $employeeNo, string $month, bool $apply): array
     {
@@ -44,7 +46,12 @@ final class Importer
         $buchungsarten = app(Buchungsarten::class);
         $own = $buchungsarten->liste();
         $mapping = Mapping::parse((string) $this->ctx->setting('mapping', Mapping::DEFAULT));
-        $entries = (new Months($this->ctx))->entries($month, [$employeeNo])[$employeeNo] ?? [];
+        $months = new Months($this->ctx);
+        $entries = $months->entries($month, [$employeeNo])[$employeeNo] ?? [];
+        $targets = $months->targets($month, [$employeeNo])[$employeeNo] ?? [];
+        if ($apply && $targets !== []) {
+            app(Sollzeiten::class)->speichern($personId, $month, $targets, self::QUELLE);
+        }
 
         // Unbekannte Buchungsarten: «Name (clicktime)» anlegen und in der Mapping-Tabelle ergänzen
         $created = [];
@@ -150,7 +157,8 @@ final class Importer
         usort($changes, fn (array $a, array $b): int => [$a['day'], $a['change']] <=> [$b['day'], $b['change']]);
         $this->ctx->log(($apply ? 'Übernommen' : 'Vorschau').": {$counts['neu']} neu, {$counts['geändert']} geändert, {$counts['gelöscht']} gelöscht.");
 
-        return ['changes' => $changes, 'counts' => $counts, 'created_types' => $created];
+        return ['changes' => $changes, 'counts' => $counts, 'created_types' => $created,
+            'targets' => ['days' => count($targets), 'hours' => round(array_sum($targets), 2)]];
     }
 
     /**

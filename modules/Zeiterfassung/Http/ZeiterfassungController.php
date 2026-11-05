@@ -22,6 +22,7 @@ use Modules\Zeiterfassung\Data\Contracts\EintragRepository;
 use Modules\Zeiterfassung\Data\Contracts\MonatRepository;
 use Modules\Zeiterfassung\Feiertage;
 use Modules\Zeiterfassung\Kategorien;
+use Modules\Zeiterfassung\Sollzeiten;
 use Modules\Zeiterfassung\Unterschriften;
 use Modules\Zeiterfassung\Zeitkonto;
 use Plugins\Clicktime\Importer;
@@ -53,6 +54,7 @@ class ZeiterfassungController extends Controller
             'eintraege' => self::mitBuchungsart($liste),
             'status' => $this->monate->status($person, $monat),
             'feiertage' => Feiertage::monat($monat),
+            'soll' => app(Sollzeiten::class)->monat($person, $monat),
             'summen' => Zeitkonto::summen($liste),
             'kategorien' => Kategorien::all() + ['buchungsarten' => $this->buchungsarten->liste()],
             'person' => ['name' => $this->name($person)],

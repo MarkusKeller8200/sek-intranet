@@ -19,9 +19,9 @@ import {
     kurzDatum,
     notizen,
     stunden,
+    tagesArt,
     tageImMonat,
     tagesZeit,
-    wochenende,
     wochentag,
     zeitraum,
 } from '../lib/types';
@@ -33,15 +33,25 @@ type Aktionen = {
 };
 
 /**
- * Einträge eines Monats (#102): je Tag eine Totalzeile (Wochenende und Feiertage anders eingefärbt), aufklappbar zu
- * den einzelnen Buchungen in kleiner Schrift; darunter die Summen.
+ * Einträge eines Monats (#102): je Tag eine Totalzeile mit Soll, Ist und Delta (#103), eingefärbt nach Ferien,
+ * Kompensation, Krankheit/Unfall, Wochenende und Feiertag; aufklappbar zu den Buchungen in kleiner Schrift.
  */
+
+/** Farbe der Tageszeile je Art des Tages (Tokens im Farbkonzept, Gruppe «Zeiterfassung»). */
+const FARBEN: Record<string, string> = {
+    krank: 'bg-sick-soft hover:bg-sick-soft',
+    ferien: 'bg-vacation-soft hover:bg-vacation-soft',
+    kompensation: 'bg-compensation-soft hover:bg-compensation-soft',
+    frei: 'bg-warning-soft hover:bg-warning-soft',
+    normal: 'bg-secondary/60 hover:bg-secondary',
+};
 export default function EintraegeTabelle({
     monat,
     eintraege,
     summen,
     kategorien,
     feiertage = {},
+    soll = {},
     onEdit,
     onDelete,
 }: Aktionen & {
@@ -51,6 +61,8 @@ export default function EintraegeTabelle({
     kategorien: Kategorien;
     /** Datum → Name des Feiertags */
     feiertage?: Record<string, string>;
+    /** Datum → Sollzeit in Stunden (z. B. aus ClickTime) */
+    soll?: Record<string, number>;
 }) {
     const [offen, setOffen] = useState<Set<string>>(new Set());
     const proTag = new Map<string, Eintrag[]>();
@@ -73,6 +85,8 @@ export default function EintraegeTabelle({
         setOffen(neu);
     };
     const alle = () => setOffen(alleOffen ? new Set() : new Set(mitBuchungen));
+    const sollTotal = Object.values(soll).reduce((s, h) => s + h, 0);
+    const mitSoll = Object.keys(soll).length > 0;
 
     return (
         <div className="grid gap-4">
@@ -117,6 +131,8 @@ export default function EintraegeTabelle({
                                     tag={tag}
                                     liste={proTag.get(tag) ?? []}
                                     feiertag={feiertage[tag]}
+                                    soll={soll[tag]}
+                                    kategorien={kategorien}
                                     auf={offen.has(tag)}
                                     aktionen={aktionen}
                                     onToggle={() => umschalten(tag)}
@@ -177,6 +193,22 @@ export default function EintraegeTabelle({
                         {stunden(summen.total)}
                     </dd>
                 </div>
+                {mitSoll && (
+                    <>
+                        <div className="flex justify-between gap-4 py-1 font-semibold">
+                            <dt>Soll</dt>
+                            <dd className="tabular-nums" translate="no">
+                                {hhmm(sollTotal)}
+                            </dd>
+                        </div>
+                        <div className="flex justify-between gap-4 py-1 font-semibold">
+                            <dt>Delta (Ist − Soll)</dt>
+                            <dd className="tabular-nums" translate="no">
+                                {hhmm(summen.total - sollTotal)}
+                            </dd>
+                        </div>
+                    </>
+                )}
             </dl>
         </div>
     );
@@ -187,6 +219,8 @@ function TagesZeile({
     tag,
     liste,
     feiertag,
+    soll,
+    kategorien,
     auf,
     aktionen,
     onToggle,
@@ -194,22 +228,18 @@ function TagesZeile({
     tag: string;
     liste: Eintrag[];
     feiertag?: string;
+    soll?: number;
+    kategorien: Kategorien;
     auf: boolean;
     aktionen: boolean;
     onToggle: () => void;
 }) {
-    const frei = Boolean(feiertag) || wochenende(tag);
     const ist = liste.reduce((s, e) => s + e.stunden, 0);
+    const delta = soll === undefined ? null : ist - soll;
+    const art = tagesArt(tag, liste, kategorien, Boolean(feiertag));
 
     return (
-        <TableRow
-            className={cn(
-                'font-medium',
-                frei
-                    ? 'bg-warning-soft hover:bg-warning-soft'
-                    : 'bg-secondary/60 hover:bg-secondary',
-            )}
-        >
+        <TableRow className={cn('font-medium', FARBEN[art])}>
             <TableCell className="py-1">
                 {liste.length > 0 && (
                     <Button
@@ -239,14 +269,20 @@ function TagesZeile({
             >
                 {tagesZeit(liste)}
             </TableCell>
-            <TableCell className="text-right text-muted-foreground">
-                –
+            <TableCell className="text-right tabular-nums" translate="no">
+                {soll === undefined ? '–' : hhmm(soll)}
             </TableCell>
             <TableCell className="text-right tabular-nums" translate="no">
-                {liste.length > 0 ? hhmm(ist) : ''}
+                {liste.length > 0 || soll !== undefined ? hhmm(ist) : ''}
             </TableCell>
-            <TableCell className="text-right text-muted-foreground">
-                –
+            <TableCell
+                className={cn(
+                    'text-right tabular-nums',
+                    delta !== null && delta < -0.005 && 'text-destructive',
+                )}
+                translate="no"
+            >
+                {delta === null ? '–' : hhmm(delta)}
             </TableCell>
             <TableCell colSpan={aktionen ? 3 : 2} />
         </TableRow>

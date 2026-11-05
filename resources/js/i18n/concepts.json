@@ -3194,6 +3194,15 @@
         "Dots under terms (hover)",
         "Pünkt under Begriff (drüber)"
     ],
+    "Zeiterfassung: Ferien": ["Time tracking: holidays", "Ziiterfassig: Ferie"],
+    "Zeiterfassung: Kompensation": [
+        "Time tracking: compensation",
+        "Ziiterfassig: Kompensation"
+    ],
+    "Zeiterfassung: Krankheit / Unfall": [
+        "Time tracking: illness / accident",
+        "Ziiterfassig: Chrankheit / Unfall"
+    ],
     "Punkte unter Begriffen auf Hintergrund": [
         "Term dots on background",
         "Pünkt under Begriff uf em Hintergrund"

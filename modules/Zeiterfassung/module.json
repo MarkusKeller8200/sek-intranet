@@ -1,7 +1,7 @@
 {
     "key": "zeiterfassung",
     "name": "Zeiterfassung",
-    "version": "0.5.0",
+    "version": "0.6.0",
     "core": ">=0.32.0",
     "description": "Arbeitszeit mit Buchungsart (Arbeitszeit, Homeoffice, Ferien, Krankheit …), Tätigkeiten, Projekte und Abwesenheiten pro Monat erfassen; Monatsvisum durch die Schulleitung, Export für die Lohnbuchhaltung und Monatsblatt als PDF; visierte Monatsrapporte elektronisch unterschreiben (DeepSign).",
     "aktiv": true,
@@ -235,6 +235,33 @@
                     "type": "int",
                     "required": false,
                     "label": "Reihenfolge"
+                }
+            }
+        },
+        "zeit_soll": {
+            "label": "Zeiterfassung: Sollzeit",
+            "description": "Sollzeit pro Person und Monat (id = Person:Monat), pro Tag in Stunden, z. B. aus ClickTime.",
+            "fields": {
+                "person_id": {
+                    "type": "ref",
+                    "references": "users",
+                    "required": true,
+                    "label": "Person"
+                },
+                "monat": {
+                    "type": "string",
+                    "required": true,
+                    "label": "Monat (JJJJ-MM)"
+                },
+                "tage": {
+                    "type": "json",
+                    "required": true,
+                    "label": "Soll pro Tag (Datum → Stunden)"
+                },
+                "quelle": {
+                    "type": "string",
+                    "required": false,
+                    "label": "Herkunft (z. B. clicktime)"
                 }
             }
         }

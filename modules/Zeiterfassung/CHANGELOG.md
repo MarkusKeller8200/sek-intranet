@@ -4,6 +4,13 @@ Versionen des Moduls nach SemVer (module.json → «version»).
 
 ## [Unveröffentlicht]
 
+### Neu
+
+- **Tagestotale (#102, 0.5.0):** Tabelle mit Totalzeile pro Tag (aufklappbar), Wochentag, Datum TT.MM., Zeit
+  HH:MM – HH:MM, Herkunft; Feiertage Kanton Zürich (`Feiertage`); Einträge aus dem Intranet bearbeiten.
+- **Soll und Delta (#103, 0.6.0):** Sammlung `zeit_soll` (Soll pro Tag, `Sollzeiten`), beim Übernehmen aus
+  ClickTime gefüllt; Tageszeilen eingefärbt nach Ferien, Kompensation, Krankheit/Unfall.
+
 ## [0.4.0]
 
 ### Neu

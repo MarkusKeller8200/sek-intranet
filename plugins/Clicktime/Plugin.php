@@ -316,21 +316,22 @@ class Plugin extends BasePlugin implements DemoResponder
         $holidays = $months->holidays((int) substr($month, 0, 4));
         $weekdays = ['SO', 'MO', 'DI', 'MI', 'DO', 'FR', 'SA'];
 
+        $targets = $months->targets($month, $filter);
         $rows = [];
         $sum = [];
         [$from, $to] = Months::range($month);
         for ($t = (int) strtotime($from); $t <= (int) strtotime($to); $t = (int) strtotime('+1 day', $t)) {
             $day = date('Y-m-d', $t);
-            $cumulatives = $months->cumulativesBetween($day, $day, $filter);
             foreach ($people as $no => $name) {
-                $target = Months::target($cumulatives[(string) $no] ?? []);
+                $target = $targets[(string) $no][$day] ?? null;
                 $sum[$no] = ($sum[$no] ?? 0.0) + (float) $target;
                 $rows[] = [
                     'no' => (string) $no,
                     'name' => $name,
                     'weekday' => $weekdays[(int) date('w', $t)],
                     'day' => date('d.m.', $t),
-                    'target' => $target === null ? '–' : Months::hours($target),
+                    'target' => $target === null ? '–' : Months::hhmm($target),
+                    'hours' => $target === null ? '–' : Months::hours($target),
                     'note' => $holidays[$day] ?? '',
                 ];
             }
@@ -342,7 +343,7 @@ class Plugin extends BasePlugin implements DemoResponder
         foreach ($people as $no => $name) {
             $total = Months::target($monthly[(string) $no] ?? []);
             $ok = $total !== null && abs($total - $sum[$no]) < 0.01;
-            $checks[] = "{$name}: Summe Tage ".Months::hours($sum[$no]).' h, Monat '.($total === null ? '–' : Months::hours($total)).' h'.($ok ? ' ✓' : ' – weicht ab');
+            $checks[] = "{$name}: Summe Tage ".Months::hhmm($sum[$no]).', Monat '.($total === null ? '–' : Months::hhmm($total)).($ok ? ' ✓' : ' – weicht ab');
         }
         $days = (int) date('t', (int) strtotime($from));
 
@@ -351,7 +352,8 @@ class Plugin extends BasePlugin implements DemoResponder
             ['key' => 'name', 'label' => 'Name'],
             ['key' => 'weekday', 'label' => 'Tag'],
             ['key' => 'day', 'label' => 'Datum'],
-            ['key' => 'target', 'label' => 'Soll (h)'],
+            ['key' => 'target', 'label' => 'Soll (HH:MM)'],
+            ['key' => 'hours', 'label' => 'Soll (h)'],
             ['key' => 'note', 'label' => 'Feiertag'],
         ], $rows);
     }
@@ -856,7 +858,7 @@ class Plugin extends BasePlugin implements DemoResponder
     }
 
     /**
-     * @param  array{changes: list<array<string, string>>, counts: array<string, int>, created_types: list<string>}  $result
+     * @param  array{changes: list<array<string, string>>, counts: array<string, int>, created_types: list<string>, targets?: array{days: int, hours: float}}  $result
      */
     public static function importMessage(PluginContext $ctx, string $name, string $month, array $result, bool $apply): string
     {
@@ -865,6 +867,10 @@ class Plugin extends BasePlugin implements DemoResponder
             ."{$c['gelöscht']} gelöscht, {$c['unverändert']} unverändert.";
         if ($result['created_types'] !== []) {
             $message .= ' Neue Buchungsarten'.($apply ? '' : ' (beim Übernehmen)').': '.implode(', ', array_map(fn (string $n): string => "{$n} (clicktime)", $result['created_types'])).'.';
+        }
+
+        if (($result['targets']['days'] ?? 0) > 0) {
+            $message .= ' Sollzeit: '.$result['targets']['days'].' Tage, '.Months::hhmm($result['targets']['hours']).($apply ? ' gespeichert.' : ' (beim Übernehmen).');
         }
 
         return $message.($apply ? '' : ' Zum Übernehmen «Übernehmen» ankreuzen.');

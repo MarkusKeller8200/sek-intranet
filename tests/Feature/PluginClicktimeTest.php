@@ -18,6 +18,7 @@ use Inertia\Testing\AssertableInertia as Assert;
 use Modules\Zeiterfassung\Buchungsarten;
 use Modules\Zeiterfassung\Data\Contracts\EintragRepository;
 use Modules\Zeiterfassung\Data\Contracts\MonatRepository;
+use Modules\Zeiterfassung\Sollzeiten;
 use Plugins\Clicktime\Importer;
 use Plugins\Clicktime\Months;
 use Plugins\Clicktime\Plugin;
@@ -181,10 +182,10 @@ class PluginClicktimeTest extends TestCase
         $res = $this->postJson('/plugins/clicktime/aktion/targets', ['options' => ['month' => '2026-10', 'person' => '3']])->assertOk();
         $rows = $res->json('rows');
         $this->assertCount(31, $rows);
-        $this->assertSame(['no' => '3', 'name' => 'Daniel Probe', 'weekday' => 'DO', 'day' => '01.10.', 'target' => '6.72', 'note' => ''], $rows[0]);
-        $this->assertSame(['SA', '0.00'], [$rows[2]['weekday'], $rows[2]['target']]);
+        $this->assertSame(['no' => '3', 'name' => 'Daniel Probe', 'weekday' => 'DO', 'day' => '01.10.', 'target' => '06:43', 'hours' => '6.72', 'note' => ''], $rows[0]);
+        $this->assertSame(['SA', '00:00'], [$rows[2]['weekday'], $rows[2]['target']]);
         $this->assertStringContainsString('31 Abfragen', (string) $res->json('message'));
-        $this->assertStringContainsString('Summe Tage 147.84 h, Monat 147.84 h ✓', (string) $res->json('message'));
+        $this->assertStringContainsString('Summe Tage 147:50, Monat 147:50 ✓', (string) $res->json('message'));
     }
 
     public function test_balances_and_month_sheet_with_gaps_and_pdf(): void
@@ -407,6 +408,12 @@ class PluginClicktimeTest extends TestCase
         $this->assertSame('Arbeitszeit (clicktime)', app(Buchungsarten::class)->liste()['ct_arbeitszeit']['name']);
         $this->assertStringContainsString('Arbeitszeit = ct_arbeitszeit', (string) app(PluginManager::class)->state('clicktime')['settings']['mapping']);
         $this->assertNotNull($liste->firstWhere('kategorie', 'verwaltung'), 'von Hand erfasst bleibt');
+        // Sollzeit pro Tag (#103) gespeichert und an die Seite übergeben
+        $soll = app(Sollzeiten::class)->monat((string) $andrea['id'], '2026-10');
+        $this->assertCount(31, $soll);
+        $this->assertSame([8.4, 0.0], [$soll['2026-10-01'], $soll['2026-10-03']]);
+        $this->assertSame(184.8, round(array_sum($soll), 2));
+        $this->get('/zeiterfassung?monat=2026-10')->assertInertia(fn (Assert $page) => $page->where('soll.2026-10-01', 8.4));
 
         // zweites Mal: nichts doppelt; Korrektur in ClickTime (Demo nach Abschluss) wird nachgeführt
         $this->actingAs($admin);

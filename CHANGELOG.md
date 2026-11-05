@@ -15,6 +15,8 @@ laufend unter **Unveröffentlicht**. Ab 0.32.0 entsteht eine Version nur bei ein
   Bisherige Einträge erhalten sie automatisch.
 - Die Zeiterfassung zeigt neu pro Tag eine Totalzeile mit Wochentag und Stunden:Minuten; Wochenende und Feiertage
   sind farbig. Aufklappen zeigt die einzelnen Buchungen. Selbst erfasste Einträge lassen sich bearbeiten.
+- Beim Übernehmen aus ClickTime kommt die Sollzeit mit; pro Tag stehen Soll, Ist und Differenz. Tage mit Ferien,
+  Kompensation oder Krankheit/Unfall haben eine eigene Farbe.
 
 ### Neu
 
@@ -24,6 +26,11 @@ laufend unter **Unveröffentlicht**. Ab 0.32.0 entsteht eine Version nur bei ein
   Farbe, `Feiertage`), einzeln oder «Alle aufklappen» zu den Buchungen in kleiner Schrift; Tabelle nutzt die ganze
   Breite. Soll und Delta vorerst «–» (Quelle der Sollzeit offen). Einträge aus dem Intranet bearbeiten (Stift, Formular oben)
   und löschen, Einträge aus Fremdsystemen nur löschen (`PUT zeiterfassung/eintraege/{id}`). Modul 0.5.0.
+- **Zeiterfassung: Soll, Delta und Farben je Abwesenheit (#103):** Beim Übernehmen aus ClickTime wird die Sollzeit
+  pro Tag mitgeholt (eine Abfrage je Tag) und in `zeit_soll` gespeichert (Modul 0.6.0, Plugin 0.6). Tageszeilen zeigen
+  Soll, Ist und Delta in HH:MM (negativ rot), unten Soll und Delta des Monats. Farben: Ferien pastellgrün,
+  Kompensation hellviolett, Krankheit/Unfall hellrot (neue Tokens `vacation-soft`, `compensation-soft`, `sick-soft`,
+  Theme-Gruppe «Zeiterfassung»). Aktion «Sollzeit pro Tag» zusätzlich in HH:MM.
 - **ClickTime: Sollzeit pro Tag (#102):** Aktion «Sollzeit pro Tag» fragt die Kumulative je Tag ab (`valid_from` =
   `valid_to`, Buchungsart 0 = Sollzeit) und listet Tag, Datum, Soll und Feiertag; Kontrolle Summe der Tage gegen die
   Sollzeit des Monats. Grundlage für Soll und Delta in der Zeiterfassung (Plugin 0.5).

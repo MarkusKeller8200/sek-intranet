@@ -151,6 +151,30 @@ final class Months
     }
 
     /**
+     * Sollzeit pro Tag eines Monats (#102/#103): eine Abfrage der Kumulative je Tag (valid_from = valid_to). Person →
+     * Datum → Stunden; Tage ohne gelieferte Sollzeit fehlen.
+     *
+     * @param  list<string>  $employees
+     * @return array<string, array<string, float>>
+     */
+    public function targets(string $month, array $employees = []): array
+    {
+        [$from, $to] = self::range($month);
+        $result = [];
+        for ($t = (int) strtotime($from); $t <= (int) strtotime($to); $t = (int) strtotime('+1 day', $t)) {
+            $day = date('Y-m-d', $t);
+            foreach ($this->cumulativesBetween($day, $day, $employees) as $no => $cumulatives) {
+                $target = self::target($cumulatives);
+                if ($target !== null) {
+                    $result[(string) $no][$day] = $target;
+                }
+            }
+        }
+
+        return $result;
+    }
+
+    /**
      * Sollzeit aus Kumulativen: Buchungsart Nummer 0, sonst Name «Sollzeit»/«Soll…». Null, wenn keine geliefert wird.
      *
      * @param  array<int|string, array{name: string, hours: float}>  $cumulatives
@@ -332,6 +356,14 @@ final class Months
     public static function hours(float $h): string
     {
         return number_format($h, 2, '.', '\'');
+    }
+
+    /** Stunden als «HH:MM», z. B. 184.8 → «184:48». */
+    public static function hhmm(float $h): string
+    {
+        $min = (int) round(abs($h) * 60);
+
+        return ($h < 0 && $min > 0 ? '−' : '').sprintf('%02d:%02d', intdiv($min, 60), $min % 60);
     }
 
     // ---------- Monatsblatt (PDF) ----------

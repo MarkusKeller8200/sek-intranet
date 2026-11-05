@@ -27,6 +27,7 @@ final class Themes
         'Seitenleiste' => ['sidebar', 'sidebar-foreground', 'sidebar-primary', 'sidebar-primary-foreground', 'sidebar-accent', 'sidebar-accent-foreground', 'sidebar-border', 'sidebar-ring'],
         'Diagramme' => ['chart-1', 'chart-2', 'chart-3', 'chart-4', 'chart-5'],
         'Glossar-Begriffe' => ['term-underline', 'term-underline-hover'],
+        'Zeiterfassung' => ['vacation-soft', 'compensation-soft', 'sick-soft'],
     ];
 
     /** @var array{light: array<string, string>, dark: array<string, string>}|null */

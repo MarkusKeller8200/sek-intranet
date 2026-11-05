@@ -71,6 +71,10 @@
 
     --color-term-underline: var(--term-underline);
     --color-term-underline-hover: var(--term-underline-hover);
+
+    --color-vacation-soft: var(--vacation-soft);
+    --color-compensation-soft: var(--compensation-soft);
+    --color-sick-soft: var(--sick-soft);
 }
 
 /*
@@ -132,6 +136,11 @@
     /* Glossar-Begriffe (#60): Farbe der feinen Punkte unter einem Begriff */
     --term-underline: #0284c7;
     --term-underline-hover: #075985;
+
+    /* Zeiterfassung (#103): Tagestotale mit Ferien, Kompensation, Krankheit/Unfall */
+    --vacation-soft: #dcf3e2;
+    --compensation-soft: #ece6fb;
+    --sick-soft: #fde6e6;
 }
 
 .dark {
@@ -180,6 +189,11 @@
 
     --term-underline: #38bdf8;
     --term-underline-hover: #bae6fd;
+
+    /* Zeiterfassung (#103): Tagestotale mit Ferien, Kompensation, Krankheit/Unfall */
+    --vacation-soft: #163a24;
+    --compensation-soft: #2b2248;
+    --sick-soft: #3f1d1d;
 }
 
 @layer base {

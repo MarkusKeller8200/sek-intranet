@@ -44,6 +44,8 @@ type Props = {
     kategorien: Kategorien;
     /** Feiertage des Monats (#102): Datum → Name */
     feiertage?: Record<string, string>;
+    /** Sollzeit pro Tag (#103): Datum → Stunden */
+    soll?: Record<string, number>;
     person: { name: string };
     darfVisum: boolean;
     unterschrift: Unterschrift;
@@ -456,6 +458,7 @@ export default function ZeiterfassungStart(props: Props) {
                         <EintraegeTabelle
                             monat={monat}
                             feiertage={props.feiertage}
+                            soll={props.soll}
                             eintraege={eintraege}
                             summen={summen}
                             kategorien={kategorien}
