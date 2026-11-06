@@ -38,7 +38,7 @@ class ModuleSettingsTest extends TestCase
         $this->get('/einstellungen/fachanwendungen')->assertOk()->assertInertia(fn (Assert $page) => $page
             ->component('module-settings')
             ->where('items', fn ($items): bool => collect($items)->pluck('key')->all() === ['cmi', 'escola', 'apple-school-manager', 'jamf-pro', 'lmvz-digital', 'sl-planer'])
-            ->where('modes', ['embed', 'both', 'tab', 'extension', 'split']));
+            ->where('modes', ['embed', 'both', 'tab', 'window', 'extension', 'split']));
         $this->get('/einstellungen/einbindungen')->assertInertia(fn (Assert $page) => $page
             ->where('items', fn ($items): bool => collect($items)->contains('key', 'lehrplan21') && ! collect($items)->contains('key', 'cmi')));
 

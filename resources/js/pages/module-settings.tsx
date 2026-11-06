@@ -27,7 +27,7 @@ import { Label } from '@/components/ui/label';
 import { t } from '@/lib/i18n';
 import { moduleIcon } from '@/lib/module-icons';
 
-type Mode = 'embed' | 'both' | 'tab' | 'extension' | 'split';
+type Mode = 'embed' | 'both' | 'tab' | 'window' | 'extension' | 'split';
 
 type Item = {
     key: string;
@@ -45,11 +45,12 @@ type Item = {
 };
 
 export const MODE_LABELS: Record<Mode, string> = {
-    embed: 'Im Intranet (iFrame)',
-    both: 'Im Intranet (iFrame) mit Knopf «Neuer Tab»',
-    tab: 'Eigenes Fenster (neuer Tab)',
-    extension: 'Über die Browser-Erweiterung',
-    split: 'Nebeneinander mit dem Intranet (Browser-Erweiterung)',
+    embed: 'iFrame – eingebettet',
+    both: 'iFrame – neuer Tab',
+    tab: 'Neuer Browser-Tab',
+    window: 'Neues Browser-Fenster',
+    extension: 'Browser-Erweiterung (neuer Tab)',
+    split: 'Browser-Erweiterung (gesplittetes Tab)',
 };
 
 function ItemCard({ item }: { item: Item }) {
@@ -154,7 +155,7 @@ function ItemCard({ item }: { item: Item }) {
                         </p>
                     </div>
                     <div className="grid gap-1.5">
-                        <Label htmlFor={`open-${item.key}`}>Öffnen</Label>
+                        <Label htmlFor={`open-${item.key}`}>Öffnen über</Label>
                         <SelectField
                             id={`open-${item.key}`}
                             value={form.data.open}

@@ -70,7 +70,9 @@ Kopfzeilen das Einbetten wirklich erlauben (Prüfung unter Einstellungen → «E
 
 Adresse und Art des Öffnens jeder Einbindung lassen sich unter **Einstellungen → Fachanwendungen** bzw.
 **Weitere Einbindungen** ändern (Sammlung `module_settings`, übersteuert Konfiguration und `.env`). Öffnen:
-iFrame, iFrame mit Knopf «Neuer Tab», eigenes Fenster oder über die Browser-Erweiterung
+«iFrame – eingebettet», «iFrame – neuer Tab» (Rahmen mit Knopf), «Neuer Browser-Tab», «Neues
+Browser-Fenster» (eigenes Fenster statt Tab, ab #150), «Browser-Erweiterung (neuer Tab)» oder «Browser-Erweiterung
+(gesplittetes Tab)»
 ([KONZEPT-BROWSER-CONNECTOR.md](KONZEPT-BROWSER-CONNECTOR.md)).
 
 ## Erwartung bei den fremden Seiten

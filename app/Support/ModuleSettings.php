@@ -13,9 +13,9 @@ final class ModuleSettings
 {
     public const COLLECTION = 'module_settings';
 
-    /** embed = nur im Rahmen, both = Rahmen mit Knopf «Neuer Tab», tab = eigenes Fenster, extension = über die
-     * Browser-Erweiterung (eigener Tab), split = über die Browser-Erweiterung nebeneinander (zwei Fenster) */
-    public const OPEN_MODES = ['embed', 'both', 'tab', 'extension', 'split'];
+    /** embed = iFrame (eingebettet), both = iFrame mit Knopf «Neuer Tab», tab = neuer Browser-Tab, window = neues
+     * Browser-Fenster, extension = Browser-Erweiterung (neuer Tab), split = Browser-Erweiterung (gesplittetes Tab) */
+    public const OPEN_MODES = ['embed', 'both', 'tab', 'window', 'extension', 'split'];
 
     /** @var array<string, array<string, mixed>>|null */
     private ?array $cache = null;

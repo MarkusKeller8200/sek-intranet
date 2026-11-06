@@ -11,6 +11,9 @@ laufend unter **Unveröffentlicht**. Ab 0.32.0 entsteht eine Version nur bei ein
 
 ### Neu
 
+- **Einbindungen: «Öffnen über» (#150):** Neue Bezeichnungen (iFrame – eingebettet, iFrame – neuer Tab, Neuer
+  Browser-Tab, Neues Browser-Fenster, Browser-Erweiterung neuer bzw. gesplittetes Tab) und neue Option «Neues
+  Browser-Fenster» (eigenes Fenster statt Tab).
 - **Personen: direkt ins CMI-Dossier (#149):** Neues System «CMI» in der Datenherkunft. Mit der Dossier-ID zeigt
   die Person den Knopf «In CMI öffnen» (Personal- bzw. Schülerdossier je Personenart, neuer Tab); es werden keine
   Daten aus CMI gelesen. Vorlagen unter `record_links`, Bereiche über die `.env` übersteuerbar.

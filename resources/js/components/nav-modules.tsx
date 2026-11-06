@@ -1,6 +1,7 @@
 import { Link } from '@inertiajs/react';
 import { ChevronDown, ExternalLink } from 'lucide-react';
 import { Fragment, useEffect } from 'react';
+import type { MouseEvent } from 'react';
 import {
     Collapsible,
     CollapsibleContent,
@@ -19,6 +20,7 @@ import {
 } from '@/components/ui/sidebar';
 import { useCurrentUrl } from '@/hooks/use-current-url';
 import { moduleIcon } from '@/lib/module-icons';
+import { openInWindow } from '@/lib/open-window';
 import {
     resetMobileGroups,
     setGroupOpen,
@@ -246,6 +248,22 @@ type SlotProps = { className?: string } & {
  * Link eines Menüpunkts: eingebunden nur als neuer Tab direkt zur Adresse, sonst Intranet-Seite.
  * Weitere Eigenschaften (Klassen, data-*) kommen von SidebarMenuButton (asChild) und werden weitergegeben.
  */
+/** Öffnet ausserhalb des Intranets: neuer Browser-Tab oder neues Browser-Fenster. */
+function opensOutside(item: ModuleNavItem): boolean {
+    return (item.open === 'tab' || item.open === 'window') && !!item.external;
+}
+
+/** «Neues Browser-Fenster»: statt Tab ein eigenes Fenster öffnen. */
+function openExternal(
+    event: MouseEvent<HTMLAnchorElement>,
+    item: ModuleNavItem,
+): void {
+    if (item.open === 'window' && item.external) {
+        event.preventDefault();
+        openInWindow(item.external);
+    }
+}
+
 function EntryLink({
     item,
     color,
@@ -258,13 +276,16 @@ function EntryLink({
 } & SlotProps) {
     const Icon = moduleIcon(item.icon);
 
-    return item.open === 'tab' && item.external ? (
+    return opensOutside(item) && item.external ? (
         <a
             {...rest}
             href={item.external}
             target="_blank"
             rel="noopener noreferrer"
-            onClick={onSelect}
+            onClick={(event) => {
+                openExternal(event, item);
+                onSelect();
+            }}
         >
             <Icon className={color.icon} />
             <span>{item.title}</span>
@@ -374,13 +395,16 @@ function SubMenu({
                                         asChild
                                         isActive={current}
                                     >
-                                        {child.open === 'tab' &&
+                                        {opensOutside(child) &&
                                         child.external ? (
                                             <a
                                                 href={child.external}
                                                 target="_blank"
                                                 rel="noopener noreferrer"
-                                                onClick={() => onSelect(child)}
+                                                onClick={(event) => {
+                                                    openExternal(event, child);
+                                                    onSelect(child);
+                                                }}
                                             >
                                                 <ChildIcon
                                                     className={color.icon}

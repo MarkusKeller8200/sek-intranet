@@ -1323,17 +1323,22 @@
         "Address and how to open, per menu item. Saved values apply to everyone and override the default configuration.",
         "Adrässe und Art vom Ufmache pro Menüpunkt. Gspeicheriti Wert gälted für alli und übersteuered d Vorgab us de Konfiguration."
     ],
-    "Im Intranet (iFrame)": [
-        "In the intranet (iFrame)",
-        "Im Intranet (iFrame)"
+    "Öffnen über": ["Open via", "Ufmache über"],
+    "iFrame – eingebettet": ["iFrame – embedded", "iFrame – iibettet"],
+    "iFrame – neuer Tab": ["iFrame – new tab", "iFrame – neue Tab"],
+    "Neuer Browser-Tab": ["New browser tab", "Neue Browser-Tab"],
+    "Neues Browser-Fenster": ["New browser window", "Neus Browser-Fänschter"],
+    "Browser-Erweiterung (neuer Tab)": [
+        "Browser extension (new tab)",
+        "Browser-Erwiiterig (neue Tab)"
     ],
-    "Im Intranet (iFrame) mit Knopf «Neuer Tab»": [
-        "In the intranet (iFrame) with “New tab” button",
-        "Im Intranet (iFrame) mit Chnopf «Neue Tab»"
+    "Browser-Erweiterung (gesplittetes Tab)": [
+        "Browser extension (split tab)",
+        "Browser-Erwiiterig (teilts Tab)"
     ],
-    "Eigenes Fenster (neuer Tab)": [
-        "Own window (new tab)",
-        "Eigets Fänschter (neue Tab)"
+    "In neuem Fenster öffnen": [
+        "Open in new window",
+        "Imne neue Fänschter uftue"
     ],
     "Über die Browser-Erweiterung": [
         "Via the browser extension",

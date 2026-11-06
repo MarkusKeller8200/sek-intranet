@@ -20,7 +20,7 @@ class EmbedController extends Controller
         abort_if($module === null, 404);
 
         $frame = match (true) {
-            $module['url'] === null || in_array($module['open'], ['tab', 'extension', 'split'], true) => null,
+            $module['url'] === null || in_array($module['open'], ['tab', 'window', 'extension', 'split'], true) => null,
             $module['allowed'] => ['embeddable' => true, 'reason' => 'Einbetten vom Anbieter erlaubt'],
             default => FrameCheck::check($module['url']),
         };

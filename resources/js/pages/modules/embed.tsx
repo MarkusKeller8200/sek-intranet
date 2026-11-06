@@ -30,6 +30,7 @@ import {
     splitWithConnector,
 } from '@/lib/connector';
 import { moduleIcon } from '@/lib/module-icons';
+import { openInWindow } from '@/lib/open-window';
 import { cn } from '@/lib/utils';
 
 type Embedded = {
@@ -42,7 +43,7 @@ type Embedded = {
     /** Fachanwendung: Seitenmenü beim Öffnen einklappen */
     collapse: boolean;
     url: string | null;
-    open: 'embed' | 'tab' | 'both' | 'extension' | 'split';
+    open: 'embed' | 'tab' | 'window' | 'both' | 'extension' | 'split';
     repo: string | null;
     stack: string | null;
 };
@@ -91,9 +92,13 @@ export default function Embed({
     const canEmbed =
         module.url !== null &&
         module.open !== 'tab' &&
+        module.open !== 'window' &&
         !viaExtension &&
         frame?.embeddable !== false;
-    const showTab = module.url !== null && module.open !== 'embed';
+    const showTab =
+        module.url !== null &&
+        module.open !== 'embed' &&
+        module.open !== 'window';
 
     // «Über die Browser-Erweiterung»: einmal je Aufruf automatisch im eigenen Tab öffnen
     const [extension] = useState(() => connectorVersion());
@@ -143,6 +148,14 @@ export default function Embed({
                             onClick={() => setReloads((n) => n + 1)}
                         >
                             <RefreshCw /> Neu laden
+                        </Button>
+                    )}
+                    {module.open === 'window' && module.url && (
+                        <Button
+                            size="sm"
+                            onClick={() => openInWindow(module.url ?? '')}
+                        >
+                            <ExternalLink /> In neuem Fenster öffnen
                         </Button>
                     )}
                     {showTab && module.url && (

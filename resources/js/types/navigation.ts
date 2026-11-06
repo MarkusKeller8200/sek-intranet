@@ -23,8 +23,8 @@ export type ModuleNavItem = {
     planned: boolean;
     /** Eingebundene Seite: Zieladresse (null = noch nicht verbunden). */
     external?: string | null;
-    /** embed = im Rahmen, tab = neuer Tab, both = Rahmen mit Knopf für neuen Tab */
-    open?: 'embed' | 'tab' | 'both' | null;
+    /** embed = im Rahmen, tab = neuer Tab, window = neues Fenster, both = Rahmen mit Knopf für neuen Tab */
+    open?: 'embed' | 'tab' | 'window' | 'both' | 'extension' | 'split' | null;
     /** Seitenmenü beim Öffnen einklappen (Fachanwendungen) */
     collapse?: boolean;
     /** Untermenü (z. B. Kommunikation → Fachanwendungen) */
