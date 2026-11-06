@@ -13,13 +13,16 @@ laufend unter **Unveröffentlicht**. Ab 0.32.0 entsteht eine Version nur bei ein
 
 - In der Zeiterfassung wählt man neu eine Buchungsart, z. B. Arbeitszeit, Homeoffice, Ferien, Krankheit oder Unfall.
   Bisherige Einträge erhalten sie automatisch.
-- Die Zeiterfassung zeigt neu pro Tag eine Totalzeile mit Wochentag und Stunden:Minuten; Wochenende und Feiertage
-  sind farbig. Aufklappen zeigt die einzelnen Buchungen. Selbst erfasste Einträge lassen sich bearbeiten.
-- Beim Übernehmen aus ClickTime kommt die Sollzeit mit; pro Tag stehen Soll, Ist und Differenz. Tage mit Ferien,
-  Kompensation oder Krankheit/Unfall haben eine eigene Farbe.
+- Die Zeiterfassung zeigt pro Tag eine Totalzeile mit Soll, Ist und Differenz in Stunden:Minuten. Wochenende,
+  Feiertage, Ferien, Kompensation und Krankheit sind farbig. Aufklappen zeigt die einzelnen Buchungen.
+- Selbst erfasste Einträge in der Zeiterfassung lassen sich neu bearbeiten.
+- Wer ClickTime nutzt, übernimmt einen Monat mit einem Knopf in die eigene Zeiterfassung, samt Sollzeit.
+- Diese Mitteilung zeigt neu die Versionsnummer und führt mit einem Link zu allen Änderungen auf GitHub.
 
 ### Neu
 
+- **Mitteilung «Neu im Intranet» mit Link auf GitHub (#144):** Die Mitteilung einer Version zeigt die
+  Versionsnummer und den Knopf «Release-Notes auf GitHub» (`INTRANET_GITHUB_REPO`, Release `v<Version>`).
 - **Konzept Betrieb (#104):** `docs/KONZEPT-BETRIEB.md` – komplett getrennte Mandanten (eine Installation pro
   Kunde), Cloud und On-Premise mit demselben Image, automatische Einrichtung über Abo- und Deploy-Plattform
   (eigenständige Projekte). Issues in den Meilensteinen «Betrieb & Auslieferung», «Plattform – Deploy», «Plattform –
@@ -31,8 +34,7 @@ laufend unter **Unveröffentlicht**. Ab 0.32.0 entsteht eine Version nur bei ein
   Kategorie, Zeit «HH:MM – HH:MM (−Pause min)», Soll, Ist (HH:MM), Delta, Herkunft (Intranet/ClickTime), Notizen.
   Alle Tage des Monats mit Tagestotal (leicht eingefärbt; Samstag, Sonntag und Feiertage Kanton Zürich in anderer
   Farbe, `Feiertage`), einzeln oder «Alle aufklappen» zu den Buchungen in kleiner Schrift; Tabelle nutzt die ganze
-  Breite. Soll und Delta vorerst «–» (Quelle der Sollzeit offen). Einträge aus dem Intranet bearbeiten (Stift, Formular oben)
-  und löschen, Einträge aus Fremdsystemen nur löschen (`PUT zeiterfassung/eintraege/{id}`). Modul 0.5.0.
+  Breite; Soll und Delta mit #103. Einträge aus dem Intranet bearbeiten (Stift, Formular oben) und löschen, Einträge aus Fremdsystemen nur löschen (`PUT zeiterfassung/eintraege/{id}`). Modul 0.5.0.
 - **Zeiterfassung: Soll, Delta und Farben je Abwesenheit (#103):** Beim Übernehmen aus ClickTime wird die Sollzeit
   pro Tag mitgeholt (eine Abfrage je Tag) und in `zeit_soll` gespeichert (Modul 0.6.0, Plugin 0.6). Tageszeilen zeigen
   Soll, Ist und Delta in HH:MM (negativ rot), unten Soll und Delta des Monats. Farben: Ferien pastellgrün,

@@ -2765,6 +2765,10 @@
         "Modul {n} igschaltet."
     ],
     "Alle Änderungen": ["All changes", "Alli Änderige"],
+    "Release-Notes auf GitHub": [
+        "Release notes on GitHub",
+        "Release-Notes uf GitHub"
+    ],
     "Neuerungen als Mitteilung": [
         "New features as announcement",
         "Neuerige als Mitteilig"

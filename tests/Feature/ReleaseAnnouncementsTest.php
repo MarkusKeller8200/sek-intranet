@@ -110,6 +110,22 @@ class ReleaseAnnouncementsTest extends TestCase
             ->where('announcement.body', fn (string $body): bool => str_contains($body, 'Gruppen')));
     }
 
+    public function test_link_to_release_notes_on_github(): void
+    {
+        config(['intranet.github_repo' => 'MarkusKeller8200/sek-intranet']);
+        $item = $this->service()->publish('1.4.0', $this->changelog());
+        $this->assertNotNull($item);
+
+        $this->signInAs('lehrperson');
+        $this->get('/mitteilungen/'.$item['id'])->assertOk()->assertInertia(fn (Assert $page) => $page
+            ->where('announcement.release_version', '1.4.0')
+            ->where('releaseUrl', 'https://github.com/MarkusKeller8200/sek-intranet/releases/tag/v1.4.0'));
+
+        config(['intranet.github_repo' => '']);
+        $this->assertNull(ReleaseAnnouncements::releaseUrl('1.4.0'));
+        $this->assertNull(ReleaseAnnouncements::releaseUrl('kein-semver'));
+    }
+
     public function test_hidden_when_nothing_is_for_the_person(): void
     {
         $changelog = "## [2.0.0] – 2026-12-01\n\n### Für Mitarbeitende\n\n- [manage-users] Nur für die Administration.\n";

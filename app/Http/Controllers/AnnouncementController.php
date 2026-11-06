@@ -47,8 +47,12 @@ class AnnouncementController extends Controller
         $item = ReleaseAnnouncements::forViewer($item);
         abort_if($item === null, 404);
 
+        $version = (string) ($item['release_version'] ?? '');
+
         return Inertia::render('announcements/show', [
             'announcement' => $this->withAuthors([$item])[0],
+            // Neuerungen einer Version: Link auf die Release-Notes (#144)
+            'releaseUrl' => $version !== '' ? ReleaseAnnouncements::releaseUrl($version) : null,
         ]);
     }
 

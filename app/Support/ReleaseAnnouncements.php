@@ -80,6 +80,17 @@ final class ReleaseAnnouncements
         return "Neu im Intranet: Version {$short}";
     }
 
+    /** Release-Notes einer Version auf GitHub (#144); null ohne Repository oder bei ungültiger Version. */
+    public static function releaseUrl(string $version): ?string
+    {
+        $repo = trim((string) config('intranet.github_repo', ''));
+        if ($repo === '' || preg_match('#^[\w.-]+/[\w.-]+$#', $repo) !== 1 || ! Release::isValid($version)) {
+            return null;
+        }
+
+        return "https://github.com/{$repo}/releases/tag/v{$version}";
+    }
+
     /**
      * @param  list<array{text: string, can: string|null}>  $items
      */

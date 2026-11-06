@@ -1,5 +1,12 @@
 import { Head, Link, usePage } from '@inertiajs/react';
-import { ArrowLeft, Clock, History, Pencil, Pin } from 'lucide-react';
+import {
+    ArrowLeft,
+    Clock,
+    ExternalLink,
+    History,
+    Pencil,
+    Pin,
+} from 'lucide-react';
 import DeleteButton from '@/components/delete-button';
 import OptionBadge from '@/components/option-badge';
 import { TermText } from '@/components/term-text';
@@ -10,8 +17,11 @@ import type { Announcement } from '@/types';
 
 export default function AnnouncementShow({
     announcement,
+    releaseUrl,
 }: {
     announcement: Announcement;
+    /** Release-Notes der Version auf GitHub (#144) */
+    releaseUrl?: string | null;
 }) {
     const { auth } = usePage().props;
 
@@ -84,7 +94,21 @@ export default function AnnouncementShow({
                     <TermText text={announcement.body} />
                 </div>
                 {announcement.release_version && (
-                    <div>
+                    <div className="flex flex-wrap items-center gap-2">
+                        <Badge variant="outline" translate="no">
+                            Version {announcement.release_version}
+                        </Badge>
+                        {releaseUrl && (
+                            <Button asChild variant="outline">
+                                <a
+                                    href={releaseUrl}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                >
+                                    <ExternalLink /> Release-Notes auf GitHub
+                                </a>
+                            </Button>
+                        )}
                         <Button asChild variant="outline">
                             <Link href="/versionen">
                                 <History /> Alle Änderungen
