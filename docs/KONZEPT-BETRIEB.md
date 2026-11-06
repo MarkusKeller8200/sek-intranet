@@ -317,6 +317,33 @@ Schwellen für den Wechsel von JSON weg: eine Sammlung über etwa 5–10 MB oder
 Zuerst die **Zeiterfassung** (Schätzung 50 Mitarbeitende × 3 Einträge × 220 Tage ≈ 33'000 Einträge bzw. 13 MB pro
 Jahr in einer Datei). Die übrigen Module bleiben bei JSON, bis sie eine Schwelle erreichen.
 
+### Strukturänderungen (Felder hinzufügen, löschen, verschieben, Typ ändern)
+
+- **JSON:** Feld hinzufügen nur im Schema (alte Datensätze ohne Feld → Vorgabewert); Löschen lässt alte Werte
+  liegen, bis ein Aufräumschritt sie entfernt (Seite «Datenstrukturen»: unbekannte Felder); Umbenennen über
+  `renames`, Typwechsel über einen Schritt in `intranet:upgrade`. Nichts erzwingt Typen.
+- **SQLite:** `ADD COLUMN` sofort; `DROP COLUMN` und `RENAME COLUMN` direkt; Typwechsel nur durch Neubau der Tabelle
+  (Laravel erledigt das, bei Schulgrösse Sekunden). Tabellen als `STRICT`, damit Typen erzwungen werden.
+- **PostgreSQL:** hinzufügen, löschen, umbenennen sofort; Typwechsel (`ALTER COLUMN … TYPE … USING`) schreibt je nach
+  Fall die Tabelle neu und sperrt sie kurz.
+- SQLite und PostgreSQL bauen Strukturen in einer Transaktion um: Schlägt eine Migration fehl, bleibt alles wie
+  vorher.
+- **Verschieben:** Die Reihenfolge der Felder spielt keine Rolle. Ein Feld in eine andere Sammlung bzw. Tabelle zu
+  verschieben ist ein Datenumzug (neu anlegen, kopieren, Code umstellen, alt später löschen).
+
+Regeln (gelten für alle Speicher, siehe auch `docs/KONZEPT-VERSIONIERUNG.md`):
+
+1. **Erweitern, später aufräumen:** In Version N wird das Neue zusätzlich angelegt, Werte übertragen, beide
+   geschrieben, neu gelesen; das Alte wird frühestens in der nächsten Minor-Version entfernt. So liest die
+   vorherige Version die Daten noch, und ein Update lässt sich ohne Wiederherstellung zurücknehmen. Nie in einem
+   Schritt löschen oder den Typ hart umbauen.
+2. **Jede Schemaänderung mit Umbau im selben Commit:** Migration für SQLite/PostgreSQL, Upgrade-Schritt für JSON.
+3. **Ein Test prüft**, dass Schema (`config/intranet.php`, `module.json`) und Migrationen übereinstimmen (wie
+   `SchemaCompletenessTest`).
+4. **Probelauf:** `intranet:upgrade --dry-run` zeigt vorab die anstehenden Migrationen und Umstellungen (#127).
+5. Jede Installation baut sich beim Update selbst um, in Wellen: Fehler treffen zuerst Test- und
+   Beta-Installationen.
+
 ## Sicherung
 
 - **Was:** pro Installation das Datenvolumen (JSON bzw. SQLite, Dateien und Dokumente; Plugin-Zugangsdaten liegen

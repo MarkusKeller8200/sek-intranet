@@ -82,6 +82,18 @@ Er wird beim Vorbereiten des Releases geschrieben und zusammen mit dem Release f
   wenn es seit dem letzten Tag geändert wurde.
 - Der Release-Workflow (`.github/blueprint/release.py check`) prüft dasselbe zusätzlich für die Module.
 
+### Datenstrukturen ändern (ab 06.11.2026)
+
+Weil sich jede Installation beim Update selbst umbaut und ein Update zurückgenommen werden können muss
+(`docs/KONZEPT-BETRIEB.md`, «Automatische Updates» und «Strukturänderungen»):
+
+- **Erweitern, später aufräumen:** Neues Feld bzw. neuer Typ zuerst zusätzlich anlegen und befüllen; das Alte
+  frühestens in der nächsten Minor-Version entfernen. Die vorherige Minor-Version muss die Daten noch lesen können.
+- **Umbau im selben Commit:** Migration (SQLite/PostgreSQL) bzw. Schritt in `intranet:upgrade` (JSON), beliebig oft
+  ausführbar ohne Schaden; Schlüssel von Auswahllisten weiterhin über `renames`.
+- **Schema und Migrationen stimmen überein** (Test in der CI); `intranet:upgrade --dry-run` zeigt den Umbau vorab.
+- Entfernte Felder und Umbauten gehören in den CHANGELOG (Abschnitt «Geändert»), mit Hinweis für Betreiber.
+
 ### Bestehende Versionen
 
 Die Tags `v0.1.0` und `v0.6.0` bis `v0.31.0` sind rückwirkend gesetzt (`.github/release-backfill.txt`). Der
