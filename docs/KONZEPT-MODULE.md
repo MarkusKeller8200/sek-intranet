@@ -10,6 +10,8 @@ Entscheid des Projektverantwortlichen vom 01.11.2026. Umsetzung erst nach Freiga
 2. **Module sind eine Ordnerstruktur im Intranet** und trennen die Themen fachlich:
    `modules/<Name>/` mit `module.json`, eigenen Rechten, eigenem Menü, eigenen Tests und eigenem CHANGELOG.
 3. **Jedes Modul hat seine eigene Datenhaltung.**
+    - Ergänzung 06.11.2026: Als schlanke Datenbank ist **SQLite** vorgesehen (eine Datei pro Installation, Vorgabe
+      für den Betrieb; `docs/KONZEPT-BETRIEB.md`). Gleiche Repositories, Tabellen mit Präfix des Moduls.
     - Mit Datenbank: ein PostgreSQL-Schema und ein DB-Benutzer pro Modul. Der Benutzer darf nur im eigenen Schema
       schreiben («eigener DB-Writer»).
     - Jedes Modul hat eigene Migrationen und eigene Repositories (Contracts mit JSON- und Database-Umsetzung).

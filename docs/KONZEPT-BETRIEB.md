@@ -269,6 +269,74 @@ Entscheid 06.11.2026:
 6. Hostinger Frankfurt mit Stufe 1 und 2 und Schlüssel in der Schweiz ist die Ausgangslage für die Anfrage an die
    Datenschutzbeauftragte. Bis zum Entscheid: echte Schuldaten nur bei einem Schweizer Hoster.
 
+## Datenspeicher: JSON, SQLite, PostgreSQL
+
+Entscheid 06.11.2026: **SQLite kommt als schlanke Datenbank dazu** (`INTRANET_STORE=sqlite`), zwischen dem
+JSON-Speicher und PostgreSQL. Gewechselt wird pro Modul über die Repositories (`docs/KONZEPT-MODULE.md`).
+
+### Wie sie arbeiten
+
+- **JSON (heute):** Jede Abfrage liest und dekodiert die ganze Datei der Sammlung, Suchen durchläuft alle
+  Datensätze; keine Indizes, kein Zwischenspeicher. Jede Änderung schreibt die ganze Datei neu (temporäre Datei und
+  `rename()`) und sperrt die Sammlung. Keine Transaktionen über mehrere Sammlungen.
+- **SQLite:** Datenbank als eine Datei pro Installation, läuft im PHP-Prozess (kein Server, kein Netzwerk). Indizes,
+  Transaktionen; im WAL-Modus lesen viele gleichzeitig, geschrieben wird von einem Schreiber nach dem anderen.
+- **PostgreSQL:** eigener Datenbank-Server; viele gleichzeitige Schreiber (Sperre pro Zeile), ausgereifte Abfragen,
+  Replikation, mehrere Container auf dieselben Daten.
+
+### Vergleich (Grössenordnungen, Lasttest auf der Demoplattform bestätigt die Zahlen)
+
+- **Einen Datensatz lesen:** JSON bei kleiner Datei (unter 1 MB) einige Millisekunden, bei 10–15 MB etwa
+  100–200 ms; SQLite mit Index unter 0.1 ms; PostgreSQL etwa 0.2–1 ms (Weg über Socket bzw. Netzwerk).
+- **Listen, Filter, Summen:** JSON in PHP über alle Datensätze; SQLite und PostgreSQL mit Index und SQL, um ein
+  Vielfaches schneller. Bei grossen Datenmengen und komplexen Auswertungen ist PostgreSQL am stärksten.
+- **Schreiben:** JSON schreibt die ganze Datei (Millisekunden bis Hunderte Millisekunden), nacheinander pro
+  Sammlung; SQLite wenige Millisekunden, ein Schreiber pro Datenbank – für eine Schule mehr als genug;
+  PostgreSQL am besten bei vielen gleichzeitigen Schreibern (grosse Schulen, Importe, Monatsende).
+- **Arbeitsspeicher:** JSON braucht pro Anfrage ein Mehrfaches der Dateigrösse (13 MB Datei → grob 50–100 MB in
+  PHP); SQLite wenige MB; PostgreSQL ein eigener Server mit grob 50–150 MB pro Installation.
+- **Grenze:** JSON einige MB pro Sammlung; SQLite problemlos bis in den GB-Bereich auf einem Server; PostgreSQL
+  sehr gross, auch über mehrere Server.
+- **Mehrere Container auf denselben Daten:** JSON nein, SQLite nein (eine Datei, kein Netzlaufwerk), PostgreSQL ja.
+- **Betrieb:** JSON und SQLite ohne zusätzlichen Dienst; PostgreSQL braucht Server, Updates und Einstellungen.
+- **Sicherung:** JSON Dateien kopieren unter Sperre; SQLite Online-Sicherung (`VACUUM INTO`) oder laufende
+  Replikation (Litestream) auf S3-kompatiblen Speicher – Datenverlust höchstens Sekunden; PostgreSQL `pg_dump`
+  bzw. WAL-Archivierung mit Wiederherstellung auf einen Zeitpunkt.
+
+### Wann was
+
+1. **JSON:** Prototyp, Tests, Demo und kleine Sammlungen (Einstellungen, Glossar, Termine, Mitteilungen).
+2. **SQLite – Vorgabe für den Betrieb pro Installation**, bei «Geteilt» und «Dediziert»: kein zusätzlicher Dienst
+   und kaum zusätzlicher Arbeitsspeicher, passt zur Trennung pro Installation.
+3. **PostgreSQL:** grosse Schulen oder Gemeinden, viele gleichzeitige Schreiber, mehrere Container, aufwendige
+   Auswertungen – typischerweise bei «Dediziert».
+
+Schwellen für den Wechsel von JSON weg: eine Sammlung über etwa 5–10 MB oder 20'000 Datensätze, Seiten dauerhaft
+über 200 ms, Auswertungen über viele Datensätze, mehrere Container, Start des Betriebs mit echten Schuldaten.
+
+Zuerst die **Zeiterfassung** (Schätzung 50 Mitarbeitende × 3 Einträge × 220 Tage ≈ 33'000 Einträge bzw. 13 MB pro
+Jahr in einer Datei). Die übrigen Module bleiben bei JSON, bis sie eine Schwelle erreichen.
+
+## Sicherung
+
+- **Was:** pro Installation das Datenvolumen (JSON bzw. SQLite, Dateien und Dokumente; Plugin-Zugangsdaten liegen
+  verschlüsselt darin). Schlüssel nicht – die liegen im Schlüsseldienst (#138); ohne Schlüssel ist eine Sicherung
+  unlesbar.
+- **Wie:** restic (verschlüsselt, inkrementell, Aufbewahrungsregeln) in den eigenen Swiss-Backup-Platz der Schule,
+  nie nur auf demselben Server. Einheitlicher Stand: bei JSON kurzes Anhalten oder Sperre aller Sammlungen, bei
+  SQLite `VACUUM INTO` bzw. Litestream, bei PostgreSQL `pg_dump`.
+- **Wann:** jede Nacht im Wartungsfenster und vor jedem Update; bei «Dediziert» zusätzlich Snapshots des Servers.
+- **Aufbewahrung (Vorschlag):** 7 tägliche, 4 wöchentliche, 12 monatliche Stände.
+- **3-2-1 für echte Schuldaten:** zweite Kopie an einem anderen Ort in der Schweiz (z. B. andere Region oder bei
+  der Schule).
+- **Prüfen:** wöchentlich automatische Wiederherstellung in einen Wegwerf-Container mit `/health`; Meldung an den
+  Betreiber bei Fehlern.
+- **Ziele:** Datenverlust höchstens 24 Stunden (mit SQLite-Replikation Sekunden); eine Schule in Minuten
+  wiederhergestellt, ohne die anderen zu berühren.
+- **Löschen:** nach Kündigung und Frist laufen auch die Sicherungen ab; der Export für die Schule (#109) ist davon
+  getrennt.
+- **On-Premise:** derselbe Ablauf, Ziel wählt der Betreiber (NAS oder S3).
+
 ## Reihenfolge
 
 1. Intranet: Container-Image, Konfiguration über Umgebungsvariablen, `/health`, `intranet:setup`, Einladungslink.
@@ -282,7 +350,8 @@ Entscheid 06.11.2026:
 
 ## Issues
 
-- Intranet: Meilenstein «Betrieb & Auslieferung», #104 (Konzept) mit #105–#113; Updates #127–#129; Verschlüsselung #136–#137.
+- Intranet: Meilenstein «Betrieb & Auslieferung», #104 (Konzept) mit #105–#113; Updates #127–#129; Verschlüsselung #136–#137;
+  SQLite #141, Zeiterfassung auf SQLite #142, Sicherung `intranet:backup` #143.
 - Deploy-Plattform: Meilenstein «Plattform – Deploy», #114–#120; Updates #130–#132; Demoplattform #134;
   Grundeinrichtung und Deploy-Agent #135; Schlüsseldienst #138; Angebot «Dediziert» #140.
 - Abo-Plattform: Meilenstein «Plattform – Abo», #121–#126; Updates #133.

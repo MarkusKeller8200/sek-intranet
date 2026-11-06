@@ -25,6 +25,8 @@ laufend unter **Unveröffentlicht**. Ab 0.32.0 entsteht eine Version nur bei ein
   (eigenständige Projekte). Issues in den Meilensteinen «Betrieb & Auslieferung», «Plattform – Deploy», «Plattform –
   Abo», alle `triage`. Ergänzt um automatische Updates (SemVer-Regeln, Wellen, Wartungsfenster,
   Schnappschuss und Zurückschalten, On-Premise-Update-Dienst; #127–#133).
+  Ergänzt um Hosting (Infomaniak VPS Lite, Hostinger), Datenschutz Standort Deutschland, Verschlüsselung, Angebote
+  «Geteilt»/«Dediziert», Datenspeicher (SQLite als schlanke Datenbank) und Sicherung (#134–#143).
 - **Zeiterfassung: neue Tabelle und Einträge bearbeiten (#102):** Spalten Tag (MO–SO), Datum (TT.MM.), Buchungsart,
   Kategorie, Zeit «HH:MM – HH:MM (−Pause min)», Soll, Ist (HH:MM), Delta, Herkunft (Intranet/ClickTime), Notizen.
   Alle Tage des Monats mit Tagestotal (leicht eingefärbt; Samstag, Sonntag und Feiertage Kanton Zürich in anderer
