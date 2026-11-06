@@ -566,7 +566,7 @@ return [
                 'sl-planer' => [
                     'title' => 'SL-Planer',
                     'icon' => 'CalendarClock',
-                    'description' => 'SL-Planer (Planung für Schulleitungen). Anmeldeseite eines fremden Dienstes – öffnet in neuem Tab; Einbetten unter Einstellungen prüfen.',
+                    'description' => 'SL-Planer (Planung für Schulleitungen). Der SL-Planer verbietet das Einbetten (X-Frame-Options: SAMEORIGIN, geprüft 06.11.2026) – öffnet in neuem Tab.',
                     'embed' => ['url' => 'https://slplaner.ch/my/users/sign_in?open_modal=true', 'open' => 'tab'],
                 ],
             ],

@@ -12,7 +12,7 @@ laufend unter **Unveröffentlicht**. Ab 0.32.0 entsteht eine Version nur bei ein
 ### Neu
 
 - **Fachanwendungen: SL-Planer (#145):** Neuer Menüpunkt «SL-Planer» (Anmeldeseite, öffnet in neuem Tab;
-  Adresse und Öffnen unter Einstellungen → Fachanwendungen).
+  der SL-Planer verbietet das Einbetten mit `X-Frame-Options: SAMEORIGIN`).
 
 ## [0.36.0] – 2026-11-06
 

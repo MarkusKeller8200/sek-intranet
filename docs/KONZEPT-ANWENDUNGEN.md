@@ -56,7 +56,7 @@ eines Menüpunkts).
 | Escola               | `https://www.sekbuelach.ch/escola/login` (`.env` `INTRANET_APP_ESCOLA_URL` übersteuert) | Rahmen, falls erlaubt, sonst neuer Tab                 |
 | Apple School Manager | `https://school.apple.com`                                                              | immer neuer Tab (Apple verbietet das Einbetten)        |
 | Jamf Pro             | `.env` `INTRANET_APP_JAMF_URL`                                                          | Rahmen, falls erlaubt, sonst neuer Tab (Daten: Plugin) |
-| SL-Planer            | `https://slplaner.ch/my/users/sign_in?open_modal=true`                                  | neuer Tab (Einbetten ungeprüft)                        |
+| SL-Planer            | `https://slplaner.ch/my/users/sign_in?open_modal=true`                                  | immer neuer Tab (X-Frame-Options: SAMEORIGIN)          |
 
 Escola sendet `Content-Security-Policy: … frame-ancestors 'self'` (geprüft am 31.10.2026, Server Apache, kein
 Cloudflare). `'self'` heisst: nur Seiten derselben Adresse (`https://www.sekbuelach.ch`) dürfen Escola einbetten.
