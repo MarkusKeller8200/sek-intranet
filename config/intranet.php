@@ -567,7 +567,8 @@ return [
                     'title' => 'SL-Planer',
                     'icon' => 'CalendarClock',
                     'description' => 'SL-Planer (Planung für Schulleitungen). Der SL-Planer verbietet das Einbetten (X-Frame-Options: SAMEORIGIN, geprüft 06.11.2026) – öffnet in neuem Tab.',
-                    'embed' => ['url' => 'https://slplaner.ch/my/users/sign_in?open_modal=true', 'open' => 'tab'],
+                    // Adresse wie bei CMI/Escola über die Server-.env übersteuerbar (z. B. eigene Instanz oder Login-Seite)
+                    'embed' => ['url' => env('INTRANET_APP_SLPLANER_URL', 'https://slplaner.ch/my/users/sign_in?open_modal=true'), 'open' => 'tab'],
                 ],
             ],
         ],

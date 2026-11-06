@@ -12,7 +12,8 @@ laufend unter **Unveröffentlicht**. Ab 0.32.0 entsteht eine Version nur bei ein
 ### Neu
 
 - **Fachanwendungen: SL-Planer (#145):** Neuer Menüpunkt «SL-Planer» (Anmeldeseite, öffnet in neuem Tab;
-  der SL-Planer verbietet das Einbetten mit `X-Frame-Options: SAMEORIGIN`).
+  der SL-Planer verbietet das Einbetten mit `X-Frame-Options: SAMEORIGIN`). Adresse wie bei CMI/Escola über die
+  Server-`.env` übersteuerbar (`INTRANET_APP_SLPLANER_URL`).
 
 ## [0.36.0] – 2026-11-06
 
