@@ -9,9 +9,7 @@ export function openInWindow(
 ): void {
     const share = (value: number) => Math.min(100, Math.max(20, value)) / 100;
     const width = Math.round(window.screen.availWidth * share(widthPercent));
-    const height = Math.round(
-        window.screen.availHeight * share(heightPercent),
-    );
+    const height = Math.round(window.screen.availHeight * share(heightPercent));
     const left = Math.round((window.screen.availWidth - width) / 2);
     const top = Math.round((window.screen.availHeight - height) / 2);
 
