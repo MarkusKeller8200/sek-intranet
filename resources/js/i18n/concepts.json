@@ -1512,6 +1512,21 @@
     "LMVZ Digital": ["LMVZ Digital", "LMVZ Digital"],
     "SL-Planer": ["SL-Planer", "SL-Planer"],
     "In CMI öffnen": ["Open in CMI", "Im CMI uftue"],
+    "Menü überlagernd": ["Overlay menu", "Menü überlagernd"],
+    "Bei schmalem Fenster": ["In narrow windows", "Bi schmalem Fänschter"],
+    "Gilt für diesen Browser.": [
+        "Applies to this browser.",
+        "Gilt für dä Browser."
+    ],
+    "Das Seitenmenü öffnet über dem Inhalt statt daneben (Knopf oben links). Schafft Platz, wenn eine Fachanwendung im Browser geteilt neben dem Intranet läuft. «Bei schmalem Fenster» gilt unter {n} Pixel Breite.": [
+        "The side menu opens over the content instead of next to it (button top left). Makes room when an application runs split next to the intranet in the browser. “In narrow windows” applies below {n} pixels width.",
+        "S Siitemenü gaht über em Inhalt uf statt dernäbe (Chnopf obe links). Git Platz, wänn e Fachaawändig im Browser teilt näbem Intranet lauft. «Bi schmalem Fänschter» gilt under {n} Pixel Breiti."
+    ],
+    "Tipp: Unter": ["Tip: under", "Tipp: Under"],
+    "«Menü überlagernd» einschalten – dann hat das Intranet neben der Anwendung mehr Platz.": [
+        "turn on “Overlay menu” – the intranet then has more room next to the application.",
+        "«Menü überlagernd» iischalte – dänn hät s Intranet näbe de Aawändig meh Platz."
+    ],
     "SL-Planer (Planung für Schulleitungen). Der SL-Planer verbietet das Einbetten (X-Frame-Options: SAMEORIGIN, geprüft {n}) – öffnet in neuem Tab.": [
         "SL-Planer (planning for school management). SL-Planer does not allow embedding (X-Frame-Options: SAMEORIGIN, checked {n}) – opens in a new tab.",
         "SL-Planer (Planig für Schuelleitige). De SL-Planer verbüütet s Iibette (X-Frame-Options: SAMEORIGIN, prüeft {n}) – gaht imne neue Tab uf."

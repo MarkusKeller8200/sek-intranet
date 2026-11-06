@@ -11,6 +11,9 @@ laufend unter **Unveröffentlicht**. Ab 0.32.0 entsteht eine Version nur bei ein
 
 ### Neu
 
+- **Darstellung: Menü überlagernd (#153):** Optional unter Einstellungen → Darstellung (Aus, Bei schmalem Fenster
+  unter 1280 px, Immer; gilt für diesen Browser). Das Seitenmenü öffnet dann über dem Inhalt statt daneben – mehr
+  Platz, wenn eine Fachanwendung im Browser geteilt neben dem Intranet läuft. Hinweis auf der Seite der Anwendung.
 - **Konzept Design-Werkzeuge (#152):** `docs/KONZEPT-DESIGN.md` – VisBug und Entwicklertools zum Messen und Melden,
   Penpot (Test in der Cloud, danach Hostinger KVM 2 in Frankfurt mit Microsoft-Login), Design-Tokens als einzige
   Quelle für `app.css` und Themes, Developer-Werkzeuge im Intranet.

@@ -4,6 +4,7 @@ import FontPicker from '@/components/font-picker';
 import { InstallAppButton } from '@/components/install-app';
 import LanguagePicker from '@/components/language-picker';
 import Heading from '@/components/heading';
+import SidebarOverlaySetting from '@/components/sidebar-overlay-setting';
 import TermHighlightSetting from '@/components/term-highlight-setting';
 
 export default function Appearance() {
@@ -31,6 +32,13 @@ export default function Appearance() {
                     description="Sprache der Oberfläche. Gilt für diesen Browser; Inhalte wie Mitteilungen bleiben in ihrer Sprache."
                 />
                 <LanguagePicker />
+
+                <Heading
+                    variant="small"
+                    title="Menü"
+                    description="Gilt für diesen Browser."
+                />
+                <SidebarOverlaySetting />
 
                 <Heading
                     variant="small"

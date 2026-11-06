@@ -21,6 +21,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip"
 import { useIsMobile } from "@/hooks/use-mobile"
+import { useSidebarOverlay } from "@/lib/sidebar-overlay"
 import { cn } from "@/lib/utils"
 
 const SIDEBAR_COOKIE_NAME = "sidebar_state"
@@ -64,7 +65,10 @@ function SidebarProvider({
   open?: boolean
   onOpenChange?: (open: boolean) => void
 }) {
-  const isMobile = useIsMobile()
+  // Menü überlagernd (#153): wie auf dem Handy über dem Inhalt öffnen, damit die Seite die ganze Breite hat
+  const narrowScreen = useIsMobile()
+  const overlay = useSidebarOverlay()
+  const isMobile = narrowScreen || overlay
   const [openMobile, setOpenMobile] = React.useState(false)
 
   // This is the internal state of the sidebar.

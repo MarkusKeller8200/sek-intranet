@@ -31,6 +31,7 @@ import {
 } from '@/lib/connector';
 import { moduleIcon } from '@/lib/module-icons';
 import { openInWindow } from '@/lib/open-window';
+import { useSidebarOverlaySetting } from '@/lib/sidebar-overlay';
 import { cn } from '@/lib/utils';
 
 type Embedded = {
@@ -93,6 +94,7 @@ export default function Embed({
     }, [module.key, module.collapse, isMobile, setOpen]);
 
     const viaExtension = module.open === 'extension' || module.open === 'split';
+    const overlay = useSidebarOverlaySetting();
     const canEmbed =
         module.url !== null &&
         module.open !== 'tab' &&
@@ -181,6 +183,20 @@ export default function Embed({
                         </Button>
                     )}
                 </div>
+
+                {module.open === 'split' && overlay === 'aus' && (
+                    <p className="text-xs text-muted-foreground">
+                        Tipp: Unter{' '}
+                        <Link
+                            href="/einstellungen/darstellung"
+                            className="text-primary hover:underline"
+                        >
+                            Darstellung
+                        </Link>{' '}
+                        «Menü überlagernd» einschalten – dann hat das Intranet
+                        neben der Anwendung mehr Platz.
+                    </p>
+                )}
 
                 {module.url === null && (
                     <Card>
