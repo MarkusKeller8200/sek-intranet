@@ -40,6 +40,38 @@ final class PersonLinks
     }
 
     /**
+     * Adresse, um direkt ins fremde System zu springen (#149, config intranet.record_links), z. B. ins CMI-Dossier.
+     * Null ohne Vorlage, bei ungültiger ID oder wenn die Adresse nicht https ist.
+     */
+    public static function recordUrl(string $system, string $externalId, string $personType): ?string
+    {
+        $config = config("intranet.record_links.{$system}");
+        if (! is_array($config) || ! is_string($config['url'] ?? null)) {
+            return null;
+        }
+        $id = trim($externalId);
+        $pattern = is_string($config['id_pattern'] ?? null) ? $config['id_pattern'] : '/^[A-Za-z0-9-]{1,64}$/';
+        if ($id === '' || preg_match($pattern, $id) !== 1) {
+            return null;
+        }
+        $areas = is_array($config['bereiche'] ?? null) ? $config['bereiche'] : [];
+        $area = (string) ($areas[$personType] ?? $areas['*'] ?? '');
+        if (str_contains($config['url'], '{bereich}') && preg_match('/^[A-Za-z0-9-]{1,64}$/', $area) !== 1) {
+            return null;
+        }
+        $url = strtr($config['url'], ['{bereich}' => $area, '{id}' => rawurlencode($id)]);
+
+        return str_starts_with($url, 'https://') ? $url : null;
+    }
+
+    public static function recordLabel(string $system): ?string
+    {
+        $label = config("intranet.record_links.{$system}.label");
+
+        return is_string($label) ? $label : null;
+    }
+
+    /**
      * @return list<array<string, mixed>>
      */
     public function all(): array
@@ -58,7 +90,9 @@ final class PersonLinks
         $links = array_values(array_filter($this->all(), fn (array $l): bool => ($l['person_id'] ?? null) === $personId));
         usort($links, fn (array $a, array $b): int => [($a['direction'] ?? '') === 'source' ? 0 : 1, $a['system'] ?? ''] <=> [($b['direction'] ?? '') === 'source' ? 0 : 1, $b['system'] ?? '']);
 
-        return array_map(fn (array $l): array => $l + ['status' => self::status($l, $person)], $links);
+        return array_map(fn (array $l): array => $l + ['status' => self::status($l, $person)]
+            + ['open_url' => self::recordUrl((string) ($l['system'] ?? ''), (string) ($l['external_id'] ?? ''), (string) ($person['person_type'] ?? ''))]
+            + ['open_label' => self::recordLabel((string) ($l['system'] ?? ''))], $links);
     }
 
     /**

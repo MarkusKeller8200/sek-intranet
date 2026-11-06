@@ -35,6 +35,17 @@ Sammlung `person_links`, je Eintrag: Person, Richtung (**Quelle** oder **Ziel**)
   (Escola: Escola-ID, Entra: objectId).
 - `intranet:upgrade` übernimmt vorhandene Escola-IDs als Quelle.
 
+### Direkt ins fremde System springen (ab #149)
+
+Für Systeme mit einer Vorlage unter `config/intranet.php` → `record_links` zeigt die Datenherkunft einer Person einen
+Knopf, der den Datensatz im fremden System öffnet (neuer Tab). Es werden keine Daten aus dem System gelesen; die
+Anmeldung und die Rechte prüft das System selbst.
+
+- **CMI:** Dossier-ID = letzte GUID der CMI-Adresse (`https://sekbuelach.cmicloud.ch/#/{bereich}/{bereich}/{id}`).
+  Der Bereich hängt von der Personenart ab (Schüler:innen → Schülerdossier, übrige → Personaldossier), übersteuerbar
+  in der Server-`.env` (`INTRANET_CMI_DOSSIER_URL`, `INTRANET_CMI_BEREICH_SCHUELER`, `INTRANET_CMI_BEREICH_PERSONAL`).
+- Nur IDs, die zum Muster passen (CMI: 32 Hex-Zeichen), und nur `https`-Adressen.
+
 ## Geräteausgabe
 
 «Schüler:innen importieren» → **Aus dem Intranet laden**: Jahrgang wählen, Klassen ankreuzen, laden. Es werden

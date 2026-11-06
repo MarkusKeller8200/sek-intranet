@@ -5,6 +5,7 @@ import {
     CircleCheck,
     CircleDashed,
     Database,
+    ExternalLink,
     Pencil,
     Plus,
     RefreshCw,
@@ -35,6 +36,9 @@ export type PersonLink = {
     last_sync_at: string | null;
     note: string | null;
     status: 'imported' | 'unknown' | 'pending' | 'current';
+    /** Direkt ins fremde System springen, z. B. ins CMI-Dossier (#149) */
+    open_url?: string | null;
+    open_label?: string | null;
 };
 
 type LinkForm = {
@@ -48,6 +52,21 @@ type LinkForm = {
 
 const selectClass =
     'h-9 rounded-md border border-input bg-background px-2 text-sm';
+
+/** Knopf «In CMI öffnen» o. ä.: öffnet den Datensatz im fremden System in einem neuen Tab. */
+function OpenInSystem({ link }: { link: PersonLink }) {
+    if (!link.open_url) {
+        return null;
+    }
+
+    return (
+        <Button asChild variant="outline" size="sm" className="mt-1">
+            <a href={link.open_url} target="_blank" rel="noopener noreferrer">
+                <ExternalLink /> {link.open_label ?? 'Öffnen'}
+            </a>
+        </Button>
+    );
+}
 
 function Status({ link }: { link: PersonLink }) {
     switch (link.status) {
@@ -356,6 +375,7 @@ export default function PersonLinksCard({
                                                         {link.id_label}
                                                     </div>
                                                 )}
+                                                <OpenInSystem link={link} />
                                             </td>
                                             <td className="px-3 py-2 whitespace-nowrap">
                                                 {link.last_sync_at

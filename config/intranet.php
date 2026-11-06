@@ -395,9 +395,25 @@ return [
         'ida' => 'IDA',
         'inventory360' => 'Inventory360',
         'clicktime' => 'ClickTime',
+        'cmi' => 'CMI',
         'edulog' => 'Edulog',
         'datei' => 'Datei-Import (Excel/CSV)',
         'intranet' => 'Intranet (manuell erfasst)',
+    ],
+
+    // Direkt aus der Datenherkunft ins fremde System springen (#149): Adresse mit {id} (ID aus der Datenherkunft) und
+    // {bereich} je Personenart ('*' = alle übrigen). Nur gültige IDs (Muster), nur https. Es werden keine Daten gelesen.
+    'record_links' => [
+        'cmi' => [
+            'label' => 'In CMI öffnen',
+            'url' => env('INTRANET_CMI_DOSSIER_URL', 'https://sekbuelach.cmicloud.ch/#/{bereich}/{bereich}/{id}'),
+            'id_pattern' => '/^[0-9a-f]{32}$/i',
+            'bereiche' => [
+                // Schülerdossier bzw. Personaldossier (GUID des Bereichs in der CMI-Adresse)
+                'schueler' => env('INTRANET_CMI_BEREICH_SCHUELER', '360f3d3459a745e5b2f35918edb69434'),
+                '*' => env('INTRANET_CMI_BEREICH_PERSONAL', 'a6918005296e46f8a31242fc7861f653'),
+            ],
+        ],
     ],
 
     // Art der Person (Kontakt), unabhängig von den Rechten im Intranet. Liste erweiterbar.

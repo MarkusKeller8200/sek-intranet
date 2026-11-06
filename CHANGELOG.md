@@ -11,6 +11,9 @@ laufend unter **Unveröffentlicht**. Ab 0.32.0 entsteht eine Version nur bei ein
 
 ### Neu
 
+- **Personen: direkt ins CMI-Dossier (#149):** Neues System «CMI» in der Datenherkunft. Mit der Dossier-ID zeigt
+  die Person den Knopf «In CMI öffnen» (Personal- bzw. Schülerdossier je Personenart, neuer Tab); es werden keine
+  Daten aus CMI gelesen. Vorlagen unter `record_links`, Bereiche über die `.env` übersteuerbar.
 - **Sicherheit: Schutz-Kopfzeilen (#147):** Jede Antwort sendet `X-Frame-Options: SAMEORIGIN` und eine
   Content-Security-Policy mit `frame-ancestors 'self'` (kein Einbetten des Intranets durch fremde Seiten),
   `frame-src` nur für Fachanwendungen und Einbindungen im Rahmen (inkl. Einstellungen), `object-src 'none'` und
