@@ -131,10 +131,11 @@ class ModuleNavigation
             'planned' => ! is_string($href),
             'external' => $embed['url'] ?? null,
             'open' => $embed['open'] ?? null,
+        ] + ($embed !== null ? [
             // Neues Browser-Fenster: Grösse in % des sichtbaren Anzeigebereichs (#151)
-            'width' => $embed['width'] ?? null,
-            'height' => $embed['height'] ?? null,
-        ];
+            'width' => $embed['width'],
+            'height' => $embed['height'],
+        ] : []);
     }
 
     /**
