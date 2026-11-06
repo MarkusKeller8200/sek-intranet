@@ -563,6 +563,12 @@ return [
                     'description' => 'Lehrmittel-Lizenzen des LMVZ (inoffiziell). Über die Browser-Erweiterung: Lizenzübersicht mit der Anmeldung im Tab abrufen – ohne Token im Intranet.',
                     'embed' => ['url' => 'https://digital.lmvz.ch', 'open' => 'extension'],
                 ],
+                'sl-planer' => [
+                    'title' => 'SL-Planer',
+                    'icon' => 'CalendarClock',
+                    'description' => 'SL-Planer (Planung für Schulleitungen). Anmeldeseite eines fremden Dienstes – öffnet in neuem Tab; Einbetten unter Einstellungen prüfen.',
+                    'embed' => ['url' => 'https://slplaner.ch/my/users/sign_in?open_modal=true', 'open' => 'tab'],
+                ],
             ],
         ],
         'wissen' => [

@@ -9,6 +9,11 @@ laufend unter **Unveröffentlicht**. Ab 0.32.0 entsteht eine Version nur bei ein
 
 ## [Unveröffentlicht]
 
+### Neu
+
+- **Fachanwendungen: SL-Planer (#145):** Neuer Menüpunkt «SL-Planer» (Anmeldeseite, öffnet in neuem Tab;
+  Adresse und Öffnen unter Einstellungen → Fachanwendungen).
+
 ## [0.36.0] – 2026-11-06
 
 ### Für Mitarbeitende

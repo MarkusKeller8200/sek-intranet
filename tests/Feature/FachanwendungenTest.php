@@ -23,7 +23,7 @@ class FachanwendungenTest extends TestCase
 
                 return $groups->pluck('key')->take(2)->all() === ['kommunikation', 'fachanwendungen']
                     && ! collect($groups[0]['items'])->contains('key', 'fachanwendungen')
-                    && $children->pluck('key')->all() === ['cmi', 'escola', 'apple-school-manager', 'jamf-pro', 'lmvz-digital']
+                    && $children->pluck('key')->all() === ['cmi', 'escola', 'apple-school-manager', 'jamf-pro', 'lmvz-digital', 'sl-planer']
                     && $children->every(fn ($c) => $c['collapse'] === true && str_starts_with($c['href'], '/einbindung/'))
                     && $children->firstWhere('key', 'escola')['external'] === 'https://www.sekbuelach.ch/escola/login'
                     && $children->firstWhere('key', 'escola')['open'] === 'tab'
