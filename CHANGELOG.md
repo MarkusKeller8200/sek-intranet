@@ -20,6 +20,10 @@ laufend unter **Unveröffentlicht**. Ab 0.32.0 entsteht eine Version nur bei ein
 
 ### Neu
 
+- **Konzept Betrieb (#104):** `docs/KONZEPT-BETRIEB.md` – komplett getrennte Mandanten (eine Installation pro
+  Kunde), Cloud und On-Premise mit demselben Image, automatische Einrichtung über Abo- und Deploy-Plattform
+  (eigenständige Projekte). Issues in den Meilensteinen «Betrieb & Auslieferung», «Plattform – Deploy», «Plattform –
+  Abo», alle `triage`.
 - **Zeiterfassung: neue Tabelle und Einträge bearbeiten (#102):** Spalten Tag (MO–SO), Datum (TT.MM.), Buchungsart,
   Kategorie, Zeit «HH:MM – HH:MM (−Pause min)», Soll, Ist (HH:MM), Delta, Herkunft (Intranet/ClickTime), Notizen.
   Alle Tage des Monats mit Tagestotal (leicht eingefärbt; Samstag, Sonntag und Feiertage Kanton Zürich in anderer
