@@ -155,6 +155,32 @@ Angebot (1 vCPU, 2 GB RAM, 20 GB).
   in der Infomaniak Public Cloud (OpenStack-API, Terraform), z. B. als Option «eigener Server».
 - Die Grösse für den Betrieb (Schulen pro Server) zeigt ein Lasttest auf der Demoplattform.
 
+### Infomaniak-API (geprüft 06.11.2026, developer.infomaniak.com)
+
+- **VPS (Lite und Cloud): keine Endpunkte.** Bestellen, neu installieren und Snapshots nur von Hand im Manager.
+- **DNS:** `POST /2/zones/{zone}/records`, `PUT`/`DELETE /2/zones/{zone}/records/{record}` – Subdomain pro Kunde
+  anlegen und entfernen; auch für Zertifikate per DNS-Prüfung (Wildcard) nutzbar.
+- **Swiss Backup:** `POST /1/swiss_backups/{id}/slots` (Platz pro Kunde), `GET …/slots/{slot}/rclone`
+  (Zugangsangaben für rclone), Platz deaktivieren und löschen.
+- **Public Cloud:** Projekte, Benutzer, Zugangsdaten, Object Storage (S3), Datenbanken, Kubernetes per REST; die
+  virtuellen Server selbst über die OpenStack-API bzw. Terraform. Ein Projekt pro Kunde ist möglich.
+- API-Token aus dem Infomaniak Manager mit nur den nötigen Rechten (DNS, Swiss Backup), verschlüsselt in der
+  Deploy-Plattform; nie im Repository oder im Chat.
+
+### Was auf dem VPS läuft
+
+Einmalig von Hand: VPS bestellen, Linux (Ubuntu LTS) mit SSH-Schlüssel. Danach automatisch:
+
+1. **Grundeinrichtung per Skript** (einmal, wiederholbar): Updates, Firewall (22/80/443), Docker Engine mit
+   Compose, Reverse Proxy (Container, holt Zertifikate), Deploy-Agent.
+2. **Deploy-Agent** (kleiner Container auf dem VPS): holt Aufträge bei der Deploy-Plattform ab (nur ausgehende
+   Verbindung, kein Zugang von aussen nötig) und führt sie mit Docker aus.
+3. **Pro Kunde ein Compose-Projekt:** Intranet-Container (Image aus #105), eigenes Volumen, eigenes Netzwerk,
+   eigene `.env` mit eigenem App-Schlüssel; Label für den Reverse Proxy (Subdomain); Sicherung per rclone in den
+   Swiss-Backup-Platz des Kunden.
+
+Grob 150–250 MB RAM pro Installation: Auf dem kleinsten VPS Lite (2 GB) haben 4–6 Demo-Installationen Platz.
+
 ## Reihenfolge
 
 1. Intranet: Container-Image, Konfiguration über Umgebungsvariablen, `/health`, `intranet:setup`, Einladungslink.
@@ -169,7 +195,7 @@ Angebot (1 vCPU, 2 GB RAM, 20 GB).
 ## Issues
 
 - Intranet: Meilenstein «Betrieb & Auslieferung», #104 (Konzept) mit #105–#113; Updates #127–#129.
-- Deploy-Plattform: Meilenstein «Plattform – Deploy», #114–#120; Updates #130–#132; Demoplattform #134.
+- Deploy-Plattform: Meilenstein «Plattform – Deploy», #114–#120; Updates #130–#132; Demoplattform #134; Grundeinrichtung und Deploy-Agent #135.
 - Abo-Plattform: Meilenstein «Plattform – Abo», #121–#126; Updates #133.
 
 Alle mit `triage`. Die Issues der beiden Plattformen ziehen in die eigenen Repositories um, sobald es diese gibt.
