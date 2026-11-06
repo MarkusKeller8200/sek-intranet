@@ -87,20 +87,25 @@ lässt sich automatisch zurücknehmen. Freigegeben wird eine Version weiterhin n
    Ankündigung. Dringende Sicherheitskorrekturen auch ausserhalb des Fensters, mit Hinweis an die Administration.
 2. **Minor** (z. B. 0.37.0, neue Funktionen): automatisch im Wartungsfenster, Ankündigung an die Administration
    mindestens 3 Tage vorher (Text aus «Für Mitarbeitende»). Danach wie heute die Mitteilung «Neu im Intranet».
-3. **Major** (z. B. 1.0.0, grössere Umstellungen): nie automatisch. Die Administration bestätigt im Kundenkonto
-   oder wählt einen Termin; nach spätestens 90 Tagen wird nachgezogen, weil die alte Version nicht mehr
-   unterstützt wird.
+3. **Major** (z. B. 1.0.0, grössere Umstellungen): nie automatisch (ausser im Kanal «Beta»). Die Administration
+   bestätigt im Kundenkonto oder wählt einen Termin; nach spätestens 90 Tagen wird nachgezogen, weil die alte
+   Version nicht mehr unterstützt wird.
 
 ### Kanäle und Wellen
 
-- **Kanäle:** «Vorschau» (Developer Release, für Test-Installationen) und «Stabil» (freigegebene Releases, Vorgabe).
-- **Wellen** für «Stabil»: Welle 0 eigene Test-Installation, Welle 1 Pilotschulen (freiwillig), Welle 2 alle.
-  Zwischen den Wellen mindestens 24 Stunden (Patch) bzw. 3 Tage (Minor). Häufen sich Fehler in einer Welle, hält
-  das Ausrollen automatisch an, bis es freigegeben wird.
+- **Kanal «Beta»:** Wer sich im Kundenkonto für Beta-Versionen registriert, bekommt **alle Versionen so rasch wie
+  möglich** – Developer Releases, Patch, Minor und Major – ohne Abstand zwischen Wellen und ohne Bestätigung, im
+  nächsten Wartungsfenster nach der Veröffentlichung. Abmelden jederzeit; zurück auf «Stabil» geht es mit der
+  nächsten stabilen Version (kein Zurückspringen auf ältere Daten).
+- **Kanal «Stabil»** (Vorgabe): nur freigegebene Releases, in Wellen: Welle 0 eigene Test-Installation, Welle 1
+  die Beta-Installationen (haben die Version dann schon), Welle 2 alle übrigen. Zwischen den Wellen mindestens
+  24 Stunden (Patch) bzw. 3 Tage (Minor). Häufen sich Fehler in einer Welle, hält das Ausrollen automatisch an, bis
+  es freigegeben wird.
 
 ### Wartungsfenster
 
-- Vorgabe nachts (z. B. 02:00–05:00), pro Kunde im Kundenkonto änderbar.
+- Möglich zwischen **23:00 und 05:00** Uhr; der Kunde wählt im Kundenkonto ein Fenster in diesem Bereich (Vorgabe
+  die ganze Zeit 23:00–05:00). Ausserhalb gibt es nur dringende Sicherheitskorrekturen.
 - Sperrzeiten, die der Kunde setzt (z. B. Zeugniswoche, Semesterende): keine Minor- oder Major-Updates.
 - Updates höchstens 30 Tage aufschieben; Sicherheitskorrekturen lassen sich nicht aufschieben.
 
@@ -160,5 +165,6 @@ Alle mit `triage`. Die Issues der beiden Plattformen ziehen in die eigenen Repos
 3. Betreiber und Vertragspartner für die ADV (Person, Schule Bülach oder eigene Organisation)?
 4. Kostenmodell (gratis, Pauschale pro Schule, nach Grösse) – bestimmt, ob die Abo-Plattform eine Abrechnung braucht.
 5. Eigene Repositories für Abo- und Deploy-Plattform anlegen (bis dahin Meilensteine in diesem Repository).
-6. Updates: Wartungsfenster, Abstand der Wellen und Frist für Major-Updates (Vorschlag 02:00–05:00, 24 h / 3 Tage,
-   90 Tage) bestätigen; welche Schulen sind Pilotschulen?
+
+Entschieden am 06.11.2026: Wartungsfenster 23:00–05:00; Wellen 24 Stunden (Patch) bzw. 3 Tage (Minor); Major nach
+Bestätigung, spätestens nach 90 Tagen; Kanal «Beta» bekommt alle Versionen so rasch wie möglich.
