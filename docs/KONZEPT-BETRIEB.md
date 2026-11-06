@@ -219,6 +219,36 @@ bzw. dem Volksschulamt abklären.
 - `INTRANET_DATA_LOCATION` (#112) erhält dafür die Werte `CH` und `EU`; Personendaten-Endpunkte der Plugins bleiben
   bei `EU` gesperrt, solange nichts anderes entschieden ist.
 
+### Verschlüsselung
+
+Leitfaden «Nutzung externer Cloud-Dienste» der Datenschutzbeauftragten: Liegt das Schlüsselmanagement beim
+öffentlichen Organ, ist das Offenbaren der Daten ausgeschlossen (Ziff. 3); Schweizer und europäische Clouds werden
+bevorzugt (Ziff. 11); eine Datenschutz-Folgenabschätzung bleibt nötig, bei vielen besonderen Personendaten mit
+Vorabkontrolle (Ziff. 4, 6); die Cloud darf kein höheres Risiko bringen als eine lokale Lösung (Ziff. 14).
+
+Technischer Haken: Das Intranet muss Daten zum Anzeigen, Suchen und Rechnen entschlüsseln. Auf einem gemieteten
+Server liegen Schlüssel und Klartext dabei im Arbeitsspeicher der Maschine des Hosters. Verschlüsselung schützt
+sicher vor Zugriff auf Datenträger, Sicherungen und Snapshots, nicht vollständig vor einem Hoster, der aktiv in die
+laufende Maschine greift.
+
+Entscheid 06.11.2026:
+
+1. **Stufe 1 – ganze Installation verschlüsselt:** Volumen bzw. Datenspeicher pro Kunde verschlüsselt; der Schlüssel
+   liegt nicht auf dem Server, sondern kommt beim Start aus einem **Schlüsseldienst in der Schweiz** (Teil der
+   Deploy-Plattform) und bleibt nur im Arbeitsspeicher. Sicherungen und Snapshots sind für den Hoster unlesbar.
+2. **Stufe 2 – Feldverschlüsselung** für besonders schützenswerte Angaben (z. B. Gesundheit, Förderung,
+   Verhalten): eigener Schlüssel pro Kunde, Entschlüsselung nur mit Recht; nicht in Logs, Suche oder Exporten.
+3. Stufen 1 und 2 gelten **unabhängig vom Hoster** (Infomaniak, Hostinger, On-Premise).
+4. **Keine Ende-zu-Ende-Verschlüsselung für das ganze Intranet.** Gründe: Suche, Summen, PDFs, Plugins (ClickTime,
+   DeepSign), Benachrichtigungen, geplante Abläufe und die REST-API funktionieren nur mit Klartext auf dem Server;
+   Rechte würden zu Schlüsselverteilung (neue und austretende Personen), verlorene Schlüssel bedeuten verlorene
+   Daten; mehrere Geräte pro Person; der Verschlüsselungscode kommt vom Server und könnte dort manipuliert werden;
+   Metadaten bleiben sichtbar; praktisch ein Neubau.
+5. **Ende-zu-Ende höchstens für einen klar abgegrenzten Bereich** ohne Suche und Plugins (Idee: Modul «Vertrauliche
+   Dokumente»), falls die Datenschutzbeauftragte das verlangt.
+6. Hostinger Frankfurt mit Stufe 1 und 2 und Schlüssel in der Schweiz ist die Ausgangslage für die Anfrage an die
+   Datenschutzbeauftragte. Bis zum Entscheid: echte Schuldaten nur bei einem Schweizer Hoster.
+
 ## Reihenfolge
 
 1. Intranet: Container-Image, Konfiguration über Umgebungsvariablen, `/health`, `intranet:setup`, Einladungslink.
@@ -232,10 +262,11 @@ bzw. dem Volksschulamt abklären.
 
 ## Issues
 
-- Intranet: Meilenstein «Betrieb & Auslieferung», #104 (Konzept) mit #105–#113; Updates #127–#129.
+- Intranet: Meilenstein «Betrieb & Auslieferung», #104 (Konzept) mit #105–#113; Updates #127–#129; Verschlüsselung #136–#137.
 - Deploy-Plattform: Meilenstein «Plattform – Deploy», #114–#120; Updates #130–#132; Demoplattform #134;
-  Grundeinrichtung und Deploy-Agent #135.
+  Grundeinrichtung und Deploy-Agent #135; Schlüsseldienst #138.
 - Abo-Plattform: Meilenstein «Plattform – Abo», #121–#126; Updates #133.
+- Idee Ende-zu-Ende für einen abgegrenzten Bereich: #139 (Sammlung «Funktionen»).
 
 Alle mit `triage`. Die Issues der beiden Plattformen ziehen in die eigenen Repositories um, sobald es diese gibt.
 
