@@ -138,6 +138,23 @@ lässt sich automatisch zurücknehmen. Freigegeben wird eine Version weiterhin n
 - Ohne Update-Dienst: Hinweis in der Administration, sobald eine neue Version freigegeben ist, und Anleitung
   (`docker compose pull && docker compose up -d`). Ohne Internet: Paket zum Herunterladen.
 
+## Hosting
+
+Entscheid 06.11.2026: Start mit **Infomaniak VPS Lite** (Schweiz), zuerst als Demoplattform auf dem kleinsten
+Angebot (1 vCPU, 2 GB RAM, 20 GB).
+
+- Der VPS wird **von Hand bestellt** (keine Bestellung per API bekannt, Jahresbindung). Automatisiert wird alles
+  darauf: Die Deploy-Plattform legt pro Kunde Container, Volumen, Netzwerk und Schlüssel per SSH bzw. Docker an.
+- Eine Wildcard-Domain (`*.<domain>`) zeigt auf den Server; pro Kunde ist kein DNS-Eintrag nötig. Zertifikate holt
+  der Reverse Proxy pro Subdomain automatisch.
+- Keine Snapshots bei VPS Lite: Die Deploy-Plattform sichert selbst, verschlüsselt pro Kunde, auf einen S3-Speicher
+  in der Schweiz (z. B. Infomaniak Public Cloud oder Swiss Backup). Der Schnappschuss vor Updates ist eine solche
+  Sicherung.
+- Ausgehend ist Port 25 gesperrt: Mails über einen SMTP-Dienst mit Port 587.
+- Ziele austauschbar halten: «Container auf bestehendem Server» (VPS Lite) und später «eigener Server pro Kunde»
+  in der Infomaniak Public Cloud (OpenStack-API, Terraform), z. B. als Option «eigener Server».
+- Die Grösse für den Betrieb (Schulen pro Server) zeigt ein Lasttest auf der Demoplattform.
+
 ## Reihenfolge
 
 1. Intranet: Container-Image, Konfiguration über Umgebungsvariablen, `/health`, `intranet:setup`, Einladungslink.
@@ -152,19 +169,18 @@ lässt sich automatisch zurücknehmen. Freigegeben wird eine Version weiterhin n
 ## Issues
 
 - Intranet: Meilenstein «Betrieb & Auslieferung», #104 (Konzept) mit #105–#113; Updates #127–#129.
-- Deploy-Plattform: Meilenstein «Plattform – Deploy», #114–#120; Updates #130–#132.
+- Deploy-Plattform: Meilenstein «Plattform – Deploy», #114–#120; Updates #130–#132; Demoplattform #134.
 - Abo-Plattform: Meilenstein «Plattform – Abo», #121–#126; Updates #133.
 
 Alle mit `triage`. Die Issues der beiden Plattformen ziehen in die eigenen Repositories um, sobald es diese gibt.
 
 ## Offene Fragen
 
-1. Hoster in der Schweiz mit API für Server, DNS und Speicher; zum Start ein Server mit Docker oder gleich
-   Kubernetes?
-2. Freigabe neuer Kunden: immer von Hand oder automatisch für Schul-Domains?
-3. Betreiber und Vertragspartner für die ADV (Person, Schule Bülach oder eigene Organisation)?
-4. Kostenmodell (gratis, Pauschale pro Schule, nach Grösse) – bestimmt, ob die Abo-Plattform eine Abrechnung braucht.
-5. Eigene Repositories für Abo- und Deploy-Plattform anlegen (bis dahin Meilensteine in diesem Repository).
+1. Freigabe neuer Kunden: immer von Hand oder automatisch für Schul-Domains?
+2. Betreiber und Vertragspartner für die ADV (Person, Schule Bülach oder eigene Organisation)?
+3. Kostenmodell (gratis, Pauschale pro Schule, nach Grösse) – bestimmt, ob die Abo-Plattform eine Abrechnung braucht.
+4. Eigene Repositories für Abo- und Deploy-Plattform anlegen (bis dahin Meilensteine in diesem Repository).
 
 Entschieden am 06.11.2026: Wartungsfenster 23:00–05:00; Wellen 24 Stunden (Patch) bzw. 3 Tage (Minor); Major nach
-Bestätigung, spätestens nach 90 Tagen; Kanal «Beta» bekommt alle Versionen so rasch wie möglich.
+Bestätigung, spätestens nach 90 Tagen; Kanal «Beta» bekommt alle Versionen so rasch wie möglich. Hosting: VPS Lite
+bei Infomaniak, zuerst als Demoplattform (Abschnitt «Hosting»).
