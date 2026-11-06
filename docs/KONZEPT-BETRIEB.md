@@ -75,19 +75,80 @@ Was das Intranet selbst können muss, damit es automatisch aufgesetzt und betrie
    Personendaten in Plugins stützt sich darauf.
 9. **Betriebshandbuch:** Anforderungen, Installation, Sicherung, Update, Adressen für die Firewall.
 
+## Automatische Updates
+
+Ziel: Alle Installationen sind ohne Handarbeit aktuell, ein fehlerhaftes Update trifft nie alle gleichzeitig und
+lässt sich automatisch zurücknehmen. Freigegeben wird eine Version weiterhin nur vom Projektverantwortlichen
+(`docs/KONZEPT-VERSIONIERUNG.md`); automatisch ist nur das Ausrollen.
+
+### Was automatisch kommt (nach SemVer)
+
+1. **Patch** (z. B. 0.36.1, Fehler- und Sicherheitskorrekturen): automatisch im nächsten Wartungsfenster, ohne
+   Ankündigung. Dringende Sicherheitskorrekturen auch ausserhalb des Fensters, mit Hinweis an die Administration.
+2. **Minor** (z. B. 0.37.0, neue Funktionen): automatisch im Wartungsfenster, Ankündigung an die Administration
+   mindestens 3 Tage vorher (Text aus «Für Mitarbeitende»). Danach wie heute die Mitteilung «Neu im Intranet».
+3. **Major** (z. B. 1.0.0, grössere Umstellungen): nie automatisch. Die Administration bestätigt im Kundenkonto
+   oder wählt einen Termin; nach spätestens 90 Tagen wird nachgezogen, weil die alte Version nicht mehr
+   unterstützt wird.
+
+### Kanäle und Wellen
+
+- **Kanäle:** «Vorschau» (Developer Release, für Test-Installationen) und «Stabil» (freigegebene Releases, Vorgabe).
+- **Wellen** für «Stabil»: Welle 0 eigene Test-Installation, Welle 1 Pilotschulen (freiwillig), Welle 2 alle.
+  Zwischen den Wellen mindestens 24 Stunden (Patch) bzw. 3 Tage (Minor). Häufen sich Fehler in einer Welle, hält
+  das Ausrollen automatisch an, bis es freigegeben wird.
+
+### Wartungsfenster
+
+- Vorgabe nachts (z. B. 02:00–05:00), pro Kunde im Kundenkonto änderbar.
+- Sperrzeiten, die der Kunde setzt (z. B. Zeugniswoche, Semesterende): keine Minor- oder Major-Updates.
+- Updates höchstens 30 Tage aufschieben; Sicherheitskorrekturen lassen sich nicht aufschieben.
+
+### Ablauf pro Installation
+
+1. Vorprüfung: `/health` in Ordnung, genug Speicherplatz, keine laufende Sperrzeit.
+2. Image holen und prüfen: nur signierte Images mit bekannter Prüfsumme.
+3. Sicherung: Schnappschuss von Daten und Dateien unmittelbar vor dem Update.
+4. Wartungsmodus mit Hinweis für Angemeldete; neuer Container startet, `intranet:upgrade` stellt die Daten um.
+5. Prüfung: `/health` und eine kurze Funktionsprobe (Anmeldeseite, Startseite).
+6. Umschalten auf den neuen Container; der alte bleibt 24 Stunden bereit.
+7. Bei Fehler: automatisch zurück auf den alten Container, bei geänderten Daten mit dem Schnappschuss aus Schritt 3;
+   Meldung an den Betreiber, die Welle hält an.
+
+### Regeln für die Entwicklung
+
+- `intranet:upgrade` läuft beliebig oft ohne Schaden und hat einen Probelauf (`--dry-run`).
+- Datenumstellungen in zwei Schritten (erweitern, später aufräumen): Die vorherige Minor-Version muss die Daten der
+  neuen noch lesen können, damit Zurückschalten ohne Wiederherstellung geht.
+- Die Datenversion steht in den Daten; eine ältere Version startet nicht auf neueren Daten, die sie nicht kennt.
+- Plugins und Module kommen nur mit dem Image, nie einzeln.
+- Abhängigkeiten werden laufend aktualisiert (automatische Pull Requests); Sicherheitslücken führen zu einem Patch.
+- Unterstützt werden die aktuelle und die vorherige Minor-Version.
+
+### On-Premise
+
+- Optionaler **Update-Dienst** als kleiner Container neben dem Intranet: Er fragt den Kanal ab, prüft die Signatur
+  und führt denselben Ablauf aus (Sicherung, Upgrade, Prüfung, Zurückschalten). Nur ausgehende Verbindungen zur
+  Registry, keine Verbindung von aussen nötig.
+- Ohne Update-Dienst: Hinweis in der Administration, sobald eine neue Version freigegeben ist, und Anleitung
+  (`docker compose pull && docker compose up -d`). Ohne Internet: Paket zum Herunterladen.
+
 ## Reihenfolge
 
 1. Intranet: Container-Image, Konfiguration über Umgebungsvariablen, `/health`, `intranet:setup`, Einladungslink.
 2. Deploy-Plattform: ein Server mit Docker und Reverse Proxy, Einrichtung per Skript, dann per API.
-3. Intranet: Export/Import, Support-Zugriff, Webhook-Ersatz, Speicherort.
-4. Abo-Plattform: Formular, Bestätigung, Freigabe, Auftrag an die Deploy-Plattform.
-5. Später: PostgreSQL und S3-kompatibler Speicher pro Kunde, automatische Freigabe, Abrechnung.
+3. Intranet: sichere Updates (Probelauf, Datenversion, Wartungsmodus), signierte Images.
+4. Deploy-Plattform: Updates in Wellen mit Wartungsfenster und Zurückschalten.
+5. Intranet: Export/Import, Support-Zugriff, Webhook-Ersatz, Speicherort.
+6. Abo-Plattform: Formular, Bestätigung, Freigabe, Auftrag an die Deploy-Plattform, Update-Einstellungen.
+7. Später: Update-Dienst für On-Premise, PostgreSQL und S3-kompatibler Speicher pro Kunde, automatische Freigabe,
+   Abrechnung.
 
 ## Issues
 
-- Intranet: Meilenstein «Betrieb & Auslieferung», #104 (Konzept) mit #105–#113.
-- Deploy-Plattform: Meilenstein «Plattform – Deploy», #114–#120.
-- Abo-Plattform: Meilenstein «Plattform – Abo», #121–#126.
+- Intranet: Meilenstein «Betrieb & Auslieferung», #104 (Konzept) mit #105–#113; Updates #127–#129.
+- Deploy-Plattform: Meilenstein «Plattform – Deploy», #114–#120; Updates #130–#132.
+- Abo-Plattform: Meilenstein «Plattform – Abo», #121–#126; Updates #133.
 
 Alle mit `triage`. Die Issues der beiden Plattformen ziehen in die eigenen Repositories um, sobald es diese gibt.
 
@@ -99,3 +160,5 @@ Alle mit `triage`. Die Issues der beiden Plattformen ziehen in die eigenen Repos
 3. Betreiber und Vertragspartner für die ADV (Person, Schule Bülach oder eigene Organisation)?
 4. Kostenmodell (gratis, Pauschale pro Schule, nach Grösse) – bestimmt, ob die Abo-Plattform eine Abrechnung braucht.
 5. Eigene Repositories für Abo- und Deploy-Plattform anlegen (bis dahin Meilensteine in diesem Repository).
+6. Updates: Wartungsfenster, Abstand der Wellen und Frist für Major-Updates (Vorschlag 02:00–05:00, 24 h / 3 Tage,
+   90 Tage) bestätigen; welche Schulen sind Pilotschulen?
