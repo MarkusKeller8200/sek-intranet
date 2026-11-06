@@ -195,7 +195,8 @@ Grob 150–250 MB RAM pro Installation: Auf dem kleinsten VPS Lite (2 GB) haben 
 ## Issues
 
 - Intranet: Meilenstein «Betrieb & Auslieferung», #104 (Konzept) mit #105–#113; Updates #127–#129.
-- Deploy-Plattform: Meilenstein «Plattform – Deploy», #114–#120; Updates #130–#132; Demoplattform #134; Grundeinrichtung und Deploy-Agent #135.
+- Deploy-Plattform: Meilenstein «Plattform – Deploy», #114–#120; Updates #130–#132; Demoplattform #134;
+  Grundeinrichtung und Deploy-Agent #135.
 - Abo-Plattform: Meilenstein «Plattform – Abo», #121–#126; Updates #133.
 
 Alle mit `triage`. Die Issues der beiden Plattformen ziehen in die eigenen Repositories um, sobald es diese gibt.
