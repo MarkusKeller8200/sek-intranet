@@ -22,6 +22,26 @@ Installationsaufwand ist so klein wie möglich und vollständig automatisierbar.
    Code fragt nur nach Fähigkeiten (`INTRANET_STORE`, `INTRANET_FILES`, `INTRANET_DATA_LOCATION`), nie nach der
    Betriebsart.
 
+### Angebote: wie weit getrennt (Entscheid 06.11.2026)
+
+Beide Varianten der Cloud werden angeboten; die Schule wählt im Formular. Die Installation ist in allen Fällen
+dieselbe, es unterscheidet sich nur, wo sie läuft.
+
+1. **«Geteilt» – Daten getrennt:** Installation als Container auf einem gemeinsamen Server. Getrennt sind Daten,
+   Dateien, Schlüssel, Netzwerk, Konten und Einstellungen. Gemeinsam sind Betriebssystem-Kern, Docker, Reverse Proxy,
+   Rechenleistung und der Root-Zugang des Betreibers. Eine Lücke im Kernel oder in Docker könnte alle Installationen
+   des Servers betreffen. Absicherung: Container ohne Root-Rechte, nur lesbares Dateisystem, keine Sonderrechte,
+   User-Namespaces, Grenzen für RAM und CPU, automatische Sicherheitsupdates, kein Shell-Zugang für Kunden.
+   Günstig; für Demo, Tests und Schulen, die das bewusst wählen.
+2. **«Dediziert» – Installation und Daten getrennt:** eigener virtueller Server pro Schule mit eigenem Kern, eigenem
+   Docker, eigener Firewall und eigenem Root-Zugang; gemeinsam bleibt nur die Virtualisierung des Hosters.
+   Automatisch bestellt: Hostinger per API (`POST /api/vps/v1/virtual-machines`), Infomaniak über die Public Cloud
+   (OpenStack). Vorgabe für echte Schuldaten (#140).
+3. **On-Premise:** eigener Server bei der Schule oder Gemeinde, nichts geteilt (Installationspaket, #116).
+
+Ein Wechsel von «Geteilt» zu «Dediziert» ist jederzeit möglich (Export/Import, #109). Stufen 1 und 2 der
+Verschlüsselung gelten für alle Angebote.
+
 ## Drei Teile, drei Projekte
 
 ```
@@ -264,7 +284,7 @@ Entscheid 06.11.2026:
 
 - Intranet: Meilenstein «Betrieb & Auslieferung», #104 (Konzept) mit #105–#113; Updates #127–#129; Verschlüsselung #136–#137.
 - Deploy-Plattform: Meilenstein «Plattform – Deploy», #114–#120; Updates #130–#132; Demoplattform #134;
-  Grundeinrichtung und Deploy-Agent #135; Schlüsseldienst #138.
+  Grundeinrichtung und Deploy-Agent #135; Schlüsseldienst #138; Angebot «Dediziert» #140.
 - Abo-Plattform: Meilenstein «Plattform – Abo», #121–#126; Updates #133.
 - Idee Ende-zu-Ende für einen abgegrenzten Bereich: #139 (Sammlung «Funktionen»).
 
