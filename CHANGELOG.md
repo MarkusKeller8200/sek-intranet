@@ -11,6 +11,9 @@ laufend unter **Unveröffentlicht**. Ab 0.32.0 entsteht eine Version nur bei ein
 
 ### Neu
 
+- **Konzept Design-Werkzeuge (#152):** `docs/KONZEPT-DESIGN.md` – VisBug und Entwicklertools zum Messen und Melden,
+  Penpot (Test in der Cloud, danach Hostinger KVM 2 in Frankfurt mit Microsoft-Login), Design-Tokens als einzige
+  Quelle für `app.css` und Themes, Developer-Werkzeuge im Intranet.
 - **Einbindungen: Fenstergrösse und Trennlinie (#151):** «Neues Browser-Fenster» mit Breite und Höhe in % des
   sichtbaren Anzeigebereichs (Vorgabe 80 %), «gesplittetes Tab» mit Trennlinie in % von links (Vorgabe 50 %, für die
   Aufteilung in zwei Fenster). Felder «Adresse» und «Öffnen über» auf gleicher Höhe.
