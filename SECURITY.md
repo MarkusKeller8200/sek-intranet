@@ -33,3 +33,9 @@ Mitwirkenden, und Benachrichtigungen gehen per E-Mail hinaus.
 - Nur erfundene Testdaten; der Testserver steht nicht in der Schweiz und erhält keine echten Daten.
 - Zugangsdaten von Plugins werden verschlüsselt gespeichert und nie angezeigt oder protokolliert.
 - API nur mit Token (gespeichert als Hash), Rechte wie die Besitzerin bzw. der Besitzer.
+- Schutz-Kopfzeilen für jede Antwort (`App\Http\Middleware\SecurityHeaders`): Nur das Intranet selbst darf das
+  Intranet einbetten (`X-Frame-Options: SAMEORIGIN`, `frame-ancestors 'self'`). Im Rahmen sind nur Fachanwendungen
+  erlaubt, die als Rahmen eingestellt sind (`frame-src`). Dazu `object-src 'none'`, `base-uri 'self'`, `nosniff`,
+  gekürzter Referrer, Kamera/Mikrofon/Standort aus, HSTS bei HTTPS.
+- Fachanwendungen nur im Rahmen, wenn der Hersteller das Einbetten erlaubt; Kopfzeilen fremder Seiten werden nie
+  über einen Proxy entfernt. Anmeldungen bevorzugt in einem eigenen Tab.

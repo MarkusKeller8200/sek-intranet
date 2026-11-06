@@ -4,6 +4,7 @@ use App\Http\Middleware\HandleAppearance;
 use App\Http\Middleware\HandleInertiaRequests;
 use App\Http\Middleware\RequireSitePassword;
 use App\Http\Middleware\RestrictRoleAreas;
+use App\Http\Middleware\SecurityHeaders;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -23,6 +24,9 @@ return Application::configure(basePath: dirname(__DIR__))
         // Hinter Traefik (Reverse Proxy): HTTPS und Client-IP aus den Proxy-Headern übernehmen.
         // Der Container ist nur über Traefik erreichbar (kein veröffentlichter Port).
         $middleware->trustProxies(at: '*');
+
+        // Schutz-Kopfzeilen für alle Antworten (#147)
+        $middleware->append(SecurityHeaders::class);
 
         $middleware->web(prepend: [
             RequireSitePassword::class,

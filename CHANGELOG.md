@@ -11,6 +11,10 @@ laufend unter **Unveröffentlicht**. Ab 0.32.0 entsteht eine Version nur bei ein
 
 ### Neu
 
+- **Sicherheit: Schutz-Kopfzeilen (#147):** Jede Antwort sendet `X-Frame-Options: SAMEORIGIN` und eine
+  Content-Security-Policy mit `frame-ancestors 'self'` (kein Einbetten des Intranets durch fremde Seiten),
+  `frame-src` nur für Fachanwendungen und Einbindungen im Rahmen (inkl. Einstellungen), `object-src 'none'` und
+  `base-uri 'self'`; dazu `nosniff`, `Referrer-Policy`, `Permissions-Policy` und HSTS bei HTTPS.
 - **Browser-Erweiterung: «Nebeneinander» in der geteilten Ansicht (#146):** Kennt der Browser die Tabs Split View
   API (Chrome ab 155), öffnet «Nebeneinander» die Fachanwendung als geteilte Ansicht neben dem Intranet im selben
   Fenster (ein schon offener Tab wird dazugeholt). Sonst wie bisher zwei Fenster je halber Bildschirm.
