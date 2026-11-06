@@ -1289,7 +1289,10 @@ return [
             'fields' => [
                 'key' => ['type' => 'string', 'required' => true, 'label' => 'Menüpunkt (Schlüssel)'],
                 'url' => ['type' => 'string', 'required' => false, 'label' => 'Adresse (https)'],
-                'open' => ['type' => 'string', 'required' => false, 'label' => 'Öffnen (embed, both, tab, extension)'],
+                'open' => ['type' => 'string', 'required' => false, 'label' => 'Öffnen über (embed, both, tab, window, extension, split)'],
+                'width' => ['type' => 'int', 'required' => false, 'label' => 'Neues Fenster: Breite in % des Anzeigebereichs'],
+                'height' => ['type' => 'int', 'required' => false, 'label' => 'Neues Fenster: Höhe in % des Anzeigebereichs'],
+                'split' => ['type' => 'int', 'required' => false, 'label' => 'Nebeneinander: Trennlinie in % von links'],
                 'updated_by' => ['type' => 'ref', 'references' => 'users', 'required' => false, 'label' => 'Geändert von'],
             ],
         ],

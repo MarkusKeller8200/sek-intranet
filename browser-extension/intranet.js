@@ -39,6 +39,8 @@
                 kind: 'split',
                 url: data.url,
                 key: typeof data.key === 'string' ? data.key : null,
+                // Trennlinie in % von links (Breite des Intranets, #151)
+                split: Math.min(80, Math.max(20, Number(data.split) || 50)),
                 screen: {
                     left: screen.availLeft || 0,
                     top: screen.availTop || 0,

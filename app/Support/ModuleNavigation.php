@@ -9,8 +9,8 @@ use Illuminate\Support\Facades\Gate;
 /**
  * Module aus config/intranet.php → modules: Navigation (Seitenleiste) und Platzhalter.
  *
- * @phpstan-type Module array{key: string, title: string, icon: string, href: string, planned: bool, external: string|null, open: string|null, collapse?: bool, children?: list<array<string, mixed>>}
- * @phpstan-type Embedded array{key: string, title: string, icon: string, group: string, color: string, description: string, collapse: bool, url: string|null, open: string, repo: string|null, stack: string|null, system: string|null, allowed: bool}
+ * @phpstan-type Module array{key: string, title: string, icon: string, href: string, planned: bool, external: string|null, open: string|null, width?: int|null, height?: int|null, collapse?: bool, children?: list<array<string, mixed>>}
+ * @phpstan-type Embedded array{key: string, title: string, icon: string, group: string, color: string, description: string, collapse: bool, url: string|null, open: string, repo: string|null, stack: string|null, system: string|null, allowed: bool, width: int, height: int, split: int}
  * @phpstan-type Group array{key: string, title: string, color: string, icon: string, items: list<Module>}
  */
 class ModuleNavigation
@@ -131,6 +131,9 @@ class ModuleNavigation
             'planned' => ! is_string($href),
             'external' => $embed['url'] ?? null,
             'open' => $embed['open'] ?? null,
+            // Neues Browser-Fenster: Grösse in % des sichtbaren Anzeigebereichs (#151)
+            'width' => $embed['width'] ?? null,
+            'height' => $embed['height'] ?? null,
         ];
     }
 
@@ -166,7 +169,7 @@ class ModuleNavigation
     /**
      * Alle Einbindungen mit Vorgabe und Einstellung (für das Menü «Einstellungen»).
      *
-     * @return list<array{key: string, title: string, icon: string, group: string, group_title: string, default_url: string|null, default_open: string, url: string|null, open: string, custom: bool, allowed: bool, description: string}>
+     * @return list<array{key: string, title: string, icon: string, group: string, group_title: string, default_url: string|null, default_open: string, url: string|null, open: string, width: int, height: int, split: int, defaults: array{width: int, height: int, split: int}, custom: bool, allowed: bool, description: string}>
      */
     public function embedSettings(): array
     {
@@ -188,6 +191,10 @@ class ModuleNavigation
                 'default_open' => $default['open'],
                 'url' => $effective['url'],
                 'open' => $effective['open'],
+                'width' => $effective['width'],
+                'height' => $effective['height'],
+                'split' => $effective['split'],
+                'defaults' => ['width' => $default['width'], 'height' => $default['height'], 'split' => $default['split']],
                 'custom' => $settings->get($key) !== null,
                 'allowed' => $effective['allowed'],
                 'description' => (string) ($module['description'] ?? ''),
@@ -258,7 +265,7 @@ class ModuleNavigation
      * Einbindung mit Vorgabe (config/.env) und – falls gespeichert – Einstellung aus dem Menü «Einstellungen».
      *
      * @param  array<mixed>  $module
-     * @return array{url: string|null, open: string, repo: string|null, stack: string|null, system: string|null, allowed: bool}|null
+     * @return array{url: string|null, open: string, repo: string|null, stack: string|null, system: string|null, allowed: bool, width: int, height: int, split: int}|null
      */
     private function embed(array $module, ?string $key = null): ?array
     {
@@ -281,7 +288,26 @@ class ModuleNavigation
             // Anbieter erlaubt das Einbetten nachweislich (z. B. Escola): keine automatische Prüfung nötig
             // gilt nur für die vorgegebene Adresse – eine andere Adresse wird wieder geprüft
             'allowed' => ($embed['allowed'] ?? false) === true && $url === ($embed['url'] ?? null),
-        ];
+        ] + self::layout($embed, $setting);
+    }
+
+    /**
+     * Fenstergrösse und Trennlinie (#151): Einstellung, sonst Konfiguration, sonst Vorgabe.
+     *
+     * @param  array<mixed>  $embed
+     * @param  array<string, mixed>|null  $setting
+     * @return array{width: int, height: int, split: int}
+     */
+    private static function layout(array $embed, ?array $setting): array
+    {
+        $result = [];
+        foreach (ModuleSettings::LAYOUT_RANGES as $field => [$min, $max]) {
+            $value = $setting[$field] ?? $embed[$field] ?? ModuleSettings::LAYOUT[$field];
+            $result[$field] = max($min, min($max, is_numeric($value) ? (int) $value : ModuleSettings::LAYOUT[$field]));
+        }
+
+        /** @var array{width: int, height: int, split: int} $result */
+        return $result;
     }
 
     /**

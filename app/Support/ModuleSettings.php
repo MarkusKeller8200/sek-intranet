@@ -17,6 +17,12 @@ final class ModuleSettings
      * Browser-Fenster, extension = Browser-Erweiterung (neuer Tab), split = Browser-Erweiterung (gesplittetes Tab) */
     public const OPEN_MODES = ['embed', 'both', 'tab', 'window', 'extension', 'split'];
 
+    /** Vorgaben (#151): neues Fenster in % des sichtbaren Anzeigebereichs, Trennlinie «nebeneinander» in % von links */
+    public const LAYOUT = ['width' => 80, 'height' => 80, 'split' => 50];
+
+    /** Erlaubte Bereiche je Wert (Prozent) */
+    public const LAYOUT_RANGES = ['width' => [20, 100], 'height' => [20, 100], 'split' => [20, 80]];
+
     /** @var array<string, array<string, mixed>>|null */
     private ?array $cache = null;
 
@@ -48,11 +54,12 @@ final class ModuleSettings
     }
 
     /**
-     * Speichert die Einstellung eines Menüpunkts (null = Vorgabe verwenden).
+     * Speichert die Einstellung eines Menüpunkts (null = Vorgabe verwenden). Layout: width, height, split in Prozent.
      *
+     * @param  array<string, mixed>  $layout
      * @return array{before: array<string, mixed>|null, after: array<string, mixed>}
      */
-    public function save(string $key, ?string $url, ?string $open, ?string $userId): array
+    public function save(string $key, ?string $url, ?string $open, ?string $userId, array $layout = []): array
     {
         $before = $this->get($key);
         $record = [
@@ -61,6 +68,10 @@ final class ModuleSettings
             'open' => $open !== null && in_array($open, self::OPEN_MODES, true) ? $open : null,
             'updated_by' => $userId,
         ];
+        foreach (self::LAYOUT_RANGES as $field => [$min, $max]) {
+            $value = $layout[$field] ?? null;
+            $record[$field] = is_numeric($value) ? max($min, min($max, (int) $value)) : null;
+        }
         $after = $before !== null
             ? $this->store->update(self::COLLECTION, (string) $before['id'], $record)
             : $this->store->insert(self::COLLECTION, $record);

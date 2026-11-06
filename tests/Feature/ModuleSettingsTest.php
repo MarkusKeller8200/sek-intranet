@@ -76,6 +76,31 @@ class ModuleSettingsTest extends TestCase
         $this->assertSame([], app(JsonStore::class)->all(ModuleSettings::COLLECTION));
     }
 
+    public function test_window_size_and_split_ratio(): void
+    {
+        $this->signInAs('admin');
+
+        // Vorgabe: Fenster 80 × 80 %, Trennlinie 50 %
+        $this->get('/einstellungen/fachanwendungen')->assertInertia(fn (Assert $page) => $page
+            ->where('items', fn ($items): bool => collect($items)->firstWhere('key', 'cmi')['width'] === 80 && collect($items)->firstWhere('key', 'cmi')['split'] === 50));
+
+        // Neues Browser-Fenster mit eigener Grösse – im Menü verfügbar
+        $this->put('/einstellungen/menuepunkt/cmi', ['url' => 'https://cmi.example.org', 'open' => 'window', 'width' => 60, 'height' => 90])->assertRedirect();
+        $this->get('/start')->assertInertia(fn (Assert $page) => $page->where('navigation', function ($groups): bool {
+            $cmi = collect(collect($groups)->firstWhere('key', 'fachanwendungen')['items'])->firstWhere('key', 'cmi');
+
+            return $cmi['open'] === 'window' && $cmi['width'] === 60 && $cmi['height'] === 90;
+        }));
+
+        // Nebeneinander: Trennlinie für die Browser-Erweiterung
+        $this->put('/einstellungen/menuepunkt/escola', ['url' => '', 'open' => 'split', 'split' => 35])->assertRedirect();
+        $this->get('/einbindung/escola')->assertInertia(fn (Assert $page) => $page->where('module.split', 35)->where('module.width', 80));
+
+        // Grenzen
+        $this->put('/einstellungen/menuepunkt/cmi', ['url' => '', 'open' => 'window', 'width' => 10])->assertSessionHasErrors('width');
+        $this->put('/einstellungen/menuepunkt/cmi', ['url' => '', 'open' => 'split', 'split' => 95])->assertSessionHasErrors('split');
+    }
+
     public function test_changed_escola_address_is_checked_again(): void
     {
         Http::fake(['*' => Http::response('', 200, ['X-Frame-Options' => 'DENY'])]);

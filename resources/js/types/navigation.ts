@@ -25,6 +25,9 @@ export type ModuleNavItem = {
     external?: string | null;
     /** embed = im Rahmen, tab = neuer Tab, window = neues Fenster, both = Rahmen mit Knopf für neuen Tab */
     open?: 'embed' | 'tab' | 'window' | 'both' | 'extension' | 'split' | null;
+    /** Neues Browser-Fenster: Breite und Höhe in % des sichtbaren Anzeigebereichs */
+    width?: number | null;
+    height?: number | null;
     /** Seitenmenü beim Öffnen einklappen (Fachanwendungen) */
     collapse?: boolean;
     /** Untermenü (z. B. Kommunikation → Fachanwendungen) */

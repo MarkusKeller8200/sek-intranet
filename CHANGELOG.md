@@ -11,6 +11,9 @@ laufend unter **Unveröffentlicht**. Ab 0.32.0 entsteht eine Version nur bei ein
 
 ### Neu
 
+- **Einbindungen: Fenstergrösse und Trennlinie (#151):** «Neues Browser-Fenster» mit Breite und Höhe in % des
+  sichtbaren Anzeigebereichs (Vorgabe 80 %), «gesplittetes Tab» mit Trennlinie in % von links (Vorgabe 50 %, für die
+  Aufteilung in zwei Fenster). Felder «Adresse» und «Öffnen über» auf gleicher Höhe.
 - **Einbindungen: «Öffnen über» (#150):** Neue Bezeichnungen (iFrame – eingebettet, iFrame – neuer Tab, Neuer
   Browser-Tab, Neues Browser-Fenster, Browser-Erweiterung neuer bzw. gesplittetes Tab) und neue Option «Neues
   Browser-Fenster» (eigenes Fenster statt Tab).

@@ -56,9 +56,18 @@ class ModuleSettingsController extends Controller
         $data = $request->validate([
             'url' => ['nullable', 'string', 'max:2000', 'regex:#^https://[^\s<>"]+$#'],
             'open' => ['required', Rule::in(ModuleSettings::OPEN_MODES)],
-        ], ['url.regex' => 'Nur https-Adressen sind erlaubt.']);
+            'width' => ['nullable', 'integer', 'between:20,100'],
+            'height' => ['nullable', 'integer', 'between:20,100'],
+            'split' => ['nullable', 'integer', 'between:20,80'],
+        ], [
+            'url.regex' => 'Nur https-Adressen sind erlaubt.',
+            'width.between' => 'Breite zwischen 20 und 100 %.',
+            'height.between' => 'Höhe zwischen 20 und 100 %.',
+            'split.between' => 'Trennlinie zwischen 20 und 80 % von links.',
+        ]);
 
-        $result = $this->settings->save($key, $data['url'] ?? null, $data['open'], (string) $request->user()?->getAuthIdentifier());
+        $layout = array_intersect_key($data, ModuleSettings::LAYOUT);
+        $result = $this->settings->save($key, $data['url'] ?? null, $data['open'], (string) $request->user()?->getAuthIdentifier(), $layout);
         $this->audit->record(ModuleSettings::COLLECTION, $result['before'], $result['after'], 'Einstellungen', $request->user());
 
         $this->toast('Einstellung gespeichert.');

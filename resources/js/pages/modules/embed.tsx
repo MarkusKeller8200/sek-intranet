@@ -44,6 +44,10 @@ type Embedded = {
     collapse: boolean;
     url: string | null;
     open: 'embed' | 'tab' | 'window' | 'both' | 'extension' | 'split';
+    /** Neues Fenster: % des Anzeigebereichs; nebeneinander: Trennlinie in % von links */
+    width: number;
+    height: number;
+    split: number;
     repo: string | null;
     stack: string | null;
 };
@@ -114,7 +118,7 @@ export default function Embed({
             openedFor.current = module.key;
             setOpened(
                 module.open === 'split'
-                    ? splitWithConnector(module.url, module.key)
+                    ? splitWithConnector(module.url, module.key, module.split)
                     : openWithConnector(module.url, module.title, module.key),
             );
         }
@@ -125,6 +129,7 @@ export default function Embed({
         module.key,
         module.title,
         module.open,
+        module.split,
     ]);
 
     return (
@@ -153,7 +158,13 @@ export default function Embed({
                     {module.open === 'window' && module.url && (
                         <Button
                             size="sm"
-                            onClick={() => openInWindow(module.url ?? '')}
+                            onClick={() =>
+                                openInWindow(
+                                    module.url ?? '',
+                                    module.width,
+                                    module.height,
+                                )
+                            }
                         >
                             <ExternalLink /> In neuem Fenster öffnen
                         </Button>

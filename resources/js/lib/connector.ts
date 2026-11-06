@@ -42,9 +42,16 @@ export function openWithConnector(
     return sendToConnector('open', { url, title, key });
 }
 
-/** Intranet und Fachanwendung nebeneinander: geteilte Ansicht des Browsers (#146), sonst zwei Fenster je halber Bildschirm. */
-export function splitWithConnector(url: string, key: string): boolean {
-    return sendToConnector('split', { url, key });
+/**
+ * Intranet und Fachanwendung nebeneinander: geteilte Ansicht des Browsers (#146), sonst zwei Fenster; Trennlinie in %
+ * von links (Breite des Intranets, #151).
+ */
+export function splitWithConnector(
+    url: string,
+    key: string,
+    split = 50,
+): boolean {
+    return sendToConnector('split', { url, key, split });
 }
 
 /** Nachricht der Erweiterung (nur aus diesem Fenster). */

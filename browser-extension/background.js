@@ -369,7 +369,12 @@ async function handle(message, sender) {
             const top = Number(area.top) || 0;
             const width = Math.max(800, Number(area.width) || 1600);
             const height = Math.max(500, Number(area.height) || 900);
-            const half = Math.floor(width / 2);
+            // Trennlinie in % von links (Breite des Intranet-Fensters, #151)
+            const ratio = Math.min(
+                80,
+                Math.max(20, Number(message.split) || 50),
+            );
+            const half = Math.floor((width * ratio) / 100);
             await chrome.windows.update(sender.tab.windowId, {
                 state: 'normal',
             });

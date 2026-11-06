@@ -72,7 +72,8 @@ Adresse und Art des Öffnens jeder Einbindung lassen sich unter **Einstellungen 
 **Weitere Einbindungen** ändern (Sammlung `module_settings`, übersteuert Konfiguration und `.env`). Öffnen:
 «iFrame – eingebettet», «iFrame – neuer Tab» (Rahmen mit Knopf), «Neuer Browser-Tab», «Neues
 Browser-Fenster» (eigenes Fenster statt Tab, ab #150), «Browser-Erweiterung (neuer Tab)» oder «Browser-Erweiterung
-(gesplittetes Tab)»
+(gesplittetes Tab)». Beim neuen Fenster lassen sich Breite und Höhe in % des sichtbaren Anzeigebereichs
+setzen, beim gesplitteten Tab die Trennlinie in % von links (#151; Felder `width`, `height`, `split`)
 ([KONZEPT-BROWSER-CONNECTOR.md](KONZEPT-BROWSER-CONNECTOR.md)).
 
 ## Erwartung bei den fremden Seiten

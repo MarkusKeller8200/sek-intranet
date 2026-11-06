@@ -260,7 +260,7 @@ function openExternal(
 ): void {
     if (item.open === 'window' && item.external) {
         event.preventDefault();
-        openInWindow(item.external);
+        openInWindow(item.external, item.width ?? 80, item.height ?? 80);
     }
 }
 

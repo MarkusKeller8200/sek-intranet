@@ -42,6 +42,19 @@ type Item = {
     custom: boolean;
     allowed: boolean;
     description: string;
+    /** Neues Fenster: Breite/Höhe in % des Anzeigebereichs; nebeneinander: Trennlinie in % von links (#151) */
+    width: number;
+    height: number;
+    split: number;
+    defaults: { width: number; height: number; split: number };
+};
+
+type SettingForm = {
+    url: string;
+    open: Mode;
+    width: string;
+    height: string;
+    split: string;
 };
 
 export const MODE_LABELS: Record<Mode, string> = {
@@ -53,11 +66,50 @@ export const MODE_LABELS: Record<Mode, string> = {
     split: 'Browser-Erweiterung (gesplittetes Tab)',
 };
 
+/** Eingabe in Prozent (Fenstergrösse bzw. Trennlinie). */
+function PercentField({
+    id,
+    label,
+    value,
+    error,
+    min = 20,
+    max = 100,
+    onChange,
+}: {
+    id: string;
+    label: string;
+    value: string;
+    error?: string;
+    min?: number;
+    max?: number;
+    onChange: (value: string) => void;
+}) {
+    return (
+        <div className="grid gap-1.5">
+            <Label htmlFor={id}>{label}</Label>
+            <Input
+                id={id}
+                type="number"
+                min={min}
+                max={max}
+                step={5}
+                value={value}
+                onChange={(e) => onChange(e.target.value)}
+                aria-invalid={!!error}
+            />
+            <InputError message={error} />
+        </div>
+    );
+}
+
 function ItemCard({ item }: { item: Item }) {
     const Icon = moduleIcon(item.icon);
-    const form = useForm<{ url: string; open: Mode }>({
+    const form = useForm<SettingForm>({
         url: item.custom ? (item.url ?? '') : '',
         open: item.open,
+        width: String(item.width),
+        height: String(item.height),
+        split: String(item.split),
     });
 
     const [check, setCheck] = useState<FrameResult | null>(null);
@@ -101,7 +153,14 @@ function ItemCard({ item }: { item: Item }) {
         }
         router.delete(`/einstellungen/menuepunkt/${item.key}`, {
             preserveScroll: true,
-            onSuccess: () => form.setData({ url: '', open: item.default_open }),
+            onSuccess: () =>
+                form.setData({
+                    url: '',
+                    open: item.default_open,
+                    width: String(item.defaults.width),
+                    height: String(item.defaults.height),
+                    split: String(item.defaults.split),
+                }),
         });
     };
 
@@ -124,7 +183,7 @@ function ItemCard({ item }: { item: Item }) {
             <CardContent>
                 <form
                     onSubmit={submit}
-                    className="grid gap-4 md:grid-cols-[2fr_1fr_auto] md:items-end"
+                    className="grid gap-4 md:grid-cols-[2fr_1fr_auto] md:items-start"
                 >
                     <div className="grid gap-1.5">
                         <Label htmlFor={`url-${item.key}`}>Adresse (URL)</Label>
@@ -166,8 +225,40 @@ function ItemCard({ item }: { item: Item }) {
                         <p className="text-xs text-muted-foreground">
                             Vorgabe: {MODE_LABELS[item.default_open]}
                         </p>
+                        {form.data.open === 'window' && (
+                            <div className="grid grid-cols-2 gap-2">
+                                <PercentField
+                                    id={`width-${item.key}`}
+                                    label="Breite (%)"
+                                    value={form.data.width}
+                                    error={form.errors.width}
+                                    onChange={(v) => form.setData('width', v)}
+                                />
+                                <PercentField
+                                    id={`height-${item.key}`}
+                                    label="Höhe (%)"
+                                    value={form.data.height}
+                                    error={form.errors.height}
+                                    onChange={(v) => form.setData('height', v)}
+                                />
+                                <p className="col-span-2 text-xs text-muted-foreground">
+                                    In % des sichtbaren Anzeigebereichs.
+                                </p>
+                            </div>
+                        )}
+                        {form.data.open === 'split' && (
+                            <PercentField
+                                id={`split-${item.key}`}
+                                label="Trennlinie (% von links)"
+                                value={form.data.split}
+                                error={form.errors.split}
+                                min={20}
+                                max={80}
+                                onChange={(v) => form.setData('split', v)}
+                            />
+                        )}
                     </div>
-                    <div className="flex gap-2 md:pb-6">
+                    <div className="flex gap-2 md:mt-5">
                         <Button type="submit" disabled={form.processing}>
                             <Save /> Speichern
                         </Button>
@@ -258,9 +349,10 @@ export default function ModuleSettingsPage({
                 <p className="flex items-start gap-2 text-sm text-muted-foreground">
                     <Puzzle className="mt-0.5 size-4 shrink-0" />
                     <span>
-                        «Über die Browser-Erweiterung» öffnet die Anwendung in
-                        einem eigenen Tab, gruppiert mit dem Intranet; ohne
-                        installierte Erweiterung erscheint ein Hinweis.{' '}
+                        «Browser-Erweiterung (neuer Tab)» öffnet die Anwendung
+                        in einem eigenen Tab, gruppiert mit dem Intranet;
+                        «gesplittetes Tab» zeigt sie daneben. Ohne installierte
+                        Erweiterung erscheint ein Hinweis.{' '}
                         <Link
                             href="/einstellungen/browser-erweiterung"
                             className="text-primary hover:underline"
