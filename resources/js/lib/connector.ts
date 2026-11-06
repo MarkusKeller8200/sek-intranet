@@ -42,7 +42,7 @@ export function openWithConnector(
     return sendToConnector('open', { url, title, key });
 }
 
-/** Intranet und Fachanwendung nebeneinander anzeigen (zwei Fenster, je halber Bildschirm). */
+/** Intranet und Fachanwendung nebeneinander: geteilte Ansicht des Browsers (#146), sonst zwei Fenster je halber Bildschirm. */
 export function splitWithConnector(url: string, key: string): boolean {
     return sendToConnector('split', { url, key });
 }

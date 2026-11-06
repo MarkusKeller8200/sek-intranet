@@ -214,7 +214,7 @@ export default function Embed({
                             </CardTitle>
                             <CardDescription>
                                 {extension
-                                    ? 'Die Anwendung läuft in einem eigenen Tab neben dem Intranet oder «Nebeneinander» in einem zweiten Fenster. Website einmal verbinden: Symbol der Erweiterung im Tab der Anwendung → «Website verbinden».'
+                                    ? 'Die Anwendung läuft in einem eigenen Tab neben dem Intranet oder «Nebeneinander» in der geteilten Ansicht des Browsers (sonst in einem zweiten Fenster). Website einmal verbinden: Symbol der Erweiterung im Tab der Anwendung → «Website verbinden».'
                                     : 'Für diese Anwendung ist «Über die Browser-Erweiterung» eingestellt. Ohne Erweiterung öffnet sie in einem normalen Tab.'}
                             </CardDescription>
                         </CardHeader>

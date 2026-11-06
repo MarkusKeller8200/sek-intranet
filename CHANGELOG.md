@@ -11,6 +11,9 @@ laufend unter **Unveröffentlicht**. Ab 0.32.0 entsteht eine Version nur bei ein
 
 ### Neu
 
+- **Browser-Erweiterung: «Nebeneinander» in der geteilten Ansicht (#146):** Kennt der Browser die Tabs Split View
+  API (Chrome ab 155), öffnet «Nebeneinander» die Fachanwendung als geteilte Ansicht neben dem Intranet im selben
+  Fenster (ein schon offener Tab wird dazugeholt). Sonst wie bisher zwei Fenster je halber Bildschirm.
 - **Fachanwendungen: SL-Planer (#145):** Neuer Menüpunkt «SL-Planer» (Anmeldeseite, öffnet in neuem Tab;
   der SL-Planer verbietet das Einbetten mit `X-Frame-Options: SAMEORIGIN`). Adresse wie bei CMI/Escola über die
   Server-`.env` übersteuerbar (`INTRANET_APP_SLPLANER_URL`).

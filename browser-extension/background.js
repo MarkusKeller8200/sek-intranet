@@ -89,6 +89,66 @@ async function appTab(state, key) {
     }
 }
 
+/**
+ * Intranet-Tab und Fachanwendung in der geteilten Ansicht des Browsers (#146). Null, wenn der Browser die API nicht
+ * kennt oder sie scheitert (angeheftet, Gruppe, anderes Fenster) – dann zwei Fenster wie bisher.
+ */
+async function splitView(state, intranetTab, message) {
+    if (typeof chrome.tabs.createSplit !== 'function' || intranetTab.pinned) {
+        return null;
+    }
+    try {
+        // eine bestehende geteilte Ansicht des Intranet-Tabs zuerst auflösen
+        if (
+            typeof intranetTab.splitViewId === 'number' &&
+            intranetTab.splitViewId > -1 &&
+            typeof chrome.tabs.unsplit === 'function'
+        ) {
+            await chrome.tabs.unsplit(intranetTab.splitViewId);
+        }
+        const existing = message.key ? await appTab(state, message.key) : null;
+        let tabId;
+        if (existing && existing.id !== intranetTab.id) {
+            if (existing.windowId !== intranetTab.windowId) {
+                await chrome.tabs.move(existing.id, {
+                    windowId: intranetTab.windowId,
+                    index: intranetTab.index + 1,
+                });
+            } else {
+                await chrome.tabs.move(existing.id, {
+                    index: intranetTab.index + 1,
+                });
+            }
+            if (
+                typeof existing.splitViewId === 'number' &&
+                existing.splitViewId > -1
+            ) {
+                await chrome.tabs.unsplit(existing.splitViewId);
+            }
+            await chrome.tabs.createSplit([intranetTab.id, existing.id]);
+            tabId = existing.id;
+        } else {
+            const tab = await chrome.tabs.create({
+                url: message.url,
+                splitWithTabId: intranetTab.id,
+            });
+            tabId = tab.id;
+        }
+        if (message.key) {
+            state.apps[message.key] = {
+                tabId,
+                origin: new URL(message.url).origin,
+                intranetTab: intranetTab.id,
+            };
+            await save(state);
+        }
+
+        return tabId;
+    } catch {
+        return null;
+    }
+}
+
 async function tabCommand(state, message) {
     const tab = await appTab(state, message.key);
     if (!tab) {
@@ -299,6 +359,11 @@ async function handle(message, sender) {
             if (!sender.tab || !/^https:\/\//.test(message.url)) {
                 return { ok: false };
             }
+            // Geteilte Ansicht des Browsers (Tabs Split View API, Chrome ab 155): ein Fenster, verschiebbare Trennlinie
+            const shared = await splitView(state, sender.tab, message);
+            if (shared) {
+                return { ok: true, mode: 'split-view' };
+            }
             const area = message.screen || {};
             const left = Number(area.left) || 0;
             const top = Number(area.top) || 0;
@@ -349,7 +414,7 @@ async function handle(message, sender) {
                 await save(state);
             }
 
-            return { ok: true };
+            return { ok: true, mode: 'windows' };
         }
         case 'tab':
             if (
