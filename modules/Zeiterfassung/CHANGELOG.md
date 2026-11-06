@@ -4,6 +4,8 @@ Versionen des Moduls nach SemVer (module.json → «version»).
 
 ## [Unveröffentlicht]
 
+## [0.6.0] – 2026-11-06 (Intranet 0.36.0)
+
 ### Neu
 
 - **Tagestotale (#102, 0.5.0):** Tabelle mit Totalzeile pro Tag (aufklappbar), Wochentag, Datum TT.MM., Zeit
