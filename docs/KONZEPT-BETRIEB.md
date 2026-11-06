@@ -181,6 +181,44 @@ Einmalig von Hand: VPS bestellen, Linux (Ubuntu LTS) mit SSH-Schlüssel. Danach 
 
 Grob 150–250 MB RAM pro Installation: Auf dem kleinsten VPS Lite (2 GB) haben 4–6 Demo-Installationen Platz.
 
+### Alternative: Hostinger VPS (geprüft 06.11.2026, OpenAPI 2.7.0)
+
+Bei Hostinger lässt sich **auch der Server selbst automatisieren**:
+
+- **Bestellen und einrichten:** `POST /api/vps/v1/virtual-machines` (Katalog-Artikel, `data_center_id`, Vorlage,
+  SSH-Schlüssel, `post_install_script_id`, wöchentliche Sicherung); Standorte über `GET /api/vps/v1/data-centers`,
+  Preise über `GET /api/billing/v1/catalog`.
+- **Grundeinrichtung:** Post-Install-Skripte (`/api/vps/v1/post-install-scripts`) – unser Skript aus #135 läuft
+  beim ersten Start.
+- **Docker-Projekte pro Kunde direkt per API:** `POST /api/vps/v1/virtual-machines/{id}/docker` (Compose-Inhalt
+  und Umgebungsvariablen), dazu start, stop, update, logs, löschen. Ein eigener Deploy-Agent wäre nicht zwingend.
+- **Snapshots und Sicherungen:** `…/snapshot` (erstellen, wiederherstellen), `…/backups` (wöchentlich,
+  wiederherstellen) – ideal für den Schnappschuss vor Updates.
+- **Firewall** (`/api/vps/v1/firewall`) und **DNS** (`/api/dns/v1/zones/{domain}`).
+- **Standort:** VPS u. a. in Deutschland (Frankfurt, Gebäude von Digital Realty, eigene Server von Hostinger);
+  kein Standort in der Schweiz.
+
+### Datenschutz Standort Deutschland (Volksschule Kanton Zürich)
+
+Einschätzung, keine Rechtsberatung; vor dem produktiven Einsatz mit der Datenschutzbeauftragten des Kantons Zürich
+bzw. dem Volksschulamt abklären.
+
+- **Ausland grundsätzlich möglich:** Cloud ist Bearbeiten im Auftrag (§ 6 IDG, § 25 IDV); Bearbeitung im Ausland nur
+  mit gleichwertigem Datenschutzniveau und/oder zusätzlichen Massnahmen (§ 19 IDG analog). Deutschland bzw. die EU
+  gelten nach Schweizer Recht als Länder mit angemessenem Schutzniveau.
+- **Vertrag ist die eigentliche Hürde:** Verlangt werden u. a. Schweizer Recht und Gerichtsstand Schweiz,
+  Kontrollrechte für Schule, Datenschutzbeauftragte und Finanzkontrolle, Offenlegung aller Bearbeitungsorte und
+  Unterauftragnehmer, Zustimmung bei Änderungen, Meldung von Vorfällen, Löschung und Portabilität (Merkblatt Cloud
+  Computing; empfohlen: AGB Auslagerung Informatikleistungen). Standard-AGB eines Massen-Hosters erfüllen das in der
+  Regel nicht und sind kaum verhandelbar.
+- **Besondere Personendaten** (z. B. Gesundheit, Förderung, Verhalten) nur mit besonderen Massnahmen, vor allem
+  Verschlüsselung; Datenschutz-Folgenabschätzung (§ 10 IDG) vor der Einführung.
+- **Folgerung für uns:** Hostinger in Frankfurt eignet sich für die **Demoplattform mit erfundenen Daten**. Für
+  echte Schuldaten nur, wenn die Vertragsfragen geklärt sind und die Daten bei Hostinger **verschlüsselt** liegen
+  (Schlüssel nur bei der Schule bzw. in der Installation, nicht beim Hoster). Sonst Schweizer Hoster.
+- `INTRANET_DATA_LOCATION` (#112) erhält dafür die Werte `CH` und `EU`; Personendaten-Endpunkte der Plugins bleiben
+  bei `EU` gesperrt, solange nichts anderes entschieden ist.
+
 ## Reihenfolge
 
 1. Intranet: Container-Image, Konfiguration über Umgebungsvariablen, `/health`, `intranet:setup`, Einladungslink.
@@ -207,6 +245,8 @@ Alle mit `triage`. Die Issues der beiden Plattformen ziehen in die eigenen Repos
 2. Betreiber und Vertragspartner für die ADV (Person, Schule Bülach oder eigene Organisation)?
 3. Kostenmodell (gratis, Pauschale pro Schule, nach Grösse) – bestimmt, ob die Abo-Plattform eine Abrechnung braucht.
 4. Eigene Repositories für Abo- und Deploy-Plattform anlegen (bis dahin Meilensteine in diesem Repository).
+5. Hostinger (Frankfurt) für echte Schuldaten: Abklärung mit der Datenschutzbeauftragten des Kantons Zürich bzw.
+   dem Volksschulamt (Vertrag, Verschlüsselung, Folgenabschätzung). Bis dahin nur Demoplattform.
 
 Entschieden am 06.11.2026: Wartungsfenster 23:00–05:00; Wellen 24 Stunden (Patch) bzw. 3 Tage (Minor); Major nach
 Bestätigung, spätestens nach 90 Tagen; Kanal «Beta» bekommt alle Versionen so rasch wie möglich. Hosting: VPS Lite
