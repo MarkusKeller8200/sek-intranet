@@ -156,7 +156,7 @@ final class GlossaryTransfer
             }
             $kuerzel[$key] = $id !== '' ? $id : 'neu:'.$n;
             $changes = $existing === null
-                ? array_filter($data, fn ($v): bool => $v !== '' && $v !== null)
+                ? array_filter($data, fn ($v): bool => $v !== '')
                 : array_filter($data, fn ($v, string $f): bool => (string) ($existing[$f] ?? '') !== (string) $v, ARRAY_FILTER_USE_BOTH);
             if ($existing !== null && $changes === []) {
                 continue;
@@ -178,7 +178,7 @@ final class GlossaryTransfer
     /**
      * Vorschau übernehmen.
      *
-     * @param  list<array<string, mixed>>  $plan
+     * @param  array<mixed>  $plan
      * @return array{neu: int, geaendert: int, log: list<array{0: array<string, mixed>|null, 1: array<string, mixed>}>}
      */
     public function applyListPlan(string $list, array $plan): array
@@ -188,6 +188,10 @@ final class GlossaryTransfer
         $log = [];
         $known = array_column($this->glossary->listItems($list), null, 'id');
         foreach ($plan as $p) {
+            if (! is_array($p)) {
+                continue;
+            }
+            /** @var array<string, mixed> $data */
             $data = (array) ($p['daten'] ?? []);
             if (($p['art'] ?? '') === 'neu') {
                 $log[] = [null, $this->glossary->saveListItem($list, null, $data)];
