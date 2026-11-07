@@ -381,8 +381,9 @@ class GlossaryController extends Controller
     public function listImportApply(Request $request, string $list, string $token, GlossaryTransfer $transfer): RedirectResponse
     {
         $list = $this->listKey($list);
-        $cached = Cache::pull('glossar-listen-import:'.$token);
+        $cached = Cache::get('glossar-listen-import:'.$token);
         abort_if(! is_array($cached) || ($cached['user'] ?? null) !== $request->user()?->getAuthIdentifier() || ($cached['liste'] ?? null) !== $list, 404);
+        Cache::forget('glossar-listen-import:'.$token);
         $result = $transfer->applyListPlan($list, (array) $cached['plan']);
         foreach ($result['log'] as [$before, $after]) {
             $this->audit->record('glossar_'.$list, $before, $after, 'Glossar: Liste '.GlossaryTransfer::LIST_NAMES[$list].' (Excel-Import)', $request->user());
