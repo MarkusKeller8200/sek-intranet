@@ -9,6 +9,8 @@ laufend unter **Unveröffentlicht**. Ab 0.32.0 entsteht eine Version nur bei ein
 
 ## [Unveröffentlicht]
 
+## [0.37.0] – 2026-11-07
+
 ### Neu
 
 - **Glossar: gemeinsame Felder nach DEC-020 (#155):** Alternative Schreibweisen aus dem EduKSX-Glossary in
@@ -52,6 +54,16 @@ laufend unter **Unveröffentlicht**. Ab 0.32.0 entsteht eine Version nur bei ein
 - **Fachanwendungen: SL-Planer (#145):** Neuer Menüpunkt «SL-Planer» (Anmeldeseite, öffnet in neuem Tab;
   der SL-Planer verbietet das Einbetten mit `X-Frame-Options: SAMEORIGIN`). Adresse wie bei CMI/Escola über die
   Server-`.env` übersteuerbar (`INTRANET_APP_SLPLANER_URL`).
+
+### Für Mitarbeitende
+
+- Neu im Menü Fachanwendungen: der SL-Planer.
+- Fachanwendungen lassen sich neben dem Intranet öffnen – im selben Browserfenster geteilt oder in einem eigenen
+  Fenster.
+- Unter Einstellungen → Darstellung kann das Seitenmenü über dem Inhalt aufgehen – mehr Platz, wenn eine Anwendung
+  daneben läuft.
+- Wer ClickTime nutzt, erfasst die Zeiten nur noch dort; im Intranet werden sie übernommen.
+- [edit-glossary] Das Glossar lässt sich vollständig exportieren, auch Kategorien und Herkunft einzeln.
 
 ## [0.36.0] – 2026-11-06
 
