@@ -129,9 +129,10 @@ Referenzclient `App\Glossary\SyncClient` des Glossary (dort `docs/SYNC-INTRANET.
   ist für solche Einträge gesperrt. Neu: `aliase_alternativ` (alternative Schreibweisen).
 - **Lokal und nie überschrieben:** eigene Abkürzung, Bezeichnung und Alias, «Intern genutzt in», Notiz,
   Suchbegriffe, Doppelte.
-- **Entscheide zu den offenen Fragen (Vorschlag, zu bestätigen):** Lokal angelegte Begriffe, die es im Glossary nicht
-  gibt, bleiben lokal und bearbeitbar (Vorschläge ans Glossary kommen mit dem Meilenstein «Vorschläge und
-  Moderation»). Der Excel-Import bleibt für übernommene Begriffe offen, aber nur für die lokalen Felder.
+- **Entscheid (07.11.2026):** Lokal angelegte Begriffe, die es im Glossary nicht gibt, bleiben lokal und
+  bearbeitbar (Vorschläge ans Glossary kommen mit dem Meilenstein «Vorschläge und Moderation»).
+- **Offen (klären, sobald der Glossary-Server online erreichbar ist):** ob der Excel-Import für übernommene Begriffe
+  gesperrt wird. Bis dahin bleibt er offen, aber nur für die lokalen Felder (gemeinsame Felder gesperrt).
 - **Zeitplan:** `php artisan intranet:glossar-sync` läuft alle fünf Minuten und synchronisiert, wenn das Plugin
   eingeschaltet und der Abstand aus den Einstellungen (Vorgabe 10 Minuten, 5–60) erreicht ist; `--jetzt` sofort,
   `--neu` mit Vollstand. Von Hand: Plugin → Aktion «Jetzt synchronisieren».
