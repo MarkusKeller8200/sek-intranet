@@ -9,6 +9,14 @@ laufend unter **Unveröffentlicht**. Ab 0.32.0 entsteht eine Version nur bei ein
 
 ## [Unveröffentlicht]
 
+### Geändert
+
+- **Glossar: Kategorien und Herkunft mit UUID (#159):** Die Listeneinträge des Startinhalts hatten Kurz-IDs wie
+  «beh» oder «vsa». `intranet:upgrade` stellt sie einmalig auf UUIDs um (alter Schlüssel im Feld `schluessel`, Label
+  und Farbe fest gespeichert) und führt die Verweise der Einträge und die Zuordnung des Syncs nach; Zeitstempel
+  bleiben, nichts wird gelöscht. Neue Installationen und vom EduKSX-Glossary angelegte Listeneinträge erhalten direkt
+  eine UUID. Plugin EduKSX-Glossary 0.2.
+
 ## [0.37.0] – 2026-11-07
 
 ### Neu

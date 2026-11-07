@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Data\Contracts\GlossaryRepository;
+use App\Data\Store\JsonStore;
 use App\Support\Glossary;
 use App\Support\GlossaryExamples;
 use App\Support\SpreadsheetWriter;
@@ -20,6 +21,12 @@ class GlossaryTest extends TestCase
         return app(GlossaryRepository::class);
     }
 
+    /** ID eines Listeneintrags des Startinhalts (#159: UUID, Schlüssel im Feld «schluessel»). */
+    private function id(string $list, string $key): string
+    {
+        return (string) $this->repo()->listId($list, $key);
+    }
+
     /**
      * @return array<string, mixed>
      */
@@ -34,7 +41,7 @@ class GlossaryTest extends TestCase
         $this->assertCount(141, $all);
         $this->assertCount(10, $this->repo()->listItems('kategorien'));
         $this->assertSame(3, collect($all)->where('abk_offiziell', 'SHP')->count(), 'Doppelte nicht zusammengeführt');
-        $this->assertTrue(collect($all)->every(fn (array $e): bool => $e['herkunft'] === ['vsa']));
+        $this->assertTrue(collect($all)->every(fn (array $e): bool => $e['herkunft'] === [$this->id('herkunft', 'vsa')]));
         $this->assertSame('zu_pruefen', $this->entry('SV')['status']);
         $this->assertSame(['biz'], $this->entry('BIZ')['aliase_offiziell']);
     }
@@ -56,7 +63,7 @@ class GlossaryTest extends TestCase
             ['id' => $vsa['id'], 'field' => 'kategorien', 'value' => 'BEH; Recht'],
             ['id' => $vsa['id'], 'field' => 'status', 'value' => 'aktuell'],
         ]])->assertOk()->assertJsonPath('rows.0.kategorien', 'Behörden; Recht');
-        $this->assertSame(['beh', 'rec'], $this->repo()->find($vsa['id'])['kategorien']);
+        $this->assertSame([$this->id('kategorien', 'beh'), $this->id('kategorien', 'rec')], $this->repo()->find($vsa['id'])['kategorien']);
 
         // offizielle Felder gesperrt, unbekannte Herkunft abgewiesen, alles oder nichts
         $this->postJson('/glossar/zellen', ['changes' => [
@@ -92,8 +99,8 @@ class GlossaryTest extends TestCase
         $changed = app(GlossaryExamples::class)->apply();
         $this->assertGreaterThan(20, $changed);
         $this->assertSame('Eigene', $this->repo()->find($vsa['id'])['kurzbeschreibung']);
-        $this->assertSame(['vsa', 'bund'], $this->entry('BFS')['herkunft']);
-        $this->assertSame(['dsi', 'unt'], $this->entry('BYOD')['kategorien']);
+        $this->assertSame([$this->id('herkunft', 'vsa'), $this->id('herkunft', 'bund')], $this->entry('BFS')['herkunft']);
+        $this->assertSame([$this->id('kategorien', 'dsi'), $this->id('kategorien', 'unt')], $this->entry('BYOD')['kategorien']);
         $this->assertSame(0, app(GlossaryExamples::class)->apply(), 'nur einmal');
     }
 
@@ -137,13 +144,45 @@ class GlossaryTest extends TestCase
         $this->get('/glossar/'.$neu['id'])->assertOk()->assertInertia(fn (Assert $page) => $page->component('glossary/show')->where('eintrag.kurzbeschreibung', 'Kurz'));
     }
 
+    public function test_list_ids_are_uuids_and_old_keys_are_migrated(): void
+    {
+        $uuid = '/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/';
+        foreach (['kategorien', 'herkunft'] as $list) {
+            foreach ($this->repo()->listItems($list) as $item) {
+                $this->assertMatchesRegularExpression($uuid, (string) $item['id'], 'Startinhalt mit UUID');
+            }
+        }
+
+        // früherer Stand: Kurz-IDs ohne Label/Farbe, Einträge verweisen darauf
+        $store = app(JsonStore::class);
+        $store->replace('glossar_kategorien', [['id' => 'beh', 'kuerzel' => 'BEH', 'bezeichnung' => 'Behörden', 'position' => 1]]);
+        $store->replace('glossar_herkunft', [['id' => 'vsa', 'kuerzel' => 'VSA', 'bezeichnung' => 'Volksschulamt', 'position' => 1]]);
+        $entry = $this->entry('VSA');
+        $store->replace('glossar', [['kategorien' => ['beh'], 'herkunft' => ['vsa']] + $entry]);
+        $before = $store->find('glossar', $entry['id']);
+        $this->repo()->saveSyncState(['listen' => ['herkunft' => ['vsa' => 'vsa']]]);
+
+        $this->assertSame(2, $this->repo()->migrateListIds());
+        $beh = $this->repo()->listItems('kategorien')[0];
+        $this->assertMatchesRegularExpression($uuid, (string) $beh['id']);
+        $this->assertSame('beh', $beh['schluessel']);
+        $this->assertSame('Behörden', $beh['label'], 'Label des Startinhalts fest gespeichert');
+        $this->assertSame('violet', $beh['farbe'], 'Farbe des Startinhalts fest gespeichert');
+        $after = $store->find('glossar', $entry['id']);
+        $this->assertSame([$beh['id']], $after['kategorien']);
+        $this->assertSame([$this->id('herkunft', 'vsa')], $after['herkunft']);
+        $this->assertSame($before['updated_at'], $after['updated_at'], 'Zeitstempel bleiben');
+        $this->assertSame(['vsa' => $this->id('herkunft', 'vsa')], $this->repo()->syncState()['listen']['herkunft']);
+        $this->assertSame(0, $this->repo()->migrateListIds(), 'idempotent');
+    }
+
     public function test_lists_for_categories_and_origin(): void
     {
         $this->signInAs('verwaltung');
         $this->post('/glossar/listen/herkunft', ['kuerzel' => 'GEMA', 'bezeichnung' => 'Gemeindeamt Kanton', 'url' => 'https://example.org'])->assertRedirect();
         $this->post('/glossar/listen/herkunft', ['kuerzel' => 'gema', 'bezeichnung' => 'doppelt'])->assertSessionHasErrors('kuerzel');
-        $this->delete('/glossar/listen/herkunft/vsa')->assertRedirect();
-        $this->assertNotNull(collect($this->repo()->listItems('herkunft'))->firstWhere('id', 'vsa'), 'verwendet → nicht gelöscht');
+        $this->delete('/glossar/listen/herkunft/'.$this->id('herkunft', 'vsa'))->assertRedirect();
+        $this->assertNotNull(collect($this->repo()->listItems('herkunft'))->firstWhere('schluessel', 'vsa'), 'verwendet → nicht gelöscht');
         $this->get('/glossar/listen?liste=herkunft')->assertInertia(fn (Assert $page) => $page->where('liste', 'herkunft')->where('eintraege.0.verwendet', 141)->where('eintraege.0.label', 'VSA'));
     }
 
@@ -171,7 +210,7 @@ class GlossaryTest extends TestCase
         $vsa = $this->entry('VSA');
         $this->postJson('/glossar/zellen', ['changes' => [['id' => $vsa['id'], 'field' => 'herkunft', 'value' => 'VSA; ZH']]])
             ->assertOk()->assertJsonPath('rows.0.herkunft', 'VSA; ZH');
-        $this->assertSame(['vsa', 'kanton'], $this->repo()->find($vsa['id'])['herkunft']);
+        $this->assertSame([$this->id('herkunft', 'vsa'), $this->id('herkunft', 'kanton')], $this->repo()->find($vsa['id'])['herkunft']);
         $this->get('/glossar')->assertInertia(fn (Assert $page) => $page
             ->where('rows', fn ($rows): bool => collect($rows)->firstWhere('id', $vsa['id'])['herkunft'] === 'VSA; ZH'));
     }
@@ -186,7 +225,7 @@ class GlossaryTest extends TestCase
         $ziel = $shp[0]['id'];
         $this->post('/glossar/doppelte/zusammenfuehren', ['ids' => $shp->pluck('id')->all(), 'ziel' => $ziel, 'auswahl' => ['bez_offiziell' => $shp[1]['id']]])->assertRedirect('/glossar/doppelte');
         $merged = $this->repo()->find($ziel);
-        $this->assertSame(['beh', 'sop', 'per'], $merged['kategorien']);
+        $this->assertSame([$this->id('kategorien', 'beh'), $this->id('kategorien', 'sop'), $this->id('kategorien', 'per')], $merged['kategorien']);
         $this->assertSame($shp[1]['bez_offiziell'], $merged['bez_offiziell']);
         $this->assertCount(2, $merged['fruehere_ids']);
         $this->assertSame(1, collect($this->repo()->all())->where('abk_offiziell', 'SHP')->count());

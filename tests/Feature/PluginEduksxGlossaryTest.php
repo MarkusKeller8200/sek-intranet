@@ -117,9 +117,10 @@ class PluginEduksxGlossaryTest extends TestCase
 
         $new = $this->repo()->find(self::NEW_ID);
         $this->assertSame('NEUX', $new['abk_offiziell']);
-        $this->assertSame(['neue-kat'], $new['kategorien']);
-        $this->assertSame('Neue Kategorie', collect($this->repo()->listItems('kategorien'))->firstWhere('id', 'neue-kat')['bezeichnung']);
-        $this->assertSame('https://www.zh.ch/vsa', collect($this->repo()->listItems('herkunft'))->firstWhere('id', 'vsa')['url']);
+        $this->assertSame([$this->repo()->listId('kategorien', 'neue-kat')], $new['kategorien']);
+        $this->assertMatchesRegularExpression('/^[0-9a-f-]{36}$/', (string) $new['kategorien'][0], 'neue Kategorie mit UUID');
+        $this->assertSame('Neue Kategorie', collect($this->repo()->listItems('kategorien'))->firstWhere('schluessel', 'neue-kat')['bezeichnung']);
+        $this->assertSame('https://www.zh.ch/vsa', collect($this->repo()->listItems('herkunft'))->firstWhere('schluessel', 'vsa')['url']);
         $this->assertCount($count + 2, $this->repo()->all(), 'lokale Einträge bleiben, nichts gelöscht');
         $this->assertSame(10, $this->repo()->syncState()['cursor']);
     }

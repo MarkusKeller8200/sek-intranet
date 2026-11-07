@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Data\Contracts\GlossaryRepository;
 use App\Data\Store\JsonStore;
 use App\Support\DemoStudents;
 use App\Support\GlossaryExamples;
@@ -83,6 +84,12 @@ class UpgradeIntranetDataCommand extends Command
         // Prototyp: erfundene Schüler:innen und Eltern, Beispiel-Datenherkunft
         $total += DemoStudents::addIfMissing($store);
         $total += DemoStudents::addRoleAccounts($store);
+        // Glossar (#159): Kategorien und Herkunft ohne UUID umstellen (Verweise der Einträge nachgeführt)
+        $migrated = app(GlossaryRepository::class)->migrateListIds();
+        if ($migrated > 0) {
+            $this->components->info("Glossar: {$migrated} Listeneinträge auf UUID umgestellt.");
+            $total += $migrated;
+        }
         // Beispieldaten Glossar (#68), einmalig
         $examples = app(GlossaryExamples::class)->apply();
         if ($examples > 0) {

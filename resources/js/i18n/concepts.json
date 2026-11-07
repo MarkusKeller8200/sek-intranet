@@ -3454,5 +3454,10 @@
     "Umleitungen alte ID → neue ID": [
         "Redirects old ID → new ID",
         "Umleitige alti ID → neui ID"
-    ]
+    ],
+    "Schlüssel (Startinhalt bzw. EduKSX-Glossary)": [
+        "Key (initial content or EduKSX Glossary)",
+        "Schlüssel (Startinhalt oder EduKSX-Glossary)"
+    ],
+    "Label (Tag in der Tabelle)": ["Label (tag in the table)", "Label (Tag i de Tabälle)"]
 }

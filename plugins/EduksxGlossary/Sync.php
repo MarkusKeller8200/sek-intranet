@@ -3,6 +3,7 @@
 namespace Plugins\EduksxGlossary;
 
 use App\Data\Contracts\GlossaryRepository;
+use App\Data\Store\JsonStore;
 use App\Support\Glossary;
 use Closure;
 use RuntimeException;
@@ -281,7 +282,7 @@ final class Sync
     /**
      * Listen abgleichen: Schlüssel = ID, sonst Kürzel, Label oder Bezeichnung (ohne Gross-/Kleinschreibung).
      * Bezeichnung und URL kommen aus dem Glossary; Farbe, Label, Beschreibung und Notiz bleiben lokal. Fehlende
-     * Einträge werden mit dem Schlüssel als ID angelegt. Nie löschen.
+     * Einträge werden mit UUID und dem Schlüssel im Feld «schluessel» angelegt (#159). Nie löschen.
      *
      * @param  list<array<mixed>>  $remote
      */
@@ -298,7 +299,7 @@ final class Sync
             $label = trim((string) ($item['label'] ?? $key));
             $url = is_string($item['url'] ?? null) && str_starts_with($item['url'], 'https://') ? $item['url'] : '';
             $found = null;
-            foreach ([['id', $key], ['kuerzel', $key], ['kuerzel', $label], ['label', $label], ['bezeichnung', $name]] as [$field, $value]) {
+            foreach ([['id', $key], ['schluessel', $key], ['kuerzel', $key], ['kuerzel', $label], ['label', $label], ['bezeichnung', $name]] as [$field, $value]) {
                 foreach ($local as $row) {
                     if (mb_strtolower(trim((string) ($row[$field] ?? ''))) === mb_strtolower($value)) {
                         $found = $row;
@@ -308,7 +309,7 @@ final class Sync
             }
             if ($found === null) {
                 $found = $this->glossary->saveListItem($list, null, [
-                    'id' => $key, 'kuerzel' => mb_substr($label, 0, 20), 'label' => mb_substr($label, 0, 30), 'farbe' => '',
+                    'id' => JsonStore::uuid7(), 'schluessel' => $key, 'kuerzel' => mb_substr($label, 0, 20), 'label' => mb_substr($label, 0, 30), 'farbe' => '',
                     'bezeichnung' => $name, 'beschreibung' => '', 'url' => $url, 'notiz' => '',
                 ]);
                 $local[] = $found;

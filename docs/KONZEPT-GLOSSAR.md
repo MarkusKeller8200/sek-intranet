@@ -115,8 +115,8 @@ Referenzclient `App\Glossary\SyncClient` des Glossary (dort `docs/SYNC-INTRANET.
 - **Ablauf:** erster Lauf mit dem Vollstand (`/api/v1/exports?format=json`), danach nur Änderungen
   (`/api/v1/changes?since=<cursor>`, seitenweise; Cursor nach jeder Seite gespeichert). Vorher prüft
   `/api/v1/releases/latest`, ob sich der Cursor geändert hat – sonst kein weiterer Abruf. Kategorien und Herkunft
-  über `/categories` und `/sources` (Schlüssel = ID der Liste, sonst Kürzel, Label oder Bezeichnung; fehlende werden
-  mit dem Schlüssel als ID angelegt; Bezeichnung und URL aus dem Glossary, Farbe und Notiz bleiben lokal).
+  über `/categories` und `/sources` (Schlüssel = ID oder Feld `schluessel` der Liste, sonst Kürzel, Label oder
+  Bezeichnung; fehlende werden mit UUID und dem Schlüssel in `schluessel` angelegt, #159; Bezeichnung und URL aus dem Glossary, Farbe und Notiz bleiben lokal).
 - **Ereignisse:** `published` übernimmt den Begriff in dieser Revision (inaktiv → ausgeblendet), `unpublished`
   blendet aus, `merged` blendet aus, überträgt «Intern genutzt in», Doppelte, eigene Formen und Notiz (wo das Ziel
   leer ist) auf den verbleibenden Begriff und vermerkt die alte ID unter «Frühere IDs». Unbekannte Arten werden

@@ -23,6 +23,17 @@ interface GlossaryRepository extends Repository
 
     public function deleteListItem(string $list, string $id): bool;
 
+    /** ID eines Listeneintrags zu ID oder Schlüssel (z. B. «vsa» aus dem Startinhalt), sonst null. */
+    public function listId(string $list, string $key): ?string;
+
+    /**
+     * Listeneinträge ohne UUID (frühere Schlüssel wie «beh», «vsa») auf UUIDs umstellen (#159): alter Schlüssel ins
+     * Feld «schluessel», Verweise der Einträge und die Zuordnung des Syncs nachführen. Idempotent, löscht nichts.
+     *
+     * @return int Anzahl umgestellter Listeneinträge
+     */
+    public function migrateListIds(): int;
+
     /**
      * Stand des Syncs mit dem EduKSX-Glossary (#156): Cursor, Datenstand, letzter Lauf, Fehler, Zuordnung der Listen.
      *

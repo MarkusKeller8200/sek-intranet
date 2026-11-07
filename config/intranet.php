@@ -1411,6 +1411,9 @@ return [
             'label' => 'Glossar: Kategorien',
             'description' => 'Kategorien des Glossars (Abkürzung, Bezeichnung, Beschreibung, URL, Notiz).',
             'fields' => [
+                'schluessel' => ['type' => 'string', 'required' => false, 'label' => 'Schlüssel (Startinhalt bzw. EduKSX-Glossary)'],
+                'label' => ['type' => 'string', 'required' => false, 'label' => 'Label (Tag in der Tabelle)'],
+                'farbe' => ['type' => 'string', 'required' => false, 'label' => 'Farbe'],
                 'kuerzel' => ['type' => 'string', 'required' => true, 'label' => 'Abkürzung'],
                 'bezeichnung' => ['type' => 'string', 'required' => true, 'label' => 'Bezeichnung'],
                 'beschreibung' => ['type' => 'text', 'required' => false, 'label' => 'Beschreibung'],
@@ -1423,6 +1426,9 @@ return [
             'label' => 'Glossar: Herkunft',
             'description' => 'Herkunft der Begriffe, z. B. VSA, Kanton, Bund (Abkürzung, Bezeichnung, Beschreibung, URL, Notiz).',
             'fields' => [
+                'schluessel' => ['type' => 'string', 'required' => false, 'label' => 'Schlüssel (Startinhalt bzw. EduKSX-Glossary)'],
+                'label' => ['type' => 'string', 'required' => false, 'label' => 'Label (Tag in der Tabelle)'],
+                'farbe' => ['type' => 'string', 'required' => false, 'label' => 'Farbe'],
                 'kuerzel' => ['type' => 'string', 'required' => true, 'label' => 'Abkürzung'],
                 'bezeichnung' => ['type' => 'string', 'required' => true, 'label' => 'Bezeichnung'],
                 'beschreibung' => ['type' => 'text', 'required' => false, 'label' => 'Beschreibung'],

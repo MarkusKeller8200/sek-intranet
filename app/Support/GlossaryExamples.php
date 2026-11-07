@@ -64,19 +64,22 @@ final class GlossaryExamples
         }
 
         $changed = 0;
+        // Listen mit UUID (#159): Schlüssel des Startinhalts → ID
+        $origin = fn (string $key): string => $this->glossary->listId('herkunft', $key) ?? $key;
+        $category = fn (string $key): string => $this->glossary->listId('kategorien', $key) ?? $key;
         foreach ($this->glossary->all() as $entry) {
             $abk = (string) ($entry['abk_offiziell'] ?? '');
             $update = [];
             if (isset(self::SHORT[$abk]) && trim((string) ($entry['kurzbeschreibung'] ?? '')) === '') {
                 $update['kurzbeschreibung'] = self::SHORT[$abk];
             }
-            $origin = (array) ($entry['herkunft'] ?? []);
-            if (isset(self::ORIGIN[$abk]) && $origin === ['vsa']) {
-                $update['herkunft'] = ['vsa', self::ORIGIN[$abk]];
+            $origins = (array) ($entry['herkunft'] ?? []);
+            if (isset(self::ORIGIN[$abk]) && $origins === [$origin('vsa')]) {
+                $update['herkunft'] = [$origin('vsa'), $origin(self::ORIGIN[$abk])];
             }
             $categories = (array) ($entry['kategorien'] ?? []);
-            if (isset(self::CATEGORY[$abk]) && count($categories) === 1 && ! in_array(self::CATEGORY[$abk], $categories, true)) {
-                $update['kategorien'] = [...$categories, self::CATEGORY[$abk]];
+            if (isset(self::CATEGORY[$abk]) && count($categories) === 1 && ! in_array($category(self::CATEGORY[$abk]), $categories, true)) {
+                $update['kategorien'] = [...$categories, $category(self::CATEGORY[$abk])];
             }
             if ($abk === 'VSA' && trim((string) ($entry['notiz'] ?? '')) === '') {
                 $update['notiz'] = "**Beispiel-Notiz:** Weisungen des VSA gelten für alle Schulen.\n- [Volksschule Kanton Zürich](".GlossarySeed::VSA_URL.')';
