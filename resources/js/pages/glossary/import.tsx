@@ -30,11 +30,18 @@ export default function GlossaryImport({
     datei,
     plan,
     felder,
+    titel = 'Excel-Import prüfen',
+    ziel,
+    zurueck = '/glossar',
 }: {
     token: string;
     datei: string;
     plan: Zeile[];
     felder: Record<string, string>;
+    /** Import einer Liste (#157): eigene Überschrift, Ziel und Rückweg */
+    titel?: string;
+    ziel?: string;
+    zurueck?: string;
 }) {
     const zahl = (art: Zeile['art']) =>
         plan.filter((p) => p.art === art).length;
@@ -44,20 +51,22 @@ export default function GlossaryImport({
             <Head title="Glossar: Import" />
             <div className="flex min-w-0 flex-1 flex-col gap-6 p-4 md:p-6">
                 <PageHeader
-                    title="Excel-Import prüfen"
+                    title={titel}
                     description={`${datei}: ${zahl('neu')} neu, ${zahl('geaendert')} geändert, ${zahl('fehler')} Fehler. Unveränderte Zeilen werden nicht angezeigt. Es wird nie etwas gelöscht.`}
                     actions={
                         <>
                             <Button
                                 disabled={zahl('neu') + zahl('geaendert') === 0}
                                 onClick={() =>
-                                    router.post(`/glossar/import/${token}`)
+                                    router.post(
+                                        ziel ?? `/glossar/import/${token}`,
+                                    )
                                 }
                             >
                                 <Check /> Übernehmen
                             </Button>
                             <Button asChild variant="outline">
-                                <Link href="/glossar">Abbrechen</Link>
+                                <Link href={zurueck}>Abbrechen</Link>
                             </Button>
                         </>
                     }

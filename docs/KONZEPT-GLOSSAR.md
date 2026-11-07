@@ -96,6 +96,15 @@ und Kurzbeschreibung**; ein Link führt direkt zum Eintrag im Glossar.
   getrennt; unbekannte Herkunft/Kategorie werden als Fehler gemeldet oder auf Wunsch neu angelegt. **Vorschau** vor
   dem Übernehmen (neu / geändert / Fehler), gesperrte Felder nur mit Recht, **nie löschen**. Leere Vorlage zum
   Herunterladen.
+- **Vollexport (#157)**, nur mit Recht «Glossar pflegen»: Menü Export → «Excel vollständig (alle Daten)» – alle
+  Einträge (auch inaktive) mit allen Feldern und zusätzlich «Intern genutzt in (Schlüssel)» (`bereich:…`,
+  `modul:…`), «Doppelte geprüft» (`dubletten_ok`), «Erstellt», «Geändert». Der Import ignoriert diese Spalten; ein
+  Vollexport lässt sich unverändert wieder importieren. Rohdaten als JSON: `php artisan intranet:glossar-export
+  --datei=glossar.json` (Einträge mit allen gespeicherten Feldern, Bereiche, beide Listen).
+- **Listen Kategorien und Herkunft (#157):** Auf der Seite «Kategorien & Herkunft» je Liste «Excel-Export» mit den
+  Spalten ID, Kürzel, Bezeichnung, Label, Farbe, Beschreibung, URL, Notiz, Reihenfolge und «Excel-Import» mit
+  Vorschau (neu / geändert / Fehler, Regeln wie im Formular, Kürzel eindeutig, **nie löschen**). Fehlende Spalten
+  behalten den bisherigen Wert.
 
 ## Rechte (je Rolle einstellbar)
 

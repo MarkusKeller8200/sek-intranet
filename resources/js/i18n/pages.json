@@ -371,5 +371,14 @@
         ". The token is only kept in this browser tab.",
         ". S Token bliibt nur i dem Browser-Tab gspicheret."
     ],
-    "Basis-URL": ["Base URL", "Basis-URL"]
+    "Basis-URL": ["Base URL", "Basis-URL"],
+    "Excel vollständig (alle Daten)": [
+        "Excel complete (all data)",
+        "Excel vollständig (alli Date)"
+    ],
+    "Excel-Export": ["Excel export", "Excel-Export"],
+    "Excel-Datei für den Import der Liste wählen": [
+        "Choose Excel file to import the list",
+        "Excel-Datei für de Import vo de Lischte uswähle"
+    ]
 }

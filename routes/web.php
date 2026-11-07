@@ -183,6 +183,9 @@ Route::middleware('auth')->group(function () {
         Route::post('glossar/zeile', [GlossaryController::class, 'newRow'])->middleware('throttle:60,1')->name('glossary.row');
         Route::post('glossar/zellen', [GlossaryController::class, 'cells'])->middleware('throttle:120,1')->name('glossary.cells');
         Route::get('glossar/listen', [GlossaryController::class, 'lists'])->name('glossary.lists');
+        Route::get('glossar/listen/{list}/export', [GlossaryController::class, 'listExport'])->middleware('throttle:30,1')->name('glossary.lists.export');
+        Route::post('glossar/listen/{list}/import', [GlossaryController::class, 'listImportPreview'])->middleware('throttle:20,1')->name('glossary.lists.import');
+        Route::post('glossar/listen/{list}/import/{token}', [GlossaryController::class, 'listImportApply'])->name('glossary.lists.import.apply');
         Route::post('glossar/listen/{list}', [GlossaryController::class, 'storeListItem'])->name('glossary.lists.store');
         Route::put('glossar/listen/{list}/{id}', [GlossaryController::class, 'updateListItem'])->name('glossary.lists.update');
         Route::delete('glossar/listen/{list}/{id}', [GlossaryController::class, 'destroyListItem'])->name('glossary.lists.destroy');

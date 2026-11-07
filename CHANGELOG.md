@@ -11,6 +11,10 @@ laufend unter **Unveröffentlicht**. Ab 0.32.0 entsteht eine Version nur bei ein
 
 ### Neu
 
+- **Glossar: vollständiger Export (#157):** Für die Übernahme ins EduKSX-Glossary exportiert «Excel vollständig
+  (alle Daten)» alle Einträge (auch inaktive) mit «Intern genutzt in (Schlüssel)», «Doppelte geprüft», «Erstellt»
+  und «Geändert»; der bisherige Export und Import bleiben gleich. Kategorien und Herkunft haben je einen eigenen
+  Excel-Export und -Import mit Vorschau (nie löschen). Rohdaten als JSON mit `php artisan intranet:glossar-export`.
 - **Zeiterfassung: ClickTime führt (#154):** Ist ClickTime für eine Person aktiv (Plugin eingeschaltet, ClickTime-Nr.
   in der Datenherkunft), sind «Eintrag erfassen» und Bearbeiten deaktiviert, auch auf dem Server; Übernehmen aus
   ClickTime, Löschen übernommener Einträge und Einreichen bleiben. Modul Zeiterfassung 0.7.0.

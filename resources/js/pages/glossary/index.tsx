@@ -46,7 +46,7 @@ type Props = {
 
 type CellsResponse = { rows?: GlossaryRow[]; message?: string };
 
-async function download(ids: string[] | null, vorlage = false) {
+async function download(ids: string[] | null, vorlage = false, voll = false) {
     const token = decodeURIComponent(
         document.cookie
             .split('; ')
@@ -61,7 +61,9 @@ async function download(ids: string[] | null, vorlage = false) {
             'X-Requested-With': 'XMLHttpRequest',
             'X-XSRF-TOKEN': token,
         },
-        body: JSON.stringify(vorlage ? { vorlage: true } : { ids }),
+        body: JSON.stringify(
+            vorlage ? { vorlage: true } : voll ? { voll: true } : { ids },
+        ),
     });
     if (!response.ok) {
         toast.error(`Export nicht möglich (HTTP ${response.status}).`);
@@ -71,9 +73,12 @@ async function download(ids: string[] | null, vorlage = false) {
     const url = URL.createObjectURL(await response.blob());
     const a = document.createElement('a');
     a.href = url;
+    const datum = new Date().toISOString().slice(0, 10);
     a.download = vorlage
         ? 'glossar-vorlage.xlsx'
-        : `glossar-${new Date().toISOString().slice(0, 10)}.xlsx`;
+        : voll
+          ? `glossar-vollstaendig-${datum}.xlsx`
+          : `glossar-${datum}.xlsx`;
     a.click();
     URL.revokeObjectURL(url);
 }
@@ -314,6 +319,15 @@ export default function GlossaryIndex({
                     onAddRow={rechte.edit ? neueZeile : undefined}
                     onExport={(_format, ids) => void download(ids)}
                     extraExports={[
+                        ...(rechte.edit
+                            ? [
+                                  {
+                                      label: 'Excel vollständig (alle Daten)',
+                                      run: () =>
+                                          void download(null, false, true),
+                                  },
+                              ]
+                            : []),
                         {
                             label: 'PDF …',
                             // erst nach dem Schliessen des Menüs öffnen (Fokus)

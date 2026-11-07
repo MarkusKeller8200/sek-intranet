@@ -1,7 +1,7 @@
-import { Head, Link, useForm } from '@inertiajs/react';
-import { ExternalLink, Pencil, Plus } from 'lucide-react';
+import { Head, Link, router, useForm } from '@inertiajs/react';
+import { Download, ExternalLink, FileUp, Pencil, Plus } from 'lucide-react';
 import type { FormEvent } from 'react';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import DeleteButton from '@/components/delete-button';
 import FormField from '@/components/form-field';
 import { GlossaryTag } from '@/components/glossary-tags';
@@ -55,6 +55,7 @@ export default function GlossaryLists({
     eintraege: Eintrag[];
 }) {
     const [bearbeiten, setBearbeiten] = useState<Eintrag | null>(null);
+    const datei = useRef<HTMLInputElement>(null);
     const form = useForm({ ...leer });
     const waehlen = (e: Eintrag | null) => {
         setBearbeiten(e);
@@ -90,6 +91,39 @@ export default function GlossaryLists({
                 <PageHeader
                     title="Kategorien & Herkunft"
                     description="Listen für das Glossar. Jeder Eintrag hat Abkürzung, Bezeichnung, Beschreibung, URL und Notiz."
+                    actions={
+                        <>
+                            <Button asChild variant="outline">
+                                <a href={`/glossar/listen/${liste}/export`}>
+                                    <Download /> Excel-Export
+                                </a>
+                            </Button>
+                            <Button
+                                variant="outline"
+                                onClick={() => datei.current?.click()}
+                            >
+                                <FileUp /> Excel-Import
+                            </Button>
+                            <input
+                                ref={datei}
+                                type="file"
+                                accept=".xlsx,.csv"
+                                className="hidden"
+                                aria-label="Excel-Datei für den Import der Liste wählen"
+                                onChange={(e) => {
+                                    const file = e.target.files?.[0];
+                                    if (file) {
+                                        router.post(
+                                            `/glossar/listen/${liste}/import`,
+                                            { datei: file },
+                                            { forceFormData: true },
+                                        );
+                                    }
+                                    e.target.value = '';
+                                }}
+                            />
+                        </>
+                    }
                 />
                 <div
                     className="flex flex-wrap gap-2"

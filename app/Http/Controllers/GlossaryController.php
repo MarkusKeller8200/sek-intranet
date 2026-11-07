@@ -6,6 +6,7 @@ use App\Data\Contracts\GlossaryRepository;
 use App\Plugins\Support\SpreadsheetReader;
 use App\Support\AuditLog;
 use App\Support\Glossary;
+use App\Support\GlossaryTransfer;
 use App\Support\GridViews;
 use App\Support\SpreadsheetWriter;
 use Illuminate\Http\JsonResponse;
@@ -315,7 +316,14 @@ class GlossaryController extends Controller
 
     public function export(Request $request): HttpResponse
     {
-        $data = $request->validate(['ids' => ['nullable', 'array'], 'ids.*' => ['string'], 'vorlage' => ['nullable', 'boolean']]);
+        $data = $request->validate(['ids' => ['nullable', 'array'], 'ids.*' => ['string'], 'vorlage' => ['nullable', 'boolean'], 'voll' => ['nullable', 'boolean']]);
+        // Vollexport (#157): alle Einträge, auch inaktive, mit Schlüsseln und Zeitstempeln – nur mit «Glossar pflegen»
+        if ($request->boolean('voll')) {
+            abort_unless(Gate::allows('edit-glossary'), 403);
+            $transfer = app(GlossaryTransfer::class);
+
+            return $this->xlsx($transfer->fullHeader(), $transfer->fullRows(), 'Glossar', 'glossar-vollstaendig-'.date('Y-m-d'));
+        }
         $header = ['ID', ...array_values(Glossary::FIELDS)];
         $rows = [];
         if (! $request->boolean('vorlage')) {
@@ -329,7 +337,66 @@ class GlossaryController extends Controller
         }
         $name = $request->boolean('vorlage') ? 'glossar-vorlage' : 'glossar-'.date('Y-m-d');
 
-        return response(SpreadsheetWriter::xlsx($header, $rows, 'Glossar'), 200, [
+        return $this->xlsx($header, $rows, 'Glossar', $name);
+    }
+
+    /** Export einer Liste (#157) mit allen Feldern des Formulars. */
+    public function listExport(string $list, GlossaryTransfer $transfer): HttpResponse
+    {
+        $list = $this->listKey($list);
+
+        return $this->xlsx(array_values(GlossaryTransfer::LIST_FIELDS), $transfer->listRows($list), GlossaryTransfer::LIST_NAMES[$list], 'glossar-'.$list.'-'.date('Y-m-d'));
+    }
+
+    /** Import einer Liste hochladen → Vorschau (neu / geändert / Fehler), nichts wird gespeichert. */
+    public function listImportPreview(Request $request, string $list, GlossaryTransfer $transfer): Response
+    {
+        $list = $this->listKey($list);
+        $request->validate(['datei' => ['required', 'file', 'max:2048']]);
+        $file = $request->file('datei');
+        abort_if($file === null || is_array($file), 422);
+        try {
+            $table = SpreadsheetReader::read($file->getRealPath(), $file->getClientOriginalName(), array_values(GlossaryTransfer::LIST_FIELDS));
+        } catch (RuntimeException $e) {
+            throw ValidationException::withMessages(['datei' => $e->getMessage()]);
+        }
+        $plan = $transfer->listPlan($list, $table['rows']);
+        $token = (string) Str::uuid();
+        Cache::put('glossar-listen-import:'.$token, ['user' => $request->user()?->getAuthIdentifier(), 'liste' => $list, 'plan' => $plan], now()->addMinutes(30));
+
+        return Inertia::render('glossary/import', [
+            'token' => $token,
+            'datei' => $file->getClientOriginalName(),
+            'plan' => array_map(fn (array $p): array => array_diff_key($p, ['daten' => true]), $plan),
+            'felder' => GlossaryTransfer::LIST_FIELDS,
+            'titel' => 'Import '.GlossaryTransfer::LIST_NAMES[$list].' prüfen',
+            'ziel' => '/glossar/listen/'.$list.'/import/'.$token,
+            'zurueck' => '/glossar/listen?liste='.$list,
+        ]);
+    }
+
+    /** Vorschau einer Liste übernehmen: neue anlegen, geänderte aktualisieren, Fehler überspringen. Nie löschen. */
+    public function listImportApply(Request $request, string $list, string $token, GlossaryTransfer $transfer): RedirectResponse
+    {
+        $list = $this->listKey($list);
+        $cached = Cache::pull('glossar-listen-import:'.$token);
+        abort_if(! is_array($cached) || ($cached['user'] ?? null) !== $request->user()?->getAuthIdentifier() || ($cached['liste'] ?? null) !== $list, 404);
+        $result = $transfer->applyListPlan($list, (array) $cached['plan']);
+        foreach ($result['log'] as [$before, $after]) {
+            $this->audit->record('glossar_'.$list, $before, $after, 'Glossar: Liste '.GlossaryTransfer::LIST_NAMES[$list].' (Excel-Import)', $request->user());
+        }
+        $this->toast("Import: {$result['neu']} neu, {$result['geaendert']} geändert.");
+
+        return redirect('/glossar/listen?liste='.$list);
+    }
+
+    /**
+     * @param  list<string>  $header
+     * @param  list<list<string>>  $rows
+     */
+    private function xlsx(array $header, array $rows, string $sheet, string $name): HttpResponse
+    {
+        return response(SpreadsheetWriter::xlsx($header, $rows, $sheet), 200, [
             'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
             'Content-Disposition' => 'attachment; filename="'.$name.'.xlsx"',
         ]);
