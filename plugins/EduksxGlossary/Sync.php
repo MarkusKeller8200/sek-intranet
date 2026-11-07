@@ -36,8 +36,6 @@ final class Sync
 
     public const MERGED = 'zusammengefuehrt';
 
-    private const LISTS = ['kategorien' => 'categories', 'herkunft' => 'sources'];
-
     /** @var array<string, mixed> */
     private array $state;
 

@@ -421,7 +421,7 @@ final class Glossary
             }
             // aus EduKSX-Glossary übernommen (#156): gemeinsame Felder nur über den Sync
             if (in_array($field, self::SHARED, true) && $existing !== null && is_array($existing['glossary'] ?? null)
-                && ($field === 'aktiv' ? self::active($existing) : ($existing[$field] ?? (in_array($field, self::MULTI, true) ? [] : ''))) != $value) {
+                && ($existing[$field] ?? (in_array($field, self::MULTI, true) ? [] : '')) != $value) {
                 $errors[$field] = self::FIELDS[$field].' kommt aus dem EduKSX-Glossary und ist hier gesperrt.';
             }
             if (in_array($field, self::OFFICIAL, true) && ! $canOfficial && $existing !== null) {
