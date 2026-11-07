@@ -113,3 +113,10 @@ Volksschulamt des Kantons Zürich» mit derselben URL.
 der Doppelten folgt danach mit dem Knopf «Doppelte Abkürzungen oder Begriffe» (#62). Was die Recherche selbst als
 gebräuchliche Kurzform (SV, KLP, QM, QS, QE …) oder als fachliche Ergänzung (ICT-Begriffe) kennzeichnet, erhält
 zusätzlich den Status «zu prüfen», damit es beim Bereinigen auffällt.
+
+## Anbindung an EduKSX-Glossary (07.11.2026)
+
+Führendes System für den gemeinsamen Bestand ist künftig EduKSX-Glossary (glossary.eduksx.ch). Das Intranet
+übernimmt die veröffentlichten Begriffe über die API v1; eigene Formen und «Intern genutzt in» bleiben lokal.
+Aufgaben und Reihenfolge: [UEBERGABE-EDUKSX-GLOSSARY.md](UEBERGABE-EDUKSX-GLOSSARY.md), Meilenstein
+«EduKSX-Glossary – Anbindung» (#155, #156, #157).
