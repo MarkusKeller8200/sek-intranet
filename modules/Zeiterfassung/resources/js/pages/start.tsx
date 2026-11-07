@@ -372,7 +372,10 @@ export default function ZeiterfassungStart(props: Props) {
                                             type="time"
                                             value={form.data.ende}
                                             onChange={(e) =>
-                                                form.setData('ende', e.target.value)
+                                                form.setData(
+                                                    'ende',
+                                                    e.target.value,
+                                                )
                                             }
                                         />
                                     </FormField>
