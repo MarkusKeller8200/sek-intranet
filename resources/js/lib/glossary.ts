@@ -29,6 +29,8 @@ export type GlossaryRow = {
     anzeige: string;
     /** aus EduKSX-Glossary übernommen (#156) */
     sync?: boolean;
+    /** alternative Schreibweisen aus dem EduKSX-Glossary, mit «; » getrennt (#155) */
+    aliase_alternativ?: string;
 };
 
 export type GlossaryEntry = {

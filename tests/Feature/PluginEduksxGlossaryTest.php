@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Data\Contracts\GlossaryRepository;
 use App\Plugins\PluginManager;
+use App\Support\Glossary;
 use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\Http;
 use Inertia\Testing\AssertableInertia as Assert;
@@ -225,6 +226,29 @@ class PluginEduksxGlossaryTest extends TestCase
             ->where('quelle', true)
             ->where('rows', fn ($rows): bool => collect($rows)->firstWhere('id', $vsa)['sync'] === true));
         $this->get('/glossar/'.$vsa)->assertInertia(fn (Assert $page) => $page->where('eintrag.glossary.zustand', 'veroeffentlicht'));
+    }
+
+    public function test_ambiguity_from_shared_values_and_alternative_spellings(): void
+    {
+        $vsa = $this->vsaId();
+        // zweite Bedeutung im Glossary, gleiche Bezeichnung mit anderem Leerraum zählt einmal
+        $this->api['terms'][1] = $this->term(self::NEW_ID, 'VSA', 'Verband  Schweizer Archive');
+        $this->api['terms'][2] = $this->term(self::OLD_ID, 'vsa', 'verband schweizer archive');
+        $this->sync();
+        // lokale eigene Abkürzung «VSA» eines nicht übernommenen Eintrags zählt für übernommene nicht
+        $local = collect($this->repo()->all())->first(fn (array $e): bool => ! isset($e['glossary']));
+        $this->repo()->update((string) $local['id'], ['abk_eigen' => 'VSA', 'bez_eigen' => 'Ganz anderes']);
+
+        $this->signInAs('verwaltung');
+        $this->get('/glossar')->assertInertia(fn (Assert $page) => $page->where('rows', function ($rows) use ($vsa): bool {
+            $row = collect($rows)->firstWhere('id', $vsa);
+            $this->assertSame(2, $row['bedeutungen']);
+            $this->assertSame('Volksschulamt', $row['aliase_alternativ']);
+
+            return true;
+        }));
+        $term = collect(app(Glossary::class)->terms())->firstWhere('id', $vsa);
+        $this->assertContains('Volksschulamt', $term['match'], 'alternative Schreibweise im Freitext erkannt');
     }
 
     public function test_status_text_and_connection_test(): void

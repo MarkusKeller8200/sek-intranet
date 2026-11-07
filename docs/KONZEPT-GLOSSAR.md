@@ -142,6 +142,31 @@ Referenzclient `App\Glossary\SyncClient` des Glossary (dort `docs/SYNC-INTRANET.
   Glossar-Ansicht, in der Einzelansicht übernommener Einträge und in den Exporten PDF und Markdown, sobald
   übernommene Einträge enthalten sind.
 
+## Gemeinsame Felder nach DEC-020 (#155)
+
+Im EduKSX-Glossary enthält ein Begriff nur gemeinsame Fachdaten (DEC-020); `own_abbreviation` und `own_name` gibt
+es in der API nicht mehr.
+
+- **Anzeige:** `Glossary::shortName` und `displayName` zeigen weiterhin die eigene Form vor der offiziellen. Die
+  eigene Form ist lokale Konfiguration des Intranets und kommt nie aus dem Glossary; der Sync überschreibt sie nicht.
+- **Abbildung der API:** `abbreviation` → Abkürzung offiziell, `name` → Bezeichnung offiziell, `official_aliases` →
+  Aliase offiziell, `alternative_aliases` → `aliase_alternativ` (neu), `short_description`, `description`, `url`,
+  `categories`/`sources` (Schlüssel), `status`, `is_active`, `valid_from`/`valid_until`. `aliases`, `display_label`
+  und `is_full_term` ergeben sich daraus.
+- **Mehrdeutigkeit:** Für übernommene Begriffe zählt das Intranet wie `App\Glossary\GlossaryDisplay`: je
+  normalisierter offizieller Abkürzung (NFC, Leerraum zusammengefasst, klein) die verschiedenen normalisierten
+  offiziellen Bezeichnungen der aktiven übernommenen Begriffe; Kategorien und lokale eigene Formen zählen nicht.
+  `is_ambiguous`/`meaning_count` fehlen im Change-Feed und werden darum immer lokal berechnet. Für lokale Einträge
+  gilt die bisherige Regel (offizielle und eigene Abkürzungen).
+- **Alternative Schreibweisen** erscheinen in der Einzelansicht, werden in der Suche der Tabelle (zusammen mit
+  Aliasen und Suchbegriffen, auch bei ausgeblendeten Spalten) und beim Erkennen von Begriffen im Freitext
+  (Tooltip) berücksichtigt.
+- **Excel Format Version 2 des Glossary – Entscheid:** Der Abgleich läuft nur noch über die API. Eine Datei im
+  Format 2 lässt sich im Intranet trotzdem importieren: fehlende Spalten («Abkürzung eigene», «Alias eigene»,
+  «Bezeichnung eigene», «Intern genutzt in») lassen die lokalen Werte unverändert, die Spalte «Alternative
+  Schreibweisen» wird ignoriert (kommt über den Sync), und gemeinsame Felder übernommener Begriffe sind gesperrt
+  (Fehler in der Vorschau, wenn sie abweichen). Der Excel-Export des Intranets bleibt im bisherigen Format.
+
 ## Rechte (je Rolle einstellbar)
 
 - Glossar ansehen: alle Mitarbeitenden

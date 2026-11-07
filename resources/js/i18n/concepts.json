@@ -3411,5 +3411,48 @@
         "Signed PDF (manually sent requests only)",
         "Unterschriibnigs PDF (nur vo Hand gschickti Ufträg)"
     ],
-    "Unterschriebenes PDF": ["Signed PDF", "Unterschriibnigs PDF"]
+    "Unterschriebenes PDF": ["Signed PDF", "Unterschriibnigs PDF"],
+    "Alternative Schreibweisen": [
+        "Alternative spellings",
+        "Alternativi Schriibwiise"
+    ],
+    "Alternative Schreibweisen (EduKSX-Glossary)": [
+        "Alternative spellings (EduKSX Glossary)",
+        "Alternativi Schriibwiise (EduKSX-Glossary)"
+    ],
+    "Aus EduKSX-Glossary (Zustand, Revision, Slug, Adresse)": [
+        "From EduKSX Glossary (state, revision, slug, address)",
+        "Us em EduKSX-Glossary (Zuestand, Revision, Slug, Adrässe)"
+    ],
+    "Glossar: Sync mit EduKSX-Glossary": [
+        "Glossary: sync with EduKSX Glossary",
+        "Glossar: Sync mit em EduKSX-Glossary"
+    ],
+    "Stand des Syncs (#{n}), ein Datensatz «eduksx»: Cursor, Datenstand, letzter Abruf, Fehler, Zuordnung der Listen, Umleitungen.": [
+        "Sync state (#{n}), one record “eduksx”: cursor, data version, last fetch, error, list mapping, redirects.",
+        "Stand vom Sync (#{n}), en Datesatz «eduksx»: Cursor, Datestand, letschte Abruef, Fehler, Zuordnig vo de Lischte, Umleitige."
+    ],
+    "Cursor (letztes Ereignis)": [
+        "Cursor (last event)",
+        "Cursor (letschts Ereignis)"
+    ],
+    "Datenstand": ["Data version", "Datestand"],
+    "Lizenz": ["Licence", "Lizänz"],
+    "Letzter Abruf": ["Last fetch", "Letschte Abruef"],
+    "Letzter erfolgreicher Sync": [
+        "Last successful sync",
+        "Letschte erfolgriiche Sync"
+    ],
+    "Fehler des letzten Abrufs": [
+        "Error of the last fetch",
+        "Fehler vom letschte Abruef"
+    ],
+    "Zuordnung Schlüssel → Liste": [
+        "Mapping key → list",
+        "Zuordnig Schlüssel → Lischte"
+    ],
+    "Umleitungen alte ID → neue ID": [
+        "Redirects old ID → new ID",
+        "Umleitige alti ID → neui ID"
+    ]
 }

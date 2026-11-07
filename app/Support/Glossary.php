@@ -205,8 +205,9 @@ final class Glossary
             }
             $match = [];
             $candidates = [(string) ($e['abk_offiziell'] ?? ''), (string) ($e['abk_eigen'] ?? '')];
-            foreach ((array) ($e['aliase_offiziell'] ?? []) as $alias) {
-                $candidates[] = (string) $alias;
+            // offizielle und alternative Schreibweisen (EduKSX-Glossary, #155)
+            foreach ([...(array) ($e['aliase_offiziell'] ?? []), ...(array) ($e['aliase_alternativ'] ?? [])] as $alias) {
+                $candidates[] = is_scalar($alias) ? (string) $alias : '';
             }
             foreach (explode(';', (string) ($e['alias_eigen'] ?? '')) as $alias) {
                 $candidates[] = $alias;
@@ -281,10 +282,17 @@ final class Glossary
         // Mehrfachbedeutung (#67): nur verschiedene Bezeichnungen zählen; gleiche Bezeichnung in anderer
         // Kategorie ist kein echtes Duplikat
         $meanings = [];
+        // aus EduKSX-Glossary (#155): wie im Glossary nur gemeinsame Werte aktiver übernommener Begriffe
+        // (App\Glossary\GlossaryDisplay: gleiche normalisierte Bezeichnung zählt einmal, Kategorien zählen nicht)
+        $shared = [];
         foreach ($entries as $e) {
             $name = mb_strtolower(self::displayName($e));
             foreach (self::abbreviations($e) as $a) {
                 $meanings[$a][$name] = true;
+            }
+            if (is_array($e['glossary'] ?? null) && self::active($e) && ($abk = self::normalize($e['abk_offiziell'] ?? '')) !== '') {
+                $official = self::normalize($e['bez_offiziell'] ?? '');
+                $shared[$abk][$official !== '' ? $official : 'id:'.(string) $e['id']] = true;
             }
         }
         $rows = [];
@@ -294,13 +302,16 @@ final class Glossary
                 $row[$field] = $this->cellText($field, $e[$field] ?? null, $lists);
             }
             $row['aktiv'] = self::active($e);
-            $row['bedeutungen'] = max(1, ...array_map(fn (string $a): int => count($meanings[$a] ?? []), self::abbreviations($e) ?: ['']));
+            $row['bedeutungen'] = is_array($e['glossary'] ?? null)
+                ? max(1, count($shared[self::normalize($e['abk_offiziell'] ?? '')] ?? []))
+                : max(1, ...array_map(fn (string $a): int => count($meanings[$a] ?? []), self::abbreviations($e) ?: ['']));
             $row['mehrdeutig'] = $row['bedeutungen'] > 1;
             // Begriff ohne Abkürzung (#72): Bezeichnung anzeigen und danach sortieren
             $row['begriff'] = self::shortName($e) === '' && self::displayName($e) !== '';
             $row['anzeige'] = $row['begriff'] ? self::displayName($e) : self::shortName($e);
             // aus EduKSX-Glossary übernommen (#156)
             $row['sync'] = is_array($e['glossary'] ?? null);
+            $row['aliase_alternativ'] = implode('; ', array_map('strval', (array) ($e['aliase_alternativ'] ?? [])));
             $rows[] = $row;
         }
         usort($rows, fn (array $a, array $b): int => strnatcasecmp((string) $a['anzeige'], (string) $b['anzeige']));
@@ -320,6 +331,17 @@ final class Glossary
         }
 
         return is_scalar($value) ? (string) $value : '';
+    }
+
+    /** Wie App\Glossary\GlossaryDisplay::normalize: Unicode NFC, Leerraum zusammengefasst, klein. */
+    public static function normalize(mixed $value): string
+    {
+        $value = is_scalar($value) ? (string) $value : '';
+        if (class_exists(\Normalizer::class)) {
+            $value = \Normalizer::normalize($value, \Normalizer::FORM_C) ?: $value;
+        }
+
+        return mb_strtolower(trim((string) preg_replace('/\s+/u', ' ', $value)));
     }
 
     /**

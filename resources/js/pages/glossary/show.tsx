@@ -150,6 +150,15 @@ export default function GlossaryShow({
                                         </span>
                                     </Row>
                                 )}
+                                {(e.aliase_alternativ ?? []).length > 0 && (
+                                    <Row label="Alternative Schreibweisen">
+                                        <span translate="no">
+                                            {(e.aliase_alternativ ?? []).join(
+                                                ', ',
+                                            )}
+                                        </span>
+                                    </Row>
+                                )}
                                 <Row label="Bezeichnung">
                                     <span translate="no">
                                         {e.bez_offiziell || '–'}

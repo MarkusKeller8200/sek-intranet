@@ -359,8 +359,10 @@ export default function DataGrid<T extends GridRow>({
 
         return (
             search === '' ||
-            visibleCols.some((c) =>
-                display(c, row[c.id]).toLowerCase().includes(search),
+            visibleCols.some(
+                (c) =>
+                    display(c, row[c.id]).toLowerCase().includes(search) ||
+                    (c.search?.(row).toLowerCase().includes(search) ?? false),
             )
         );
     });

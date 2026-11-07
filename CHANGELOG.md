@@ -11,6 +11,10 @@ laufend unter **Unveröffentlicht**. Ab 0.32.0 entsteht eine Version nur bei ein
 
 ### Neu
 
+- **Glossar: gemeinsame Felder nach DEC-020 (#155):** Alternative Schreibweisen aus dem EduKSX-Glossary in
+  Einzelansicht, Suche und Tooltip; die Suche der Tabelle findet auch Aliase und Suchbegriffe. Mehrdeutigkeit
+  übernommener Begriffe wie im Glossary (nur gemeinsame Werte, gleiche normalisierte Bezeichnung zählt einmal).
+  Entscheid zum Excel-Format 2: Abgleich nur über die API, Import bleibt möglich (Format in `KONZEPT-GLOSSAR.md`).
 - **Glossar: Sync mit dem EduKSX-Glossary (#156):** Neues Plugin «EduKSX-Glossary» übernimmt die veröffentlichten
   Begriffe über die API v1 (Vollstand, danach Change-Feed; Veröffentlichung, Rückzug, Zusammenführung), mit gleichen
   IDs. Übernommene Einträge sind gekennzeichnet, gemeinsame Felder gesperrt; eigene Formen, «Intern genutzt in»,

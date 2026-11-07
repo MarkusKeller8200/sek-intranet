@@ -80,7 +80,11 @@
                 "use": "Nachschlagen",
                 "params": [
                     { "name": "q", "example": "VSA", "help": "Suchtext." },
-                    { "name": "category", "example": "beh", "help": "Schlüssel einer Kategorie." },
+                    {
+                        "name": "category",
+                        "example": "beh",
+                        "help": "Schlüssel einer Kategorie."
+                    },
                     { "name": "status", "example": "aktuell" }
                 ]
             },
@@ -91,7 +95,13 @@
                 "label": "Ein Begriff",
                 "status": "full",
                 "use": "Nachschlagen (alte IDs antworten mit 301)",
-                "params": [{ "name": "id", "required": true, "help": "ID oder Slug, z. B. aus «Begriffe»." }]
+                "params": [
+                    {
+                        "name": "id",
+                        "required": true,
+                        "help": "ID oder Slug, z. B. aus «Begriffe»."
+                    }
+                ]
             }
         ]
     },

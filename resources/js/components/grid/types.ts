@@ -15,6 +15,8 @@ export type GridColumn<T> = {
     /** Anzeige ausserhalb des Bearbeitens */
     render?: (row: T) => ReactNode;
     hidden?: boolean;
+    /** Zusätzlicher Suchtext der Zeile für die Suche (z. B. Aliase, auch wenn deren Spalten ausgeblendet sind) */
+    search?: (row: T) => string;
     className?: string;
     /** Mehrfachwerte als Text (z. B. «A; B»): beim Gruppieren erscheint die Zeile in jeder Gruppe; bei «multi» Trennzeichen (Standard «;»). */
     separator?: string;

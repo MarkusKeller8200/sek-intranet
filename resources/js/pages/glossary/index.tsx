@@ -142,6 +142,14 @@ export default function GlossaryIndex({
 
         return [
             text('anzeige', {
+                // Suche auch in Aliasen, alternativen Schreibweisen und Suchbegriffen (#155)
+                search: (r) =>
+                    [
+                        r.aliase_offiziell,
+                        r.alias_eigen,
+                        r.aliase_alternativ ?? '',
+                        r.suchbegriffe,
+                    ].join(' '),
                 title: 'Abkürzung',
                 editable: false,
                 render: (r) => (
