@@ -22,4 +22,16 @@ interface GlossaryRepository extends Repository
     public function saveListItem(string $list, ?string $id, array $attributes): array;
 
     public function deleteListItem(string $list, string $id): bool;
+
+    /**
+     * Stand des Syncs mit dem EduKSX-Glossary (#156): Cursor, Datenstand, letzter Lauf, Fehler, Zuordnung der Listen.
+     *
+     * @return array<string, mixed>
+     */
+    public function syncState(): array;
+
+    /**
+     * @param  array<string, mixed>  $state
+     */
+    public function saveSyncState(array $state): void;
 }

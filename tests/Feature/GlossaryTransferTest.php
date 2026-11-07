@@ -111,8 +111,8 @@ class GlossaryTransferTest extends TestCase
         file_put_contents($path, $content);
 
         $response = $this->post('/glossar/listen/herkunft/import', ['datei' => new UploadedFile($path, 'herkunft.xlsx', null, null, true)])->assertOk();
-        $response->assertInertia(fn (Assert $page) => $page
-            ->where('plan', fn ($plan): bool => collect($plan)->pluck('art')->sort()->values()->all() === ['fehler', 'fehler', 'fehler', 'fehler', 'geaendert', 'neu']));
+        $plan = $response->viewData('page')['props']['plan'];
+        $this->assertSame(['fehler', 'fehler', 'fehler', 'fehler', 'geaendert', 'neu'], collect($plan)->pluck('art')->sort()->values()->all(), (string) json_encode($plan, JSON_UNESCAPED_UNICODE));
         $props = $response->viewData('page')['props'];
         $this->assertSame($first['bezeichnung'], $this->repo()->listItems('herkunft')[0]['bezeichnung'], 'Vorschau speichert nichts');
 

@@ -11,6 +11,11 @@ class JsonGlossaryRepository extends JsonRepository implements GlossaryRepositor
 {
     public const LISTS = ['kategorien' => 'glossar_kategorien', 'herkunft' => 'glossar_herkunft'];
 
+    /** Stand des Syncs mit dem EduKSX-Glossary (#156), ein Datensatz */
+    public const SYNC = 'glossar_sync';
+
+    public const SYNC_ID = 'eduksx';
+
     protected string $collection = 'glossar';
 
     public function all(): array
@@ -61,6 +66,24 @@ class JsonGlossaryRepository extends JsonRepository implements GlossaryRepositor
     public function deleteListItem(string $list, string $id): bool
     {
         return $this->store->delete($this->listCollection($list), $id);
+    }
+
+    public function syncState(): array
+    {
+        $state = $this->store->find(self::SYNC, self::SYNC_ID) ?? [];
+        unset($state['id'], $state['created_at'], $state['updated_at']);
+
+        return $state;
+    }
+
+    public function saveSyncState(array $state): void
+    {
+        if ($this->store->find(self::SYNC, self::SYNC_ID) === null) {
+            $this->store->insert(self::SYNC, ['id' => self::SYNC_ID] + $state);
+
+            return;
+        }
+        $this->store->update(self::SYNC, self::SYNC_ID, $state);
     }
 
     private function listCollection(string $list): string

@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { formatDateTime } from '@/lib/format';
 import type { GlossaryEntry } from '@/lib/glossary';
-import { entryTitle } from '@/lib/glossary';
+import { entryTitle, GLOSSARY_SOURCE } from '@/lib/glossary';
 
 type Herkunft = {
     id: string;
@@ -97,6 +97,31 @@ export default function GlossaryShow({
                     </Badge>
                     {e.aktiv === false && (
                         <Badge variant="destructive">inaktiv</Badge>
+                    )}
+                    {e.glossary && (
+                        <Badge variant="outline">
+                            {e.glossary.web_url ? (
+                                <a
+                                    href={e.glossary.web_url}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                >
+                                    aus EduKSX-Glossary
+                                </a>
+                            ) : (
+                                'aus EduKSX-Glossary'
+                            )}
+                        </Badge>
+                    )}
+                    {e.glossary?.zustand === 'zurueckgezogen' && (
+                        <Badge variant="secondary">
+                            im Glossary zurückgezogen
+                        </Badge>
+                    )}
+                    {e.glossary?.zustand === 'zusammengefuehrt' && (
+                        <Badge variant="secondary">
+                            im Glossary zusammengeführt
+                        </Badge>
                     )}
                 </div>
 
@@ -278,6 +303,11 @@ export default function GlossaryShow({
                             <Markdown text={e.notiz} />
                         </CardContent>
                     </Card>
+                )}
+                {e.glossary && (
+                    <p className="text-xs text-muted-foreground">
+                        {GLOSSARY_SOURCE}
+                    </p>
                 )}
             </div>
         </>

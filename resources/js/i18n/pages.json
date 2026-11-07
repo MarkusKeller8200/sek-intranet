@@ -380,5 +380,18 @@
     "Excel-Datei für den Import der Liste wählen": [
         "Choose Excel file to import the list",
         "Excel-Datei für de Import vo de Lischte uswähle"
+    ],
+    "Aus dem EduKSX-Glossary: offizielle Werte, Kategorien, Beschreibungen, Herkunft, Status und Gültigkeit kommen aus dem Sync und sind hier gesperrt. Eigene Abkürzung und Bezeichnung, Alias, «Intern genutzt in», Suchbegriffe und Notiz bleiben im Intranet.": [
+        "From the EduKSX Glossary: official values, categories, descriptions, origin, status and validity come from the sync and are locked here. Own abbreviation and designation, alias, “Used internally in”, search terms and note stay in the intranet.",
+        "Us em EduKSX-Glossary: offizielli Wärt, Kategorie, Beschriibige, Herkunft, Status und Gültigkeit chömed us em Sync und sind da gsperrt. Eigeti Abchürzig und Bezeichnig, Alias, «Intern brucht i», Suechbegriff und Notiz bliibed im Intranet."
+    ],
+    "aus EduKSX-Glossary": ["from EduKSX Glossary", "us em EduKSX-Glossary"],
+    "im Glossary zurückgezogen": [
+        "withdrawn in the Glossary",
+        "im Glossary zruggzoge"
+    ],
+    "im Glossary zusammengeführt": [
+        "merged in the Glossary",
+        "im Glossary zämegfüehrt"
     ]
 }

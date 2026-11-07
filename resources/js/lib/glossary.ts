@@ -27,6 +27,8 @@ export type GlossaryRow = {
     /** Anzahl verschiedener Bedeutungen der Abkürzung (gleiche Bezeichnung zählt einmal) */
     bedeutungen: number;
     anzeige: string;
+    /** aus EduKSX-Glossary übernommen (#156) */
+    sync?: boolean;
 };
 
 export type GlossaryEntry = {
@@ -50,7 +52,25 @@ export type GlossaryEntry = {
     gueltig_bis: string | null;
     aktiv?: boolean;
     updated_at?: string;
+    /** aus EduKSX-Glossary übernommen (#156) */
+    glossary?: GlossarySync | null;
+    /** alternative Schreibweisen aus dem EduKSX-Glossary (#155) */
+    aliase_alternativ?: string[];
 };
+
+/** Kennzeichen eines aus dem EduKSX-Glossary übernommenen Eintrags (#156). */
+export type GlossarySync = {
+    zustand: 'veroeffentlicht' | 'zurueckgezogen' | 'zusammengefuehrt';
+    revision?: number;
+    slug?: string;
+    web_url?: string;
+    published_at?: string;
+    merged_into?: string;
+};
+
+/** Quellenangabe für Daten aus dem EduKSX-Glossary (CC BY 4.0). */
+export const GLOSSARY_SOURCE =
+    'Quelle: EduKSX-Glossary, glossary.eduksx.ch (CC BY 4.0)';
 
 export const abbreviation = (r: { abk_eigen: string; abk_offiziell: string }) =>
     r.abk_eigen.trim() || r.abk_offiziell.trim();
@@ -375,7 +395,7 @@ table{border-collapse:collapse;width:100%;table-layout:fixed}th,td{border-bottom
 small{color:#555}.url{color:#1d4f91}.tag{-webkit-print-color-adjust:exact;print-color-adjust:exact;display:inline-block;border:1px solid #bbb;border-radius:3px;padding:0 4px;margin:0 2px 1px 0;font-size:7.5pt;line-height:1.4;background:#f6f7f8}
 ${options.umbruch === 'gruppe' ? 'section+section{break-before:page}' : ''}
 p.meta{margin:0 0 6px;color:#555}@media print{body{margin:0}tr{break-inside:avoid}th{-webkit-print-color-adjust:exact;print-color-adjust:exact}}</style></head><body>
-<h1>Glossar</h1><p class="meta">${meta}${rows.some((r) => r.bedeutungen > 1) ? ' · hochgestellte Zahl = Anzahl verschiedener Bedeutungen der Abkürzung' : ''}</p>${body}
+<h1>Glossar</h1><p class="meta">${meta}${rows.some((r) => r.bedeutungen > 1) ? ' · hochgestellte Zahl = Anzahl verschiedener Bedeutungen der Abkürzung' : ''}</p>${body}${rows.some((r) => r.sync) ? `<p class="meta">${GLOSSARY_SOURCE}</p>` : ''}
 <script>window.onload=()=>window.print()</script></body></html>`;
     const w = window.open('', '_blank');
     if (!w) {
@@ -414,6 +434,9 @@ export function downloadMarkdown(rows: GlossaryRow[], names: Labels = {}) {
             );
         }
         parts.push('');
+    }
+    if (rows.some((r) => r.sync)) {
+        parts.push(GLOSSARY_SOURCE, '');
     }
     const blob = new Blob([parts.join('\n')], {
         type: 'text/markdown;charset=utf-8',

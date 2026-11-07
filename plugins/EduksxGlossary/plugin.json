@@ -1,0 +1,133 @@
+{
+    "id": "eduksx-glossary",
+    "name": "EduKSX-Glossary",
+    "version": "0.1",
+    "api": 1,
+    "category": "school",
+    "author": "SekBülach Intranet",
+    "description": "Übernimmt die veröffentlichten Begriffe und Abkürzungen aus dem EduKSX-Glossary (glossary.eduksx.ch, API v1) ins Glossar des Intranets und hält sie aktuell: beim ersten Mal der Vollstand, danach nur Änderungen (Change-Feed). Eigene Formen und «Intern genutzt in» bleiben lokal. Daten unter CC BY 4.0.",
+    "data_notice": "Öffentliche Fachbegriffe ohne Personendaten. Quellenangabe «EduKSX-Glossary, glossary.eduksx.ch» (CC BY 4.0) erscheint in der Glossar-Ansicht und in den Exporten.",
+    "service": {
+        "name": "EduKSX-Glossary API v1",
+        "home": "https://glossary.eduksx.ch",
+        "docs": "https://glossary.eduksx.ch/api/docs",
+        "auth": { "type": "none" },
+        "auth_note": "Öffentliche API ohne Anmeldung. Limit 120 Abrufe pro Minute und Adresse (HTTP 429 mit Retry-After).",
+        "endpoints": [
+            {
+                "id": "status",
+                "method": "GET",
+                "path": "/api/v1/",
+                "label": "Status der API",
+                "status": "full",
+                "use": "Verbindung testen"
+            },
+            {
+                "id": "releases-latest",
+                "method": "GET",
+                "path": "/api/v1/releases/latest",
+                "label": "Aktueller Datenstand",
+                "status": "full",
+                "use": "Prüfen, ob es Änderungen gibt (Cursor)"
+            },
+            {
+                "id": "export",
+                "method": "GET",
+                "path": "/api/v1/exports",
+                "label": "Vollstand (alle Begriffe und Listen)",
+                "status": "full",
+                "use": "Erster Sync",
+                "params": [{ "name": "format", "default": "json" }]
+            },
+            {
+                "id": "changes",
+                "method": "GET",
+                "path": "/api/v1/changes",
+                "label": "Änderungen seit dem Cursor",
+                "status": "full",
+                "use": "Sync (seitenweise)",
+                "params": [
+                    {
+                        "name": "since",
+                        "example": "0",
+                        "help": "Cursor des letzten verarbeiteten Ereignisses."
+                    },
+                    { "name": "limit", "default": "500" }
+                ]
+            },
+            {
+                "id": "categories",
+                "method": "GET",
+                "path": "/api/v1/categories",
+                "label": "Kategorien",
+                "status": "full",
+                "use": "Listen abgleichen"
+            },
+            {
+                "id": "sources",
+                "method": "GET",
+                "path": "/api/v1/sources",
+                "label": "Herkunft",
+                "status": "full",
+                "use": "Listen abgleichen"
+            },
+            {
+                "id": "terms",
+                "method": "GET",
+                "path": "/api/v1/terms",
+                "label": "Begriffe (mit Mehrdeutigkeit)",
+                "status": "full",
+                "use": "Nachschlagen",
+                "params": [
+                    { "name": "q", "example": "VSA", "help": "Suchtext." },
+                    { "name": "category", "example": "beh", "help": "Schlüssel einer Kategorie." },
+                    { "name": "status", "example": "aktuell" }
+                ]
+            },
+            {
+                "id": "term",
+                "method": "GET",
+                "path": "/api/v1/terms/{id}",
+                "label": "Ein Begriff",
+                "status": "full",
+                "use": "Nachschlagen (alte IDs antworten mit 301)",
+                "params": [{ "name": "id", "required": true, "help": "ID oder Slug, z. B. aus «Begriffe»." }]
+            }
+        ]
+    },
+    "settings": [
+        {
+            "key": "base_url",
+            "type": "url",
+            "label": "Adresse des Glossary",
+            "default": "https://glossary.eduksx.ch",
+            "help": "Nur https://. Für Tests z. B. eine Testinstanz des Glossary."
+        },
+        {
+            "key": "interval",
+            "type": "number",
+            "label": "Abstand des automatischen Syncs (Minuten, 5–60)",
+            "default": 10
+        }
+    ],
+    "actions": [
+        {
+            "id": "sync",
+            "label": "Jetzt synchronisieren",
+            "kind": "read",
+            "options": [
+                {
+                    "key": "neu",
+                    "type": "check",
+                    "label": "Vollstand neu laden (sonst nur Änderungen)"
+                }
+            ]
+        },
+        {
+            "id": "sync-status",
+            "label": "Stand anzeigen",
+            "kind": "read",
+            "options": []
+        }
+    ]
+}

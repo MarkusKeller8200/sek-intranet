@@ -106,6 +106,42 @@ und Kurzbeschreibung**; ein Link führt direkt zum Eintrag im Glossar.
   Vorschau (neu / geändert / Fehler, Regeln wie im Formular, Kürzel eindeutig, **nie löschen**). Fehlende Spalten
   behalten den bisherigen Wert.
 
+## Sync mit dem EduKSX-Glossary (#156)
+
+Das EduKSX-Glossary (glossary.eduksx.ch) ist das führende System für Begriffe und Abkürzungen. Das Plugin
+**EduKSX-Glossary** (`plugins/EduksxGlossary`) übernimmt die veröffentlichten Begriffe über die API v1, nach dem
+Referenzclient `App\Glossary\SyncClient` des Glossary (dort `docs/SYNC-INTRANET.md`).
+
+- **Ablauf:** erster Lauf mit dem Vollstand (`/api/v1/exports?format=json`), danach nur Änderungen
+  (`/api/v1/changes?since=<cursor>`, seitenweise; Cursor nach jeder Seite gespeichert). Vorher prüft
+  `/api/v1/releases/latest`, ob sich der Cursor geändert hat – sonst kein weiterer Abruf. Kategorien und Herkunft
+  über `/categories` und `/sources` (Schlüssel = ID der Liste, sonst Kürzel, Label oder Bezeichnung; fehlende werden
+  mit dem Schlüssel als ID angelegt; Bezeichnung und URL aus dem Glossary, Farbe und Notiz bleiben lokal).
+- **Ereignisse:** `published` übernimmt den Begriff in dieser Revision (inaktiv → ausgeblendet), `unpublished`
+  blendet aus, `merged` blendet aus, überträgt «Intern genutzt in», Doppelte, eigene Formen und Notiz (wo das Ziel
+  leer ist) auf den verbleibenden Begriff und vermerkt die alte ID unter «Frühere IDs». Unbekannte Arten werden
+  übersprungen. **Es wird nie gelöscht.** Wiederholbar: ein zweiter Lauf ohne Änderungen ändert nichts.
+- **Gleiche IDs:** Die UUIDs im Glossary sind die IDs des Intranets. Übernommene Einträge tragen das Feld
+  `glossary` (Zustand, Revision, Slug, Adresse) und zeigen «aus EduKSX-Glossary».
+- **Gemeinsame Felder** (`Glossary::SHARED`: Kategorien, offizielle Abkürzung/Aliase/Bezeichnung, Kurzbeschreibung,
+  Beschreibung, URL, Herkunft, Status, Gültigkeit, Aktiv) kommen aus dem Sync und sind im Intranet gesperrt – in
+  Formular, Tabelle und Excel-Import (Änderungen später über Vorschläge im Glossary). Zusammenführen von Doppelten
+  ist für solche Einträge gesperrt. Neu: `aliase_alternativ` (alternative Schreibweisen).
+- **Lokal und nie überschrieben:** eigene Abkürzung, Bezeichnung und Alias, «Intern genutzt in», Notiz,
+  Suchbegriffe, Doppelte.
+- **Entscheide zu den offenen Fragen (Vorschlag, zu bestätigen):** Lokal angelegte Begriffe, die es im Glossary nicht
+  gibt, bleiben lokal und bearbeitbar (Vorschläge ans Glossary kommen mit dem Meilenstein «Vorschläge und
+  Moderation»). Der Excel-Import bleibt für übernommene Begriffe offen, aber nur für die lokalen Felder.
+- **Zeitplan:** `php artisan intranet:glossar-sync` läuft alle fünf Minuten und synchronisiert, wenn das Plugin
+  eingeschaltet und der Abstand aus den Einstellungen (Vorgabe 10 Minuten, 5–60) erreicht ist; `--jetzt` sofort,
+  `--neu` mit Vollstand. Von Hand: Plugin → Aktion «Jetzt synchronisieren».
+- **Stand und Fehler:** Sammlung `glossar_sync` (Cursor, Datenstand, letzter Abruf und Erfolg, Fehler, Zuordnung der
+  Listen, Umleitungen); Statustext auf der Plugin-Karte, Läufe im Protokoll, Fehler zusätzlich im Log. Ohne
+  Verbindung (oder bei HTTP 429 mit Retry-After) bleibt der lokale Stand.
+- **Lizenz:** Daten unter CC BY 4.0 – «Quelle: EduKSX-Glossary, glossary.eduksx.ch (CC BY 4.0)» in der
+  Glossar-Ansicht, in der Einzelansicht übernommener Einträge und in den Exporten PDF und Markdown, sobald
+  übernommene Einträge enthalten sind.
+
 ## Rechte (je Rolle einstellbar)
 
 - Glossar ansehen: alle Mitarbeitenden

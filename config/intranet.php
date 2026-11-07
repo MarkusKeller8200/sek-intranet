@@ -1389,6 +1389,22 @@ return [
                 'aktiv' => ['type' => 'bool', 'required' => false, 'label' => 'Aktiv (fehlt = aktiv)'],
                 'dubletten_ok' => ['type' => 'json', 'required' => false, 'label' => 'Als mehrdeutig belassen (Gruppen)'],
                 'fruehere_ids' => ['type' => 'json', 'required' => false, 'label' => 'Frühere IDs (zusammengeführt)'],
+                'aliase_alternativ' => ['type' => 'json', 'required' => false, 'label' => 'Alternative Schreibweisen (EduKSX-Glossary)'],
+                'glossary' => ['type' => 'json', 'required' => false, 'label' => 'Aus EduKSX-Glossary (Zustand, Revision, Slug, Adresse)'],
+            ],
+        ],
+        'glossar_sync' => [
+            'label' => 'Glossar: Sync mit EduKSX-Glossary',
+            'description' => 'Stand des Syncs (#156), ein Datensatz «eduksx»: Cursor, Datenstand, letzter Abruf, Fehler, Zuordnung der Listen, Umleitungen.',
+            'fields' => [
+                'cursor' => ['type' => 'int', 'required' => false, 'label' => 'Cursor (letztes Ereignis)'],
+                'release' => ['type' => 'int', 'required' => false, 'label' => 'Datenstand'],
+                'lizenz' => ['type' => 'json', 'required' => false, 'label' => 'Lizenz'],
+                'letzter_abruf' => ['type' => 'datetime', 'required' => false, 'label' => 'Letzter Abruf'],
+                'letzter_erfolg' => ['type' => 'datetime', 'required' => false, 'label' => 'Letzter erfolgreicher Sync'],
+                'fehler' => ['type' => 'string', 'required' => false, 'label' => 'Fehler des letzten Abrufs'],
+                'listen' => ['type' => 'json', 'required' => false, 'label' => 'Zuordnung Schlüssel → Liste'],
+                'umleitungen' => ['type' => 'json', 'required' => false, 'label' => 'Umleitungen alte ID → neue ID'],
             ],
         ],
         'glossar_kategorien' => [

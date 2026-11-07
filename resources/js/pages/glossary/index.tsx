@@ -24,7 +24,11 @@ import { AlertDialog } from '@/components/ui/alert-dialog';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import type { GlossaryRow } from '@/lib/glossary';
-import { downloadMarkdown, printGlossary } from '@/lib/glossary';
+import {
+    downloadMarkdown,
+    GLOSSARY_SOURCE,
+    printGlossary,
+} from '@/lib/glossary';
 import { postJson } from '@/lib/http';
 
 type Props = {
@@ -42,6 +46,8 @@ type Props = {
     views: SavedView[];
     rechte: { edit: boolean; official: boolean };
     doppelte: number;
+    /** Quellenangabe EduKSX-Glossary (#156) */
+    quelle?: boolean;
 };
 
 type CellsResponse = { rows?: GlossaryRow[]; message?: string };
@@ -111,6 +117,7 @@ export default function GlossaryIndex({
     views,
     rechte,
     doppelte,
+    quelle = false,
 }: Props) {
     const datei = useRef<HTMLInputElement>(null);
     const [pdfIds, setPdfIds] = useState<string[] | null>(null);
@@ -494,6 +501,11 @@ export default function GlossaryIndex({
                         )
                     }
                 />
+                {quelle && (
+                    <p className="text-xs text-muted-foreground">
+                        {GLOSSARY_SOURCE}
+                    </p>
+                )}
             </div>
         </>
     );

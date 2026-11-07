@@ -52,6 +52,8 @@ class GlossaryController extends Controller
             'views' => $views->for(self::GRID, $request->user()),
             'rechte' => $this->rights(),
             'doppelte' => count($this->service->duplicates()),
+            // Quellenangabe (CC BY 4.0), sobald Einträge aus dem EduKSX-Glossary stammen (#156)
+            'quelle' => array_filter($this->glossary->all(), fn (array $e): bool => is_array($e['glossary'] ?? null)) !== [],
         ]);
     }
 

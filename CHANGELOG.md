@@ -11,6 +11,11 @@ laufend unter **Unveröffentlicht**. Ab 0.32.0 entsteht eine Version nur bei ein
 
 ### Neu
 
+- **Glossar: Sync mit dem EduKSX-Glossary (#156):** Neues Plugin «EduKSX-Glossary» übernimmt die veröffentlichten
+  Begriffe über die API v1 (Vollstand, danach Change-Feed; Veröffentlichung, Rückzug, Zusammenführung), mit gleichen
+  IDs. Übernommene Einträge sind gekennzeichnet, gemeinsame Felder gesperrt; eigene Formen, «Intern genutzt in»,
+  Notiz und Suchbegriffe bleiben lokal. Nie löschen, wiederholbar. Zeitplan `intranet:glossar-sync` (Abstand
+  einstellbar), Stand und Fehler auf der Plugin-Karte. Quellenangabe (CC BY 4.0) in Ansicht und Exporten.
 - **Glossar: vollständiger Export (#157):** Für die Übernahme ins EduKSX-Glossary exportiert «Excel vollständig
   (alle Daten)» alle Einträge (auch inaktive) mit «Intern genutzt in (Schlüssel)», «Doppelte geprüft», «Erstellt»
   und «Geändert»; der bisherige Export und Import bleiben gleich. Kategorien und Herkunft haben je einen eigenen

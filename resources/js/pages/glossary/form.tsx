@@ -56,6 +56,8 @@ export default function GlossaryForm({
     });
     const [vorschau, setVorschau] = useState(false);
     const d = form.data;
+    // aus EduKSX-Glossary (#156): gemeinsame Felder kommen aus dem Sync und sind gesperrt
+    const sync = Boolean(eintrag?.glossary);
     // Offizielle Felder: gesperrt, ausser mit Recht oder solange sie leer sind
     const gesperrt = (
         feld: 'abk_offiziell' | 'aliase_offiziell' | 'bez_offiziell',
@@ -63,9 +65,10 @@ export default function GlossaryForm({
         const vorher = eintrag?.[feld];
 
         return (
-            eintrag !== null &&
-            !rechte.official &&
-            (Array.isArray(vorher) ? vorher.length > 0 : Boolean(vorher))
+            sync ||
+            (eintrag !== null &&
+                !rechte.official &&
+                (Array.isArray(vorher) ? vorher.length > 0 : Boolean(vorher)))
         );
     };
     const submit = (e: FormEvent) => {
@@ -101,6 +104,11 @@ export default function GlossaryForm({
                 </Button>
                 <PageHeader
                     title={eintrag ? 'Eintrag bearbeiten' : 'Neuer Eintrag'}
+                    description={
+                        sync
+                            ? 'Aus dem EduKSX-Glossary: offizielle Werte, Kategorien, Beschreibungen, Herkunft, Status und Gültigkeit kommen aus dem Sync und sind hier gesperrt. Eigene Abkürzung und Bezeichnung, Alias, «Intern genutzt in», Suchbegriffe und Notiz bleiben im Intranet.'
+                            : undefined
+                    }
                 />
 
                 <div className="grid gap-4 md:grid-cols-2">
@@ -226,112 +234,131 @@ export default function GlossaryForm({
 
                 <Card>
                     <CardContent className="grid gap-4 pt-6 sm:grid-cols-2">
-                        <FormField
-                            id="g-kat"
-                            label="Kategorien"
-                            error={form.errors.kategorien}
-                        >
-                            <MultiSelect
+                        <fieldset disabled={sync} className="contents">
+                            <FormField
                                 id="g-kat"
-                                values={d.kategorien}
-                                onChange={(v) => form.setData('kategorien', v)}
-                                options={opts(kategorien)}
-                                placeholder="Keine"
-                            />
-                        </FormField>
-                        <FormField
-                            id="g-status"
-                            label="Status"
-                            error={form.errors.status}
-                        >
-                            <NativeSelect
-                                id="g-status"
-                                value={d.status}
-                                onChange={(e) =>
-                                    form.setData('status', e.target.value)
-                                }
+                                label="Kategorien"
+                                error={form.errors.kategorien}
                             >
-                                {Object.entries(status).map(([k, l]) => (
-                                    <option key={k} value={k}>
-                                        {l}
-                                    </option>
-                                ))}
-                            </NativeSelect>
-                            <label className="mt-2 flex items-center gap-2 text-sm">
-                                <Checkbox
-                                    id="g-aktiv"
-                                    checked={d.aktiv}
-                                    onCheckedChange={(c) =>
-                                        form.setData('aktiv', c === true)
+                                <MultiSelect
+                                    id="g-kat"
+                                    values={d.kategorien}
+                                    onChange={(v) =>
+                                        form.setData('kategorien', v)
+                                    }
+                                    options={opts(kategorien)}
+                                    placeholder="Keine"
+                                />
+                            </FormField>
+                        </fieldset>
+                        <fieldset disabled={sync} className="contents">
+                            <FormField
+                                id="g-status"
+                                label="Status"
+                                error={form.errors.status}
+                            >
+                                <NativeSelect
+                                    id="g-status"
+                                    value={d.status}
+                                    onChange={(e) =>
+                                        form.setData('status', e.target.value)
+                                    }
+                                >
+                                    {Object.entries(status).map(([k, l]) => (
+                                        <option key={k} value={k}>
+                                            {l}
+                                        </option>
+                                    ))}
+                                </NativeSelect>
+                                <label className="mt-2 flex items-center gap-2 text-sm">
+                                    <Checkbox
+                                        id="g-aktiv"
+                                        checked={d.aktiv}
+                                        onCheckedChange={(c) =>
+                                            form.setData('aktiv', c === true)
+                                        }
+                                    />
+                                    Aktiv – inaktive Einträge sehen nur
+                                    Pflegende, sie werden im Text nicht markiert
+                                </label>
+                            </FormField>
+                        </fieldset>
+                        <fieldset disabled={sync} className="contents">
+                            <FormField
+                                id="g-kurz"
+                                label="Kurzbeschreibung"
+                                hint={`Ein Satz für den Tooltip (${d.kurzbeschreibung.length}/160)`}
+                                error={form.errors.kurzbeschreibung}
+                                className="sm:col-span-2"
+                            >
+                                <Input
+                                    id="g-kurz"
+                                    maxLength={160}
+                                    value={d.kurzbeschreibung}
+                                    onChange={(e) =>
+                                        form.setData(
+                                            'kurzbeschreibung',
+                                            e.target.value,
+                                        )
                                     }
                                 />
-                                Aktiv – inaktive Einträge sehen nur Pflegende,
-                                sie werden im Text nicht markiert
-                            </label>
-                        </FormField>
-                        <FormField
-                            id="g-kurz"
-                            label="Kurzbeschreibung"
-                            hint={`Ein Satz für den Tooltip (${d.kurzbeschreibung.length}/160)`}
-                            error={form.errors.kurzbeschreibung}
-                            className="sm:col-span-2"
-                        >
-                            <Input
-                                id="g-kurz"
-                                maxLength={160}
-                                value={d.kurzbeschreibung}
-                                onChange={(e) =>
-                                    form.setData(
-                                        'kurzbeschreibung',
-                                        e.target.value,
-                                    )
-                                }
-                            />
-                        </FormField>
-                        <FormField
-                            id="g-beschreibung"
-                            label="Beschreibung"
-                            error={form.errors.beschreibung}
-                            className="sm:col-span-2"
-                        >
-                            <Textarea
+                            </FormField>
+                        </fieldset>
+                        <fieldset disabled={sync} className="contents">
+                            <FormField
                                 id="g-beschreibung"
-                                rows={3}
-                                value={d.beschreibung}
-                                onChange={(e) =>
-                                    form.setData('beschreibung', e.target.value)
-                                }
-                            />
-                        </FormField>
-                        <FormField
-                            id="g-url"
-                            label="URL"
-                            error={form.errors.url}
-                            className="sm:col-span-2"
-                        >
-                            <Input
+                                label="Beschreibung"
+                                error={form.errors.beschreibung}
+                                className="sm:col-span-2"
+                            >
+                                <Textarea
+                                    id="g-beschreibung"
+                                    rows={3}
+                                    value={d.beschreibung}
+                                    onChange={(e) =>
+                                        form.setData(
+                                            'beschreibung',
+                                            e.target.value,
+                                        )
+                                    }
+                                />
+                            </FormField>
+                        </fieldset>
+                        <fieldset disabled={sync} className="contents">
+                            <FormField
                                 id="g-url"
-                                type="url"
-                                placeholder="https://"
-                                value={d.url}
-                                onChange={(e) =>
-                                    form.setData('url', e.target.value)
-                                }
-                            />
-                        </FormField>
-                        <FormField
-                            id="g-herkunft"
-                            label="Herkunft"
-                            error={form.errors.herkunft}
-                        >
-                            <MultiSelect
+                                label="URL"
+                                error={form.errors.url}
+                                className="sm:col-span-2"
+                            >
+                                <Input
+                                    id="g-url"
+                                    type="url"
+                                    placeholder="https://"
+                                    value={d.url}
+                                    onChange={(e) =>
+                                        form.setData('url', e.target.value)
+                                    }
+                                />
+                            </FormField>
+                        </fieldset>
+                        <fieldset disabled={sync} className="contents">
+                            <FormField
                                 id="g-herkunft"
-                                values={d.herkunft}
-                                onChange={(v) => form.setData('herkunft', v)}
-                                options={opts(herkunft)}
-                                placeholder="Keine"
-                            />
-                        </FormField>
+                                label="Herkunft"
+                                error={form.errors.herkunft}
+                            >
+                                <MultiSelect
+                                    id="g-herkunft"
+                                    values={d.herkunft}
+                                    onChange={(v) =>
+                                        form.setData('herkunft', v)
+                                    }
+                                    options={opts(herkunft)}
+                                    placeholder="Keine"
+                                />
+                            </FormField>
+                        </fieldset>
                         <FormField
                             id="g-genutzt"
                             label="Intern genutzt in"
@@ -359,34 +386,44 @@ export default function GlossaryForm({
                                 }
                             />
                         </FormField>
-                        <FormField
-                            id="g-ab"
-                            label="Gültig ab"
-                            error={form.errors.gueltig_ab}
-                        >
-                            <Input
+                        <fieldset disabled={sync} className="contents">
+                            <FormField
                                 id="g-ab"
-                                type="date"
-                                value={d.gueltig_ab}
-                                onChange={(e) =>
-                                    form.setData('gueltig_ab', e.target.value)
-                                }
-                            />
-                        </FormField>
-                        <FormField
-                            id="g-bis"
-                            label="Gültig bis"
-                            error={form.errors.gueltig_bis}
-                        >
-                            <Input
+                                label="Gültig ab"
+                                error={form.errors.gueltig_ab}
+                            >
+                                <Input
+                                    id="g-ab"
+                                    type="date"
+                                    value={d.gueltig_ab}
+                                    onChange={(e) =>
+                                        form.setData(
+                                            'gueltig_ab',
+                                            e.target.value,
+                                        )
+                                    }
+                                />
+                            </FormField>
+                        </fieldset>
+                        <fieldset disabled={sync} className="contents">
+                            <FormField
                                 id="g-bis"
-                                type="date"
-                                value={d.gueltig_bis}
-                                onChange={(e) =>
-                                    form.setData('gueltig_bis', e.target.value)
-                                }
-                            />
-                        </FormField>
+                                label="Gültig bis"
+                                error={form.errors.gueltig_bis}
+                            >
+                                <Input
+                                    id="g-bis"
+                                    type="date"
+                                    value={d.gueltig_bis}
+                                    onChange={(e) =>
+                                        form.setData(
+                                            'gueltig_bis',
+                                            e.target.value,
+                                        )
+                                    }
+                                />
+                            </FormField>
+                        </fieldset>
                     </CardContent>
                 </Card>
 

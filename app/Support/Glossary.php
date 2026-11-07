@@ -46,6 +46,16 @@ final class Glossary
         'aktiv' => 'Aktiv',
     ];
 
+    /**
+     * Gemeinsame Felder (EduKSX-Glossary, DEC-020, #155/#156): bei Einträgen «aus EduKSX-Glossary» kommen sie aus dem
+     * Sync und sind lokal gesperrt (Änderungen später über Vorschläge im Glossary).
+     */
+    public const SHARED = ['kategorien', 'abk_offiziell', 'aliase_offiziell', 'bez_offiziell', 'kurzbeschreibung', 'beschreibung',
+        'url', 'herkunft', 'status', 'gueltig_ab', 'gueltig_bis', 'aktiv'];
+
+    /** Lokale Texte des Intranets, die der Sync nie überschreibt (eigene Formen, Notiz, Suchbegriffe). */
+    public const LOCAL_TEXT = ['abk_eigen', 'alias_eigen', 'bez_eigen', 'notiz', 'suchbegriffe'];
+
     /** Häkchen-Felder (Excel: ja/nein). */
     public const BOOL = ['aktiv'];
 
@@ -289,6 +299,8 @@ final class Glossary
             // Begriff ohne Abkürzung (#72): Bezeichnung anzeigen und danach sortieren
             $row['begriff'] = self::shortName($e) === '' && self::displayName($e) !== '';
             $row['anzeige'] = $row['begriff'] ? self::displayName($e) : self::shortName($e);
+            // aus EduKSX-Glossary übernommen (#156)
+            $row['sync'] = is_array($e['glossary'] ?? null);
             $rows[] = $row;
         }
         usort($rows, fn (array $a, array $b): int => strnatcasecmp((string) $a['anzeige'], (string) $b['anzeige']));
@@ -348,6 +360,9 @@ final class Glossary
                 if ($flag === null) {
                     $errors[$field] = self::FIELDS[$field].': ja oder nein.';
                 }
+                if ($existing !== null && is_array($existing['glossary'] ?? null) && $flag !== null && $flag !== self::active($existing)) {
+                    $errors[$field] = self::FIELDS[$field].' kommt aus dem EduKSX-Glossary und ist hier gesperrt.';
+                }
                 $data[$field] = $flag ?? true;
 
                 continue;
@@ -381,6 +396,11 @@ final class Glossary
                         $errors[$field] = self::FIELDS[$field].': Datum als TT.MM.JJJJ oder JJJJ-MM-TT.';
                     }
                 }
+            }
+            // aus EduKSX-Glossary übernommen (#156): gemeinsame Felder nur über den Sync
+            if (in_array($field, self::SHARED, true) && $existing !== null && is_array($existing['glossary'] ?? null)
+                && ($field === 'aktiv' ? self::active($existing) : ($existing[$field] ?? (in_array($field, self::MULTI, true) ? [] : ''))) != $value) {
+                $errors[$field] = self::FIELDS[$field].' kommt aus dem EduKSX-Glossary und ist hier gesperrt.';
             }
             if (in_array($field, self::OFFICIAL, true) && ! $canOfficial && $existing !== null) {
                 $before = $existing[$field] ?? null;
@@ -573,6 +593,10 @@ final class Glossary
         }
         if (count($entries) < 2 || ! isset($entries[$targetId])) {
             throw new InvalidArgumentException('Mindestens zwei Einträge und ein Ziel aus der Auswahl sind nötig.');
+        }
+        // aus EduKSX-Glossary (#156): zusammenführen nur dort, sonst stellt der nächste Sync sie wieder her
+        if (array_filter($entries, fn (array $e): bool => is_array($e['glossary'] ?? null)) !== []) {
+            throw new InvalidArgumentException('Einträge aus dem EduKSX-Glossary werden im Glossary zusammengeführt, nicht hier.');
         }
         $target = $entries[$targetId];
         $update = [];

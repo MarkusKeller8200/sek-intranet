@@ -20,6 +20,7 @@ automatisch aus der Beschreibung.
 | IDA                         | `plugins/Ida`          | Verbindung prüfen, Personen-Ereignisse vormerken                                                                                                                                      | wartet auf die IDA-API                                             |
 | DeepSign                    | `plugins/Deepsign`     | Elektronische Unterschrift: Verbindung prüfen, Dokumente, Signaturstufen, Siegel, Identifikation, API-Tester (alle 53 Endpunkte), Anbieter für «Unterschriften», Demo-Modus           | nach OpenAPI von DeepSign (53 Endpunkte); Zugang vorhanden         |
 | LMVZ (inoffiziell)          | `plugins/Lmvz`         | Shop: Artikel nachschlagen (Titel, Artikelnummer, ISBN, Listenpreis); LMVZ Digital: Lizenzübersicht, Kachel, API-Tester (Benutzer, Gruppen)                                           | inoffiziell – aus Aufzeichnung, Token kurzlebig                    |
+| EduKSX-Glossary             | `plugins/EduksxGlossary` | Begriffe aus dem EduKSX-Glossary übernehmen und aktuell halten (Vollstand, danach Change-Feed), Listen abgleichen, Zeitplan `intranet:glossar-sync`, API-Tester (8 Endpunkte) | nach API v1 und Referenzclient des Glossary |
 
 ## Datenschutz
 
