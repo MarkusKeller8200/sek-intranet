@@ -51,11 +51,14 @@ type Props = {
     unterschrift: Unterschrift;
     /** Knopf «Aus ClickTime übernehmen» (#101), null = nicht verfügbar */
     clicktime?: { nr: string } | null;
+    /** ClickTime führt die Zeiten dieser Person (#154): keine eigenen Einträge */
+    clicktimeFuehrt?: boolean;
 };
 
 /** Eigene Zeiterfassung eines Monats: erfassen, Übersicht, einreichen, Monatsblatt als PDF. */
 export default function ZeiterfassungStart(props: Props) {
     const { monat, eintraege, status, summen, kategorien, person } = props;
+    const fuehrt = props.clicktimeFuehrt === true;
     const gesperrt =
         status.status === 'eingereicht' || status.status === 'visiert';
     const heute = new Date().toISOString().slice(0, 10);
@@ -261,190 +264,194 @@ export default function ZeiterfassungStart(props: Props) {
                                     : 'Eintrag erfassen'}
                             </CardTitle>
                             <CardDescription>
-                                Beginn und Ende (mit Pause) oder direkt die
-                                Stunden angeben.
+                                {fuehrt
+                                    ? 'Ihre Zeiten werden in ClickTime erfasst. Eigene Einträge sind hier nicht möglich – mit «Aus ClickTime übernehmen» holen Sie den Monat.'
+                                    : 'Beginn und Ende (mit Pause) oder direkt die Stunden angeben.'}
                             </CardDescription>
                         </CardHeader>
                         <CardContent>
-                            <form
-                                onSubmit={submit}
-                                className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4"
-                            >
-                                <FormField
-                                    id="z-datum"
-                                    label="Datum *"
-                                    error={form.errors.datum}
+                            <form onSubmit={submit}>
+                                {/* ClickTime führt (#154): keine eigenen Einträge */}
+                                <fieldset
+                                    disabled={fuehrt}
+                                    className="grid gap-3 disabled:opacity-60 sm:grid-cols-2 lg:grid-cols-4"
                                 >
-                                    <Input
+                                    <FormField
                                         id="z-datum"
-                                        type="date"
-                                        value={form.data.datum}
-                                        onChange={(e) =>
-                                            form.setData(
-                                                'datum',
-                                                e.target.value,
-                                            )
-                                        }
-                                    />
-                                </FormField>
-                                <FormField
-                                    id="z-buchungsart"
-                                    label="Buchungsart *"
-                                    error={form.errors.buchungsart}
-                                >
-                                    <NativeSelect
-                                        id="z-buchungsart"
-                                        value={form.data.buchungsart}
-                                        onChange={(e) =>
-                                            form.setData(
-                                                'buchungsart',
-                                                e.target.value,
-                                            )
-                                        }
-                                    >
-                                        {optionen}
-                                    </NativeSelect>
-                                </FormField>
-                                {art === 'arbeit' ? (
-                                    <FormField
-                                        id="z-kategorie"
-                                        label="Kategorie *"
-                                        error={form.errors.kategorie}
-                                    >
-                                        <NativeSelect
-                                            id="z-kategorie"
-                                            value={form.data.kategorie}
-                                            onChange={(e) =>
-                                                form.setData(
-                                                    'kategorie',
-                                                    e.target.value,
-                                                )
-                                            }
-                                        >
-                                            {taetigkeiten}
-                                        </NativeSelect>
-                                    </FormField>
-                                ) : (
-                                    <div />
-                                )}
-                                <FormField
-                                    id="z-projekt"
-                                    label="Projekt / Einsatz"
-                                    error={form.errors.projekt}
-                                >
-                                    <Input
-                                        id="z-projekt"
-                                        value={form.data.projekt}
-                                        onChange={(e) =>
-                                            form.setData(
-                                                'projekt',
-                                                e.target.value,
-                                            )
-                                        }
-                                    />
-                                </FormField>
-                                <FormField id="z-beginn" label="Beginn">
-                                    <Input
-                                        id="z-beginn"
-                                        type="time"
-                                        value={form.data.beginn}
-                                        onChange={(e) =>
-                                            form.setData(
-                                                'beginn',
-                                                e.target.value,
-                                            )
-                                        }
-                                    />
-                                </FormField>
-                                <FormField
-                                    id="z-ende"
-                                    label="Ende"
-                                    error={form.errors.ende}
-                                >
-                                    <Input
-                                        id="z-ende"
-                                        type="time"
-                                        value={form.data.ende}
-                                        onChange={(e) =>
-                                            form.setData('ende', e.target.value)
-                                        }
-                                    />
-                                </FormField>
-                                <FormField
-                                    id="z-pause"
-                                    label="Pause (Minuten)"
-                                    error={form.errors.pause_min}
-                                >
-                                    <Input
-                                        id="z-pause"
-                                        type="number"
-                                        min={0}
-                                        step={5}
-                                        value={form.data.pause_min}
-                                        onChange={(e) =>
-                                            form.setData(
-                                                'pause_min',
-                                                e.target.value,
-                                            )
-                                        }
-                                    />
-                                </FormField>
-                                <FormField
-                                    id="z-stunden"
-                                    label="oder Stunden"
-                                    error={form.errors.stunden}
-                                >
-                                    <Input
-                                        id="z-stunden"
-                                        type="number"
-                                        min={0.25}
-                                        max={24}
-                                        step={0.25}
-                                        value={form.data.stunden}
-                                        onChange={(e) =>
-                                            form.setData(
-                                                'stunden',
-                                                e.target.value,
-                                            )
-                                        }
-                                    />
-                                </FormField>
-                                <div className="sm:col-span-2 lg:col-span-3">
-                                    <FormField
-                                        id="z-notiz"
-                                        label="Notiz"
-                                        error={form.errors.notiz}
+                                        label="Datum *"
+                                        error={form.errors.datum}
                                     >
                                         <Input
-                                            id="z-notiz"
-                                            value={form.data.notiz}
+                                            id="z-datum"
+                                            type="date"
+                                            value={form.data.datum}
                                             onChange={(e) =>
                                                 form.setData(
-                                                    'notiz',
+                                                    'datum',
                                                     e.target.value,
                                                 )
                                             }
                                         />
                                     </FormField>
-                                </div>
-                                <div className="flex items-end gap-2">
-                                    <Button
-                                        type="submit"
-                                        disabled={form.processing}
-                                        className="flex-1"
+                                    <FormField
+                                        id="z-buchungsart"
+                                        label="Buchungsart *"
+                                        error={form.errors.buchungsart}
                                     >
-                                        Speichern
-                                    </Button>
-                                    {bearbeite && (
-                                        <Button
-                                            type="button"
-                                            variant="outline"
-                                            onClick={abbrechen}
+                                        <NativeSelect
+                                            id="z-buchungsart"
+                                            value={form.data.buchungsart}
+                                            onChange={(e) =>
+                                                form.setData(
+                                                    'buchungsart',
+                                                    e.target.value,
+                                                )
+                                            }
                                         >
-                                            Abbrechen
-                                        </Button>
+                                            {optionen}
+                                        </NativeSelect>
+                                    </FormField>
+                                    {art === 'arbeit' ? (
+                                        <FormField
+                                            id="z-kategorie"
+                                            label="Kategorie *"
+                                            error={form.errors.kategorie}
+                                        >
+                                            <NativeSelect
+                                                id="z-kategorie"
+                                                value={form.data.kategorie}
+                                                onChange={(e) =>
+                                                    form.setData(
+                                                        'kategorie',
+                                                        e.target.value,
+                                                    )
+                                                }
+                                            >
+                                                {taetigkeiten}
+                                            </NativeSelect>
+                                        </FormField>
+                                    ) : (
+                                        <div />
                                     )}
-                                </div>
+                                    <FormField
+                                        id="z-projekt"
+                                        label="Projekt / Einsatz"
+                                        error={form.errors.projekt}
+                                    >
+                                        <Input
+                                            id="z-projekt"
+                                            value={form.data.projekt}
+                                            onChange={(e) =>
+                                                form.setData(
+                                                    'projekt',
+                                                    e.target.value,
+                                                )
+                                            }
+                                        />
+                                    </FormField>
+                                    <FormField id="z-beginn" label="Beginn">
+                                        <Input
+                                            id="z-beginn"
+                                            type="time"
+                                            value={form.data.beginn}
+                                            onChange={(e) =>
+                                                form.setData(
+                                                    'beginn',
+                                                    e.target.value,
+                                                )
+                                            }
+                                        />
+                                    </FormField>
+                                    <FormField
+                                        id="z-ende"
+                                        label="Ende"
+                                        error={form.errors.ende}
+                                    >
+                                        <Input
+                                            id="z-ende"
+                                            type="time"
+                                            value={form.data.ende}
+                                            onChange={(e) =>
+                                                form.setData('ende', e.target.value)
+                                            }
+                                        />
+                                    </FormField>
+                                    <FormField
+                                        id="z-pause"
+                                        label="Pause (Minuten)"
+                                        error={form.errors.pause_min}
+                                    >
+                                        <Input
+                                            id="z-pause"
+                                            type="number"
+                                            min={0}
+                                            step={5}
+                                            value={form.data.pause_min}
+                                            onChange={(e) =>
+                                                form.setData(
+                                                    'pause_min',
+                                                    e.target.value,
+                                                )
+                                            }
+                                        />
+                                    </FormField>
+                                    <FormField
+                                        id="z-stunden"
+                                        label="oder Stunden"
+                                        error={form.errors.stunden}
+                                    >
+                                        <Input
+                                            id="z-stunden"
+                                            type="number"
+                                            min={0.25}
+                                            max={24}
+                                            step={0.25}
+                                            value={form.data.stunden}
+                                            onChange={(e) =>
+                                                form.setData(
+                                                    'stunden',
+                                                    e.target.value,
+                                                )
+                                            }
+                                        />
+                                    </FormField>
+                                    <div className="sm:col-span-2 lg:col-span-3">
+                                        <FormField
+                                            id="z-notiz"
+                                            label="Notiz"
+                                            error={form.errors.notiz}
+                                        >
+                                            <Input
+                                                id="z-notiz"
+                                                value={form.data.notiz}
+                                                onChange={(e) =>
+                                                    form.setData(
+                                                        'notiz',
+                                                        e.target.value,
+                                                    )
+                                                }
+                                            />
+                                        </FormField>
+                                    </div>
+                                    <div className="flex items-end gap-2">
+                                        <Button
+                                            type="submit"
+                                            disabled={form.processing}
+                                            className="flex-1"
+                                        >
+                                            Speichern
+                                        </Button>
+                                        {bearbeite && (
+                                            <Button
+                                                type="button"
+                                                variant="outline"
+                                                onClick={abbrechen}
+                                            >
+                                                Abbrechen
+                                            </Button>
+                                        )}
+                                    </div>
+                                </fieldset>
                             </form>
                         </CardContent>
                     </Card>
@@ -462,7 +469,7 @@ export default function ZeiterfassungStart(props: Props) {
                             eintraege={eintraege}
                             summen={summen}
                             kategorien={kategorien}
-                            onEdit={gesperrt ? undefined : bearbeiten}
+                            onEdit={gesperrt || fuehrt ? undefined : bearbeiten}
                             onDelete={
                                 gesperrt
                                     ? undefined

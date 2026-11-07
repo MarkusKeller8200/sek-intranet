@@ -4,6 +4,11 @@ Versionen des Moduls nach SemVer (module.json → «version»).
 
 ## [Unveröffentlicht]
 
+### Neu
+
+- **ClickTime führt (#154, 0.7.0):** Mit ClickTime-Nr. und eingeschaltetem Plugin keine eigenen Einträge (Formular
+  deaktiviert, Erfassen und Ändern auf dem Server abgewiesen).
+
 ## [0.6.0] – 2026-11-06 (Intranet 0.36.0)
 
 ### Neu

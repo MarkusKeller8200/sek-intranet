@@ -61,6 +61,8 @@ class ZeiterfassungController extends Controller
             'darfVisum' => Gate::allows('visum-zeiterfassung'),
             'unterschrift' => self::unterschrift($person, $monat, $this->monate->status($person, $monat)),
             'clicktime' => self::clicktime($request, $person),
+            // ClickTime führt (#154): keine eigenen Einträge erfassen oder bearbeiten
+            'clicktimeFuehrt' => self::clicktimeNr($person) !== null,
         ]);
     }
 
@@ -72,6 +74,23 @@ class ZeiterfassungController extends Controller
      */
     private static function clicktime(Request $request, string $person): ?array
     {
+        $nr = self::clicktimeNr($person);
+        if ($nr === null) {
+            return null;
+        }
+        $user = $request->user();
+        $allowed = ($user instanceof IntranetUser && $user->hasRole('admin'))
+            || app(PluginManager::class)->context('clicktime', null)->setting('import_self', false) === true;
+
+        return $allowed ? ['nr' => $nr] : null;
+    }
+
+    /**
+     * ClickTime-Nr. der Person, wenn ClickTime für sie aktiv ist (Plugin eingeschaltet, Nr. in der Datenherkunft).
+     * Dann führt ClickTime die Zeiten (#154).
+     */
+    private static function clicktimeNr(string $person): ?string
+    {
         $plugins = app(PluginManager::class);
         if (! class_exists(Importer::class) || ! isset($plugins->all()['clicktime']) || ! $plugins->state('clicktime')['enabled']) {
             return null;
@@ -82,11 +101,16 @@ class ZeiterfassungController extends Controller
                 $nr = (string) ($link['external_id'] ?? '');
             }
         }
-        $user = $request->user();
-        $allowed = ($user instanceof IntranetUser && $user->hasRole('admin'))
-            || $plugins->context('clicktime', null)->setting('import_self', false) === true;
 
-        return $nr !== null && $nr !== '' && $allowed ? ['nr' => $nr] : null;
+        return $nr !== null && $nr !== '' ? $nr : null;
+    }
+
+    /** Mit ClickTime keine eigenen Einträge (#154). */
+    private static function ohneClicktime(string $person): void
+    {
+        if (self::clicktimeNr($person) !== null) {
+            throw ValidationException::withMessages(['datum' => 'Ihre Zeiten werden in ClickTime erfasst – eigene Einträge sind hier nicht möglich.']);
+        }
     }
 
     /** Eigenen Monat aus ClickTime übernehmen (#101). */
@@ -138,6 +162,7 @@ class ZeiterfassungController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $person = self::person($request);
+        self::ohneClicktime($person);
         $eintrag = $this->daten($request, $person);
         $this->eintraege->create(['person_id' => $person] + $eintrag);
         $this->toast('Eintrag gespeichert ('.number_format((float) $eintrag['stunden'], 2, '.', "'").' h).');
@@ -149,6 +174,7 @@ class ZeiterfassungController extends Controller
     public function update(Request $request, string $id): RedirectResponse
     {
         $person = self::person($request);
+        self::ohneClicktime($person);
         $alt = $this->eintraege->find($id);
         abort_if($alt === null || ($alt['person_id'] ?? null) !== $person, 404);
         if ((string) ($alt['quelle'] ?? '') !== '') {

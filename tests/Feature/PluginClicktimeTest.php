@@ -413,6 +413,13 @@ class PluginClicktimeTest extends TestCase
         $this->assertCount(31, $soll);
         $this->assertSame([8.4, 0.0], [$soll['2026-10-01'], $soll['2026-10-03']]);
         $this->assertSame(184.8, round(array_sum($soll), 2));
+
+        // ClickTime führt (#154): keine eigenen Einträge erfassen oder bearbeiten, Felder deaktiviert
+        $this->get('/zeiterfassung?monat=2026-10')->assertInertia(fn (Assert $page) => $page->where('clicktimeFuehrt', true));
+        $this->post('/zeiterfassung', ['datum' => '2026-10-20', 'buchungsart' => 'arbeitszeit', 'kategorie' => 'unterricht', 'stunden' => 2])->assertSessionHasErrors('datum');
+        $manuell = $liste->firstWhere('kategorie', 'verwaltung');
+        $this->put('/zeiterfassung/eintraege/'.$manuell['id'], ['datum' => '2026-10-05', 'buchungsart' => 'arbeitszeit', 'kategorie' => 'verwaltung', 'stunden' => 3])->assertSessionHasErrors('datum');
+        $this->assertCount(22, $eintraege->fuerPersonMonat((string) $andrea['id'], '2026-10'));
         $this->get('/zeiterfassung?monat=2026-10')->assertInertia(fn (Assert $page) => $page->where('soll.2026-10-01', 8.4));
 
         // zweites Mal: nichts doppelt; Korrektur in ClickTime (Demo nach Abschluss) wird nachgeführt

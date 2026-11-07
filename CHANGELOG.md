@@ -11,6 +11,9 @@ laufend unter **Unveröffentlicht**. Ab 0.32.0 entsteht eine Version nur bei ein
 
 ### Neu
 
+- **Zeiterfassung: ClickTime führt (#154):** Ist ClickTime für eine Person aktiv (Plugin eingeschaltet, ClickTime-Nr.
+  in der Datenherkunft), sind «Eintrag erfassen» und Bearbeiten deaktiviert, auch auf dem Server; Übernehmen aus
+  ClickTime, Löschen übernommener Einträge und Einreichen bleiben. Modul Zeiterfassung 0.7.0.
 - **Darstellung: Menü überlagernd (#153):** Optional unter Einstellungen → Darstellung (Aus, Bei schmalem Fenster
   unter 1280 px, Immer; gilt für diesen Browser). Das Seitenmenü öffnet dann über dem Inhalt statt daneben – mehr
   Platz, wenn eine Fachanwendung im Browser geteilt neben dem Intranet läuft. Hinweis auf der Seite der Anwendung.

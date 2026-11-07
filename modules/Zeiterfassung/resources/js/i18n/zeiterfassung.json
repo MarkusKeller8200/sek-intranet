@@ -76,6 +76,10 @@
     "Ende": ["End", "Änd"],
     "Datum": ["Date", "Datum"],
     "Tag": ["Day", "Tag"],
+    "Ihre Zeiten werden in ClickTime erfasst. Eigene Einträge sind hier nicht möglich – mit «Aus ClickTime übernehmen» holen Sie den Monat.": [
+        "Your times are recorded in ClickTime. Own entries are not possible here – use “Import from ClickTime” to get the month.",
+        "Ihri Ziite wärded im ClickTime erfasst. Eigeti Iiträg sind da nöd möglich – mit «Us ClickTime übernäh» holed Sie de Monet."
+    ],
     "Soll": ["Target", "Soll"],
     "Ist": ["Actual", "Ist"],
     "Delta": ["Difference", "Differänz"],
