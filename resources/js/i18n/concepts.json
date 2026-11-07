@@ -3459,5 +3459,8 @@
         "Key (initial content or EduKSX Glossary)",
         "Schlüssel (Startinhalt oder EduKSX-Glossary)"
     ],
-    "Label (Tag in der Tabelle)": ["Label (tag in the table)", "Label (Tag i de Tabälle)"]
+    "Label (Tag in der Tabelle)": [
+        "Label (tag in the table)",
+        "Label (Tag i de Tabälle)"
+    ]
 }
