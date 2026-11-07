@@ -192,8 +192,8 @@ class GlossaryTest extends TestCase
         $this->get('/glossar')->assertInertia(fn (Assert $page) => $page
             ->where('tagFarben.kategorien.Recht', 'rose')
             ->where('tagFarben.herkunft.VSA', 'brand'));
-        $this->put('/glossar/listen/kategorien/rec', ['kuerzel' => 'REC', 'label' => 'Recht', 'bezeichnung' => 'Recht', 'farbe' => 'pink'])->assertSessionHasErrors('farbe');
-        $this->put('/glossar/listen/kategorien/rec', ['kuerzel' => 'REC', 'label' => 'Recht', 'bezeichnung' => 'Recht', 'farbe' => 'teal'])->assertRedirect();
+        $this->put('/glossar/listen/kategorien/'.$this->id('kategorien', 'rec'), ['kuerzel' => 'REC', 'label' => 'Recht', 'bezeichnung' => 'Recht', 'farbe' => 'pink'])->assertSessionHasErrors('farbe');
+        $this->put('/glossar/listen/kategorien/'.$this->id('kategorien', 'rec'), ['kuerzel' => 'REC', 'label' => 'Recht', 'bezeichnung' => 'Recht', 'farbe' => 'teal'])->assertRedirect();
         $this->post('/glossar/listen/kategorien', ['kuerzel' => 'FIN', 'label' => 'Finanzen', 'bezeichnung' => 'Finanzen & Rechnungslegung'])->assertRedirect();
         $this->get('/glossar')->assertInertia(fn (Assert $page) => $page
             ->where('tagFarben.kategorien.Recht', 'teal')
@@ -206,7 +206,7 @@ class GlossaryTest extends TestCase
     public function test_origin_label_as_tag_in_table_and_for_input(): void
     {
         $this->signInAs('verwaltung');
-        $this->put('/glossar/listen/herkunft/kanton', ['kuerzel' => 'KT', 'label' => 'ZH', 'bezeichnung' => 'Kanton Zürich'])->assertRedirect();
+        $this->put('/glossar/listen/herkunft/'.$this->id('herkunft', 'kanton'), ['kuerzel' => 'KT', 'label' => 'ZH', 'bezeichnung' => 'Kanton Zürich'])->assertRedirect();
         $vsa = $this->entry('VSA');
         $this->postJson('/glossar/zellen', ['changes' => [['id' => $vsa['id'], 'field' => 'herkunft', 'value' => 'VSA; ZH']]])
             ->assertOk()->assertJsonPath('rows.0.herkunft', 'VSA; ZH');
