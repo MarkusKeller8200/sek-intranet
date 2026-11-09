@@ -109,7 +109,7 @@ class PluginEduksxGlossaryTest extends TestCase
         return Http::response($this->api['proposals'][$id], 201);
     }
 
-    private function withToken(): void
+    private function enableToken(): void
     {
         app(PluginManager::class)->saveSettings('eduksx-glossary', ['token' => 'gls_test_erfunden', '_allow_write' => true]);
     }
@@ -323,7 +323,7 @@ class PluginEduksxGlossaryTest extends TestCase
 
     public function test_connection_test_with_token_checks_scope(): void
     {
-        $this->withToken();
+        $this->enableToken();
         $test = app(PluginManager::class)->test('eduksx-glossary', null);
         $this->assertTrue($test['ok'], (string) $test['message']);
         $this->assertStringContainsString('Intranet Test', (string) $test['message']);
@@ -336,7 +336,7 @@ class PluginEduksxGlossaryTest extends TestCase
         $this->signInAs('verwaltung');
         $this->get('/glossar/'.$local['id'])->assertInertia(fn (Assert $page) => $page->where('vorschlagen', false));
 
-        $this->withToken();
+        $this->enableToken();
         $this->get('/glossar/'.$local['id'])->assertInertia(fn (Assert $page) => $page->where('vorschlagen', true));
         $this->get('/glossar/'.$local['id'].'/vorschlag')->assertOk()->assertInertia(fn (Assert $page) => $page
             ->component('glossary/propose')
@@ -381,7 +381,7 @@ class PluginEduksxGlossaryTest extends TestCase
     public function test_propose_correction_sends_only_changed_fields(): void
     {
         $this->sync();
-        $this->withToken();
+        $this->enableToken();
         $vsa = $this->vsaId();
         $result = app(PluginManager::class)->runAction('eduksx-glossary', 'propose', ['eintrag' => $vsa, 'begruendung' => '', '_changes' => [
             'official_abbreviation' => 'VSA', 'official_name' => 'Volksschulamt Kanton Zürich', 'short_description' => 'Amt für die Volksschule',
