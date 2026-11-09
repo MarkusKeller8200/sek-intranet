@@ -9,6 +9,8 @@ laufend unter **Unveröffentlicht**. Ab 0.32.0 entsteht eine Version nur bei ein
 
 ## [Unveröffentlicht]
 
+## [0.38.0] – 2026-11-09
+
 ### Neu
 
 - **Glossar: Sync von der öffentlichen Plattform vorbereitet (#161):** Neue Seite «EduKSX-Glossary» im Glossar (Recht
