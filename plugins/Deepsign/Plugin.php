@@ -473,7 +473,7 @@ class Plugin extends BasePlugin implements DemoResponder, SignatureProvider
      * Simulierter Ablauf wie bei DeepSign: Entwurf → Unterzeichnende → Start → je Reihenfolge unterschreiben.
      *
      * @param  array<string, string>  $pathParams
-     * @param  array<string, mixed>|null  $body
+     * @param  array<mixed>|null  $body
      * @return array{status: int, json?: mixed}
      */
     private static function demoStateResponse(string $endpoint, ?string $doc, array $pathParams, ?array $body, PluginContext $ctx): array
@@ -1050,7 +1050,7 @@ class Plugin extends BasePlugin implements DemoResponder, SignatureProvider
      * Datei-Service). Schreibende ohne Inhalt antworten wie DeepSign mit 204.
      *
      * @param  array<string, string>  $pathParams
-     * @param  array<string, mixed>|null  $body
+     * @param  array<mixed>|null  $body
      * @return array{status: int, json?: mixed}
      */
     private static function demoGeneric(string $endpoint, array $pathParams, ?array $body, PluginContext $ctx): array
@@ -1120,7 +1120,7 @@ class Plugin extends BasePlugin implements DemoResponder, SignatureProvider
     }
 
     /**
-     * @param  array<string, mixed>|null  $body
+     * @param  array<mixed>|null  $body
      * @return array<string, mixed>
      */
     private static function demoDocument(string $status, PluginContext $ctx, ?array $body = null, string $id = self::DEMO_DOCUMENT): array

@@ -295,9 +295,7 @@ class Plugin extends BasePlugin implements DemoResponder
                 return ActionResult::ok('In ClickTime gibt es die Person schon (Nr. '.(string) ($match['employee_no'] ?? '?').') – nur verbunden, nichts angelegt.');
             }
             // ClickTime erwartet eine Liste von Mitarbeitenden
-            /** @var array<string, mixed> $liste */
-            $liste = [$payload];
-            $response = $ctx->call('employees-create', [], $liste);
+            $response = $ctx->call('employees-create', [], [$payload]);
             if (! $response->successful()) {
                 $json = $response->json();
                 $message = is_array($json) ? (string) ($json['message'] ?? $json['error'] ?? '') : '';

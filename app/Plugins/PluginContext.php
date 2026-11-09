@@ -163,7 +163,7 @@ final class PluginContext
      * (bzw. data_field) mit $body als JSON (z. B. DeepSign POST /documents/file).
      *
      * @param  array<string, mixed>  $params  Pfad- ({name}) und Abfrageparameter
-     * @param  array<string, mixed>|null  $body
+     * @param  array<mixed>|null  $body  Objekt oder Liste (z. B. ClickTime POST /employees)
      * @param  array{name: string, contents: string, mime?: string, field?: string, data_field?: string}|null  $file
      */
     public function call(string $endpointId, array $params = [], ?array $body = null, ?array $file = null): Response

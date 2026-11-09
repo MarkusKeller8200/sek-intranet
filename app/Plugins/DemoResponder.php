@@ -20,7 +20,7 @@ interface DemoResponder
      * @param  array<string, mixed>  $endpoint  Endpunkt aus plugin.json
      * @param  array<string, string>  $pathParams  eingesetzte Pfadparameter ({documentId} → Wert)
      * @param  array<string, mixed>  $query
-     * @param  array<string, mixed>|null  $body
+     * @param  array<mixed>|null  $body  Objekt oder Liste
      * @return array{status: int, json?: mixed}
      */
     public function demoResponse(array $endpoint, array $pathParams, array $query, ?array $body, PluginContext $ctx): array;
