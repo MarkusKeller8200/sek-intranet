@@ -284,7 +284,7 @@ class Plugin extends BasePlugin implements DemoResponder
             }
         }
         $row = ['_key' => (string) $person['id'], 'person' => (string) ($person['name'] ?? ''), 'email' => (string) $person['email'],
-            'username' => (string) $payload['username'], 'employee_no' => isset($payload['employee_no']) ? (string) $payload['employee_no'] : 'von ClickTime',
+            'username' => (string) ($payload['username'] ?? ''), 'employee_no' => isset($payload['employee_no']) ? (string) $payload['employee_no'] : 'von ClickTime',
             'status' => $match !== null ? 'verbinden mit Nr. '.(string) ($match['employee_no'] ?? '?').' ('.self::fullName($match).')' : 'neu anlegen'];
 
         if (($options['_apply'] ?? false) === true) {
@@ -294,7 +294,10 @@ class Plugin extends BasePlugin implements DemoResponder
 
                 return ActionResult::ok('In ClickTime gibt es die Person schon (Nr. '.(string) ($match['employee_no'] ?? '?').') – nur verbunden, nichts angelegt.');
             }
-            $response = $ctx->call('employees-create', [], [$payload]);
+            // ClickTime erwartet eine Liste von Mitarbeitenden
+            /** @var array<string, mixed> $liste */
+            $liste = [$payload];
+            $response = $ctx->call('employees-create', [], $liste);
             if (! $response->successful()) {
                 $json = $response->json();
                 $message = is_array($json) ? (string) ($json['message'] ?? $json['error'] ?? '') : '';
