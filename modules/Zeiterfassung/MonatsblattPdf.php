@@ -107,7 +107,7 @@ final class MonatsblattPdf
                 $y += self::ZEILE;
             }
             // Tagestotal
-            $pdf->dotted(self::X['std'] - 30, $y - 8, self::X['std'], $y - 8);
+            $pdf->dotted(self::X['std'] - 30, $y - 9.5, self::X['std'], $y - 9.5);
             $pdf->textRight(self::X['std'], $y, self::hm($ist), self::SCHRIFT);
             if ($sollTag !== null) {
                 $pdf->textRight(self::X['soll'], $y, self::hm($sollTag), self::SCHRIFT);
