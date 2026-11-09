@@ -390,7 +390,7 @@ class PluginClicktimeTest extends TestCase
             },
         ]);
         $this->realAccount();
-        $gefiltert = fn (): int => count(array_filter(Http::recorded(), fn (array $pair): bool => str_contains($pair[0]->url(), 'entry_type')));
+        $gefiltert = fn (): int => Http::recorded(fn (Request $r): bool => str_contains($r->url(), 'entry_type'))->count();
         $targets = (new Months(app(PluginManager::class)->context('clicktime', null)))->targets('2026-02', ['1']);
         $this->assertCount(28, $targets['1']);
         $this->assertSame(8.4, $targets['1']['2026-02-01']);

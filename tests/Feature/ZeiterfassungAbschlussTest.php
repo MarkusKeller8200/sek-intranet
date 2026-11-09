@@ -127,7 +127,7 @@ class ZeiterfassungAbschlussTest extends TestCase
         $id = (string) $lp->getAuthIdentifier();
         $this->post('/zeiterfassung', ['datum' => self::MONAT.'-05', 'art' => 'arbeit', 'kategorie' => 'unterricht', 'beginn' => '07:30', 'ende' => '12:15', 'pause_min' => 15])->assertRedirect();
         $this->get('/zeiterfassung?monat='.self::MONAT)->assertInertia(fn (Assert $page) => $page
-            ->where('fehlend', fn ($tage): bool => in_array('2026-10-01', (array) $tage, true) && ! in_array('2026-10-05', (array) $tage, true)));
+            ->where('fehlend', fn ($tage): bool => collect($tage)->contains('2026-10-01') && ! collect($tage)->contains('2026-10-05')));
 
         // Erinnerung an offene Monate
         $sl = $this->signInAs('schulleitung');
