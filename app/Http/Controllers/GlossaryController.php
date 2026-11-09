@@ -6,6 +6,7 @@ use App\Data\Contracts\GlossaryRepository;
 use App\Plugins\Support\SpreadsheetReader;
 use App\Support\AuditLog;
 use App\Support\Glossary;
+use App\Support\GlossaryProposals;
 use App\Support\GlossaryTransfer;
 use App\Support\GridViews;
 use App\Support\SpreadsheetWriter;
@@ -92,7 +93,17 @@ class GlossaryController extends Controller
             'bereiche' => $this->service->areaLinks($request->user()),
             'status' => Glossary::STATUS,
             'rechte' => $this->rights(),
+            // Vorschläge ans EduKSX-Glossary (#162): Plugin eingeschaltet, Token hinterlegt, Recht «Glossar pflegen»
+            'vorschlagen' => Gate::allows('edit-glossary') && $this->canPropose(),
+            'vorschlagStatus' => GlossaryProposals::STATUS,
         ]);
+    }
+
+    private function canPropose(): bool
+    {
+        $status = app(GlossarySyncController::class)->status();
+
+        return ($status['eingeschaltet'] ?? false) === true && ($status['token'] ?? false) === true;
     }
 
     public function create(): Response

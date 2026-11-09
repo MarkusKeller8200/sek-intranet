@@ -9,6 +9,22 @@ laufend unter **Unveröffentlicht**. Ab 0.32.0 entsteht eine Version nur bei ein
 
 ## [Unveröffentlicht]
 
+### Neu
+
+- **Glossar: Sync von der öffentlichen Plattform vorbereitet (#161):** Neue Seite «EduKSX-Glossary» im Glossar (Recht
+  «Glossar pflegen») mit Stand, **Probelauf** (zeigt neu, geändert, ausgeblendet und Listen, speichert nichts) und
+  «Mit EduKSX-Glossary synchronisieren». Der Zeitplan synchronisiert nur noch mit der neuen Einstellung
+  «Automatisch im Zeitplan synchronisieren» (Vorgabe aus). Checkliste Go-live in `docs/KONZEPT-GLOSSAR.md`.
+- **Glossar: Vorschläge ans EduKSX-Glossary (#162):** «Dem EduKSX-Glossary vorschlagen» bzw. «Korrektur
+  vorschlagen» am Eintrag (Formular, Bestätigung, Begründung). Gesendet werden nur Fachdaten über
+  `POST /api/v1/proposals` (Servicekonto, Scope «propose»); der Vorschlag geht in die Moderation. Nummer und Stand am
+  Eintrag, Stand wird beim Sync nachgefragt; nach Annahme verbindet der Sync den lokalen Begriff mit dem
+  veröffentlichten (lokale Daten übernommen, lokaler Eintrag ausgeblendet, keine Dublette).
+- **Plugin EduKSX-Glossary: API nachgeführt (#160):** Stand Glossary 0.9.0 / OpenAPI 0.4.0-preview – neu Index,
+  Token prüfen (whoami), Vorschläge einreichen und abfragen; Organisation (`/org/terms`) als geplant. Optionales
+  Token des Servicekontos (verschlüsselt); «Verbindung testen» prüft mit Token Servicekonto und Scopes. Neu im Kern:
+  `bearer` mit `optional: true`. Plugin 0.3.
+
 ### Geändert
 
 - **Glossar: Kategorien und Herkunft mit UUID (#159):** Die Listeneinträge des Startinhalts hatten Kurz-IDs wie

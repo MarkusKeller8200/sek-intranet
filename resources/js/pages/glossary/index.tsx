@@ -6,6 +6,7 @@ import {
     ListTree,
     Pencil,
     Plus,
+    RefreshCw,
     Trash2,
 } from 'lucide-react';
 import { useMemo, useRef, useState } from 'react';
@@ -310,6 +311,11 @@ export default function GlossaryIndex({
                                 <Button asChild variant="outline">
                                     <Link href="/glossar/listen">
                                         <ListTree /> Kategorien & Herkunft
+                                    </Link>
+                                </Button>
+                                <Button asChild variant="outline">
+                                    <Link href="/glossar/sync">
+                                        <RefreshCw /> EduKSX-Glossary
                                     </Link>
                                 </Button>
                                 <Button asChild>

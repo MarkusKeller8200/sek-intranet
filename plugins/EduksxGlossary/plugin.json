@@ -1,24 +1,28 @@
 {
     "id": "eduksx-glossary",
     "name": "EduKSX-Glossary",
-    "version": "0.2",
+    "version": "0.3",
     "api": 1,
     "category": "school",
     "author": "SekBülach Intranet",
-    "description": "Übernimmt die veröffentlichten Begriffe und Abkürzungen aus dem EduKSX-Glossary (glossary.eduksx.ch, API v1) ins Glossar des Intranets und hält sie aktuell: beim ersten Mal der Vollstand, danach nur Änderungen (Change-Feed). Eigene Formen und «Intern genutzt in» bleiben lokal. Daten unter CC BY 4.0.",
-    "data_notice": "Öffentliche Fachbegriffe ohne Personendaten. Quellenangabe «EduKSX-Glossary, glossary.eduksx.ch» (CC BY 4.0) erscheint in der Glossar-Ansicht und in den Exporten.",
+    "description": "Übernimmt die veröffentlichten Begriffe und Abkürzungen aus dem EduKSX-Glossary (glossary.eduksx.ch, API v1) ins Glossar des Intranets und hält sie aktuell: beim ersten Mal der Vollstand, danach nur Änderungen (Change-Feed). Neue Begriffe und Korrekturen gehen als Vorschlag in die Moderation des Glossary. Eigene Formen und «Intern genutzt in» bleiben lokal. Daten unter CC BY 4.0.",
+    "data_notice": "Öffentliche Fachbegriffe ohne Personendaten. Vorschläge enthalten nur Fachinhalte und eine Begründung – keine Personendaten eintragen. Quellenangabe «EduKSX-Glossary, glossary.eduksx.ch» (CC BY 4.0) erscheint in der Glossar-Ansicht und in den Exporten.",
     "service": {
-        "name": "EduKSX-Glossary API v1",
+        "name": "EduKSX-Glossary API v1 (OpenAPI 0.4.0-preview, Glossary 0.9.0)",
         "home": "https://glossary.eduksx.ch",
         "docs": "https://glossary.eduksx.ch/api/docs",
-        "auth": { "type": "none" },
-        "auth_note": "Öffentliche API ohne Anmeldung. Limit 120 Abrufe pro Minute und Adresse (HTTP 429 mit Retry-After).",
+        "auth": {
+            "type": "bearer",
+            "token_setting": "token",
+            "optional": true
+        },
+        "auth_note": "Lesen ohne Anmeldung. Für Vorschläge (Scope «propose») ein Token eines Servicekontos («gls_…») hinterlegen – im Glossary unter Administration → Servicekonten erstellt, befristet und widerrufbar. Das Token wird verschlüsselt gespeichert, nie angezeigt und nur an die Glossary-Adresse gesendet. Limit 120 Abrufe pro Minute und Adresse (HTTP 429 mit Retry-After), Vorschläge 30 pro Minute.",
         "endpoints": [
             {
                 "id": "status",
                 "method": "GET",
                 "path": "/api/v1/",
-                "label": "Status der API",
+                "label": "Einstieg: Version, Datenstand, Endpunkte",
                 "status": "full",
                 "use": "Verbindung testen"
             },
@@ -34,16 +38,21 @@
                 "id": "export",
                 "method": "GET",
                 "path": "/api/v1/exports",
-                "label": "Vollstand (alle Begriffe und Listen)",
+                "label": "Vollstand aller öffentlichen Begriffe",
                 "status": "full",
                 "use": "Erster Sync",
-                "params": [{ "name": "format", "default": "json" }]
+                "params": [
+                    {
+                        "name": "format",
+                        "default": "json"
+                    }
+                ]
             },
             {
                 "id": "changes",
                 "method": "GET",
                 "path": "/api/v1/changes",
-                "label": "Änderungen seit dem Cursor",
+                "label": "Änderungen seit einem Cursor (Change-Feed)",
                 "status": "full",
                 "use": "Sync (seitenweise)",
                 "params": [
@@ -52,7 +61,10 @@
                         "example": "0",
                         "help": "Cursor des letzten verarbeiteten Ereignisses."
                     },
-                    { "name": "limit", "default": "500" }
+                    {
+                        "name": "limit",
+                        "default": "500"
+                    }
                 ]
             },
             {
@@ -67,7 +79,7 @@
                 "id": "sources",
                 "method": "GET",
                 "path": "/api/v1/sources",
-                "label": "Herkunft",
+                "label": "Herkunft (Quelleninstitutionen)",
                 "status": "full",
                 "use": "Listen abgleichen"
             },
@@ -75,24 +87,31 @@
                 "id": "terms",
                 "method": "GET",
                 "path": "/api/v1/terms",
-                "label": "Begriffe (mit Mehrdeutigkeit)",
+                "label": "Veröffentlichte Begriffe suchen und blättern",
                 "status": "full",
-                "use": "Nachschlagen",
+                "use": "Nachschlagen (mit Mehrdeutigkeit)",
                 "params": [
-                    { "name": "q", "example": "VSA", "help": "Suchtext." },
+                    {
+                        "name": "q",
+                        "example": "VSA",
+                        "help": "Suchtext."
+                    },
                     {
                         "name": "category",
                         "example": "beh",
                         "help": "Schlüssel einer Kategorie."
                     },
-                    { "name": "status", "example": "aktuell" }
+                    {
+                        "name": "status",
+                        "example": "aktuell"
+                    }
                 ]
             },
             {
                 "id": "term",
                 "method": "GET",
                 "path": "/api/v1/terms/{id}",
-                "label": "Ein Begriff",
+                "label": "Ein veröffentlichter Begriff",
                 "status": "full",
                 "use": "Nachschlagen (alte IDs antworten mit 301)",
                 "params": [
@@ -100,6 +119,104 @@
                         "name": "id",
                         "required": true,
                         "help": "ID oder Slug, z. B. aus «Begriffe»."
+                    }
+                ]
+            },
+            {
+                "id": "index",
+                "method": "GET",
+                "path": "/api/v1/index",
+                "label": "Kompakter Index (Renderer, Browser-Erweiterung)",
+                "status": "full",
+                "use": "Nachschlagen"
+            },
+            {
+                "id": "service-whoami",
+                "method": "GET",
+                "path": "/api/v1/service/whoami",
+                "label": "Token prüfen (Servicekonto, Scopes, Ablauf)",
+                "status": "full",
+                "use": "Verbindung testen mit Token"
+            },
+            {
+                "id": "proposals-create",
+                "method": "POST",
+                "path": "/api/v1/proposals",
+                "label": "Vorschlag einreichen (Moderation)",
+                "status": "full",
+                "use": "Neuer Begriff oder Korrektur vorschlagen",
+                "danger": true,
+                "body": {
+                    "changes": {
+                        "official_abbreviation": "TST",
+                        "official_name": "Testbegriff aus dem Intranet",
+                        "short_description": "Erfundener Begriff zum Testen"
+                    },
+                    "reason": "Test aus dem Intranet"
+                },
+                "fields": [
+                    {
+                        "name": "term",
+                        "type": "string",
+                        "help": "Nur für Korrekturen: UUID oder Slug eines veröffentlichten Begriffs. Ohne = neuer Begriff.",
+                        "example": "sl-schulleitung"
+                    },
+                    {
+                        "name": "changes",
+                        "type": "object",
+                        "required": true,
+                        "help": "official_abbreviation, official_name, short_description, description, url, alternative_aliases (Liste), categories (Liste von Schlüsseln).",
+                        "example": "{\"short_description\": \"Führt die Schule\"}"
+                    },
+                    {
+                        "name": "reason",
+                        "type": "string",
+                        "help": "Begründung, höchstens 2000 Zeichen, ohne Personendaten.",
+                        "example": "Rückmeldung aus dem Intranet"
+                    }
+                ]
+            },
+            {
+                "id": "proposal",
+                "method": "GET",
+                "path": "/api/v1/proposals/{id}",
+                "label": "Stand eines eigenen Vorschlags",
+                "status": "full",
+                "use": "Stand der Vorschläge nachführen",
+                "params": [
+                    {
+                        "name": "id",
+                        "required": true,
+                        "example": "1",
+                        "help": "Nummer des Vorschlags."
+                    }
+                ]
+            },
+            {
+                "id": "org-terms",
+                "method": "GET",
+                "path": "/api/v1/org/terms",
+                "label": "Begriffe in der Darstellung der Organisation",
+                "status": "planned",
+                "use": "später: Anpassungen der Organisation (Scope «read-org»)",
+                "params": [
+                    {
+                        "name": "customized",
+                        "example": "1"
+                    }
+                ]
+            },
+            {
+                "id": "org-term",
+                "method": "GET",
+                "path": "/api/v1/org/terms/{id}",
+                "label": "Ein Begriff in der Darstellung der Organisation",
+                "status": "planned",
+                "use": "später",
+                "params": [
+                    {
+                        "name": "id",
+                        "required": true
                     }
                 ]
             }
@@ -112,6 +229,19 @@
             "label": "Adresse des Glossary",
             "default": "https://glossary.eduksx.ch",
             "help": "Nur https://. Für Tests z. B. eine Testinstanz des Glossary."
+        },
+        {
+            "key": "token",
+            "type": "password",
+            "label": "Token des Servicekontos (für Vorschläge)",
+            "help": "«gls_…» mit Scope «propose». Ohne Token nur lesen."
+        },
+        {
+            "key": "auto",
+            "type": "check",
+            "label": "Automatisch im Zeitplan synchronisieren",
+            "default": false,
+            "help": "Erst einschalten, wenn Probelauf und erster Sync geprüft sind."
         },
         {
             "key": "interval",
@@ -130,6 +260,11 @@
                     "key": "neu",
                     "type": "check",
                     "label": "Vollstand neu laden (sonst nur Änderungen)"
+                },
+                {
+                    "key": "probelauf",
+                    "type": "check",
+                    "label": "Probelauf: nur anzeigen, was sich ändern würde"
                 }
             ]
         },
@@ -138,6 +273,25 @@
             "label": "Stand anzeigen",
             "kind": "read",
             "options": []
+        },
+        {
+            "id": "propose",
+            "label": "Vorschlag einreichen",
+            "kind": "write",
+            "confirm": "Der Vorschlag geht an die Moderation des EduKSX-Glossary. Normalerweise über den Eintrag im Glossar («Dem EduKSX-Glossary vorschlagen»).",
+            "options": [
+                {
+                    "key": "eintrag",
+                    "type": "text",
+                    "label": "ID des Glossar-Eintrags",
+                    "required": true
+                },
+                {
+                    "key": "begruendung",
+                    "type": "textarea",
+                    "label": "Begründung (ohne Personendaten)"
+                }
+            ]
         }
     ]
 }

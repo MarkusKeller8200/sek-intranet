@@ -393,5 +393,65 @@
     "im Glossary zusammengeführt": [
         "merged in the Glossary",
         "im Glossary zämegfüehrt"
-    ]
+    ],
+    "EduKSX-Glossary": ["EduKSX Glossary", "EduKSX-Glossary"],
+    "Vorschläge sind noch nicht möglich: Im Plugin «EduKSX-Glossary» fehlen das Token des Servicekontos oder die Freigabe für schreibende Aktionen.": [
+        "Proposals are not possible yet: the “EduKSX-Glossary” plugin lacks the service account token or the permission for write actions.",
+        "Vorschläg gönd no nöd: Im Plugin «EduKSX-Glossary» fehlt s Token vom Servicekonto oder d Freigab für schriibendi Aktione."
+    ],
+    "Vorschlag senden …": ["Send proposal …", "Vorschlag schicke …"],
+    "Der Vorschlag geht an die Moderation des EduKSX-Glossary und wird erst nach der Prüfung veröffentlicht. Gesendet werden nur die Fachdaten unten – eigene Formen, «Intern genutzt in» und Notiz bleiben im Intranet. Keine Personendaten eintragen.": [
+        "The proposal goes to the moderation of the EduKSX Glossary and is only published after review. Only the content below is sent – own forms, “Used internally in” and note stay in the intranet. Do not enter personal data.",
+        "De Vorschlag gaht a d Moderation vom EduKSX-Glossary und wird erscht nach de Prüefig veröffentlicht. Gschickt werded nur d Fachdate unde – eigeti Forme, «Intern brucht i» und Notiz bliibed im Intranet. Kei Persone-Date iitrage."
+    ],
+    "Nur Kategorien, die es im EduKSX-Glossary gibt": [
+        "Only categories that exist in the EduKSX Glossary",
+        "Nur Kategorie, wos im EduKSX-Glossary git"
+    ],
+    "Begründung": ["Reason", "Begründig"],
+    "Vorschlag senden?": ["Send proposal?", "Vorschlag schicke?"],
+    "Korrektur vorschlagen": ["Propose correction", "Korrektur vorschlah"],
+    "Dem EduKSX-Glossary vorschlagen": [
+        "Propose to the EduKSX Glossary",
+        "Em EduKSX-Glossary vorschlah"
+    ],
+    "Gesendet werden nur die geänderten Felder. Die Moderation des EduKSX-Glossary prüft den Vorschlag.": [
+        "Only changed fields are sent. The EduKSX Glossary moderation reviews the proposal.",
+        "Gschickt werded nur d gänderete Fälder. D Moderation vom EduKSX-Glossary prüeft de Vorschlag."
+    ],
+    "Der neue Begriff geht an die Moderation des EduKSX-Glossary. Nach der Annahme kommt er über den Sync zurück und ersetzt diesen lokalen Eintrag (eigene Formen bleiben).": [
+        "The new term goes to the EduKSX Glossary moderation. Once accepted it returns via the sync and replaces this local entry (own forms stay).",
+        "De neu Begriff gaht a d Moderation vom EduKSX-Glossary. Nach de Annahm chunnt er über de Sync zrugg und ersetzt dä lokal Iitrag (eigeti Forme bliibed)."
+    ],
+    "Vorschläge an das EduKSX-Glossary": [
+        "Proposals to the EduKSX Glossary",
+        "Vorschläg as EduKSX-Glossary"
+    ],
+    "noch nicht eingerichtet": ["not set up yet", "no nöd iigrichtet"],
+    "Sync noch nicht eingerichtet. Die Administration schaltet das Plugin «EduKSX-Glossary» ein, sobald die Plattform erreichbar ist.": [
+        "Sync not set up yet. The administration turns on the “EduKSX-Glossary” plugin as soon as the platform is reachable.",
+        "Sync no nöd iigrichtet. D Administration schaltet s Plugin «EduKSX-Glossary» ii, sobald d Plattform erreichbar isch."
+    ],
+    "Plugin einrichten": ["Set up plugin", "Plugin iirichte"],
+    "Synchronisieren": ["Synchronise", "Synchronisiere"],
+    "Zuerst den Probelauf prüfen: Er zeigt, was sich ändern würde, und speichert nichts.": [
+        "Check the dry run first: it shows what would change and saves nothing.",
+        "Zerscht de Probelauf aaluege: Er zeigt, was sich würd ändere, und speicheret nüt."
+    ],
+    "Vollstand neu laden (sonst nur Änderungen)": [
+        "Reload full data (otherwise only changes)",
+        "Vollstand neu lade (suscht nur Änderige)"
+    ],
+    "Probelauf": ["Dry run", "Probelauf"],
+    "Mit EduKSX-Glossary synchronisieren": [
+        "Synchronise with EduKSX Glossary",
+        "Mit em EduKSX-Glossary synchronisiere"
+    ],
+    "Ergebnis des Probelaufs": ["Dry run result", "Resultat vom Probelauf"],
+    "Glossar: EduKSX-Glossary": [
+        "Glossary: EduKSX Glossary",
+        "Glossar: EduKSX-Glossary"
+    ],
+    "Letzter Sync": ["Last sync", "Letschte Sync"],
+    "Vorschläge": ["Proposals", "Vorschläg"]
 }

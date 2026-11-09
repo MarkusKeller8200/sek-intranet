@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Data\Contracts\GlossaryRepository;
 use App\Plugins\PluginManager;
 use App\Support\Glossary;
+use GuzzleHttp\Promise\PromiseInterface;
 use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\Http;
 use Inertia\Testing\AssertableInertia as Assert;
@@ -65,6 +66,8 @@ class PluginEduksxGlossaryTest extends TestCase
             ],
             'pages' => [],
             'fail' => false,
+            'proposals' => [],
+            'sent' => [],
         ];
         Http::fake(function (Request $request) {
             if ($this->api['fail']) {
@@ -80,12 +83,35 @@ class PluginEduksxGlossaryTest extends TestCase
                 '/api/v1/sources' => Http::response(['data' => $this->api['sources']]),
                 '/api/v1/changes' => Http::response($this->api['pages'][(string) ($query['since'] ?? '0')]
                     ?? ['data' => [], 'meta' => ['since' => (int) ($query['since'] ?? 0), 'next_cursor' => (int) ($query['since'] ?? 0), 'has_more' => false, 'release' => 2]]),
-                default => Http::response([], 404),
+                '/api/v1/service/whoami' => $request->hasHeader('Authorization', 'Bearer gls_test_erfunden')
+                    ? Http::response(['service_account' => ['id' => self::NEW_ID, 'name' => 'Intranet Test', 'scopes' => ['propose']], 'token' => ['name' => 'Test', 'expires_at' => null]])
+                    : Http::response([], 401),
+                '/api/v1/proposals' => $this->proposalCreated($request),
+                default => str_starts_with($path, '/api/v1/proposals/') && isset($this->api['proposals'][substr($path, 18)])
+                    ? Http::response(['data' => $this->api['proposals'][substr($path, 18)]])
+                    : Http::response([], 404),
             };
         });
         $manager = app(PluginManager::class);
         $manager->saveSettings('eduksx-glossary', ['_allow_write' => false]);
         $manager->setEnabled('eduksx-glossary', true);
+    }
+
+    private function proposalCreated(Request $request): PromiseInterface
+    {
+        if (! $request->hasHeader('Authorization', 'Bearer gls_test_erfunden')) {
+            return Http::response([], 401);
+        }
+        $this->api['sent'][] = $request->data();
+        $id = (string) (count($this->api['sent']) + 6);
+        $this->api['proposals'][$id] = ['id' => (int) $id, 'kind' => isset($request->data()['term']) ? 'change' : 'new', 'term_id' => null, 'status' => 'eingereicht', 'created_at' => '2026-11-09T10:00:00Z', 'resolved_at' => null];
+
+        return Http::response($this->api['proposals'][$id], 201);
+    }
+
+    private function withToken(): void
+    {
+        app(PluginManager::class)->saveSettings('eduksx-glossary', ['token' => 'gls_test_erfunden', '_allow_write' => true]);
     }
 
     /**
@@ -199,6 +225,10 @@ class PluginEduksxGlossaryTest extends TestCase
 
     public function test_command_respects_plugin_and_interval(): void
     {
+        // ohne «Automatisch synchronisieren» kein Abruf im Zeitplan (#161)
+        $this->artisan('intranet:glossar-sync')->assertSuccessful();
+        Http::assertSentCount(0);
+        app(PluginManager::class)->saveSettings('eduksx-glossary', ['auto' => true, '_allow_write' => false]);
         $this->artisan('intranet:glossar-sync')->assertSuccessful();
         $this->assertSame(10, $this->repo()->syncState()['cursor']);
         $this->api['cursor'] = 20;
@@ -250,6 +280,121 @@ class PluginEduksxGlossaryTest extends TestCase
         }));
         $term = collect(app(Glossary::class)->terms())->firstWhere('id', $vsa);
         $this->assertContains('Volksschulamt', $term['match'], 'alternative Schreibweise im Freitext erkannt');
+    }
+
+    public function test_dry_run_shows_changes_and_saves_nothing(): void
+    {
+        $before = $this->repo()->all();
+        $result = app(PluginManager::class)->runAction('eduksx-glossary', 'sync', ['probelauf' => true], null);
+        $this->assertSame('success', $result['status'], (string) $result['message']);
+        $this->assertStringContainsString('Probelauf – nichts gespeichert', (string) $result['message']);
+        $this->assertStringContainsString('lokale Begriffe ohne Gegenstück', (string) $result['message']);
+        $rows = collect($result['rows']);
+        $this->assertNotNull($rows->first(fn (array $r): bool => $r['art'] === 'neu' && str_contains($r['titel'], 'NEUX')));
+        $this->assertNotNull($rows->first(fn (array $r): bool => $r['art'] === 'geändert' && str_contains($r['felder'], 'Bezeichnung offiziell')));
+        $this->assertNotNull($rows->firstWhere('liste', 'Kategorien'));
+        $this->assertEquals($before, $this->repo()->all(), 'nichts gespeichert');
+        $this->assertNull(collect($this->repo()->listItems('kategorien'))->firstWhere('schluessel', 'neue-kat'));
+        $this->assertSame([], array_intersect_key($this->repo()->syncState(), ['cursor' => true]));
+    }
+
+    public function test_sync_page_dry_run_and_sync_for_glossary_editors(): void
+    {
+        $this->signInAs('lehrperson');
+        $this->get('/glossar/sync')->assertForbidden();
+
+        $this->signInAs('verwaltung');
+        $this->get('/glossar/sync')->assertOk()->assertInertia(fn (Assert $page) => $page
+            ->component('glossary/sync')
+            ->where('sync.eingeschaltet', true)
+            ->where('sync.token', false)
+            ->where('ergebnis', null));
+        $this->post('/glossar/sync/probelauf')->assertOk()->assertInertia(fn (Assert $page) => $page
+            ->where('ergebnis.status', 'success')
+            ->where('ergebnis.rows', fn ($rows): bool => count($rows) > 0));
+        $this->assertArrayNotHasKey('cursor', $this->repo()->syncState());
+        $this->post('/glossar/sync')->assertRedirect('/glossar/sync');
+        $this->assertSame(10, $this->repo()->syncState()['cursor']);
+
+        app(PluginManager::class)->setEnabled('eduksx-glossary', false);
+        $this->get('/glossar/sync')->assertInertia(fn (Assert $page) => $page->where('sync.eingeschaltet', false));
+        $this->post('/glossar/sync')->assertRedirect('/glossar/sync');
+    }
+
+    public function test_connection_test_with_token_checks_scope(): void
+    {
+        $this->withToken();
+        $test = app(PluginManager::class)->test('eduksx-glossary', null);
+        $this->assertTrue($test['ok'], (string) $test['message']);
+        $this->assertStringContainsString('Intranet Test', (string) $test['message']);
+        $this->assertStringContainsString('propose', (string) $test['message']);
+    }
+
+    public function test_propose_new_term_then_accepted_and_linked_without_duplicate(): void
+    {
+        $local = $this->repo()->create(['abk_eigen' => 'LOKX', 'bez_eigen' => 'Lokaler Begriff', 'genutzt_in' => ['bereich:schule'], 'notiz' => 'nur lokal'] + Glossary::blank());
+        $this->signInAs('verwaltung');
+        $this->get('/glossar/'.$local['id'])->assertInertia(fn (Assert $page) => $page->where('vorschlagen', false));
+
+        $this->withToken();
+        $this->get('/glossar/'.$local['id'])->assertInertia(fn (Assert $page) => $page->where('vorschlagen', true));
+        $this->get('/glossar/'.$local['id'].'/vorschlag')->assertOk()->assertInertia(fn (Assert $page) => $page
+            ->component('glossary/propose')
+            ->where('werte.official_abbreviation', 'LOKX')
+            ->where('werte.official_name', 'Lokaler Begriff'));
+        $this->post('/glossar/'.$local['id'].'/vorschlag', ['werte' => ['official_abbreviation' => 'LOKX', 'official_name' => 'Lokaler Begriff', 'categories' => ['gibt-es-nicht']], 'begruendung' => 'Test'])
+            ->assertRedirect('/glossar/'.$local['id'].'/vorschlag');
+        $this->assertSame([], $this->api['sent'], 'unbekannte Kategorie: nichts gesendet');
+
+        $this->post('/glossar/'.$local['id'].'/vorschlag', ['werte' => ['official_abbreviation' => 'LOKX', 'official_name' => 'Lokaler Begriff', 'short_description' => 'Erfunden', 'categories' => ['beh']], 'begruendung' => 'Aus dem Intranet'])
+            ->assertRedirect('/glossar/'.$local['id']);
+        $sent = $this->api['sent'][0];
+        $this->assertArrayNotHasKey('term', $sent);
+        $this->assertSame(['official_abbreviation' => 'LOKX', 'official_name' => 'Lokaler Begriff', 'short_description' => 'Erfunden', 'categories' => ['beh']], $sent['changes']);
+        $this->assertSame('Aus dem Intranet', $sent['reason']);
+        $this->assertStringNotContainsString('nur lokal', (string) json_encode($sent), 'lokale Felder nie gesendet');
+        $note = $this->repo()->find($local['id'])['vorschlaege'][0];
+        $this->assertSame(['id' => 7, 'art' => 'neu', 'status' => 'eingereicht'], array_intersect_key($note, ['id' => 1, 'art' => 1, 'status' => 1]));
+
+        // Moderation nimmt an: neuer Begriff im Glossary mit eigener ID
+        $acceptedId = '01900000-0000-7000-8000-0000000000aa';
+        $this->api['proposals']['7'] = ['status' => 'angenommen', 'term_id' => $acceptedId, 'resolved_at' => '2026-11-09T11:00:00Z'] + $this->api['proposals']['7'];
+        $this->sync();
+        $this->assertSame('angenommen', $this->repo()->find($local['id'])['vorschlaege'][0]['status']);
+        $this->assertSame($acceptedId, $this->repo()->find($local['id'])['vorschlaege'][0]['term_id']);
+
+        $this->api['cursor'] = 11;
+        $this->api['pages'] = ['10' => ['data' => [
+            ['cursor' => 11, 'action' => 'published', 'term_id' => $acceptedId, 'revision' => 1, 'merged_into' => null, 'term' => $this->term($acceptedId, 'LOKX', 'Lokaler Begriff')],
+        ], 'meta' => ['since' => 10, 'next_cursor' => 11, 'has_more' => false, 'release' => 3]]];
+        $this->sync();
+        $published = $this->repo()->find($acceptedId);
+        $this->assertSame('LOKX', $published['abk_offiziell']);
+        $this->assertSame(['bereich:schule'], $published['genutzt_in'], 'lokale Daten übernommen');
+        $this->assertSame('nur lokal', $published['notiz']);
+        $this->assertContains($local['id'], $published['fruehere_ids']);
+        $hidden = $this->repo()->find($local['id']);
+        $this->assertFalse($hidden['aktiv'], 'lokaler Eintrag ausgeblendet, nicht gelöscht');
+        $this->assertSame(1, collect($this->repo()->all())->filter(fn (array $e): bool => Glossary::active($e) && ($e['abk_offiziell'] ?? '') === 'LOKX')->count(), 'keine Dublette');
+    }
+
+    public function test_propose_correction_sends_only_changed_fields(): void
+    {
+        $this->sync();
+        $this->withToken();
+        $vsa = $this->vsaId();
+        $result = app(PluginManager::class)->runAction('eduksx-glossary', 'propose', ['eintrag' => $vsa, 'begruendung' => '', '_changes' => [
+            'official_abbreviation' => 'VSA', 'official_name' => 'Volksschulamt Kanton Zürich', 'short_description' => 'Amt für die Volksschule',
+            'alternative_aliases' => 'Volksschulamt', 'categories' => ['beh'],
+        ]], null);
+        $this->assertSame('success', $result['status'], (string) $result['message']);
+        $this->assertSame(['term' => $vsa, 'changes' => ['short_description' => 'Amt für die Volksschule'], 'reason' => ''], $this->api['sent'][0]);
+        $this->assertSame('korrektur', $this->repo()->find($vsa)['vorschlaege'][0]['art']);
+
+        // ohne Änderung: nichts gesendet
+        $result = app(PluginManager::class)->runAction('eduksx-glossary', 'propose', ['eintrag' => $vsa, '_changes' => ['official_abbreviation' => 'VSA', 'official_name' => 'Volksschulamt Kanton Zürich', 'alternative_aliases' => ['Volksschulamt'], 'categories' => ['beh']]], null);
+        $this->assertSame('warning', $result['status']);
+        $this->assertCount(1, $this->api['sent']);
     }
 
     public function test_status_text_and_connection_test(): void

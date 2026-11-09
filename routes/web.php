@@ -15,6 +15,7 @@ use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\EmbedController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\GlossaryController;
+use App\Http\Controllers\GlossarySyncController;
 use App\Http\Controllers\GridViewController;
 use App\Http\Controllers\GuiPrototypeController;
 use App\Http\Controllers\McpConceptController;
@@ -189,6 +190,12 @@ Route::middleware('auth')->group(function () {
         Route::post('glossar/listen/{list}', [GlossaryController::class, 'storeListItem'])->name('glossary.lists.store');
         Route::put('glossar/listen/{list}/{id}', [GlossaryController::class, 'updateListItem'])->name('glossary.lists.update');
         Route::delete('glossar/listen/{list}/{id}', [GlossaryController::class, 'destroyListItem'])->name('glossary.lists.destroy');
+        // EduKSX-Glossary (#161, #162): Stand, Probelauf, Sync, Vorschläge
+        Route::get('glossar/sync', [GlossarySyncController::class, 'show'])->name('glossary.sync');
+        Route::post('glossar/sync/probelauf', [GlossarySyncController::class, 'dryRun'])->middleware('throttle:10,1')->name('glossary.sync.dry-run');
+        Route::post('glossar/sync', [GlossarySyncController::class, 'sync'])->middleware('throttle:10,1')->name('glossary.sync.run');
+        Route::get('glossar/{id}/vorschlag', [GlossarySyncController::class, 'proposeForm'])->name('glossary.propose');
+        Route::post('glossar/{id}/vorschlag', [GlossarySyncController::class, 'propose'])->middleware('throttle:20,1')->name('glossary.propose.store');
         Route::get('glossar/doppelte', [GlossaryController::class, 'duplicates'])->name('glossary.duplicates');
         Route::post('glossar/doppelte/zusammenfuehren', [GlossaryController::class, 'merge'])->name('glossary.merge');
         Route::post('glossar/doppelte/belassen', [GlossaryController::class, 'keepApart'])->name('glossary.keep');

@@ -1,5 +1,5 @@
 import { Head, Link } from '@inertiajs/react';
-import { ArrowLeft, ExternalLink, Lock, Pencil } from 'lucide-react';
+import { ArrowLeft, ExternalLink, Lock, Pencil, Send } from 'lucide-react';
 import type { ReactNode } from 'react';
 import DeleteButton from '@/components/delete-button';
 import Markdown from '@/components/markdown';
@@ -36,6 +36,8 @@ export default function GlossaryShow({
     bereiche,
     status,
     rechte,
+    vorschlagen = false,
+    vorschlagStatus = {},
 }: {
     eintrag: GlossaryEntry;
     andere: { id: string; abk: string; bez: string }[];
@@ -45,8 +47,12 @@ export default function GlossaryShow({
     bereiche: Record<string, { title: string; href: string | null }>;
     status: Record<string, string>;
     rechte: { edit: boolean; official: boolean };
+    /** Vorschläge ans EduKSX-Glossary möglich (#162): Plugin ein, Token hinterlegt, Recht «Glossar pflegen» */
+    vorschlagen?: boolean;
+    vorschlagStatus?: Record<string, string>;
 }) {
     const titel = entryTitle(e);
+    const vorschlaege = e.vorschlaege ?? [];
 
     return (
         <>
@@ -73,6 +79,18 @@ export default function GlossaryShow({
                                         <Pencil /> Bearbeiten
                                     </Link>
                                 </Button>
+                                {vorschlagen && (
+                                    <Button asChild variant="outline">
+                                        <Link
+                                            href={`/glossar/${e.id}/vorschlag`}
+                                        >
+                                            <Send />{' '}
+                                            {e.glossary
+                                                ? 'Korrektur vorschlagen'
+                                                : 'Dem EduKSX-Glossary vorschlagen'}
+                                        </Link>
+                                    </Button>
+                                )}
                                 <DeleteButton
                                     url={`/glossar/${e.id}`}
                                     title="Eintrag löschen?"
@@ -310,6 +328,45 @@ export default function GlossaryShow({
                         </CardHeader>
                         <CardContent translate="no">
                             <Markdown text={e.notiz} />
+                        </CardContent>
+                    </Card>
+                )}
+                {rechte.edit && vorschlaege.length > 0 && (
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>
+                                Vorschläge an das EduKSX-Glossary
+                            </CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <ul className="grid gap-2 text-sm">
+                                {vorschlaege.map((v) => (
+                                    <li
+                                        key={v.id}
+                                        className="flex flex-wrap items-center gap-2"
+                                    >
+                                        <span className="tabular-nums">{`Nr. ${v.id}`}</span>
+                                        <Badge variant="outline">
+                                            {v.art === 'neu'
+                                                ? 'neuer Begriff'
+                                                : 'Korrektur'}
+                                        </Badge>
+                                        <Badge
+                                            variant={
+                                                v.status === 'abgelehnt'
+                                                    ? 'destructive'
+                                                    : 'secondary'
+                                            }
+                                        >
+                                            {vorschlagStatus[v.status] ??
+                                                v.status}
+                                        </Badge>
+                                        <span className="text-muted-foreground">
+                                            {formatDateTime(v.eingereicht_at)}
+                                        </span>
+                                    </li>
+                                ))}
+                            </ul>
                         </CardContent>
                     </Card>
                 )}

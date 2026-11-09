@@ -303,7 +303,10 @@ final class PluginContext
         $auth = $this->manifest->auth();
 
         return match ($auth['type'] ?? 'none') {
-            'bearer' => $request->withToken($this->required((string) $auth['token_setting'])),
+            // «optional»: ohne hinterlegtes Token ohne Anmeldung (öffentliche Lese-API, z. B. EduKSX-Glossary)
+            'bearer' => ($auth['optional'] ?? false) === true && $this->secret((string) $auth['token_setting']) === null
+                ? $request
+                : $request->withToken($this->required((string) $auth['token_setting'])),
             'header' => $request->withHeaders($this->headerAuth($auth)),
             'basic' => $request->withBasicAuth(
                 (string) $this->setting((string) $auth['username_setting'], ''),

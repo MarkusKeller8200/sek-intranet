@@ -58,6 +58,20 @@ export type GlossaryEntry = {
     glossary?: GlossarySync | null;
     /** alternative Schreibweisen aus dem EduKSX-Glossary (#155) */
     aliase_alternativ?: string[];
+    /** Vorschläge an das EduKSX-Glossary (#162) */
+    vorschlaege?: GlossaryProposal[];
+};
+
+/** Vorschlag an das EduKSX-Glossary, am Eintrag vermerkt (#162). */
+export type GlossaryProposal = {
+    id: number;
+    art: 'neu' | 'korrektur';
+    status: string;
+    term_id?: string | null;
+    felder: string[];
+    eingereicht_at: string;
+    aktualisiert_at: string;
+    resolved_at?: string | null;
 };
 
 /** Kennzeichen eines aus dem EduKSX-Glossary übernommenen Eintrags (#156). */

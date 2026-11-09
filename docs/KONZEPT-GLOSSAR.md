@@ -143,6 +143,42 @@ Referenzclient `App\Glossary\SyncClient` des Glossary (dort `docs/SYNC-INTRANET.
   Glossar-Ansicht, in der Einzelansicht übernommener Einträge und in den Exporten PDF und Markdown, sobald
   übernommene Einträge enthalten sind.
 
+### Im Glossar bedienen (#161)
+
+Seite **Glossar → EduKSX-Glossary** (`/glossar/sync`, Recht «Glossar pflegen»): Stand (Adresse, letzter Sync,
+Datenstand, Fehler, Token ja/nein), **Probelauf** (läuft wie der Sync gegen ein Abbild im Speicher,
+`Plugins\EduksxGlossary\DryRunRepository`, und listet neu/geändert/ausgeblendet/Listen sowie die lokalen Begriffe
+ohne Gegenstück – speichert nichts) und **«Mit EduKSX-Glossary synchronisieren»**. Ohne eingeschaltetes Plugin nur
+der Hinweis «Sync noch nicht eingerichtet». Der Zeitplan läuft erst mit der Einstellung «Automatisch im Zeitplan
+synchronisieren».
+
+**Checkliste Go-live:**
+
+1. Glossary-Server erreichbar; Vollexport (#157) und Listen im Glossary übernommen.
+2. Plugin «EduKSX-Glossary»: Adresse prüfen, einschalten, «Verbindung testen».
+3. Glossar → EduKSX-Glossary → **Probelauf** prüfen (keine unerwarteten Änderungen an eigenen Begriffen).
+4. «Mit EduKSX-Glossary synchronisieren»; Gegenprobe im Glossary `php artisan glossary:sync-check <Adresse>`.
+5. «Automatisch im Zeitplan synchronisieren» einschalten (Abstand 5–60 Minuten).
+6. Offenen Entscheid Excel-Import für übernommene Begriffe treffen (#156).
+7. Für Vorschläge: Servicekonto mit Scope «propose» im Glossary, Token im Plugin, «Schreibende Aktionen erlauben».
+
+### Vorschläge ans EduKSX-Glossary (#162)
+
+- Am Eintrag (Recht «Glossar pflegen», Plugin eingeschaltet, Token hinterlegt): **«Dem EduKSX-Glossary
+  vorschlagen»** für lokale Begriffe, **«Korrektur vorschlagen»** für übernommene. Formular mit Abkürzung,
+  Bezeichnung, Kurzbeschreibung, Beschreibung, URL, alternativen Schreibweisen, Kategorien (nur solche mit Schlüssel im
+  Glossary) und Begründung; Senden erst nach Bestätigung.
+- `POST /api/v1/proposals` mit Token des Servicekontos (Scope `propose`); bei Korrekturen nur geänderte Felder,
+  `term` = ID. Gesendet werden nur Fachdaten – eigene Formen, «Intern genutzt in», Notiz, Suchbegriffe nie. Keine
+  Personendaten in der Begründung.
+- Vorschläge landen **immer in der Moderation** des Glossary (DEC-018/DEC-024) und werden erst nach Annahme als neue
+  Revision veröffentlicht.
+- Am Eintrag steht `vorschlaege` (Nummer, Art, Stand, Felder, Zeitpunkte); nach jedem erfolgreichen Sync fragt das
+  Plugin offene Vorschläge nach (`GET /api/v1/proposals/{id}`, höchstens 50 je Lauf).
+- Nach Annahme eines neuen Begriffs kommt er mit eigener ID über den Sync; der Sync verbindet ihn mit dem lokalen
+  Eintrag (lokale Daten übertragen, frühere ID vermerkt, lokaler Eintrag ausgeblendet) – keine Dublette, nichts
+  gelöscht.
+
 ## Gemeinsame Felder nach DEC-020 (#155)
 
 Im EduKSX-Glossary enthält ein Begriff nur gemeinsame Fachdaten (DEC-020); `own_abbreviation` und `own_name` gibt

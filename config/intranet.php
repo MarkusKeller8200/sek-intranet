@@ -1391,6 +1391,7 @@ return [
                 'fruehere_ids' => ['type' => 'json', 'required' => false, 'label' => 'Frühere IDs (zusammengeführt)'],
                 'aliase_alternativ' => ['type' => 'json', 'required' => false, 'label' => 'Alternative Schreibweisen (EduKSX-Glossary)'],
                 'glossary' => ['type' => 'json', 'required' => false, 'label' => 'Aus EduKSX-Glossary (Zustand, Revision, Slug, Adresse)'],
+                'vorschlaege' => ['type' => 'json', 'required' => false, 'label' => 'Vorschläge an das EduKSX-Glossary (Nummer, Art, Stand)'],
             ],
         ],
         'glossar_sync' => [

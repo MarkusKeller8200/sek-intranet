@@ -40,8 +40,11 @@ final class Sync
     /** @var array<string, mixed> */
     private array $state;
 
-    /** @var array{neu: int, geaendert: int, ausgeblendet: int, zusammengefuehrt: int, uebersprungen: int} */
-    private array $count = ['neu' => 0, 'geaendert' => 0, 'ausgeblendet' => 0, 'zusammengefuehrt' => 0, 'uebersprungen' => 0];
+    /** @var array{neu: int, geaendert: int, ausgeblendet: int, zusammengefuehrt: int, uebersprungen: int, lokal: int} */
+    private array $count = ['neu' => 0, 'geaendert' => 0, 'ausgeblendet' => 0, 'zusammengefuehrt' => 0, 'uebersprungen' => 0, 'lokal' => 0];
+
+    /** @var array<string, list<string>>|null angenommene Vorschläge neuer Begriffe (#162): Glossary-ID → lokale IDs */
+    private ?array $accepted = null;
 
     /**
      * @param  Closure(string, array<string, mixed>): array<mixed>  $fetch  Endpunkt-ID und Parameter → JSON
@@ -54,7 +57,7 @@ final class Sync
     }
 
     /**
-     * @return array{art: string, neu: int, geaendert: int, ausgeblendet: int, zusammengefuehrt: int, uebersprungen: int, cursor: int}
+     * @return array{art: string, neu: int, geaendert: int, ausgeblendet: int, zusammengefuehrt: int, uebersprungen: int, lokal: int, cursor: int}
      */
     public function run(bool $fresh = false): array
     {
@@ -68,10 +71,12 @@ final class Sync
                 $seen[(string) ($term['id'] ?? '')] = true;
                 $this->published($term);
             }
-            // nicht mehr im Vollstand: zurückgezogen (nur Begriffe, die schon aus dem Glossary kamen)
+            // nicht mehr im Vollstand: zurückgezogen (nur Begriffe, die schon aus dem Glossary kamen); lokale zählen
             foreach ($this->glossary->all() as $entry) {
                 if (self::synced($entry) && ! isset($seen[(string) $entry['id']]) && ($entry['glossary']['zustand'] ?? '') === self::PUBLISHED) {
                     $this->hide((string) $entry['id'], self::WITHDRAWN, null);
+                } elseif (! self::synced($entry) && ! isset($seen[(string) $entry['id']]) && Glossary::active($entry)) {
+                    $this->count['lokal']++;
                 }
             }
             $this->state['cursor'] = (int) ($export['cursor'] ?? 0);
@@ -164,6 +169,34 @@ final class Sync
                 $this->transferLocal((string) $from, $id);
             }
         }
+        // angenommener Vorschlag eines lokalen Begriffs (#162): lokale Daten übernehmen, lokalen Eintrag ausblenden
+        foreach ($this->accepted()[$id] ?? [] as $local) {
+            if ($local !== $id) {
+                $this->merged($local, $id);
+            }
+        }
+    }
+
+    /**
+     * @return array<string, list<string>>
+     */
+    private function accepted(): array
+    {
+        if ($this->accepted === null) {
+            $this->accepted = [];
+            foreach ($this->glossary->all() as $entry) {
+                if (self::synced($entry)) {
+                    continue;
+                }
+                foreach ((array) ($entry['vorschlaege'] ?? []) as $proposal) {
+                    if (is_array($proposal) && ($proposal['art'] ?? '') === 'neu' && is_string($proposal['term_id'] ?? null) && $proposal['term_id'] !== '') {
+                        $this->accepted[$proposal['term_id']][] = (string) $entry['id'];
+                    }
+                }
+            }
+        }
+
+        return $this->accepted;
     }
 
     private function hide(string $id, string $zustand, ?string $mergedInto): void
