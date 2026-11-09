@@ -11,6 +11,12 @@ laufend unter **Unveröffentlicht**. Ab 0.32.0 entsteht eine Version nur bei ein
 
 ## [0.38.0] – 2026-11-09
 
+### Für Mitarbeitende
+
+- Die Suche im Glossar findet jetzt auch Aliase und Suchbegriffe.
+- [edit-glossary] Neu im Glossar: die Seite «EduKSX-Glossary» zur Vorbereitung der Anbindung an das gemeinsame
+  Glossar.
+
 ### Neu
 
 - **Glossar: Sync von der öffentlichen Plattform vorbereitet (#161):** Neue Seite «EduKSX-Glossary» im Glossar (Recht
