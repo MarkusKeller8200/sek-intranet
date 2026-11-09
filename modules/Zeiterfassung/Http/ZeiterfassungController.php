@@ -28,6 +28,7 @@ use Modules\Zeiterfassung\Unterschriften;
 use Modules\Zeiterfassung\Zeitkonto;
 use Plugins\Clicktime\Importer;
 use Plugins\Clicktime\Plugin;
+use Symfony\Component\HttpFoundation\Response as HttpResponse;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Throwable;
 
@@ -58,7 +59,7 @@ class ZeiterfassungController extends Controller
             'soll' => app(Sollzeiten::class)->monat($person, $monat),
             'summen' => Zeitkonto::summen($liste),
             'kategorien' => Kategorien::all() + ['buchungsarten' => $this->buchungsarten->liste()],
-            'person' => ['name' => $this->name($person)],
+            'person' => ['id' => $person, 'name' => $this->name($person)],
             'darfVisum' => Gate::allows('visum-zeiterfassung'),
             'unterschrift' => self::unterschrift($person, $monat, $this->monate->status($person, $monat)),
             'monatsblatt' => self::monatsblatt($person, $monat, $this->monate->status($person, $monat)),
@@ -151,6 +152,23 @@ class ZeiterfassungController extends Controller
         abort_unless(is_string($pfad) && $pfad === Monatsabschluss::datei($person, $monat) && Storage::disk('local')->exists($pfad), 404);
 
         return Storage::disk('local')->download($pfad, "Monatsblatt-{$monat}.pdf", ['Content-Type' => 'application/pdf']);
+    }
+
+    /**
+     * Aktueller Monatsrapport als PDF (#168), im Aufbau von ClickTime: für die Person selbst oder mit Recht
+     * visum-zeiterfassung. Wird nicht abgelegt.
+     */
+    public function rapportPdf(Request $request, string $person, string $monat): HttpResponse
+    {
+        abort_unless($person === self::person($request) || Gate::allows('visum-zeiterfassung'), 403);
+        $monat = self::monatAus($monat);
+        abort_if($this->users->find($person) === null, 404);
+        $pdf = app(Monatsabschluss::class)->pdf($person, $monat)['pdf'];
+
+        return response($pdf, 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'inline; filename="Monatsrapport-'.$monat.'.pdf"',
+        ]);
     }
 
     /**

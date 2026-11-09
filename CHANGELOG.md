@@ -17,6 +17,9 @@ laufend unter **Unveröffentlicht**. Ab 0.32.0 entsteht eine Version nur bei ein
   Schreibrechte durch ClickTime. Arbeitsplan und Berechtigungen folgen, sobald ClickTime die Felder dokumentiert.
 - **ClickTime: Sollzeit gezielt (#163):** Sollzeit pro Tag mit Filter `entry_type::IN::0` (ein Aufruf je Tag für
   alle Personen), Rückfall ohne Filter, wenn die Nummer fehlt. Ferien zählen wie in ClickTime im Ist.
+- **Zeiterfassung: Monatsrapport wie ClickTime (#168):** PDF vom Server im Aufbau des ClickTime-Monatsrapports
+  (Buchungen mit Pause, Tagestotal mit Soll/Differenz, Total, Buchungsarten, Saldi, Seitenzahl). Neu im Kern:
+  `SimplePdf::fill`, `dotted`, `footerRight`.
 - **Zeiterfassung: Prüfhinweise je Tag (#167):** keine Buchung (mit Sollzeit aus ClickTime), Ein- bzw.
   Austrittsbuchung fehlt (Schild mit Ausrufezeichen), Ist mehr als 20 % vom Soll entfernt («Arbeitszeit prüfen»).
 - **Zeiterfassung: Monatsabschluss mit ClickTime (#164), Monatsblatt-Ablage (#34), Vollständigkeit und Erinnerung

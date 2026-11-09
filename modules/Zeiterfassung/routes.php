@@ -14,6 +14,7 @@ Route::middleware('can:use-zeiterfassung')->group(function () {
     Route::post('zeiterfassung/aus-clicktime', [ZeiterfassungController::class, 'ausClicktime'])->middleware('throttle:10,1')->name('zeiterfassung.clicktime');
     Route::post('zeiterfassung/abschliessen', [ZeiterfassungController::class, 'abschliessen'])->middleware('throttle:10,1')->name('zeiterfassung.abschliessen');
     Route::get('zeiterfassung/monatsblatt/{person}/{monat}', [ZeiterfassungController::class, 'monatsblattPdf'])->name('zeiterfassung.monatsblatt');
+    Route::get('zeiterfassung/rapport/{person}/{monat}', [ZeiterfassungController::class, 'rapportPdf'])->middleware('throttle:30,1')->name('zeiterfassung.rapport');
     Route::get('zeiterfassung/unterschrift/{person}/{monat}', [ZeiterfassungController::class, 'unterschriftPdf'])->name('zeiterfassung.unterschrift-pdf');
 });
 

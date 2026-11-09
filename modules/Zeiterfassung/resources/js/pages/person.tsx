@@ -18,7 +18,6 @@ import EintraegeTabelle from '../components/eintraege-tabelle';
 import MonatNavigation from '../components/monat-navigation';
 import StatusBadge from '../components/status-badge';
 import UnterschriftKarte from '../components/unterschrift';
-import { druckeMonatsblatt } from '../lib/monatsblatt';
 import type {
     Eintrag,
     Kategorien,
@@ -92,21 +91,14 @@ export default function ZeiterfassungPerson(props: Props) {
                         </span>
                     )}
                     <span className="ml-auto flex flex-wrap gap-2">
-                        <Button
-                            variant="outline"
-                            onClick={() =>
-                                druckeMonatsblatt({
-                                    person: person.name,
-                                    monat,
-                                    eintraege,
-                                    summen,
-                                    status,
-                                    kategorien,
-                                    visiertVon: props.visiertVon,
-                                })
-                            }
-                        >
-                            <Printer /> Monatsblatt (PDF)
+                        <Button asChild variant="outline">
+                            <a
+                                href={`/zeiterfassung/rapport/${person.id}/${monat}`}
+                                target="_blank"
+                                rel="noopener"
+                            >
+                                <Printer /> Monatsrapport (PDF)
+                            </a>
                         </Button>
                         {props.monatsblatt && (
                             <Button asChild variant="outline">

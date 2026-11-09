@@ -113,10 +113,8 @@ class VisumController extends Controller
 
         $slName = (string) ($this->users->find((string) $sl->getAuthIdentifier())['name'] ?? $sl->name());
         $slEmail = (string) ($this->users->find((string) $sl->getAuthIdentifier())['email'] ?? '');
-        $liste = $this->eintraege->fuerPersonMonat($person, $monat);
-        $dokument = MonatsblattPdf::erstellen((string) $user['name'], $monat, $liste, Zeitkonto::summen($liste), $slName,
-            is_string($status['visiert_at'] ?? null) ? $status['visiert_at'] : null, ['person' => (string) $user['name'], 'schulleitung' => $slName],
-            array_map(fn (array $b): string => $b['name'], $this->buchungsarten->liste()));
+        // Monatsrapport im Aufbau von ClickTime (#168) mit Unterschriftsfeldern
+        $dokument = app(Monatsabschluss::class)->pdf($person, $monat, ['person' => (string) $user['name'], 'schulleitung' => $slName]);
         [$ordnungPerson, $ordnungSl] = match ($data['reihenfolge']) {
             'schulleitung_zuerst' => [1, 0],
             'gleichzeitig' => [0, 0],

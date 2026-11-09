@@ -272,5 +272,6 @@
         "Check – clock-in missing",
         "Prüefe – Iitrittsbuechig fehlt"
     ],
-    "Arbeitszeit prüfen": ["Check working time", "Arbeitsziit prüefe"]
+    "Arbeitszeit prüfen": ["Check working time", "Arbeitsziit prüefe"],
+    "Monatsrapport (PDF)": ["Monthly report (PDF)", "Monetsrapport (PDF)"]
 }

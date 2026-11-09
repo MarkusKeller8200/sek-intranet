@@ -13,6 +13,7 @@ use Inertia\Testing\AssertableInertia as Assert;
 use Modules\Zeiterfassung\Data\Contracts\EintragRepository;
 use Modules\Zeiterfassung\Data\Contracts\MonatRepository;
 use Modules\Zeiterfassung\Monatsabschluss;
+use Modules\Zeiterfassung\MonatsblattPdf;
 use Modules\Zeiterfassung\Zeitkonto;
 use Tests\TestCase;
 
@@ -49,6 +50,22 @@ class ZeiterfassungAbschlussTest extends TestCase
         app(PersonLinks::class)->recordSync($id, 'clicktime', 'source', '1');
 
         return $id;
+    }
+
+    public function test_report_hours_format_and_rows(): void
+    {
+        $this->assertSame(['10:13', '-1:14', '0:00', '8:24'], [MonatsblattPdf::hm(10.2167), MonatsblattPdf::hm(-1.2333), MonatsblattPdf::hm(0.0), MonatsblattPdf::hm(8.4)]);
+        $eintraege = [
+            ['datum' => '2026-10-01', 'art' => 'arbeit', 'buchungsart' => 'arbeitszeit', 'kategorie' => 'unterricht', 'beginn' => '07:30', 'ende' => '16:24', 'pause_min' => 30, 'stunden' => 8.4, 'notiz' => 'Erfundene Notiz'],
+            ['datum' => '2026-10-02', 'art' => 'abwesenheit', 'buchungsart' => 'ferien', 'kategorie' => 'ferien', 'stunden' => 8.4],
+        ];
+        $soll = ['2026-10-01' => 8.4, '2026-10-02' => 8.4, '2026-10-05' => 8.4];
+        $pdf = MonatsblattPdf::erstellen('Test Person', self::MONAT, $eintraege, Zeitkonto::summen($eintraege), null, null,
+            ['person' => 'Test Person', 'schulleitung' => ''], [], ['soll' => $soll, 'untertitel' => '99 Test Person', 'unterschriftsfelder' => false, 'heute' => '2026-10-05'])['pdf'];
+        // Pause als eigene Zeile, Block brutto, Notiz, Tag ohne Buchung, Wochentag, Total mit Soll
+        foreach (['(-0:30)', '(8:54)', '(7:30)', '(Erfundene Notiz)', '(keine Buchung)', '(Do.)', '(1.10)', '(25:12)', '(-8:24)', '(99 Test Person)'] as $text) {
+            $this->assertStringContainsString($text, $pdf);
+        }
     }
 
     public function test_missing_working_days(): void
@@ -121,9 +138,16 @@ class ZeiterfassungAbschlussTest extends TestCase
         $this->post('/zeiterfassung/abschliessen', ['monat' => self::MONAT])->assertRedirect();
         $this->assertSame((string) $status['abgeschlossen_at'], (string) $months->status($id, self::MONAT)['abgeschlossen_at']);
 
+        // Monatsrapport im Aufbau von ClickTime (#168): Tabelle, Total, Saldi aus ClickTime, Seitenzahl
+        $pdf = (string) $this->get("/zeiterfassung/rapport/{$id}/".self::MONAT)->assertOk()->assertHeader('Content-Type', 'application/pdf')->getContent();
+        foreach (['Monatsrapport Oktober 2026', 'Bemerkungen', 'Diff.', 'Total', 'Saldi', 'Gleitzeit', 'Vormonat', 'In ClickTime abgeschlossen', '(Seite 1 / '] as $text) {
+            $this->assertStringContainsString($text, $pdf);
+        }
+
         // andere Person ohne Visum-Recht sieht das Monatsblatt nicht
         $this->signInAs('lehrperson');
         $this->get("/zeiterfassung/monatsblatt/{$id}/".self::MONAT)->assertForbidden();
+        $this->get("/zeiterfassung/rapport/{$id}/".self::MONAT)->assertForbidden();
 
         // Schulleitung: benachrichtigt, Nachbuchung erkennen (übernommene Buchung lokal fehlt → in ClickTime «neu»)
         $sl = $this->signInAs('schulleitung');

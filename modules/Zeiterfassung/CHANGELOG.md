@@ -6,6 +6,11 @@ Versionen des Moduls nach SemVer (module.json → «version»).
 
 ### Neu
 
+- **Monatsrapport wie ClickTime (#168, 0.8.0):** PDF auf dem Server im Aufbau des ClickTime-Monatsrapports – Tag,
+  Von, Bis, Std., Soll, Diff., Typ (Farbfeld), Bemerkungen; Pause als eigene Zeile, Tagestotal mit Soll und
+  Differenz, Montage grau, Arbeitstage ohne Buchung; Total, Stunden je Buchungsart, Saldi aus ClickTime (Vormonat,
+  Ende Monat), Bestätigungen, «Seite n / m». Gilt für «Monatsrapport (PDF)» (neu vom Server statt Druckdialog),
+  das abgelegte Monatsblatt und die Unterschrift (DeepSign).
 - **Prüfhinweise je Tag (#167, 0.8.0):** `Zeitkonto::pruefungen` – Arbeitstag mit Sollzeit ohne Buchung («Prüfen –
   keine Buchung»), Beginn ohne Ende bzw. Ende ohne Beginn (Fehler mit Schild: «Prüfen – Austritts-/Eintrittsbuchung
   fehlt», auch an der Buchung), Ist mehr als 20 % vom Soll entfernt («Arbeitszeit prüfen»). In der Tabelle (eigene

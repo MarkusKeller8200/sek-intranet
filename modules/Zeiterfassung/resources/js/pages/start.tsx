@@ -28,7 +28,6 @@ import EintraegeTabelle from '../components/eintraege-tabelle';
 import MonatNavigation from '../components/monat-navigation';
 import StatusBadge from '../components/status-badge';
 import { UnterschriftBadge } from '../components/unterschrift';
-import { druckeMonatsblatt } from '../lib/monatsblatt';
 import type {
     Eintrag,
     Kategorien,
@@ -49,7 +48,7 @@ type Props = {
     feiertage?: Record<string, string>;
     /** Sollzeit pro Tag (#103): Datum → Stunden */
     soll?: Record<string, number>;
-    person: { name: string };
+    person: { id: string; name: string };
     darfVisum: boolean;
     unterschrift: Unterschrift;
     /** Knopf «Aus ClickTime übernehmen» (#101), null = nicht verfügbar */
@@ -183,20 +182,14 @@ export default function ZeiterfassungStart(props: Props) {
                         labels={kategorien.status}
                     />
                     <span className="ml-auto flex flex-wrap gap-2">
-                        <Button
-                            variant="outline"
-                            onClick={() =>
-                                druckeMonatsblatt({
-                                    person: person.name,
-                                    monat,
-                                    eintraege,
-                                    summen,
-                                    status,
-                                    kategorien,
-                                })
-                            }
-                        >
-                            <Printer /> Monatsblatt (PDF)
+                        <Button asChild variant="outline">
+                            <a
+                                href={`/zeiterfassung/rapport/${person.id}/${monat}`}
+                                target="_blank"
+                                rel="noopener"
+                            >
+                                <Printer /> Monatsrapport (PDF)
+                            </a>
                         </Button>
                         {props.darfVisum && (
                             <Button asChild variant="outline">

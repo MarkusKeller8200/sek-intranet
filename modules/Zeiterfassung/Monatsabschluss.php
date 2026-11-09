@@ -11,7 +11,9 @@ use Illuminate\Support\Facades\Storage;
 use Modules\Zeiterfassung\Data\Contracts\EintragRepository;
 use Modules\Zeiterfassung\Data\Contracts\MonatRepository;
 use Plugins\Clicktime\Importer;
+use Plugins\Clicktime\Months;
 use RuntimeException;
+use Throwable;
 
 /**
  * Monatsabschluss (#164, #34).
@@ -116,9 +118,28 @@ final class Monatsabschluss
      */
     public function ablegen(string $person, string $monat): string
     {
+        $dokument = $this->pdf($person, $monat);
+        $pfad = self::datei($person, $monat);
+        if (! Storage::disk('local')->put($pfad, $dokument['pdf'])) {
+            throw new RuntimeException('Monatsblatt konnte nicht abgelegt werden.');
+        }
+        $this->monate->setzen($person, $monat, ['monatsblatt_pdf' => $pfad, 'monatsblatt_at' => now()->toIso8601String()]);
+
+        return $pfad;
+    }
+
+    /**
+     * Monatsrapport als PDF im Aufbau von ClickTime (#168): Buchungen mit Soll/Differenz je Tag, Total, Buchungsarten,
+     * Saldi (mit ClickTime: Vormonat und Ende Monat), Bestätigungen. Mit $unterzeichnende zusätzlich die
+     * Unterschriftsfelder für DeepSign (#43).
+     *
+     * @param  array{person: string, schulleitung: string}|null  $unterzeichnende
+     * @return array{pdf: string, felder: array<string, array{pageNumber: int, x: float, y: float, width: float, height: float}>}
+     */
+    public function pdf(string $person, string $monat, ?array $unterzeichnende = null): array
+    {
         $status = $this->monate->status($person, $monat);
         $liste = $this->eintraege->fuerPersonMonat($person, $monat);
-        $summen = Zeitkonto::summen($liste);
         $vermerke = [];
         if (is_string($status['eingereicht_at'] ?? null)) {
             $vermerke[] = 'Eingereicht am '.self::zeit($status['eingereicht_at']);
@@ -128,22 +149,51 @@ final class Monatsabschluss
             $vermerke[] = 'In ClickTime abgeschlossen; bestätigt von '.$this->name($by).' am '.self::zeit($status['abgeschlossen_at'] ?? null)
                 .(($status['abgeschlossen_stellvertretend'] ?? false) === true ? ' (stellvertretend)' : '');
         }
-        $soll = array_sum($this->sollzeiten->monat($person, $monat));
-        if ($soll > 0) {
-            $delta = $summen['total'] - $soll;
-            $vermerke[] = sprintf('Soll %s h · Ist %s h · Differenz %s%s h', self::zahl($soll), self::zahl($summen['total']), $delta >= 0 ? '+' : '−', self::zahl(abs($delta)));
-        }
-        $visiertVon = isset($status['visiert_by']) ? $this->name((string) $status['visiert_by']) : null;
-        $dokument = MonatsblattPdf::erstellen($this->name($person), $monat, $liste, $summen, $visiertVon,
-            is_string($status['visiert_at'] ?? null) ? $status['visiert_at'] : null, ['person' => $this->name($person), 'schulleitung' => ''],
-            array_map(fn (array $b): string => $b['name'], $this->buchungsarten->liste()), $vermerke, false);
-        $pfad = self::datei($person, $monat);
-        if (! Storage::disk('local')->put($pfad, $dokument['pdf'])) {
-            throw new RuntimeException('Monatsblatt konnte nicht abgelegt werden.');
-        }
-        $this->monate->setzen($person, $monat, ['monatsblatt_pdf' => $pfad, 'monatsblatt_at' => now()->toIso8601String()]);
+        $nr = Http\ZeiterfassungController::clicktimeNr($person);
+        $name = $this->name($person);
 
-        return $pfad;
+        return MonatsblattPdf::erstellen($name, $monat, $liste, Zeitkonto::summen($liste),
+            isset($status['visiert_by']) ? $this->name((string) $status['visiert_by']) : null,
+            is_string($status['visiert_at'] ?? null) ? $status['visiert_at'] : null,
+            $unterzeichnende ?? ['person' => $name, 'schulleitung' => ''],
+            array_map(fn (array $b): string => $b['name'], $this->buchungsarten->liste()),
+            [
+                'vermerke' => $vermerke,
+                'unterschriftsfelder' => $unterzeichnende !== null,
+                'soll' => $this->sollzeiten->monat($person, $monat),
+                'untertitel' => trim(($nr ?? '').' '.$name),
+                'salden' => $nr !== null ? $this->salden($nr, $monat) : [],
+            ]);
+    }
+
+    /**
+     * Saldi aus ClickTime: Stand Ende Vormonat und Ende Monat (z. B. Gleitzeit, Ferien). Ohne Verbindung leer.
+     *
+     * @return list<array{name: string, vormonat: float|null, ende: float|null, einheit: string}>
+     */
+    private function salden(string $nr, string $monat): array
+    {
+        $ende = date('Y-m-t', (int) strtotime($monat.'-01'));
+        $vormonat = date('Y-m-d', (int) strtotime($monat.'-01 -1 day'));
+        try {
+            /** @var array{0: list<array{name: string, value: float, unit: string}>, 1: list<array{name: string, value: float, unit: string}>} $werte */
+            $werte = app(PluginManager::class)->runWith('clicktime', null, 'Zeiterfassung: Saldi für das Monatsblatt', function (PluginContext $ctx) use ($nr, $ende, $vormonat): array {
+                $months = new Months($ctx);
+
+                return [$months->balances($vormonat, [$nr])[$nr] ?? [], $months->balances($ende, [$nr])[$nr] ?? []];
+            });
+        } catch (Throwable) {
+            return [];
+        }
+        $salden = [];
+        foreach ([0 => 'vormonat', 1 => 'ende'] as $i => $feld) {
+            foreach ($werte[$i] as $b) {
+                $salden[$b['name']] ??= ['name' => $b['name'], 'vormonat' => null, 'ende' => null, 'einheit' => $b['unit'] === 'd' ? 'Tage' : ($b['unit'] === 'h' ? 'h' : $b['unit'])];
+                $salden[$b['name']][$feld] = $b['value'];
+            }
+        }
+
+        return array_values($salden);
     }
 
     private function name(string $id): string
@@ -156,10 +206,5 @@ final class Monatsabschluss
         $t = is_string($iso) ? strtotime($iso) : false;
 
         return $t === false ? '–' : date('d.m.Y H:i', $t);
-    }
-
-    private static function zahl(float $h): string
-    {
-        return number_format($h, 2, '.', "'");
     }
 }

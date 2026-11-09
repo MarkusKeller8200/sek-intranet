@@ -19,6 +19,9 @@ final class SimplePdf
     /** Inhalt der aktuellen Seite */
     private string $current = '';
 
+    /** @var array{0: string, 1: float, 2: float, 3: float}|null Fusszeile (Text, rechts, y, Grösse) */
+    private ?array $footer = null;
+
     public function __construct(private readonly string $title = '') {}
 
     public function addPage(): void
@@ -56,6 +59,30 @@ final class SimplePdf
     }
 
     /**
+     * Gefülltes Rechteck in einer Farbe (RGB 0–1), z. B. Hintergrund einer Zeile oder Farbfeld einer Legende.
+     *
+     * @param  array{0: float, 1: float, 2: float}  $rgb
+     */
+    public function fill(float $x, float $y, float $w, float $h, array $rgb): void
+    {
+        $this->draw(sprintf('q %.3F %.3F %.3F rg %.2F %.2F %.2F %.2F re f Q', $rgb[0], $rgb[1], $rgb[2], $x, self::HEIGHT - $y - $h, $w, $h));
+    }
+
+    /** Gepunktete Linie (z. B. über einer Summe). */
+    public function dotted(float $x1, float $y1, float $x2, float $y2, float $width = 0.5): void
+    {
+        $this->draw(sprintf('q [1 1.5] 0 d %.2F w %.2F %.2F m %.2F %.2F l S Q', $width, $x1, self::HEIGHT - $y1, $x2, self::HEIGHT - $y2));
+    }
+
+    /**
+     * Fusszeile rechts unten auf jeder Seite; «{seite}» und «{seiten}» werden beim Ausgeben ersetzt.
+     */
+    public function footerRight(string $text, float $right = 553.0, float $y = 815.0, float $size = 8): void
+    {
+        $this->footer = [$text, $right, $y, $size];
+    }
+
+    /**
      * Ungefähre Textbreite (Helvetica): genug, um Spalten zu kürzen und rechts auszurichten.
      */
     public static function width(string $text, float $size, bool $bold = false): float
@@ -87,7 +114,15 @@ final class SimplePdf
         $kids = [];
         $next = 5;
         $pageObjects = [];
-        foreach ([...$this->pages, $this->current] as $content) {
+        $all = [...$this->pages, $this->current];
+        if ($this->footer !== null) {
+            [$text, $right, $y, $size] = $this->footer;
+            foreach ($all as $i => $content) {
+                $line = str_replace(['{seite}', '{seiten}'], [(string) ($i + 1), (string) count($all)], $text);
+                $all[$i] = $content.sprintf("BT /F1 %.2F Tf %.2F %.2F Td (%s) Tj ET\n", $size, $right - self::width($line, $size), self::HEIGHT - $y, self::escape($line));
+            }
+        }
+        foreach ($all as $content) {
             $pageId = $next++;
             $contentId = $next++;
             $kids[] = "{$pageId} 0 R";
