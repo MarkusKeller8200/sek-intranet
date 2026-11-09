@@ -6,6 +6,17 @@ Versionen des Moduls nach SemVer (module.json → «version»).
 
 ### Neu
 
+- **Monatsabschluss mit ClickTime (#164, 0.8.0):** Für Personen mit ClickTime führt ClickTime Abschluss und
+  Genehmigung. Die Person bestätigt «In ClickTime abgeschlossen» (im Notfall die Schulleitung stellvertretend,
+  vermerkt); dann letzter Abgleich, Status `abgeschlossen` (gesperrt), Monatsblatt abgelegt, Schulleitung
+  benachrichtigt. «Mit ClickTime vergleichen» meldet Nachbuchungen, ohne zu übernehmen; Einreichen gibt es mit
+  ClickTime nicht. Export und Unterschrift auch für abgeschlossene Monate. Klasse `Monatsabschluss`.
+- **Monatsblatt abgelegt (#34, 0.8.0):** Beim Visum bzw. Abschluss entsteht das Monatsblatt als PDF auf dem Server
+  (Einträge, Summen, Soll/Ist/Differenz, Bestätigungen) in der Ablage des Moduls; abrufbar nur für die Person und mit
+  Recht `visum-zeiterfassung` (`/zeiterfassung/monatsblatt/{person}/{monat}`).
+- **Vollständigkeit und Erinnerung (#33, 0.8.0):** Arbeitstage ohne Eintrag (`Zeitkonto::fehlendeTage`, mit Soll bzw.
+  Mo–Fr ohne Feiertage) vor dem Einreichen mit Rückfrage «Ja, alles eingetragen» / «Ich ergänze noch»; im Visum
+  Anzahl je Person und «Erinnern» an alle offenen bzw. zurückgegebenen Monate (Benachrichtigung, `erinnert_at`).
 - **ClickTime führt (#154, 0.7.0):** Mit ClickTime-Nr. und eingeschaltetem Plugin keine eigenen Einträge (Formular
   deaktiviert, Erfassen und Ändern auf dem Server abgewiesen).
 

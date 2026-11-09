@@ -38,6 +38,8 @@ final class Kategorien
         'eingereicht' => 'Eingereicht',
         'visiert' => 'Visiert',
         'zurueck' => 'Zurück an Person',
+        // ClickTime führt Abschluss und Genehmigung (#164)
+        'abgeschlossen' => 'In ClickTime abgeschlossen',
     ];
 
     /** Präfix für Kategorien aus ClickTime (#101): «ct:Arbeitszeit» → «Arbeitszeit (clicktime)». */

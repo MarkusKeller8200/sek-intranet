@@ -9,6 +9,7 @@ const VARIANT: Record<
     eingereicht: 'secondary',
     visiert: 'default',
     zurueck: 'destructive',
+    abgeschlossen: 'default',
 };
 
 export default function StatusBadge({

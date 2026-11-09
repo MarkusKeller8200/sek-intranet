@@ -310,4 +310,10 @@ Für Antworten mit unbekannten Feldern baut `Support\Tabular::from($datensätze,
   dauerhafte Anmeldung (statt kurzlebigem Browser-Token) beim LMVZ anfragen. Artikelsuche und Warenkorb/Bestellung
   noch aufzeichnen und mit `intranet:plugin-from-openapi … --plugin=lmvz [--host=digital]` ergänzen. Nutzungsbedingungen klären, bevor mit
   Anmeldung gearbeitet wird; Plugins mit `"unofficial": true` zeigen einen Warnhinweis.
+- **ClickTime:** Antworten des Supports vom 09.11.2026 (#28): Schreibrechte für `employees` werden freigeschaltet
+  (bis dahin Aktion «Mitarbeitende anlegen» nur im Demo-Modus); Dubletten lehnt ClickTime bei gleicher
+  `employee_no`, `username` oder `batch_number` ab; die Antwort auf `POST /employees` enthält die `employee_no`. Sollzeit
+  pro Tag über `/cumulatives` mit `entry_type::IN::0` (Ferien/Abwesenheiten nicht abgezogen, im Ist wie geleistete
+  Zeit). Offen: Monatsabschluss und Genehmigung über die API (ClickTime klärt), Felder von `employments`
+  (Arbeitsplan), `permission-groups`/`roles`, Serverstandort und Auftragsdatenverarbeitung (IDG).
 - **IDA:** Sobald die IDA-API steht, Endpunkte von `planned` auf `full` setzen und Personen/Lizenzen anbinden.

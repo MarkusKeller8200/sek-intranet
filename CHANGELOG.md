@@ -9,6 +9,17 @@ laufend unter **Unveröffentlicht**. Ab 0.32.0 entsteht eine Version nur bei ein
 
 ## [Unveröffentlicht]
 
+### Neu
+
+- **ClickTime: Mitarbeitende anlegen (#31):** Aktion «Mitarbeitende anlegen» mit Vorschau und Dubletten-Prüfung
+  (Datenherkunft, gleiche Personalnummer, Benutzername, Badge-Nummer oder E-Mail → nur verbinden); nach dem Anlegen
+  wird die Personalnummer aus der Antwort in der Datenherkunft gespeichert. Echte Aufrufe erst nach Freischaltung der
+  Schreibrechte durch ClickTime. Arbeitsplan und Berechtigungen folgen, sobald ClickTime die Felder dokumentiert.
+- **ClickTime: Sollzeit gezielt (#163):** Sollzeit pro Tag mit Filter `entry_type::IN::0` (ein Aufruf je Tag für
+  alle Personen), Rückfall ohne Filter, wenn die Nummer fehlt. Ferien zählen wie in ClickTime im Ist.
+- **Zeiterfassung: Monatsabschluss mit ClickTime (#164), Monatsblatt-Ablage (#34), Vollständigkeit und Erinnerung
+  (#33):** siehe `modules/Zeiterfassung/CHANGELOG.md` (Modul 0.8.0). Plugin ClickTime 0.7.
+
 ## [0.38.0] – 2026-11-09
 
 ### Für Mitarbeitende

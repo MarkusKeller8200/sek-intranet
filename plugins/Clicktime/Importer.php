@@ -21,7 +21,7 @@ use RuntimeException;
  *   ergänzt. Kategorie bei Arbeit: «ct:<ClickTime-Name>» (Anzeige «Name (clicktime)»).
  * - Pause (eigene Buchung, negative Stunden) → Pause des längsten Arbeitsblocks am Tag.
  * - Sollzeit pro Tag (#103): je Tag eine Abfrage der Kumulative, gespeichert für Soll und Delta der Tagestotale.
- * - Nur Monate «offen» oder «zurück».
+ * - Nur Monate «offen» oder «zurück»; gesperrte Monate nur als Vergleich (Nachbuchungen, #164).
  */
 final class Importer
 {
@@ -35,12 +35,14 @@ final class Importer
     /**
      * @return array{changes: list<array{change: string, day: string, before: string, after: string}>, counts: array<string, int>, created_types: list<string>, targets: array{days: int, hours: float}}
      */
-    public function run(string $personId, string $employeeNo, string $month, bool $apply): array
+    public function run(string $personId, string $employeeNo, string $month, bool $apply, bool $lockedPreview = false): array
     {
         $months = app(MonatRepository::class);
         $status = (string) ($months->status($personId, $month)['status'] ?? 'offen');
-        if (Zeitkonto::gesperrt($status)) {
-            throw new RuntimeException("Der Monat {$month} ist ".($status === 'visiert' ? 'visiert' : 'eingereicht').' – Übernehmen nicht möglich.');
+        // Gesperrte Monate: nur vergleichen (Nachbuchungen nach dem Abschluss, #164), nie übernehmen
+        if (Zeitkonto::gesperrt($status) && ($apply || ! $lockedPreview)) {
+            $label = ['visiert' => 'visiert', 'abgeschlossen' => 'in ClickTime abgeschlossen'][$status] ?? 'eingereicht';
+            throw new RuntimeException("Der Monat {$month} ist {$label} – Übernehmen nicht möglich.");
         }
 
         $buchungsarten = app(Buchungsarten::class);

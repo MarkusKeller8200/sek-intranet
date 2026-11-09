@@ -117,13 +117,18 @@ final class Months
      * Kumulative eines frei gewählten Zeitraums (auch ein einzelner Tag, #102).
      *
      * @param  list<string>  $employees
+     * @param  list<int>  $types  Lohnartnummern (entry_type), leer = alle
      * @return array<string, array<int|string, array{name: string, hours: float}>>
      */
-    public function cumulativesBetween(string $from, string $to, array $employees = []): array
+    public function cumulativesBetween(string $from, string $to, array $employees = [], array $types = []): array
     {
         $filters = ["valid_from::EQ::{$from}", "valid_to::EQ::{$to}"];
         if ($employees !== []) {
             $filters[] = 'employee_no::IN::'.implode(',', $employees);
+        }
+        // Buchungsarten (Lohnartnummern) einschränken, 0 = Sollzeit (Antwort ClickTime 09.11.2026, #163)
+        if ($types !== []) {
+            $filters[] = 'entry_type::IN::'.implode(',', $types);
         }
         $result = [];
         foreach (self::rows($this->expect($this->ctx->call('cumulatives', ['filters' => $filters]))) as $row) {
@@ -151,8 +156,13 @@ final class Months
     }
 
     /**
-     * Sollzeit pro Tag eines Monats (#102/#103): eine Abfrage der Kumulative je Tag (valid_from = valid_to). Person →
-     * Datum → Stunden; Tage ohne gelieferte Sollzeit fehlen.
+     * Sollzeit pro Tag eines Monats (#102/#103): eine Abfrage der Kumulative je Tag (valid_from = valid_to) für alle
+     * Personen. Person → Datum → Stunden; Tage ohne gelieferte Sollzeit fehlen.
+     *
+     * Gezielt mit entry_type 0 (= Sollzeit, #163). Liefert der Filter nichts (in echten Antworten war die Nummer teils
+     * leer), für den Rest des Monats ohne Filter weiter und die Sollzeit am Namen erkennen. Arbeitszeitmodell, Pensum
+     * und Feiertage sind in der Sollzeit enthalten; Ferien und Abwesenheiten werden nicht abgezogen, sie zählen im Ist
+     * wie geleistete Zeit (wie der Saldo in ClickTime).
      *
      * @param  list<string>  $employees
      * @return array<string, array<string, float>>
@@ -161,9 +171,16 @@ final class Months
     {
         [$from, $to] = self::range($month);
         $result = [];
+        $types = [0];
         for ($t = (int) strtotime($from); $t <= (int) strtotime($to); $t = (int) strtotime('+1 day', $t)) {
             $day = date('Y-m-d', $t);
-            foreach ($this->cumulativesBetween($day, $day, $employees) as $no => $cumulatives) {
+            $rows = $this->cumulativesBetween($day, $day, $employees, $types);
+            if ($types !== [] && array_filter($rows, fn (array $c): bool => self::target($c) !== null) === []) {
+                // Filter liefert keine Sollzeit: ohne Filter weiter
+                $types = [];
+                $rows = $this->cumulativesBetween($day, $day, $employees);
+            }
+            foreach ($rows as $no => $cumulatives) {
                 $target = self::target($cumulatives);
                 if ($target !== null) {
                     $result[(string) $no][$day] = $target;

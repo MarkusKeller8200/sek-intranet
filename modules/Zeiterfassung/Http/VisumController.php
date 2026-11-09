@@ -19,12 +19,14 @@ use Modules\Zeiterfassung\Data\Contracts\EintragRepository;
 use Modules\Zeiterfassung\Data\Contracts\MonatRepository;
 use Modules\Zeiterfassung\Feiertage;
 use Modules\Zeiterfassung\Kategorien;
+use Modules\Zeiterfassung\Monatsabschluss;
 use Modules\Zeiterfassung\MonatsblattPdf;
 use Modules\Zeiterfassung\Sollzeiten;
 use Modules\Zeiterfassung\Unterschriften;
 use Modules\Zeiterfassung\Zeitkonto;
 use RuntimeException;
 use Symfony\Component\HttpFoundation\StreamedResponse;
+use Throwable;
 
 /**
  * Monatsvisum (Recht visum-zeiterfassung, Schulleitung): Übersicht je Monat, Monatsblatt je Person,
@@ -71,6 +73,11 @@ class VisumController extends Controller
             'kategorien' => Kategorien::all() + ['buchungsarten' => $this->buchungsarten->liste()],
             'visiertVon' => isset($status['visiert_by']) ? (string) ($this->users->find((string) $status['visiert_by'])['name'] ?? '') : null,
             'unterschrift' => $this->unterschriftInfo($person, $monat, $status),
+            // Monatsblatt (#34), ClickTime-Abschluss (#164)
+            'monatsblatt' => ZeiterfassungController::monatsblatt($person, $monat, $status),
+            'clicktime' => ZeiterfassungController::clicktimeNr($person) !== null,
+            'abgeschlossenVon' => isset($status['abgeschlossen_by']) ? (string) ($this->users->find((string) $status['abgeschlossen_by'])['name'] ?? '') : null,
+            'fehlend' => Zeitkonto::fehlendeTage($monat, $liste, Feiertage::monat($monat), app(Sollzeiten::class)->monat($person, $monat)),
         ]);
     }
 
@@ -90,8 +97,8 @@ class VisumController extends Controller
         $user = $this->users->find($person);
         $sl = $request->user();
         abort_if($user === null || ! $sl instanceof IntranetUser, 404);
-        if (($status['status'] ?? null) !== 'visiert') {
-            $this->toast('Nur visierte Monate können zur Unterschrift gesendet werden.', 'error');
+        if (! in_array($status['status'] ?? null, ['visiert', 'abgeschlossen'], true)) {
+            $this->toast('Nur visierte oder in ClickTime abgeschlossene Monate können zur Unterschrift gesendet werden.', 'error');
 
             return back();
         }
@@ -169,8 +176,16 @@ class VisumController extends Controller
         }
         $by = (string) $request->user()?->getAuthIdentifier();
         $this->monate->setzen($person, $monat, ['status' => 'visiert', 'visiert_by' => $by, 'visiert_at' => now()->toIso8601String(), 'bemerkung' => null]);
-        $this->notifications->toUsers([$person], 'zeit.monat_visiert', "Zeiterfassung {$monat} visiert", 'Die Schulleitung hat deinen Monat visiert.', "/zeiterfassung?monat={$monat}", $by);
-        $this->toast('Monat visiert.');
+        // Monatsblatt ablegen (#34); ein Fehler dabei hebt das Visum nicht auf
+        try {
+            app(Monatsabschluss::class)->ablegen($person, $monat);
+        } catch (RuntimeException $e) {
+            $this->toast('Monat visiert, Monatsblatt nicht abgelegt: '.$e->getMessage(), 'error');
+
+            return back();
+        }
+        $this->notifications->toUsers([$person], 'zeit.monat_visiert', "Zeiterfassung {$monat} visiert", 'Die Schulleitung hat deinen Monat visiert. Das Monatsblatt liegt in deiner Zeiterfassung.', "/zeiterfassung?monat={$monat}", $by);
+        $this->toast('Monat visiert, Monatsblatt abgelegt.');
 
         return back();
     }
@@ -180,15 +195,88 @@ class VisumController extends Controller
         $data = $request->validate(['monat' => ['required', 'string'], 'bemerkung' => ['required', 'string', 'max:1000']], ['bemerkung.required' => 'Bitte begründen, was korrigiert werden soll.']);
         $monat = self::monatAus($data['monat']);
         $status = (string) ($this->monate->status($person, $monat)['status'] ?? 'offen');
-        if (! in_array($status, ['eingereicht', 'visiert'], true)) {
+        if (! in_array($status, ['eingereicht', 'visiert', 'abgeschlossen'], true)) {
             $this->toast('Der Monat ist nicht eingereicht.', 'error');
 
             return back();
         }
         $by = (string) $request->user()?->getAuthIdentifier();
-        $this->monate->setzen($person, $monat, ['status' => 'zurueck', 'bemerkung' => trim($data['bemerkung']), 'visiert_by' => null, 'visiert_at' => null]);
+        $this->monate->setzen($person, $monat, ['status' => 'zurueck', 'bemerkung' => trim($data['bemerkung']), 'visiert_by' => null, 'visiert_at' => null,
+            'abgeschlossen_at' => null, 'abgeschlossen_by' => null, 'abgeschlossen_stellvertretend' => null, 'abweichung' => null]);
         $this->notifications->toUsers([$person], 'zeit.monat_zurueck', "Zeiterfassung {$monat}: bitte korrigieren", mb_substr(trim($data['bemerkung']), 0, 200), "/zeiterfassung?monat={$monat}", $by);
         $this->toast('Zurück an die Person – sie ist benachrichtigt.');
+
+        return back();
+    }
+
+    /** Im Notfall stellvertretend «in ClickTime abgeschlossen» bestätigen (#164), vermerkt und der Person gemeldet. */
+    public function abschliessen(Request $request, string $person): RedirectResponse
+    {
+        $monat = self::monatAus((string) $request->input('monat'));
+        abort_if($this->users->find($person) === null, 404);
+        $nr = ZeiterfassungController::clicktimeNr($person);
+        if ($nr === null) {
+            $this->toast('Für diese Person führt ClickTime keine Zeiten.', 'error');
+
+            return back();
+        }
+        $user = $request->user();
+        try {
+            $r = app(Monatsabschluss::class)->clicktime($person, $monat, $nr, $user instanceof IntranetUser ? $user : null);
+        } catch (Throwable $e) {
+            $this->toast('Abschluss nicht möglich: '.$e->getMessage(), 'error');
+
+            return back();
+        }
+        $this->toast("Stellvertretend abgeschlossen ({$r['neu']} neu, {$r['geaendert']} geändert, {$r['geloescht']} gelöscht), Monatsblatt abgelegt.");
+
+        return back();
+    }
+
+    /** Abgeschlossenen Monat mit ClickTime vergleichen (Nachbuchungen, #164). */
+    public function vergleichen(Request $request, string $person): RedirectResponse
+    {
+        $monat = self::monatAus((string) $request->input('monat'));
+        $nr = ZeiterfassungController::clicktimeNr($person);
+        if ($nr === null || ($this->monate->status($person, $monat)['status'] ?? '') !== 'abgeschlossen') {
+            $this->toast('Nur in ClickTime abgeschlossene Monate können verglichen werden.', 'error');
+
+            return back();
+        }
+        $user = $request->user();
+        try {
+            $r = app(Monatsabschluss::class)->vergleichen($person, $monat, $nr, $user instanceof IntranetUser ? $user : null);
+        } catch (Throwable $e) {
+            $this->toast('Vergleich nicht möglich: '.$e->getMessage(), 'error');
+
+            return back();
+        }
+        $anzahl = $r['neu'] + $r['geaendert'] + $r['geloescht'];
+        $this->toast($anzahl === 0 ? 'Keine Nachbuchungen seit dem Abschluss.' : "Nachbuchungen in ClickTime: {$r['neu']} neu, {$r['geaendert']} geändert, {$r['geloescht']} gelöscht. Zum Übernehmen den Monat zurückgeben.", $anzahl === 0 ? 'success' : 'error');
+
+        return back();
+    }
+
+    /** Erinnerung an Personen, die den Monat noch nicht eingereicht bzw. abgeschlossen haben (#33). */
+    public function erinnerung(Request $request): RedirectResponse
+    {
+        $data = $request->validate(['monat' => ['required', 'string'], 'personen' => ['nullable', 'array'], 'personen.*' => ['string']]);
+        $monat = self::monatAus($data['monat']);
+        $auswahl = isset($data['personen']) ? array_map('strval', (array) $data['personen']) : null;
+        $ids = [];
+        foreach ($this->uebersicht($monat) as $p) {
+            if (in_array($p['status'], ['offen', 'zurueck'], true) && ($auswahl === null || in_array($p['id'], $auswahl, true))) {
+                $ids[] = $p['id'];
+            }
+        }
+        $by = (string) $request->user()?->getAuthIdentifier();
+        $name = MonatsblattPdf::monatName($monat);
+        $anzahl = $this->notifications->toUsers($ids, 'zeit.erinnerung', "Zeiterfassung {$name}: bitte abschliessen",
+            'Bitte prüfen, ob alles eingetragen ist, und den Monat einreichen bzw. in ClickTime abschliessen.', "/zeiterfassung?monat={$monat}", $by);
+        foreach ($ids as $id) {
+            $this->monate->setzen($id, $monat, ['erinnert_at' => now()->toIso8601String()]);
+        }
+        $this->toast("{$anzahl} Personen erinnert.");
 
         return back();
     }
@@ -232,7 +320,7 @@ class VisumController extends Controller
         $monat = self::monatAus($request->query('monat'));
         $details = $request->query('art') === 'details';
         $nurVisiert = $request->query('nur_visiert', '1') === '1';
-        $personen = array_filter($this->uebersicht($monat), fn (array $p): bool => ! $nurVisiert || $p['status'] === 'visiert');
+        $personen = array_filter($this->uebersicht($monat), fn (array $p): bool => ! $nurVisiert || in_array($p['status'], ['visiert', 'abgeschlossen'], true));
         $kategorien = Kategorien::ARBEIT + Kategorien::ABWESENHEIT;
         $buchungsarten = array_map(fn (array $b): string => $b['name'], $this->buchungsarten->liste());
 
@@ -269,7 +357,7 @@ class VisumController extends Controller
     /**
      * Personen mit Einträgen oder Status im Monat.
      *
-     * @return list<array{id: string, name: string, email: string, status: string, eintraege: int, summen: array{arbeit: float, abwesenheit: float, total: float, kategorien: array<string, float>, projekte: array<string, float>, buchungsarten: array<string, float>}}>
+     * @return list<array{id: string, name: string, email: string, status: string, eintraege: int, summen: array{arbeit: float, abwesenheit: float, total: float, kategorien: array<string, float>, projekte: array<string, float>, buchungsarten: array<string, float>}, fehlend: int, erinnert_at: string|null}>
      */
     private function uebersicht(string $monat): array
     {
@@ -278,10 +366,14 @@ class VisumController extends Controller
             $proPerson[(string) $e['person_id']][] = $e;
         }
         $status = [];
+        $erinnert = [];
         foreach ($this->monate->fuerMonat($monat) as $m) {
-            $status[(string) $m['person_id']] = (string) $m['status'];
+            $status[(string) $m['person_id']] = (string) ($m['status'] ?? 'offen');
+            $erinnert[(string) $m['person_id']] = is_string($m['erinnert_at'] ?? null) ? $m['erinnert_at'] : null;
             $proPerson[(string) $m['person_id']] ??= [];
         }
+        $feiertage = Feiertage::monat($monat);
+        $soll = app(Sollzeiten::class);
         $result = [];
         foreach ($proPerson as $id => $liste) {
             $user = $this->users->find((string) $id);
@@ -292,6 +384,9 @@ class VisumController extends Controller
                 'status' => $status[$id] ?? 'offen',
                 'eintraege' => count($liste),
                 'summen' => Zeitkonto::summen($liste),
+                // Vollständigkeit (#33): Arbeitstage ohne Eintrag bis heute
+                'fehlend' => count(Zeitkonto::fehlendeTage($monat, $liste, $feiertage, $soll->monat((string) $id, $monat))),
+                'erinnert_at' => $erinnert[$id] ?? null,
             ];
         }
         usort($result, fn (array $a, array $b): int => strcmp($a['name'], $b['name']));

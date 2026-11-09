@@ -376,6 +376,71 @@ class PluginClicktimeTest extends TestCase
         Http::assertNothingSent();
     }
 
+    public function test_target_time_filtered_by_entry_type_with_fallback(): void
+    {
+        $sollzeit = fn (?int $number): array => [['employee_no' => 1, 'first_name' => 'Andrea', 'last_name' => 'Muster',
+            'cumulative_values' => [['entry_type_name' => ['de' => 'Sollzeit'], 'entry_type_number' => $number, 'hours' => 8.4]]]];
+        $filterLiefert = true;
+        Http::fake([
+            self::TOKEN_URL => Http::response(['access_token' => 'token-abc-123456', 'expires_in' => 3600]),
+            self::API.'/cumulatives*' => function (Request $r) use (&$filterLiefert, $sollzeit) {
+                $gefiltert = str_contains($r->url(), 'entry_type%3A%3AIN%3A%3A0');
+
+                return Http::response($gefiltert ? ($filterLiefert ? $sollzeit(0) : []) : $sollzeit(null));
+            },
+        ]);
+        $this->realAccount();
+        $gefiltert = fn (): int => count(array_filter(Http::recorded(), fn (array $pair): bool => str_contains($pair[0]->url(), 'entry_type')));
+        $targets = (new Months(app(PluginManager::class)->context('clicktime', null)))->targets('2026-02', ['1']);
+        $this->assertCount(28, $targets['1']);
+        $this->assertSame(8.4, $targets['1']['2026-02-01']);
+        // ein Aufruf je Tag für alle Personen, alle mit Filter Sollzeit (entry_type 0)
+        $this->assertSame(28, $gefiltert());
+        Http::assertSent(fn (Request $r): bool => str_contains($r->url(), 'entry_type%3A%3AIN%3A%3A0') && str_contains($r->url(), 'valid_from%3A%3AEQ%3A%3A2026-02-28'));
+
+        // Filter liefert nichts (Nummer leer): nach dem ersten Tag ohne Filter weiter, Sollzeit am Namen erkannt
+        $filterLiefert = false;
+        $targets = (new Months(app(PluginManager::class)->context('clicktime', null)))->targets('2026-02', ['1']);
+        $this->assertCount(28, $targets['1']);
+        $this->assertSame(29, $gefiltert());
+    }
+
+    public function test_create_employee_with_preview_and_duplicate_check(): void
+    {
+        Http::fake();
+        $this->enable(['demo' => true], true);
+        $this->signInAs('admin');
+        $demo = ['andrea.muster', 'beat.beispiel', 'daniel.probe', 'eva.fiktiv', 'zora.unbekannt'];
+        $person = collect(app(UserRepository::class)->all())->first(fn (array $u): bool => ! in_array(strstr((string) ($u['email'] ?? ''), '@', true), $demo, true) && str_ends_with((string) ($u['email'] ?? ''), '@sekbuelach.example'));
+        $links = app(PersonLinks::class);
+
+        $this->postJson('/plugins/clicktime/aktion/employee-create', ['options' => ['person' => 'niemand@sekbuelach.example']])->assertOk()->assertJsonPath('status', 'warning');
+        // Vorschau: neu anlegen, nichts gesendet
+        $this->postJson('/plugins/clicktime/aktion/employee-create', ['options' => ['person' => $person['email']]])->assertOk()
+            ->assertJsonPath('preview', true)
+            ->assertJsonPath('rows.0.status', 'neu anlegen')
+            ->assertJsonPath('rows.0.employee_no', 'von ClickTime');
+        $this->assertNull($links->findPerson('clicktime', '6'));
+        // gleiche Personalnummer wie eine bestehende Person: nur verbinden (keine Dublette)
+        $this->postJson('/plugins/clicktime/aktion/employee-create', ['options' => ['person' => $person['email'], 'employee_no' => '2']])->assertOk()
+            ->assertJsonPath('rows.0.status', fn (string $s): bool => str_starts_with($s, 'verbinden mit Nr. 2'));
+        // anlegen: Nummer aus der Antwort in der Datenherkunft
+        $this->postJson('/plugins/clicktime/aktion/employee-create', ['options' => ['person' => $person['email']], 'apply' => true])->assertOk()
+            ->assertJsonPath('status', 'success')
+            ->assertJsonPath('message', fn (string $m): bool => str_contains($m, 'Nr. 6'));
+        $this->assertSame((string) $person['id'], $links->findPerson('clicktime', '6'));
+        $this->postJson('/plugins/clicktime/aktion/employee-create', ['options' => ['person' => $person['email']]])->assertOk()
+            ->assertJsonPath('status', 'warning')
+            ->assertJsonPath('message', fn (string $m): bool => str_contains($m, 'bereits mit ClickTime verbunden'));
+
+        // Person, die es in ClickTime schon gibt (gleiche E-Mail): verbinden
+        $andrea = collect(app(UserRepository::class)->all())->firstWhere('email', 'andrea.muster@sekbuelach.example');
+        $this->postJson('/plugins/clicktime/aktion/employee-create', ['options' => ['person' => 'andrea.muster@sekbuelach.example'], 'apply' => true])->assertOk()
+            ->assertJsonPath('message', fn (string $m): bool => str_contains($m, 'nur verbunden'));
+        $this->assertSame((string) $andrea['id'], $links->findPerson('clicktime', '1'));
+        Http::assertNothingSent();
+    }
+
     public function test_import_month_into_time_tracking(): void
     {
         Http::fake();

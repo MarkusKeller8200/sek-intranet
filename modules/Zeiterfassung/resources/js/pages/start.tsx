@@ -1,5 +1,6 @@
 import { Head, Link, router, useForm } from '@inertiajs/react';
 import {
+    CheckCircle2,
     ClipboardCheck,
     CloudDownload,
     Download,
@@ -12,6 +13,7 @@ import type { FormEvent } from 'react';
 import FormField from '@/components/form-field';
 import PageHeader from '@/components/page-header';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { AlertDialog } from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
 import {
     Card,
@@ -34,7 +36,7 @@ import type {
     Summen,
     Unterschrift,
 } from '../lib/types';
-import { monatName } from '../lib/types';
+import { istGesperrt, monatName, tageListe } from '../lib/types';
 
 type Props = {
     monat: string;
@@ -53,14 +55,28 @@ type Props = {
     clicktime?: { nr: string } | null;
     /** ClickTime führt die Zeiten dieser Person (#154): keine eigenen Einträge */
     clicktimeFuehrt?: boolean;
+    /** Abgelegtes Monatsblatt (#34) */
+    monatsblatt?: string | null;
+    /** Arbeitstage ohne Eintrag bis heute (#33) */
+    fehlend?: string[];
 };
 
 /** Eigene Zeiterfassung eines Monats: erfassen, Übersicht, einreichen, Monatsblatt als PDF. */
 export default function ZeiterfassungStart(props: Props) {
     const { monat, eintraege, status, summen, kategorien, person } = props;
     const fuehrt = props.clicktimeFuehrt === true;
-    const gesperrt =
-        status.status === 'eingereicht' || status.status === 'visiert';
+    const gesperrt = istGesperrt(status.status);
+    const fehlend = props.fehlend ?? [];
+    // Rückfrage vor dem Einreichen bzw. Abschliessen (#33, #164)
+    const [rueckfrage, setRueckfrage] = useState(false);
+    const abschliessen = () =>
+        router.post(
+            fuehrt
+                ? '/zeiterfassung/abschliessen'
+                : '/zeiterfassung/einreichen',
+            { monat },
+            { preserveScroll: true },
+        );
     const heute = new Date().toISOString().slice(0, 10);
     // Buchungsarten zur Auswahl (#99): aktive, nach Art gruppiert
     const buchungsarten = Object.entries(kategorien.buchungsarten ?? {}).filter(
@@ -204,20 +220,76 @@ export default function ZeiterfassungStart(props: Props) {
                                 <CloudDownload /> Aus ClickTime übernehmen
                             </Button>
                         )}
-                        <Button
-                            disabled={gesperrt || eintraege.length === 0}
-                            onClick={() =>
-                                router.post(
-                                    '/zeiterfassung/einreichen',
-                                    { monat },
-                                    { preserveScroll: true },
-                                )
-                            }
-                        >
-                            <Send /> Monat einreichen
-                        </Button>
+                        {props.monatsblatt && (
+                            <Button asChild variant="outline">
+                                <a href={props.monatsblatt}>
+                                    <Download /> Abgelegtes Monatsblatt
+                                </a>
+                            </Button>
+                        )}
+                        {fuehrt ? (
+                            <Button
+                                disabled={gesperrt}
+                                onClick={() => setRueckfrage(true)}
+                            >
+                                <CheckCircle2 /> In ClickTime abgeschlossen
+                            </Button>
+                        ) : (
+                            <Button
+                                disabled={gesperrt || eintraege.length === 0}
+                                onClick={() =>
+                                    fehlend.length > 0
+                                        ? setRueckfrage(true)
+                                        : abschliessen()
+                                }
+                            >
+                                <Send /> Monat einreichen
+                            </Button>
+                        )}
                     </span>
                 </div>
+                <AlertDialog
+                    open={rueckfrage}
+                    onOpenChange={setRueckfrage}
+                    title={
+                        fuehrt
+                            ? 'Monat in ClickTime abgeschlossen?'
+                            : 'Alles eingetragen?'
+                    }
+                    description={
+                        <>
+                            {fuehrt
+                                ? 'Bitte zuerst den Monat in ClickTime abschliessen. Danach übernimmt das Intranet die Buchungen ein letztes Mal, sperrt den Monat und legt das Monatsblatt ab.'
+                                : 'Für diese Arbeitstage gibt es noch keinen Eintrag. Trotzdem einreichen?'}
+                            {fehlend.length > 0 && (
+                                <span className="mt-2 block">
+                                    {`Arbeitstage ohne Eintrag: ${tageListe(fehlend)}`}
+                                </span>
+                            )}
+                        </>
+                    }
+                    confirmLabel={
+                        fuehrt
+                            ? 'Ja, in ClickTime abgeschlossen'
+                            : 'Ja, alles eingetragen'
+                    }
+                    cancelLabel={fuehrt ? 'Abbrechen' : 'Ich ergänze noch'}
+                    onConfirm={() => {
+                        setRueckfrage(false);
+                        abschliessen();
+                    }}
+                />
+                {fuehrt && !gesperrt && (
+                    <Alert>
+                        <AlertTitle>ClickTime führt Ihre Zeiten</AlertTitle>
+                        <AlertDescription>
+                            Den Monat in ClickTime abschliessen – die
+                            Genehmigung erfolgt dort durch die vorgesetzte
+                            Person. Danach hier «In ClickTime abgeschlossen»
+                            bestätigen.
+                        </AlertDescription>
+                    </Alert>
+                )}
 
                 {status.status === 'zurueck' && status.bemerkung && (
                     <Alert variant="destructive">
@@ -246,7 +318,9 @@ export default function ZeiterfassungStart(props: Props) {
                         <AlertTitle>
                             {status.status === 'visiert'
                                 ? 'Monat visiert'
-                                : 'Monat eingereicht'}
+                                : status.status === 'abgeschlossen'
+                                  ? 'Monat in ClickTime abgeschlossen'
+                                  : 'Monat eingereicht'}
                         </AlertTitle>
                         <AlertDescription>
                             Einträge können nicht mehr geändert werden. Für

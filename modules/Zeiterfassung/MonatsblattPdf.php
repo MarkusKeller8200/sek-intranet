@@ -24,14 +24,20 @@ final class MonatsblattPdf
      * @param  array{arbeit: float, abwesenheit: float, total: float, kategorien: array<string, float>, projekte: array<string, float>, buchungsarten?: array<string, float>}  $summen
      * @param  array{person: string, schulleitung: string}  $unterzeichnende
      * @param  array<string, string>  $buchungsarten  Schlüssel → Bezeichnung (#99)
-     * @return array{pdf: string, felder: array{person: array{pageNumber: int, x: float, y: float, width: float, height: float}, schulleitung: array{pageNumber: int, x: float, y: float, width: float, height: float}}}
+     * @param  list<string>  $vermerke  Zeilen unter dem Titel (Bestätigungen, Soll/Ist, #34)
+     * @param  bool  $unterschriftsfelder  false = Ablage ohne Unterschriftsfelder (Monatsblatt, #34)
+     * @return array{pdf: string, felder: array<string, array{pageNumber: int, x: float, y: float, width: float, height: float}>}
      */
-    public static function erstellen(string $person, string $monat, array $eintraege, array $summen, ?string $visiertVon, ?string $visiertAm, array $unterzeichnende, array $buchungsarten = []): array
+    public static function erstellen(string $person, string $monat, array $eintraege, array $summen, ?string $visiertVon, ?string $visiertAm, array $unterzeichnende, array $buchungsarten = [], array $vermerke = [], bool $unterschriftsfelder = true): array
     {
         $buchungsarten += array_map(fn (array $b): string => $b['name'], Buchungsarten::VORGABE);
         $titel = 'Monatsrapport '.self::monatName($monat);
         $pdf = new SimplePdf("{$titel} – {$person}");
         $y = self::kopf($pdf, $titel, $person, $visiertVon, $visiertAm);
+        foreach ($vermerke as $vermerk) {
+            $pdf->text(self::LEFT, $y - 12, SimplePdf::fit($vermerk, self::RIGHT - self::LEFT, 9), 9);
+            $y += 14;
+        }
 
         // Spalten: Datum, Buchungsart, Kategorie, Zeit, Pause, Stunden, Projekt
         $spalten = [[self::LEFT, 'Datum'], [100, 'Buchungsart'], [160, 'Kategorie'], [300, 'Zeit'], [370, 'Pause'], [410, 'Stunden'], [462, 'Projekt']];
@@ -73,6 +79,12 @@ final class MonatsblattPdf
             $pdf->text(300, $y, $label, 9, $label === 'Total');
             $pdf->textRight(450, $y, number_format($h, 2, '.', "'").' h', 9, $label === 'Total');
             $y += 13;
+        }
+
+        if (! $unterschriftsfelder) {
+            $pdf->text(self::LEFT, self::BOTTOM + 20, 'Erstellt am '.date('d.m.Y H:i').' im Intranet SekBülach.', 7.5);
+
+            return ['pdf' => $pdf->output(), 'felder' => []];
         }
 
         // Unterschriften auf der letzten Seite unten

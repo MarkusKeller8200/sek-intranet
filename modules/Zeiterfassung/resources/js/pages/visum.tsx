@@ -1,5 +1,5 @@
-import { Head, Link } from '@inertiajs/react';
-import { Download, ListTree } from 'lucide-react';
+import { Head, Link, router } from '@inertiajs/react';
+import { Bell, Download, ListTree } from 'lucide-react';
 import PageHeader from '@/components/page-header';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -23,6 +23,9 @@ type Person = {
     status: Status['status'];
     eintraege: number;
     summen: Summen;
+    /** Arbeitstage ohne Eintrag bis heute (#33) */
+    fehlend?: number;
+    erinnert_at?: string | null;
 };
 
 /** Monatsvisum: alle Personen mit Einträgen im Monat, Status und Stunden; Export für die Lohnbuchhaltung. */
@@ -36,6 +39,9 @@ export default function ZeiterfassungVisum({
     status: Record<string, string>;
 }) {
     const offen = personen.filter((p) => p.status === 'eingereicht').length;
+    const nichtEingereicht = personen.filter(
+        (p) => p.status === 'offen' || p.status === 'zurueck',
+    ).length;
 
     return (
         <>
@@ -43,7 +49,7 @@ export default function ZeiterfassungVisum({
             <div className="flex max-w-5xl flex-1 flex-col gap-6 p-4 md:p-6">
                 <PageHeader
                     title="Zeiterfassung – Visum"
-                    description="Eingereichte Monate prüfen und visieren. Der Export für die Lohnbuchhaltung enthält standardmässig nur visierte Monate."
+                    description="Eingereichte Monate prüfen und visieren. Personen mit ClickTime schliessen den Monat in ClickTime ab. Der Export für die Lohnbuchhaltung enthält standardmässig nur visierte und abgeschlossene Monate."
                     actions={
                         <Button asChild variant="outline">
                             <Link href="/zeiterfassung/buchungsarten">
@@ -61,6 +67,19 @@ export default function ZeiterfassungVisum({
                         {`${offen} zu visieren`}
                     </span>
                     <span className="ml-auto flex flex-wrap gap-2">
+                        <Button
+                            variant="outline"
+                            disabled={nichtEingereicht === 0}
+                            onClick={() =>
+                                router.post(
+                                    '/zeiterfassung/visum/erinnerung',
+                                    { monat },
+                                    { preserveScroll: true },
+                                )
+                            }
+                        >
+                            <Bell /> {`Erinnern (${nichtEingereicht})`}
+                        </Button>
                         <Button asChild variant="outline">
                             <a
                                 href={`/zeiterfassung/visum/export?monat=${monat}`}
@@ -117,10 +136,23 @@ export default function ZeiterfassungVisum({
                                                     </Link>
                                                 </TableCell>
                                                 <TableCell>
-                                                    <StatusBadge
-                                                        status={p.status}
-                                                        labels={status}
-                                                    />
+                                                    <span className="flex flex-wrap items-center gap-1">
+                                                        <StatusBadge
+                                                            status={p.status}
+                                                            labels={status}
+                                                        />
+                                                        {(p.fehlend ?? 0) >
+                                                            0 && (
+                                                            <span className="text-xs text-muted-foreground">
+                                                                {`${p.fehlend} Tage ohne Eintrag`}
+                                                            </span>
+                                                        )}
+                                                        {p.erinnert_at && (
+                                                            <span className="text-xs text-muted-foreground">
+                                                                erinnert
+                                                            </span>
+                                                        )}
+                                                    </span>
                                                 </TableCell>
                                                 <TableCell className="text-right tabular-nums">
                                                     {p.eintraege}

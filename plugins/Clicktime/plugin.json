@@ -1,7 +1,7 @@
 {
     "id": "clicktime",
     "name": "ClickTime",
-    "version": "0.6",
+    "version": "0.7",
     "api": 1,
     "category": "other",
     "author": "SekBülach Intranet",
@@ -453,14 +453,15 @@
                 "test": false,
                 "body": [
                     {
-                        "employee_no": 3,
-                        "first_name": "Beat",
-                        "last_name": "Beispiel",
-                        "email": "beat.beispiel@sekbuelach.example",
-                        "department_number": "SEK"
+                        "employee_no": 6,
+                        "first_name": "Fiona",
+                        "last_name": "Fiktiv",
+                        "email": "fiona.fiktiv@sekbuelach.example",
+                        "username": "fiona.fiktiv@sekbuelach.example",
+                        "department_number": "20"
                     }
                 ],
-                "note": "Body noch nicht dokumentiert (#28) – Beispiel geraten. Laut ClickTime nur nach Freischaltung durch den Support."
+                "note": "Antwort ClickTime (09.11.2026, #28): nur nach Freischaltung der Schreibrechte. Abgelehnt, wenn employee_no, username oder batch_number (Badge) schon vergeben sind. Die Antwort enthält die angelegte Person mit employee_no. Übrige Felder noch nicht dokumentiert."
             },
             {
                 "id": "employees-update",
@@ -1315,6 +1316,41 @@
             "kind": "import",
             "description": "Ordnet ClickTime-Mitarbeitende Intranet-Personen zu (zuerst über die Datenherkunft, sonst über die E-Mail). Vorschau: zugeordnet, neu zuordnen, ohne Treffer. Übernehmen speichert nur die Datenherkunft – es wird nichts angelegt oder gelöscht.",
             "options": []
+        },
+        {
+            "id": "employee-create",
+            "label": "Mitarbeitende anlegen",
+            "kind": "import",
+            "confirm": "Legt die Person in ClickTime an (nach Freischaltung der Schreibrechte) bzw. verbindet sie, wenn es sie schon gibt.",
+            "options": [
+                {
+                    "key": "person",
+                    "type": "text",
+                    "label": "E-Mail der Person im Intranet",
+                    "required": true,
+                    "placeholder": "fiona.fiktiv@sekbuelach.example"
+                },
+                {
+                    "key": "employee_no",
+                    "type": "text",
+                    "label": "Personalnummer (leer = von ClickTime vergeben)"
+                },
+                {
+                    "key": "username",
+                    "type": "text",
+                    "label": "Benutzername (leer = E-Mail)"
+                },
+                {
+                    "key": "batch_number",
+                    "type": "text",
+                    "label": "Badge-Nummer (optional)"
+                },
+                {
+                    "key": "department",
+                    "type": "text",
+                    "label": "Abteilung (Nummer, optional)"
+                }
+            ]
         },
         {
             "id": "lookup",

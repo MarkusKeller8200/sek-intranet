@@ -17,11 +17,36 @@ export type Eintrag = {
 };
 
 export type Status = {
-    status: 'offen' | 'eingereicht' | 'visiert' | 'zurueck';
+    status: 'offen' | 'eingereicht' | 'visiert' | 'zurueck' | 'abgeschlossen';
     bemerkung?: string | null;
     eingereicht_at?: string | null;
     visiert_at?: string | null;
+    /** In ClickTime abgeschlossen (#164) */
+    abgeschlossen_at?: string | null;
+    abgeschlossen_stellvertretend?: boolean | null;
+    /** Nachbuchungen in ClickTime nach dem Abschluss (#164) */
+    abweichung?: {
+        anzahl: number;
+        neu: number;
+        geaendert: number;
+        geloescht: number;
+        geprueft_at: string;
+    } | null;
 };
+
+/** Gesperrt für Änderungen: eingereicht, visiert oder in ClickTime abgeschlossen. */
+export function istGesperrt(status: Status['status']): boolean {
+    return (
+        status === 'eingereicht' ||
+        status === 'visiert' ||
+        status === 'abgeschlossen'
+    );
+}
+
+/** Datum «JJJJ-MM-TT» als «TT.MM.» für Listen fehlender Tage (#33). */
+export function tageListe(tage: string[]): string {
+    return tage.map((t) => `${t.slice(8, 10)}.${t.slice(5, 7)}.`).join(', ');
+}
 
 /** Elektronische Unterschrift eines Monats (#43). */
 export type Unterschrift = {

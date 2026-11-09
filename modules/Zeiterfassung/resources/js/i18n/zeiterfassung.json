@@ -197,5 +197,70 @@
     "Aus ClickTime übernehmen": [
         "Import from ClickTime",
         "Us ClickTime übernäh"
-    ]
+    ],
+    "Abgelegtes Monatsblatt": ["Filed monthly sheet", "Abgleits Monetsblatt"],
+    "Mit ClickTime vergleichen": [
+        "Compare with ClickTime",
+        "Mit ClickTime verglyche"
+    ],
+    "Stellvertretend abschliessen": [
+        "Close on behalf",
+        "Stellvertretend abschlüsse"
+    ],
+    "Nachbuchungen in ClickTime": [
+        "Later bookings in ClickTime",
+        "Nachbuechige i ClickTime"
+    ],
+    "Arbeitstage ohne Eintrag": [
+        "Working days without entry",
+        "Arbeitstäg ohni Iitrag"
+    ],
+    "ClickTime führt die Zeiten dieser Person": [
+        "ClickTime records this person's times",
+        "ClickTime füehrt d Ziite vo dere Person"
+    ],
+    "Die Person schliesst den Monat in ClickTime ab und bestätigt es hier. Im Notfall stellvertretend abschliessen – das wird vermerkt.": [
+        "The person closes the month in ClickTime and confirms it here. In an emergency, close on their behalf – this is recorded.",
+        "D Person schlüsst de Monet i ClickTime ab und bestätigt das da. Im Notfall stellvertretend abschlüsse – das wird vermerkt."
+    ],
+    "In ClickTime abgeschlossen": [
+        "Closed in ClickTime",
+        "I ClickTime abgschlosse"
+    ],
+    "ClickTime führt Ihre Zeiten": [
+        "ClickTime records your times",
+        "ClickTime füehrt Ihri Ziite"
+    ],
+    "Den Monat in ClickTime abschliessen – die Genehmigung erfolgt dort durch die vorgesetzte Person. Danach hier «In ClickTime abgeschlossen» bestätigen.": [
+        "Close the month in ClickTime – your supervisor approves it there. Then confirm “Closed in ClickTime” here.",
+        "De Monet i ClickTime abschlüsse – d Gnehmigung macht det di vorgsetzti Person. Dänn da «In ClickTime abgeschlossen» bestätige."
+    ],
+    "Monat in ClickTime abgeschlossen?": [
+        "Month closed in ClickTime?",
+        "Monet i ClickTime abgschlosse?"
+    ],
+    "Alles eingetragen?": ["Everything entered?", "Alles iitreit?"],
+    "Bitte zuerst den Monat in ClickTime abschliessen. Danach übernimmt das Intranet die Buchungen ein letztes Mal, sperrt den Monat und legt das Monatsblatt ab.": [
+        "Please close the month in ClickTime first. The intranet then imports the bookings one last time, locks the month and files the monthly sheet.",
+        "Bitte zerscht de Monet i ClickTime abschlüsse. Dänn übernimmt s Intranet d Buechige es letschts Mal, sperrt de Monet und leit s Monetsblatt ab."
+    ],
+    "Für diese Arbeitstage gibt es noch keinen Eintrag. Trotzdem einreichen?": [
+        "There is no entry yet for these working days. Submit anyway?",
+        "För die Arbeitstäg gits no kein Iitrag. Glich iireiche?"
+    ],
+    "Ja, in ClickTime abgeschlossen": [
+        "Yes, closed in ClickTime",
+        "Ja, i ClickTime abgschlosse"
+    ],
+    "Ja, alles eingetragen": ["Yes, everything entered", "Ja, alles iitreit"],
+    "Ich ergänze noch": ["I'll add more", "Ich ergänz no"],
+    "Monat in ClickTime abgeschlossen": [
+        "Month closed in ClickTime",
+        "Monet i ClickTime abgschlosse"
+    ],
+    "Eingereichte Monate prüfen und visieren. Personen mit ClickTime schliessen den Monat in ClickTime ab. Der Export für die Lohnbuchhaltung enthält standardmässig nur visierte und abgeschlossene Monate.": [
+        "Review and approve submitted months. People with ClickTime close the month in ClickTime. By default the payroll export contains only approved and closed months.",
+        "Iigreichti Mönet prüefe und visiere. Persone mit ClickTime schlüssed de Monet i ClickTime ab. De Export für d Lohnbuechhaltig hät standardmässig nur visierti und abgschlossni Mönet."
+    ],
+    "erinnert": ["reminded", "erinneret"]
 }

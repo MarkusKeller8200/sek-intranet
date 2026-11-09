@@ -98,6 +98,7 @@ class Plugin extends BasePlugin implements DemoResponder
             'departments' => $this->departments($ctx),
             'employees' => $this->employees($ctx),
             'match' => $this->match($ctx, $options),
+            'employee-create' => $this->employeeCreate($ctx, $options),
             'lookup' => $this->lookup($ctx, trim((string) ($options['email'] ?? ''))),
             'balances' => $this->balances($ctx, $options),
             'month' => $this->monthSheet($ctx, $options),
@@ -229,6 +230,101 @@ class Plugin extends BasePlugin implements DemoResponder
                 ['key' => 'status', 'label' => 'Status'],
             ],
             $public,
+        );
+    }
+
+    /**
+     * Mitarbeitende Person in ClickTime anlegen (#31). Vorschau: Daten, die gesendet werden, und Dubletten-Prüfung
+     * (Antwort ClickTime 09.11.2026: abgelehnt wird bei gleicher Personalnummer, gleichem Benutzernamen oder gleicher
+     * Badge-Nummer; im Intranet zusätzlich gleiche E-Mail und bestehende Datenherkunft). Treffer → nur verbinden.
+     * Übernehmen: POST /employees, employee_no aus der Antwort in der Datenherkunft speichern.
+     *
+     * @param  array<string, mixed>  $options
+     */
+    private function employeeCreate(PluginContext $ctx, array $options): ActionResult
+    {
+        $email = mb_strtolower(trim((string) ($options['person'] ?? '')));
+        $person = null;
+        foreach (app(UserRepository::class)->all() as $u) {
+            if (mb_strtolower(trim((string) ($u['email'] ?? ''))) === $email && $email !== '') {
+                $person = $u;
+            }
+        }
+        if ($person === null) {
+            return ActionResult::warning('Keine Person mit dieser E-Mail im Intranet.');
+        }
+        $links = app(PersonLinks::class);
+        foreach ($links->all() as $link) {
+            if (($link['person_id'] ?? null) === $person['id'] && ($link['system'] ?? null) === self::SYSTEM && (string) ($link['external_id'] ?? '') !== '') {
+                return ActionResult::warning('Diese Person ist bereits mit ClickTime verbunden (Nr. '.(string) $link['external_id'].').');
+            }
+        }
+        $first = trim((string) ($person['first_name'] ?? ''));
+        $last = trim((string) ($person['last_name'] ?? ''));
+        if ($first === '' || $last === '') {
+            [$first, $last] = array_pad(explode(' ', trim((string) ($person['name'] ?? '')), 2), 2, '');
+        }
+        $payload = array_filter([
+            'employee_no' => preg_match('/^\d+$/', trim((string) ($options['employee_no'] ?? ''))) === 1 ? (int) $options['employee_no'] : null,
+            'first_name' => $first,
+            'last_name' => $last,
+            'email' => (string) $person['email'],
+            'username' => trim((string) ($options['username'] ?? '')) !== '' ? trim((string) $options['username']) : (string) $person['email'],
+            'batch_number' => trim((string) ($options['batch_number'] ?? '')) !== '' ? trim((string) $options['batch_number']) : null,
+            'department_number' => trim((string) ($options['department'] ?? '')) !== '' ? trim((string) $options['department']) : null,
+        ], fn ($v): bool => $v !== null && $v !== '');
+
+        // Dubletten: gleiche Personalnummer, Benutzername, Badge-Nummer oder E-Mail
+        $match = null;
+        foreach ($this->allEmployees($ctx) as $e) {
+            $same = fn (string $field): bool => isset($payload[$field]) && mb_strtolower(trim((string) ($e[$field] ?? ''))) === mb_strtolower((string) $payload[$field]);
+            if ($same('employee_no') || $same('username') || $same('batch_number') || $same('email')) {
+                $match = $e;
+                break;
+            }
+        }
+        $row = ['_key' => (string) $person['id'], 'person' => (string) ($person['name'] ?? ''), 'email' => (string) $person['email'],
+            'username' => (string) $payload['username'], 'employee_no' => isset($payload['employee_no']) ? (string) $payload['employee_no'] : 'von ClickTime',
+            'status' => $match !== null ? 'verbinden mit Nr. '.(string) ($match['employee_no'] ?? '?').' ('.self::fullName($match).')' : 'neu anlegen'];
+
+        if (($options['_apply'] ?? false) === true) {
+            if ($match !== null) {
+                $links->recordSync((string) $person['id'], self::SYSTEM, 'source', (string) ($match['employee_no'] ?? ''));
+                $ctx->log('Mit bestehender ClickTime-Person verbunden (keine Dublette angelegt).');
+
+                return ActionResult::ok('In ClickTime gibt es die Person schon (Nr. '.(string) ($match['employee_no'] ?? '?').') – nur verbunden, nichts angelegt.');
+            }
+            $response = $ctx->call('employees-create', [], [$payload]);
+            if (! $response->successful()) {
+                $json = $response->json();
+                $message = is_array($json) ? (string) ($json['message'] ?? $json['error'] ?? '') : '';
+
+                return ActionResult::warning('ClickTime lehnt das Anlegen ab (HTTP '.$response->status().')'.($message !== '' ? ": {$message}" : '')
+                    .' – Personalnummer, Benutzername oder Badge-Nummer schon vergeben? Schreibrechte freigeschaltet?');
+            }
+            $created = self::list($response)[0] ?? [];
+            $no = (string) ($created['employee_no'] ?? '');
+            if ($no === '') {
+                return ActionResult::warning('Angelegt, aber die Antwort enthält keine Personalnummer – bitte mit «Mitarbeitende abgleichen» verbinden.');
+            }
+            $links->recordSync((string) $person['id'], self::SYSTEM, 'source', $no);
+            $ctx->log("Person in ClickTime angelegt (Nr. {$no}).");
+
+            return ActionResult::ok("In ClickTime angelegt: Nr. {$no}, in der Datenherkunft gespeichert.".($ctx->demo() ? ' (Demo-Modus)' : ''));
+        }
+
+        return ActionResult::preview(
+            ($ctx->demo() ? 'Demo-Modus: ' : '').($match !== null
+                ? 'Diese Person gibt es in ClickTime schon – Übernehmen verbindet nur (keine Dublette).'
+                : 'Übernehmen legt die Person in ClickTime an und speichert die Personalnummer in der Datenherkunft. Arbeitsplan und Berechtigungen danach in ClickTime zuweisen.'),
+            [
+                ['key' => 'person', 'label' => 'Person'],
+                ['key' => 'email', 'label' => 'E-Mail'],
+                ['key' => 'username', 'label' => 'Benutzername'],
+                ['key' => 'employee_no', 'label' => 'Personalnummer'],
+                ['key' => 'status', 'label' => 'Aktion'],
+            ],
+            [$row],
         );
     }
 
@@ -928,6 +1024,9 @@ class Plugin extends BasePlugin implements DemoResponder
         if ($method === 'DELETE') {
             return ['status' => 204];
         }
+        if ($id === 'employees-create') {
+            return self::demoCreateEmployee($body ?? []);
+        }
         if ($method !== 'GET') {
             // Schreiben im Demo-Modus: wie angenommen, gesendete Daten zurück
             return ['status' => 200, 'json' => $body ?? []];
@@ -960,6 +1059,26 @@ class Plugin extends BasePlugin implements DemoResponder
             'address', 'order', 'order-date-group', 'order-date' => ['status' => 404, 'json' => ['message' => 'Nicht gefunden (Demo).']],
             default => ['status' => 200, 'json' => []],
         };
+    }
+
+    /**
+     * Anlegen im Demo-Modus (#31): Ablehnung bei gleicher Personalnummer, gleichem Benutzernamen oder gleicher
+     * Badge-Nummer (wie ClickTime), sonst die neue Person mit nächster Nummer.
+     *
+     * @param  array<mixed>  $body
+     * @return array{status: int, json: mixed}
+     */
+    private static function demoCreateEmployee(array $body): array
+    {
+        $new = is_array($body[0] ?? null) ? $body[0] : $body;
+        foreach (self::DEMO_EMPLOYEES as $e) {
+            if ((isset($new['employee_no']) && (int) $new['employee_no'] === $e['employee_no'])
+                || mb_strtolower((string) ($new['username'] ?? '')) === mb_strtolower($e['email'])) {
+                return ['status' => 422, 'json' => ['message' => 'employee_no or username already exists']];
+            }
+        }
+
+        return ['status' => 201, 'json' => [['employee_no' => (int) ($new['employee_no'] ?? count(self::DEMO_EMPLOYEES) + 1)] + $new + ['active' => true]]];
     }
 
     /**

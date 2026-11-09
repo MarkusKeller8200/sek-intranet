@@ -1,7 +1,7 @@
 {
     "key": "zeiterfassung",
     "name": "Zeiterfassung",
-    "version": "0.7.0",
+    "version": "0.8.0",
     "core": ">=0.32.0",
     "description": "Arbeitszeit mit Buchungsart (Arbeitszeit, Homeoffice, Ferien, Krankheit …), Tätigkeiten, Projekte und Abwesenheiten pro Monat erfassen; Monatsvisum durch die Schulleitung, Export für die Lohnbuchhaltung und Monatsblatt als PDF; visierte Monatsrapporte elektronisch unterschreiben (DeepSign).",
     "aktiv": true,
@@ -127,7 +127,7 @@
         },
         "zeit_monate": {
             "label": "Zeiterfassung: Monate",
-            "description": "Status je Person und Monat (id = Person:JJJJ-MM): offen, eingereicht, visiert, zurück.",
+            "description": "Status je Person und Monat (id = Person:JJJJ-MM): offen, eingereicht, visiert, zurück, in ClickTime abgeschlossen.",
             "fields": {
                 "person_id": {
                     "type": "ref",
@@ -146,7 +146,8 @@
                         "offen": "Offen",
                         "eingereicht": "Eingereicht",
                         "visiert": "Visiert",
-                        "zurueck": "Zurück an Person"
+                        "zurueck": "Zurück an Person",
+                        "abgeschlossen": "In ClickTime abgeschlossen"
                     },
                     "required": true,
                     "label": "Status"
@@ -205,6 +206,42 @@
                     "type": "string",
                     "required": false,
                     "label": "Unterschriebenes PDF (Ablage des Moduls)"
+                },
+                "abgeschlossen_at": {
+                    "type": "datetime",
+                    "required": false,
+                    "label": "In ClickTime abgeschlossen, bestätigt am (#164)"
+                },
+                "abgeschlossen_by": {
+                    "type": "ref",
+                    "references": "users",
+                    "required": false,
+                    "label": "Bestätigt von (Person oder stellvertretend)"
+                },
+                "abgeschlossen_stellvertretend": {
+                    "type": "bool",
+                    "required": false,
+                    "label": "Stellvertretend bestätigt"
+                },
+                "abweichung": {
+                    "type": "json",
+                    "required": false,
+                    "label": "Nachbuchungen in ClickTime nach dem Abschluss (Anzahl, geprüft am)"
+                },
+                "monatsblatt_pdf": {
+                    "type": "string",
+                    "required": false,
+                    "label": "Monatsblatt (PDF, Ablage des Moduls, #34)"
+                },
+                "monatsblatt_at": {
+                    "type": "datetime",
+                    "required": false,
+                    "label": "Monatsblatt erstellt am"
+                },
+                "erinnert_at": {
+                    "type": "datetime",
+                    "required": false,
+                    "label": "Zuletzt erinnert am (#33)"
                 }
             }
         },
@@ -271,7 +308,10 @@
             "zeit.monat_eingereicht",
             "zeit.monat_visiert",
             "zeit.monat_zurueck",
-            "zeit.monat_unterschrieben"
+            "zeit.monat_unterschrieben",
+            "zeit.monat_abgeschlossen",
+            "zeit.monat_nachbuchung",
+            "zeit.erinnerung"
         ],
         "empfaengt": [
             "signatur.unterschrieben",
@@ -279,5 +319,5 @@
             "signatur.abgelehnt"
         ]
     },
-    "plugins": ["deepsign"]
+    "plugins": ["deepsign", "clicktime"]
 }

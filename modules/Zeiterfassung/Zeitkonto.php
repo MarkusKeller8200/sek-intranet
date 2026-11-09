@@ -9,7 +9,7 @@ use InvalidArgumentException;
  */
 final class Zeitkonto
 {
-    public const GESPERRT = ['eingereicht', 'visiert'];
+    public const GESPERRT = ['eingereicht', 'visiert', 'abgeschlossen'];
 
     public static function monat(?string $monat): string
     {
@@ -63,6 +63,35 @@ final class Zeitkonto
         }
 
         return $s;
+    }
+
+    /**
+     * Arbeitstage ohne Eintrag bis heute (#33, Vollständigkeit vor dem Einreichen): mit Sollzeit die Tage mit Soll > 0,
+     * sonst Montag bis Freitag ohne Feiertag.
+     *
+     * @param  list<array<string, mixed>>  $eintraege
+     * @param  array<string, string>  $feiertage  Datum → Name
+     * @param  array<string, float>  $soll  Datum → Stunden
+     * @return list<string> Daten «JJJJ-MM-TT»
+     */
+    public static function fehlendeTage(string $monat, array $eintraege, array $feiertage, array $soll, ?string $heute = null): array
+    {
+        $heute ??= now()->format('Y-m-d');
+        $mitEintrag = array_flip(array_map(fn (array $e): string => (string) ($e['datum'] ?? ''), $eintraege));
+        $fehlend = [];
+        $ende = (int) date('t', (int) strtotime($monat.'-01'));
+        for ($d = 1; $d <= $ende; $d++) {
+            $tag = sprintf('%s-%02d', $monat, $d);
+            if ($tag > $heute) {
+                break;
+            }
+            $arbeitstag = $soll !== [] ? ($soll[$tag] ?? 0.0) > 0 : (int) date('N', (int) strtotime($tag)) <= 5 && ! isset($feiertage[$tag]);
+            if ($arbeitstag && ! isset($mitEintrag[$tag])) {
+                $fehlend[] = $tag;
+            }
+        }
+
+        return $fehlend;
     }
 
     public static function gesperrt(string $status): bool

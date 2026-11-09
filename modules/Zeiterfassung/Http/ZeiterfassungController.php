@@ -22,6 +22,7 @@ use Modules\Zeiterfassung\Data\Contracts\EintragRepository;
 use Modules\Zeiterfassung\Data\Contracts\MonatRepository;
 use Modules\Zeiterfassung\Feiertage;
 use Modules\Zeiterfassung\Kategorien;
+use Modules\Zeiterfassung\Monatsabschluss;
 use Modules\Zeiterfassung\Sollzeiten;
 use Modules\Zeiterfassung\Unterschriften;
 use Modules\Zeiterfassung\Zeitkonto;
@@ -60,6 +61,9 @@ class ZeiterfassungController extends Controller
             'person' => ['name' => $this->name($person)],
             'darfVisum' => Gate::allows('visum-zeiterfassung'),
             'unterschrift' => self::unterschrift($person, $monat, $this->monate->status($person, $monat)),
+            'monatsblatt' => self::monatsblatt($person, $monat, $this->monate->status($person, $monat)),
+            // Vollständigkeit (#33): Arbeitstage ohne Eintrag bis heute
+            'fehlend' => Zeitkonto::fehlendeTage($monat, $liste, Feiertage::monat($monat), app(Sollzeiten::class)->monat($person, $monat)),
             'clicktime' => self::clicktime($request, $person),
             // ClickTime führt (#154): keine eigenen Einträge erfassen oder bearbeiten
             'clicktimeFuehrt' => self::clicktimeNr($person) !== null,
@@ -89,7 +93,7 @@ class ZeiterfassungController extends Controller
      * ClickTime-Nr. der Person, wenn ClickTime für sie aktiv ist (Plugin eingeschaltet, Nr. in der Datenherkunft).
      * Dann führt ClickTime die Zeiten (#154).
      */
-    private static function clicktimeNr(string $person): ?string
+    public static function clicktimeNr(string $person): ?string
     {
         $plugins = app(PluginManager::class);
         if (! class_exists(Importer::class) || ! isset($plugins->all()['clicktime']) || ! $plugins->state('clicktime')['enabled']) {
@@ -111,6 +115,48 @@ class ZeiterfassungController extends Controller
         if (self::clicktimeNr($person) !== null) {
             throw ValidationException::withMessages(['datum' => 'Ihre Zeiten werden in ClickTime erfasst – eigene Einträge sind hier nicht möglich.']);
         }
+    }
+
+    /**
+     * Monat in ClickTime abgeschlossen (#164): letzter Abgleich, Monat sperren, Monatsblatt ablegen. Nur für Personen,
+     * deren Zeiten ClickTime führt.
+     */
+    public function abschliessen(Request $request): RedirectResponse
+    {
+        $person = self::person($request);
+        $monat = self::monatAus((string) $request->input('monat'));
+        $nr = self::clicktimeNr($person);
+        abort_if($nr === null, 403);
+        $user = $request->user();
+        try {
+            $r = app(Monatsabschluss::class)->clicktime($person, $monat, $nr, $user instanceof IntranetUser ? $user : null);
+        } catch (Throwable $e) {
+            $this->toast('Abschluss nicht möglich: '.$e->getMessage(), 'error');
+
+            return back();
+        }
+        $this->toast("Monat abgeschlossen: aus ClickTime übernommen ({$r['neu']} neu, {$r['geaendert']} geändert, {$r['geloescht']} gelöscht), Monatsblatt abgelegt.");
+
+        return back();
+    }
+
+    /** Abgelegtes Monatsblatt (#34): nur für die Person selbst oder mit Recht visum-zeiterfassung. */
+    public function monatsblattPdf(Request $request, string $person, string $monat): StreamedResponse
+    {
+        abort_unless($person === self::person($request) || Gate::allows('visum-zeiterfassung'), 403);
+        $monat = self::monatAus($monat);
+        $pfad = $this->monate->status($person, $monat)['monatsblatt_pdf'] ?? null;
+        abort_unless(is_string($pfad) && $pfad === Monatsabschluss::datei($person, $monat) && Storage::disk('local')->exists($pfad), 404);
+
+        return Storage::disk('local')->download($pfad, "Monatsblatt-{$monat}.pdf", ['Content-Type' => 'application/pdf']);
+    }
+
+    /**
+     * @param  array<string, mixed>  $status
+     */
+    public static function monatsblatt(string $person, string $monat, array $status): ?string
+    {
+        return isset($status['monatsblatt_pdf']) ? "/zeiterfassung/monatsblatt/{$person}/{$monat}" : null;
     }
 
     /** Eigenen Monat aus ClickTime übernehmen (#101). */
@@ -267,6 +313,12 @@ class ZeiterfassungController extends Controller
     {
         $person = self::person($request);
         $monat = self::monatAus((string) $request->input('monat'));
+        // Mit ClickTime: Abschluss und Genehmigung in ClickTime (#164)
+        if (self::clicktimeNr($person) !== null) {
+            $this->toast('Ihre Zeiten führt ClickTime: Monat dort abschliessen und hier «In ClickTime abgeschlossen» bestätigen.', 'error');
+
+            return back();
+        }
         $this->entsperrt($person, $monat);
         $liste = $this->eintraege->fuerPersonMonat($person, $monat);
         if ($liste === []) {
@@ -304,7 +356,7 @@ class ZeiterfassungController extends Controller
     {
         $status = (string) ($this->monate->status($person, $monat)['status'] ?? 'offen');
         if (Zeitkonto::gesperrt($status)) {
-            throw ValidationException::withMessages(['datum' => "Der Monat {$monat} ist ".($status === 'visiert' ? 'visiert' : 'eingereicht').' und kann nicht mehr geändert werden.']);
+            throw ValidationException::withMessages(['datum' => "Der Monat {$monat} ist ".(['visiert' => 'visiert', 'abgeschlossen' => 'in ClickTime abgeschlossen'][$status] ?? 'eingereicht').' und kann nicht mehr geändert werden.']);
         }
     }
 
