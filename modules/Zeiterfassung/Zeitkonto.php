@@ -11,6 +11,38 @@ final class Zeitkonto
 {
     public const GESPERRT = ['eingereicht', 'visiert', 'abgeschlossen'];
 
+    /**
+     * Nicht als Arbeitszeit angerechnete Buchungsarten (#169, wie ClickTime): Kompensation baut Überzeit ab und zählt im
+     * Ist nicht – an einem Kompensationstag ist das Ist 0:00 und die Differenz minus Soll. Erkannt an Buchungsart oder
+     * Kategorie (auch «ct_…»-Arten aus ClickTime).
+     */
+    public const NICHT_ANGERECHNET = ['kompensation'];
+
+    /**
+     * @param  array<string, mixed>  $eintrag
+     */
+    public static function angerechnet(array $eintrag): bool
+    {
+        $text = mb_strtolower(Buchungsarten::von($eintrag).' '.(string) ($eintrag['kategorie'] ?? ''));
+        foreach (self::NICHT_ANGERECHNET as $art) {
+            if (str_contains($text, $art)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Angerechnete Stunden (Ist) einer Liste von Einträgen.
+     *
+     * @param  list<array<string, mixed>>  $eintraege
+     */
+    public static function ist(array $eintraege): float
+    {
+        return round(array_sum(array_map(fn (array $e): float => self::angerechnet($e) ? (float) ($e['stunden'] ?? 0) : 0.0, $eintraege)), 2);
+    }
+
     public static function monat(?string $monat): string
     {
         if ($monat === null || $monat === '') {
@@ -39,7 +71,7 @@ final class Zeitkonto
      * Summen je Art und Kategorie.
      *
      * @param  list<array<string, mixed>>  $eintraege
-     * @return array{arbeit: float, abwesenheit: float, total: float, kategorien: array<string, float>, projekte: array<string, float>, buchungsarten: array<string, float>}
+     * @return array{arbeit: float, abwesenheit: float, total: float, kategorien: array<string, float>, projekte: array<string, float>, buchungsarten: array<string, float>, ist: float}
      */
     public static function summen(array $eintraege): array
     {
@@ -61,6 +93,8 @@ final class Zeitkonto
         foreach (['arbeit', 'abwesenheit', 'total'] as $k) {
             $s[$k] = round($s[$k], 2);
         }
+        // Ist für Soll/Delta: ohne Kompensation (#169)
+        $s['ist'] = self::ist($eintraege);
 
         return $s;
     }
@@ -142,8 +176,10 @@ final class Zeitkonto
             if ($ohneBeginn !== []) {
                 $hinweise[] = ['art' => 'fehler', 'text' => 'Prüfen – Eintrittsbuchung fehlt', 'eintraege' => $ohneBeginn];
             }
-            if ($liste !== [] && $sollTag !== null && $sollTag > 0) {
-                $ist = array_sum(array_map(fn (array $e): float => (float) ($e['stunden'] ?? 0), $liste));
+            // Kompensation (nicht angerechnet, #169) ist eine gewollte Abweichung: keine Warnung an solchen Tagen
+            $mitKompensation = array_filter($liste, fn (array $e): bool => ! self::angerechnet($e)) !== [];
+            if ($liste !== [] && ! $mitKompensation && $sollTag !== null && $sollTag > 0) {
+                $ist = self::ist($liste);
                 if (abs($ist - $sollTag) > self::ABWEICHUNG * $sollTag + 0.004) {
                     $hinweise[] = ['art' => 'warnung', 'text' => 'Arbeitszeit prüfen', 'eintraege' => []];
                 }

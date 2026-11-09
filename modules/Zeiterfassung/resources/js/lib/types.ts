@@ -80,7 +80,22 @@ export type Summen = {
     kategorien: Record<string, number>;
     projekte: Record<string, number>;
     buchungsarten?: Record<string, number>;
+    /** Angerechnete Stunden für Soll/Delta, ohne Kompensation (#169) */
+    ist?: number;
 };
+
+/** Nicht angerechnete Buchungsarten (#169, wie ClickTime): Kompensation zählt im Ist nicht. */
+const NICHT_ANGERECHNET = ['kompensation'];
+
+/** Zählt der Eintrag im Ist? Kompensation nicht (erkannt an Buchungsart oder Kategorie). */
+export function angerechnet(e: {
+    buchungsart?: string;
+    kategorie: string;
+}): boolean {
+    const text = `${e.buchungsart ?? ''} ${e.kategorie}`.toLowerCase();
+
+    return !NICHT_ANGERECHNET.some((a) => text.includes(a));
+}
 
 export type Buchungsart = {
     name: string;

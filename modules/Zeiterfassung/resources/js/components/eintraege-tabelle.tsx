@@ -19,6 +19,7 @@ import {
 import { cn } from '@/lib/utils';
 import type { Eintrag, Kategorien, Pruefung, Summen } from '../lib/types';
 import {
+    angerechnet,
     buchungsartName,
     herkunft,
     hhmm,
@@ -222,7 +223,7 @@ export default function EintraegeTabelle({
                         <div className="flex justify-between gap-4 py-1 font-semibold">
                             <dt>Delta (Ist − Soll)</dt>
                             <dd className="tabular-nums" translate="no">
-                                {hhmm(summen.total - sollTotal)}
+                                {hhmm((summen.ist ?? summen.total) - sollTotal)}
                             </dd>
                         </div>
                     </>
@@ -254,7 +255,8 @@ function TagesZeile({
     aktionen: boolean;
     onToggle: () => void;
 }) {
-    const ist = liste.reduce((s, e) => s + e.stunden, 0);
+    // Ist ohne Kompensation (#169, wie ClickTime)
+    const ist = liste.reduce((s, e) => s + (angerechnet(e) ? e.stunden : 0), 0);
     const delta = soll === undefined ? null : ist - soll;
     const art = tagesArt(tag, liste, kategorien, Boolean(feiertag));
 

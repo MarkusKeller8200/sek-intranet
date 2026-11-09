@@ -15,7 +15,8 @@ Pilotmodul (#8) und Muster für weitere Module. Schlüssel `zeiterfassung`, DB-S
   Aufbewahrungsfrist: noch festzulegen.
 - **Soll und Ist (#103, #163):** Sollzeit pro Tag aus ClickTime (Arbeitszeitmodell, Pensum, Feiertage). Ferien und
   Abwesenheiten werden nicht vom Soll abgezogen, sondern zählen im Ist wie geleistete Zeit – wie der Saldo in ClickTime
-  (Ferientag: Soll = Ist, Differenz 0).
+  (Ferientag: Soll = Ist, Differenz 0). **Ausnahme Kompensation (#169):** zählt im Ist nicht (Kompensationstag: Ist
+  0:00, Differenz −Soll), da sie Überzeit abbaut.
 - **Visum** (`/zeiterfassung/visum`, Recht `visum-zeiterfassung`, Schulleitung/Administration): Übersicht je Monat
   mit Arbeitstagen ohne Eintrag und «Erinnern» (#33), Monatsblatt je Person, visieren oder mit Bemerkung zurückgeben
   (Person wird benachrichtigt).

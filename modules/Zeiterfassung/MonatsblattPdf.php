@@ -41,7 +41,7 @@ final class MonatsblattPdf
 
     /**
      * @param  list<array<string, mixed>>  $eintraege
-     * @param  array{arbeit: float, abwesenheit: float, total: float, kategorien: array<string, float>, projekte: array<string, float>, buchungsarten?: array<string, float>}  $summen
+     * @param  array{arbeit: float, abwesenheit: float, total: float, kategorien: array<string, float>, projekte: array<string, float>, buchungsarten?: array<string, float>, ist?: float}  $summen
      * @param  array{person: string, schulleitung: string}  $unterzeichnende
      * @param  array<string, string>  $buchungsarten  Schlüssel → Bezeichnung (#99)
      * @param  array{vermerke?: list<string>, unterschriftsfelder?: bool, soll?: array<string, float>, untertitel?: string, salden?: list<array{name: string, vormonat: float|null, ende: float|null, einheit: string}>, heute?: string}  $optionen
@@ -78,7 +78,8 @@ final class MonatsblattPdf
             }
             usort($liste, fn (array $a, array $b): int => strcmp((string) ($a['beginn'] ?? ''), (string) ($b['beginn'] ?? '')));
             $zeilen = self::zeilen($liste, $buchungsarten);
-            $ist = array_sum(array_map(fn (array $e): float => (float) ($e['stunden'] ?? 0), $liste));
+            // Ist ohne Kompensation (#169, wie ClickTime)
+            $ist = Zeitkonto::ist($liste);
             $istTotal += $ist;
             $sollTotal += (float) ($sollTag ?? 0);
 

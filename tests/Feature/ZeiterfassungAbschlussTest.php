@@ -68,6 +68,28 @@ class ZeiterfassungAbschlussTest extends TestCase
         }
     }
 
+    public function test_compensation_is_not_credited(): void
+    {
+        $eintraege = [
+            ['datum' => '2026-10-19', 'art' => 'abwesenheit', 'buchungsart' => 'kompensation', 'kategorie' => 'kompensation', 'stunden' => 8.4],
+            ['datum' => '2026-10-20', 'art' => 'abwesenheit', 'buchungsart' => 'ct_kompensation_minussaldo', 'kategorie' => 'kompensation', 'stunden' => 8.4],
+            ['datum' => '2026-10-21', 'art' => 'abwesenheit', 'buchungsart' => 'ferien', 'kategorie' => 'ferien', 'stunden' => 8.4],
+        ];
+        $this->assertFalse(Zeitkonto::angerechnet($eintraege[0]));
+        $this->assertFalse(Zeitkonto::angerechnet($eintraege[1]));
+        $this->assertTrue(Zeitkonto::angerechnet($eintraege[2]), 'Ferien zählen');
+        $summen = Zeitkonto::summen($eintraege);
+        $this->assertSame(25.2, $summen['total']);
+        $this->assertSame(8.4, $summen['ist']);
+        // Kompensationstag: Ist 0:00, Differenz −Soll, aber keine Warnung «Arbeitszeit prüfen»
+        $soll = ['2026-10-19' => 8.4, '2026-10-20' => 8.4, '2026-10-21' => 8.4];
+        $this->assertSame([], Zeitkonto::pruefungen(self::MONAT, $eintraege, $soll, '2026-10-31'));
+        $pdf = MonatsblattPdf::erstellen('Test Person', self::MONAT, $eintraege, $summen, null, null, ['person' => 'Test Person', 'schulleitung' => ''], [],
+            ['soll' => $soll, 'unterschriftsfelder' => false, 'heute' => '2026-10-31'])['pdf'];
+        $this->assertStringContainsString('(0:00)', $pdf);
+        $this->assertStringContainsString('(-16:48)', $pdf, 'Total-Differenz: 8:24 Ist gegen 25:12 Soll');
+    }
+
     public function test_missing_working_days(): void
     {
         $eintraege = [['datum' => '2026-10-01', 'stunden' => 8.0]];

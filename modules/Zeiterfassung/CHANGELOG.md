@@ -6,6 +6,9 @@ Versionen des Moduls nach SemVer (module.json → «version»).
 
 ### Neu
 
+- **Kompensation nicht angerechnet (#169, 0.8.0):** Wie ClickTime zählt Kompensation im Ist nicht (Tages-Ist 0:00,
+  Differenz −Soll); Ferien und übrige Abwesenheiten zählen weiter. `Zeitkonto::angerechnet`/`ist`, Summe `ist` für
+  Soll/Delta; in Tabelle, Monatsrapport und Prüfhinweisen (an Kompensationstagen keine Warnung «Arbeitszeit prüfen»).
 - **Monatsrapport wie ClickTime (#168, 0.8.0):** PDF auf dem Server im Aufbau des ClickTime-Monatsrapports – Tag,
   Von, Bis, Std., Soll, Diff., Typ (Farbfeld), Bemerkungen; Pause als eigene Zeile, Tagestotal mit Soll und
   Differenz, Montage grau, Arbeitstage ohne Buchung; Total, Stunden je Buchungsart, Saldi aus ClickTime (Vormonat,
