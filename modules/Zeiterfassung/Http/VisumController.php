@@ -78,6 +78,7 @@ class VisumController extends Controller
             'clicktime' => ZeiterfassungController::clicktimeNr($person) !== null,
             'abgeschlossenVon' => isset($status['abgeschlossen_by']) ? (string) ($this->users->find((string) $status['abgeschlossen_by'])['name'] ?? '') : null,
             'fehlend' => Zeitkonto::fehlendeTage($monat, $liste, Feiertage::monat($monat), app(Sollzeiten::class)->monat($person, $monat)),
+            'pruefungen' => Zeitkonto::pruefungen($monat, $liste, app(Sollzeiten::class)->monat($person, $monat)),
         ]);
     }
 
@@ -357,7 +358,7 @@ class VisumController extends Controller
     /**
      * Personen mit Einträgen oder Status im Monat.
      *
-     * @return list<array{id: string, name: string, email: string, status: string, eintraege: int, summen: array{arbeit: float, abwesenheit: float, total: float, kategorien: array<string, float>, projekte: array<string, float>, buchungsarten: array<string, float>}, fehlend: int, erinnert_at: string|null}>
+     * @return list<array{id: string, name: string, email: string, status: string, eintraege: int, summen: array{arbeit: float, abwesenheit: float, total: float, kategorien: array<string, float>, projekte: array<string, float>, buchungsarten: array<string, float>}, fehlend: int, pruefen: array{fehler: int, hinweise: int}, erinnert_at: string|null}>
      */
     private function uebersicht(string $monat): array
     {
@@ -386,12 +387,25 @@ class VisumController extends Controller
                 'summen' => Zeitkonto::summen($liste),
                 // Vollständigkeit (#33): Arbeitstage ohne Eintrag bis heute
                 'fehlend' => count(Zeitkonto::fehlendeTage($monat, $liste, $feiertage, $soll->monat((string) $id, $monat))),
+                // Tage mit Fehlern bzw. Hinweisen (#167)
+                'pruefen' => self::pruefenZaehlen(Zeitkonto::pruefungen($monat, $liste, $soll->monat((string) $id, $monat))),
                 'erinnert_at' => $erinnert[$id] ?? null,
             ];
         }
         usort($result, fn (array $a, array $b): int => strcmp($a['name'], $b['name']));
 
         return $result;
+    }
+
+    /**
+     * @param  array<string, list<array{art: string, text: string, eintraege: list<string>}>>  $pruefungen
+     * @return array{fehler: int, hinweise: int} Tage mit Fehlern bzw. nur Hinweisen/Warnungen
+     */
+    private static function pruefenZaehlen(array $pruefungen): array
+    {
+        $fehler = count(array_filter($pruefungen, fn (array $h): bool => in_array('fehler', array_column($h, 'art'), true)));
+
+        return ['fehler' => $fehler, 'hinweise' => count($pruefungen) - $fehler];
     }
 
     private static function zahl(float $h): string

@@ -1,5 +1,11 @@
 import { Head, Link, router } from '@inertiajs/react';
-import { Bell, Download, ListTree } from 'lucide-react';
+import {
+    Bell,
+    Download,
+    ListTree,
+    ShieldAlert,
+    TriangleAlert,
+} from 'lucide-react';
 import PageHeader from '@/components/page-header';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -25,6 +31,8 @@ type Person = {
     summen: Summen;
     /** Arbeitstage ohne Eintrag bis heute (#33) */
     fehlend?: number;
+    /** Tage mit Fehlern bzw. Hinweisen (#167) */
+    pruefen?: { fehler: number; hinweise: number };
     erinnert_at?: string | null;
 };
 
@@ -145,6 +153,26 @@ export default function ZeiterfassungVisum({
                                                             0 && (
                                                             <span className="text-xs text-muted-foreground">
                                                                 {`${p.fehlend} Tage ohne Eintrag`}
+                                                            </span>
+                                                        )}
+                                                        {(p.pruefen?.fehler ??
+                                                            0) > 0 && (
+                                                            <span className="inline-flex items-center gap-1 text-xs text-destructive">
+                                                                <ShieldAlert
+                                                                    className="size-4"
+                                                                    aria-hidden
+                                                                />
+                                                                {`${p.pruefen?.fehler} Tage mit Fehlern`}
+                                                            </span>
+                                                        )}
+                                                        {(p.pruefen?.hinweise ??
+                                                            0) > 0 && (
+                                                            <span className="inline-flex items-center gap-1 text-xs text-warning">
+                                                                <TriangleAlert
+                                                                    className="size-4"
+                                                                    aria-hidden
+                                                                />
+                                                                {`${p.pruefen?.hinweise} Tage prüfen`}
                                                             </span>
                                                         )}
                                                         {p.erinnert_at && (

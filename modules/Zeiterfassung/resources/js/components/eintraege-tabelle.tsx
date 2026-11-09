@@ -1,4 +1,11 @@
-import { ChevronDown, ChevronRight, Pencil, Trash2 } from 'lucide-react';
+import {
+    ChevronDown,
+    ChevronRight,
+    Pencil,
+    ShieldAlert,
+    Trash2,
+    TriangleAlert,
+} from 'lucide-react';
 import { Fragment, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import {
@@ -10,7 +17,7 @@ import {
     TableRow,
 } from '@/components/ui/table';
 import { cn } from '@/lib/utils';
-import type { Eintrag, Kategorien, Summen } from '../lib/types';
+import type { Eintrag, Kategorien, Pruefung, Summen } from '../lib/types';
 import {
     buchungsartName,
     herkunft,
@@ -52,6 +59,7 @@ export default function EintraegeTabelle({
     kategorien,
     feiertage = {},
     soll = {},
+    pruefungen = {},
     onEdit,
     onDelete,
 }: Aktionen & {
@@ -63,6 +71,8 @@ export default function EintraegeTabelle({
     feiertage?: Record<string, string>;
     /** Datum → Sollzeit in Stunden (z. B. aus ClickTime) */
     soll?: Record<string, number>;
+    /** Datum → Prüfhinweise (#167), vom Server berechnet */
+    pruefungen?: Record<string, Pruefung[]>;
 }) {
     const [offen, setOffen] = useState<Set<string>>(new Set());
     const proTag = new Map<string, Eintrag[]>();
@@ -132,6 +142,7 @@ export default function EintraegeTabelle({
                                     liste={proTag.get(tag) ?? []}
                                     feiertag={feiertage[tag]}
                                     soll={soll[tag]}
+                                    pruefungen={pruefungen[tag] ?? []}
                                     kategorien={kategorien}
                                     auf={offen.has(tag)}
                                     aktionen={aktionen}
@@ -142,6 +153,13 @@ export default function EintraegeTabelle({
                                         <BuchungsZeile
                                             key={e.id}
                                             e={e}
+                                            fehler={(
+                                                pruefungen[tag] ?? []
+                                            ).find(
+                                                (p) =>
+                                                    p.art === 'fehler' &&
+                                                    p.eintraege.includes(e.id),
+                                            )}
                                             kategorien={kategorien}
                                             onEdit={onEdit}
                                             onDelete={onDelete}
@@ -220,6 +238,7 @@ function TagesZeile({
     liste,
     feiertag,
     soll,
+    pruefungen,
     kategorien,
     auf,
     aktionen,
@@ -229,6 +248,7 @@ function TagesZeile({
     liste: Eintrag[];
     feiertag?: string;
     soll?: number;
+    pruefungen: Pruefung[];
     kategorien: Kategorien;
     auf: boolean;
     aktionen: boolean;
@@ -284,8 +304,41 @@ function TagesZeile({
             >
                 {delta === null ? '–' : hhmm(delta)}
             </TableCell>
-            <TableCell colSpan={aktionen ? 3 : 2} />
+            <TableCell colSpan={aktionen ? 3 : 2}>
+                <Hinweise pruefungen={pruefungen} />
+            </TableCell>
         </TableRow>
+    );
+}
+
+/** Prüfhinweise eines Tages (#167): Fehler mit Schild und Ausrufezeichen, Hinweise und Warnungen mit Dreieck. */
+function Hinweise({ pruefungen }: { pruefungen: Pruefung[] }) {
+    if (pruefungen.length === 0) {
+        return null;
+    }
+
+    return (
+        <span className="flex flex-wrap gap-x-3 gap-y-1 text-xs font-medium">
+            {pruefungen.map((p) =>
+                p.art === 'fehler' ? (
+                    <span
+                        key={p.text}
+                        className="inline-flex items-center gap-1 text-destructive"
+                    >
+                        <ShieldAlert className="size-4" aria-hidden />
+                        {p.text}
+                    </span>
+                ) : (
+                    <span
+                        key={p.text}
+                        className="inline-flex items-center gap-1 text-warning"
+                    >
+                        <TriangleAlert className="size-4" aria-hidden />
+                        {p.text}
+                    </span>
+                ),
+            )}
+        </span>
     );
 }
 
@@ -293,9 +346,10 @@ function TagesZeile({
 function BuchungsZeile({
     e,
     kategorien,
+    fehler,
     onEdit,
     onDelete,
-}: Aktionen & { e: Eintrag; kategorien: Kategorien }) {
+}: Aktionen & { e: Eintrag; kategorien: Kategorien; fehler?: Pruefung }) {
     const name =
         buchungsartName(kategorien, e.buchungsart) ||
         (e.art === 'abwesenheit' ? 'Abwesenheit' : 'Arbeit');
@@ -313,7 +367,15 @@ function BuchungsZeile({
                 className="whitespace-nowrap tabular-nums"
                 translate="no"
             >
-                {zeitraum(e)}
+                <span className="inline-flex items-center gap-1">
+                    {zeitraum(e)}
+                    {fehler && (
+                        <ShieldAlert
+                            className="size-4 text-destructive"
+                            aria-label={fehler.text}
+                        />
+                    )}
+                </span>
             </TableCell>
             <TableCell />
             <TableCell className="text-right tabular-nums" translate="no">

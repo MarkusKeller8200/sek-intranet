@@ -64,6 +64,8 @@ class ZeiterfassungController extends Controller
             'monatsblatt' => self::monatsblatt($person, $monat, $this->monate->status($person, $monat)),
             // Vollständigkeit (#33): Arbeitstage ohne Eintrag bis heute
             'fehlend' => Zeitkonto::fehlendeTage($monat, $liste, Feiertage::monat($monat), app(Sollzeiten::class)->monat($person, $monat)),
+            // Prüfhinweise je Tag (#167)
+            'pruefungen' => Zeitkonto::pruefungen($monat, $liste, app(Sollzeiten::class)->monat($person, $monat)),
             'clicktime' => self::clicktime($request, $person),
             // ClickTime führt (#154): keine eigenen Einträge erfassen oder bearbeiten
             'clicktimeFuehrt' => self::clicktimeNr($person) !== null,

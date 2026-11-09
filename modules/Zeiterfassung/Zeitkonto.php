@@ -94,6 +94,68 @@ final class Zeitkonto
         return $fehlend;
     }
 
+    /** Abweichung Ist/Soll, ab der «Arbeitszeit prüfen» erscheint (#167). */
+    public const ABWEICHUNG = 0.2;
+
+    /**
+     * Prüfhinweise je Tag (#167):
+     * - Arbeitstag mit Sollzeit (aus ClickTime, Soll > 0, bis heute) ohne Eintrag → Hinweis «Prüfen – keine Buchung»
+     * - Beginn ohne Ende → Fehler «Prüfen – Austrittsbuchung fehlt», Ende ohne Beginn → «Prüfen – Eintrittsbuchung fehlt»
+     * - Ist weicht mehr als 20 % vom Soll ab → Warnung «Arbeitszeit prüfen»
+     * Einträge ohne Zeiten (z. B. Ferien, Stunden direkt) erzeugen keinen Fehler.
+     *
+     * @param  list<array<string, mixed>>  $eintraege
+     * @param  array<string, float>  $soll  Datum → Stunden
+     * @return array<string, list<array{art: string, text: string, eintraege: list<string>}>> Datum → Hinweise (art: fehler, hinweis, warnung)
+     */
+    public static function pruefungen(string $monat, array $eintraege, array $soll, ?string $heute = null): array
+    {
+        $heute ??= now()->format('Y-m-d');
+        $proTag = [];
+        foreach ($eintraege as $e) {
+            $proTag[(string) ($e['datum'] ?? '')][] = $e;
+        }
+        $result = [];
+        $ende = (int) date('t', (int) strtotime($monat.'-01'));
+        for ($d = 1; $d <= $ende; $d++) {
+            $tag = sprintf('%s-%02d', $monat, $d);
+            $liste = $proTag[$tag] ?? [];
+            $sollTag = $soll[$tag] ?? null;
+            $hinweise = [];
+            if ($liste === [] && $sollTag !== null && $sollTag > 0 && $tag <= $heute) {
+                $hinweise[] = ['art' => 'hinweis', 'text' => 'Prüfen – keine Buchung', 'eintraege' => []];
+            }
+            $ohneEnde = [];
+            $ohneBeginn = [];
+            foreach ($liste as $e) {
+                $beginn = trim((string) ($e['beginn'] ?? ''));
+                $endeZeit = trim((string) ($e['ende'] ?? ''));
+                if ($beginn !== '' && $endeZeit === '') {
+                    $ohneEnde[] = (string) ($e['id'] ?? '');
+                } elseif ($beginn === '' && $endeZeit !== '') {
+                    $ohneBeginn[] = (string) ($e['id'] ?? '');
+                }
+            }
+            if ($ohneEnde !== []) {
+                $hinweise[] = ['art' => 'fehler', 'text' => 'Prüfen – Austrittsbuchung fehlt', 'eintraege' => $ohneEnde];
+            }
+            if ($ohneBeginn !== []) {
+                $hinweise[] = ['art' => 'fehler', 'text' => 'Prüfen – Eintrittsbuchung fehlt', 'eintraege' => $ohneBeginn];
+            }
+            if ($liste !== [] && $sollTag !== null && $sollTag > 0) {
+                $ist = array_sum(array_map(fn (array $e): float => (float) ($e['stunden'] ?? 0), $liste));
+                if (abs($ist - $sollTag) > self::ABWEICHUNG * $sollTag + 0.004) {
+                    $hinweise[] = ['art' => 'warnung', 'text' => 'Arbeitszeit prüfen', 'eintraege' => []];
+                }
+            }
+            if ($hinweise !== []) {
+                $result[$tag] = $hinweise;
+            }
+        }
+
+        return $result;
+    }
+
     public static function gesperrt(string $status): bool
     {
         return in_array($status, self::GESPERRT, true);

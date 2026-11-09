@@ -23,6 +23,7 @@ import type {
     Eintrag,
     Kategorien,
     Status,
+    Pruefung,
     Summen,
     Unterschrift,
 } from '../lib/types';
@@ -46,6 +47,8 @@ type Props = {
     /** ClickTime führt die Zeiten der Person (#164) */
     clicktime?: boolean;
     abgeschlossenVon?: string | null;
+    /** Prüfhinweise je Tag (#167) */
+    pruefungen?: Record<string, Pruefung[]>;
     /** Arbeitstage ohne Eintrag (#33) */
     fehlend?: string[];
 };
@@ -217,6 +220,7 @@ export default function ZeiterfassungPerson(props: Props) {
                             monat={monat}
                             feiertage={props.feiertage}
                             soll={props.soll}
+                            pruefungen={props.pruefungen}
                             eintraege={eintraege}
                             summen={summen}
                             kategorien={kategorien}

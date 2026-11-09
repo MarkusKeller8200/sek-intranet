@@ -61,6 +61,38 @@ class ZeiterfassungAbschlussTest extends TestCase
         $this->assertSame(['2026-10-03'], Zeitkonto::fehlendeTage(self::MONAT, $eintraege, [], ['2026-10-01' => 8.4, '2026-10-02' => 0.0, '2026-10-03' => 4.0], '2026-10-05'));
     }
 
+    public function test_day_checks_missing_booking_clock_in_out_and_deviation(): void
+    {
+        $soll = ['2026-10-01' => 8.4, '2026-10-02' => 8.4, '2026-10-03' => 0.0, '2026-10-05' => 8.4, '2026-10-06' => 8.4, '2026-10-07' => 8.4, '2026-10-30' => 8.4];
+        $eintraege = [
+            ['id' => 'a', 'datum' => '2026-10-01', 'beginn' => '07:30', 'ende' => '16:24', 'stunden' => 8.4],
+            ['id' => 'b', 'datum' => '2026-10-05', 'beginn' => '07:30', 'ende' => null, 'stunden' => 8.4],
+            ['id' => 'c', 'datum' => '2026-10-06', 'beginn' => null, 'ende' => '16:00', 'stunden' => 8.4],
+            ['id' => 'd', 'datum' => '2026-10-07', 'beginn' => '07:30', 'ende' => '11:30', 'stunden' => 4.0],
+            // Ferien ohne Zeiten: kein Fehler
+            ['id' => 'e', 'datum' => '2026-10-02', 'beginn' => null, 'ende' => null, 'stunden' => 8.4],
+        ];
+        $p = Zeitkonto::pruefungen(self::MONAT, $eintraege, $soll, '2026-10-29');
+        $texte = fn (string $tag): array => array_column($p[$tag] ?? [], 'text');
+        $this->assertSame([], $texte('2026-10-01'));
+        $this->assertSame([], $texte('2026-10-02'), 'Ferien ohne Zeiten');
+        $this->assertSame([], $texte('2026-10-03'), 'Soll 0');
+        $this->assertSame(['Prüfen – Austrittsbuchung fehlt'], $texte('2026-10-05'));
+        $this->assertSame(['b'], $p['2026-10-05'][0]['eintraege']);
+        $this->assertSame('fehler', $p['2026-10-05'][0]['art']);
+        $this->assertSame(['Prüfen – Eintrittsbuchung fehlt'], $texte('2026-10-06'));
+        $this->assertSame(['Arbeitszeit prüfen'], $texte('2026-10-07'), '4.0 h statt 8.4 h');
+        $this->assertSame('warnung', $p['2026-10-07'][0]['art']);
+        $this->assertSame([], $texte('2026-10-30'), 'künftiger Tag');
+        // 20 % genau: keine Warnung; darüber: Warnung
+        $this->assertSame([], Zeitkonto::pruefungen(self::MONAT, [['id' => 'x', 'datum' => '2026-10-01', 'stunden' => 10.08]], ['2026-10-01' => 8.4], '2026-10-29'));
+        $this->assertNotSame([], Zeitkonto::pruefungen(self::MONAT, [['id' => 'x', 'datum' => '2026-10-01', 'stunden' => 10.2]], ['2026-10-01' => 8.4], '2026-10-29'));
+        // ohne Sollzeit (keine ClickTime-Präsenzen): kein «keine Buchung»
+        $this->assertSame([], Zeitkonto::pruefungen(self::MONAT, [], [], '2026-10-29'));
+        $tage = Zeitkonto::pruefungen(self::MONAT, [], ['2026-10-01' => 8.4], '2026-10-29');
+        $this->assertSame([['art' => 'hinweis', 'text' => 'Prüfen – keine Buchung', 'eintraege' => []]], $tage['2026-10-01']);
+    }
+
     public function test_clicktime_person_closes_month_in_clicktime(): void
     {
         $id = $this->clicktime();
@@ -81,6 +113,7 @@ class ZeiterfassungAbschlussTest extends TestCase
         $this->assertStringStartsWith('%PDF', (string) Storage::disk('local')->get(Monatsabschluss::datei($id, self::MONAT)));
 
         $this->get('/zeiterfassung?monat='.self::MONAT)->assertInertia(fn (Assert $page) => $page
+            ->has('pruefungen')
             ->where('status.status', 'abgeschlossen')
             ->where('monatsblatt', "/zeiterfassung/monatsblatt/{$id}/".self::MONAT));
         $this->get("/zeiterfassung/monatsblatt/{$id}/".self::MONAT)->assertOk()->assertHeader('Content-Type', 'application/pdf');
@@ -133,7 +166,8 @@ class ZeiterfassungAbschlussTest extends TestCase
         $sl = $this->signInAs('schulleitung');
         $this->get('/zeiterfassung/visum?monat='.self::MONAT)->assertInertia(fn (Assert $page) => $page
             ->where('personen.0.status', 'offen')
-            ->where('personen.0.fehlend', fn ($n): bool => $n > 0));
+            ->where('personen.0.fehlend', fn ($n): bool => $n > 0)
+            ->where('personen.0.pruefen.fehler', 0));
         $this->post('/zeiterfassung/visum/erinnerung', ['monat' => self::MONAT])->assertRedirect();
         $this->assertNotEmpty(array_filter((array) app(Notifications::class)->forUser($id), fn ($n): bool => str_contains((string) ($n['title'] ?? ''), 'bitte abschliessen')));
         $this->assertNotNull(app(MonatRepository::class)->status($id, self::MONAT)['erinnert_at']);

@@ -6,6 +6,10 @@ Versionen des Moduls nach SemVer (module.json → «version»).
 
 ### Neu
 
+- **Prüfhinweise je Tag (#167, 0.8.0):** `Zeitkonto::pruefungen` – Arbeitstag mit Sollzeit ohne Buchung («Prüfen –
+  keine Buchung»), Beginn ohne Ende bzw. Ende ohne Beginn (Fehler mit Schild: «Prüfen – Austritts-/Eintrittsbuchung
+  fehlt», auch an der Buchung), Ist mehr als 20 % vom Soll entfernt («Arbeitszeit prüfen»). In der Tabelle (eigene
+  Seite und Visum) und als Anzahl je Person in der Visum-Übersicht.
 - **Monatsabschluss mit ClickTime (#164, 0.8.0):** Für Personen mit ClickTime führt ClickTime Abschluss und
   Genehmigung. Die Person bestätigt «In ClickTime abgeschlossen» (im Notfall die Schulleitung stellvertretend,
   vermerkt); dann letzter Abgleich, Status `abgeschlossen` (gesperrt), Monatsblatt abgelegt, Schulleitung

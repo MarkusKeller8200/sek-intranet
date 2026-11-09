@@ -262,5 +262,15 @@
         "Review and approve submitted months. People with ClickTime close the month in ClickTime. By default the payroll export contains only approved and closed months.",
         "Iigreichti Mönet prüefe und visiere. Persone mit ClickTime schlüssed de Monet i ClickTime ab. De Export für d Lohnbuechhaltig hät standardmässig nur visierti und abgschlossni Mönet."
     ],
-    "erinnert": ["reminded", "erinneret"]
+    "erinnert": ["reminded", "erinneret"],
+    "Prüfen – keine Buchung": ["Check – no booking", "Prüefe – kei Buechig"],
+    "Prüfen – Austrittsbuchung fehlt": [
+        "Check – clock-out missing",
+        "Prüefe – Uustrittsbuechig fehlt"
+    ],
+    "Prüfen – Eintrittsbuchung fehlt": [
+        "Check – clock-in missing",
+        "Prüefe – Iitrittsbuechig fehlt"
+    ],
+    "Arbeitszeit prüfen": ["Check working time", "Arbeitsziit prüefe"]
 }

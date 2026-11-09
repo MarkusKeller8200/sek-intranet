@@ -34,6 +34,14 @@ export type Status = {
     } | null;
 };
 
+/** Prüfhinweis eines Tages (#167): Fehler (Schild), Hinweis oder Warnung. */
+export type Pruefung = {
+    art: 'fehler' | 'hinweis' | 'warnung';
+    text: string;
+    /** betroffene Einträge (IDs) */
+    eintraege: string[];
+};
+
 /** Gesperrt für Änderungen: eingereicht, visiert oder in ClickTime abgeschlossen. */
 export function istGesperrt(status: Status['status']): boolean {
     return (
