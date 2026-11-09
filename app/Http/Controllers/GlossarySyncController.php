@@ -52,7 +52,7 @@ class GlossarySyncController extends Controller
         return redirect('/glossar/sync');
     }
 
-    public function proposeForm(string $id): Response
+    public function createProposal(string $id): Response
     {
         $entry = $this->glossary->findOrFail($id);
         $proposals = new GlossaryProposals($this->glossary);
@@ -67,7 +67,7 @@ class GlossarySyncController extends Controller
         ]);
     }
 
-    public function propose(Request $request, string $id): RedirectResponse
+    public function storeProposal(Request $request, string $id): RedirectResponse
     {
         $this->glossary->findOrFail($id);
         $data = $request->validate([

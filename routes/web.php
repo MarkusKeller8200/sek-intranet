@@ -194,8 +194,8 @@ Route::middleware('auth')->group(function () {
         Route::get('glossar/sync', [GlossarySyncController::class, 'show'])->name('glossary.sync');
         Route::post('glossar/sync/probelauf', [GlossarySyncController::class, 'dryRun'])->middleware('throttle:10,1')->name('glossary.sync.dry-run');
         Route::post('glossar/sync', [GlossarySyncController::class, 'sync'])->middleware('throttle:10,1')->name('glossary.sync.run');
-        Route::get('glossar/{id}/vorschlag', [GlossarySyncController::class, 'proposeForm'])->name('glossary.propose');
-        Route::post('glossar/{id}/vorschlag', [GlossarySyncController::class, 'propose'])->middleware('throttle:20,1')->name('glossary.propose.store');
+        Route::get('glossar/{id}/vorschlag', [GlossarySyncController::class, 'createProposal'])->name('glossary.propose');
+        Route::post('glossar/{id}/vorschlag', [GlossarySyncController::class, 'storeProposal'])->middleware('throttle:20,1')->name('glossary.propose.store');
         Route::get('glossar/doppelte', [GlossaryController::class, 'duplicates'])->name('glossary.duplicates');
         Route::post('glossar/doppelte/zusammenfuehren', [GlossaryController::class, 'merge'])->name('glossary.merge');
         Route::post('glossar/doppelte/belassen', [GlossaryController::class, 'keepApart'])->name('glossary.keep');
