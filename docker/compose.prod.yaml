@@ -1,15 +1,20 @@
-# Produktion auf dem Hostinger-VPS (Traefik läuft bereits als eigenes Projekt «traefik»).
-# Liegt auf dem Server als /docker/intranet/docker-compose.yml, der Quellcode in ./src.
+# Produktion: Hostinger-VPS (Instanz «intranet», hostinger.sekbuelach.ch) und Infomaniak-Server (#171: Instanzen
+# «intranet-dev», später «intranet-live»). Traefik läuft jeweils als eigenes Projekt «traefik».
+# Liegt auf dem Server als /docker/<Instanz>/docker-compose.yml, der Quellcode in ./src.
 # Wird bei jedem Deployment von GitHub Actions überschrieben – Einstellungen in ./.env ändern.
+#
+# INTRANET_INSTANZ (in .env, vom Deploy gesetzt) trennt mehrere Instanzen auf einem Server: Projektname, Image,
+# Volumen und Traefik-Router. Ohne Angabe «intranet» – so bleiben Volumen und Router auf Hostinger unverändert.
 
-name: intranet
+name: ${INTRANET_INSTANZ:-intranet}
 
 services:
     app:
         build:
             context: ./src
-        image: sekbuelach-intranet:latest
+        image: sekbuelach-${INTRANET_INSTANZ:-intranet}:latest
         restart: unless-stopped
+        mem_limit: ${INTRANET_MEM_LIMIT:-2g}
         env_file:
             - path: ./.env
               required: false
@@ -21,10 +26,10 @@ services:
             - intranet-storage:/var/www/html/storage
         labels:
             - traefik.enable=true
-            - traefik.http.routers.intranet.rule=Host(`${INTRANET_HOST:-intranet.sekbuelach.ch}`)
-            - traefik.http.routers.intranet.entrypoints=websecure
-            - traefik.http.routers.intranet.tls.certresolver=letsencrypt
-            - traefik.http.services.intranet.loadbalancer.server.port=80
+            - traefik.http.routers.${INTRANET_INSTANZ:-intranet}.rule=Host(`${INTRANET_HOST:-intranet.sekbuelach.ch}`)
+            - traefik.http.routers.${INTRANET_INSTANZ:-intranet}.entrypoints=websecure
+            - traefik.http.routers.${INTRANET_INSTANZ:-intranet}.tls.certresolver=letsencrypt
+            - traefik.http.services.${INTRANET_INSTANZ:-intranet}.loadbalancer.server.port=80
 
 volumes:
     intranet-storage:

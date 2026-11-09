@@ -383,6 +383,8 @@ Regeln (gelten für alle Speicher, siehe auch `docs/KONZEPT-VERSIONIERUNG.md`):
   Grundeinrichtung und Deploy-Agent #135; Schlüsseldienst #138; Angebot «Dediziert» #140.
 - Abo-Plattform: Meilenstein «Plattform – Abo», #121–#126; Updates #133.
 - Idee Ende-zu-Ende für einen abgegrenzten Bereich: #139 (Sammlung «Funktionen»).
+- Eigener Server für dieses Intranet: Meilenstein «Hosting Infomaniak», #170–#173 (Anleitung
+  `docs/SERVER-INFOMANIAK.md`); Vorstufe für #114, #135, #118 und #143.
 
 Alle mit `triage`. Die Issues der beiden Plattformen ziehen in die eigenen Repositories um, sobald es diese gibt.
 

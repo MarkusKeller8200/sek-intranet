@@ -9,6 +9,13 @@ on:
         description: 'Ohne Tests veröffentlichen? «ja» eintippen'
         required: true
         default: ''
+      ziel:
+        description: 'Ziel'
+        type: choice
+        options:
+          - production
+          - dev
+        default: production
 
 permissions:
   contents: read
@@ -27,3 +34,7 @@ jobs:
     needs: check-input
     uses: ./.github/workflows/_deploy.yml
     secrets: inherit
+    with:
+      environment: ${{ inputs.ziel }}
+      target: ${{ inputs.ziel == 'dev' && '/docker/intranet-dev' || '/docker/intranet' }}
+      instanz: ${{ inputs.ziel == 'dev' && 'intranet-dev' || 'intranet' }}

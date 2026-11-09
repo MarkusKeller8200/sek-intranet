@@ -11,6 +11,11 @@ laufend unter **Unveröffentlicht**. Ab 0.32.0 entsteht eine Version nur bei ein
 
 ### Neu
 
+- **Betrieb: Infomaniak-Server (#170–#172):** Einrichtungsskript für Ubuntu 26.04 (Docker, Benutzer «deploy», SSH
+  nur mit Schlüssel, ufw, fail2ban, automatische Sicherheitsupdates, Traefik), mehrere Instanzen pro Server
+  (`INTRANET_INSTANZ`), Deploy zusätzlich nach `intranet-dev.sekbuelach.ch` (Environment «dev») und tägliche
+  verschlüsselte Sicherung mit restic nach Swiss Backup samt Wiederherstellungstest. Hostinger läuft neu unter
+  `hostinger.sekbuelach.ch`; der Hostname wird bei jedem Deploy nachgeführt. Anleitung: `docs/SERVER-INFOMANIAK.md`.
 - **ClickTime: Mitarbeitende anlegen (#31):** Aktion «Mitarbeitende anlegen» mit Vorschau und Dubletten-Prüfung
   (Datenherkunft, gleiche Personalnummer, Benutzername, Badge-Nummer oder E-Mail → nur verbinden); nach dem Anlegen
   wird die Personalnummer aus der Antwort in der Datenherkunft gespeichert. Echte Aufrufe erst nach Freischaltung der
@@ -506,7 +511,7 @@ laufend unter **Unveröffentlicht**. Ab 0.32.0 entsteht eine Version nur bei ein
 
 ### Geändert
 
-- Plugins: gespeicherte Zugangsdaten (Token, Passwörter, Secrets) erscheinen im Formular als «********»
+- Plugins: gespeicherte Zugangsdaten (Token, Passwörter, Secrets) erscheinen im Formular als «**\*\*\*\***»
 - Manifest: Einstellung `required_unless` (Pflicht nur, wenn eine andere Einstellung leer ist)
 
 ## [0.26.0] – 2026-10-31

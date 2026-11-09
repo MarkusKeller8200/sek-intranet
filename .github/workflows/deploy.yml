@@ -98,3 +98,13 @@ jobs:
     needs: ci
     uses: ./.github/workflows/_deploy.yml
     secrets: inherit
+
+  # Infomaniak-Dev (#171): wird übersprungen, solange das Environment «dev» nicht eingerichtet ist
+  deploy-dev:
+    needs: ci
+    uses: ./.github/workflows/_deploy.yml
+    secrets: inherit
+    with:
+      environment: dev
+      target: /docker/intranet-dev
+      instanz: intranet-dev

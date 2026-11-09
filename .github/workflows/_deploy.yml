@@ -1,8 +1,23 @@
 name: deploy-steps
 
 # Gemeinsame Deployment-Schritte, aufgerufen von deploy.yml und deploy-quick.yml.
+# Pro Ziel ein GitHub-Environment mit VPS_HOST, INTRANET_HOST, optional VPS_USER (Variablen) sowie VPS_SSH_KEY und
+# VPS_KNOWN_HOSTS (Secrets):
+#   production – Hostinger, Instanz «intranet» (hostinger.sekbuelach.ch)
+#   dev        – Infomaniak, Instanz «intranet-dev» (intranet-dev.sekbuelach.ch, #171)
+# Ist ein Environment ausser production nicht eingerichtet (VPS_HOST fehlt), wird der Deploy übersprungen.
 on:
   workflow_call:
+    inputs:
+      environment:
+        type: string
+        default: production
+      target:
+        type: string
+        default: /docker/intranet
+      instanz:
+        type: string
+        default: intranet
 
 permissions:
   contents: read
@@ -11,52 +26,75 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     concurrency:
-      group: deploy-production
+      group: deploy-${{ inputs.environment }}
       cancel-in-progress: false
-    environment:
-      name: production
-      url: https://${{ vars.INTRANET_HOST || 'intranet.sekbuelach.ch' }}
+    environment: ${{ inputs.environment }}
     env:
-      HOST: ${{ vars.VPS_HOST || secrets.VPS_HOST || '76.13.156.138' }}
-      INTRANET_HOST: ${{ vars.INTRANET_HOST || 'intranet.sekbuelach.ch' }}
-      TARGET: /docker/intranet
+      HOST: ${{ vars.VPS_HOST || secrets.VPS_HOST || (inputs.environment == 'production' && '76.13.156.138' || '') }}
+      INTRANET_HOST: ${{ vars.INTRANET_HOST || (inputs.environment == 'production' && 'hostinger.sekbuelach.ch' || '') }}
+      VPS_USER: ${{ vars.VPS_USER || 'root' }}
+      TARGET: ${{ inputs.target }}
+      INSTANZ: ${{ inputs.instanz }}
     steps:
+      - name: Ziel prüfen
+        id: ziel
+        run: |
+          if [ -z "$HOST" ] || [ -z "$INTRANET_HOST" ]; then
+            echo "::notice title=Deploy übersprungen::Environment «${{ inputs.environment }}» ist nicht eingerichtet (VPS_HOST/INTRANET_HOST fehlen)."
+            echo "ok=" >> "$GITHUB_OUTPUT"
+          else
+            echo "ok=1" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Checkout code
+        if: steps.ziel.outputs.ok
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
           fetch-depth: 0 # Tags für «Developer Release» (git describe)
 
       - name: SSH vorbereiten
+        if: steps.ziel.outputs.ok
         env:
           SSH_KEY: ${{ secrets.VPS_SSH_KEY }}
           KNOWN_HOSTS: ${{ secrets.VPS_KNOWN_HOSTS }}
         run: |
           test -n "$SSH_KEY" || { echo "Secret VPS_SSH_KEY fehlt"; exit 1; }
+          test -n "$KNOWN_HOSTS" || [ "${{ inputs.environment }}" = production ] || { echo "Secret VPS_KNOWN_HOSTS fehlt"; exit 1; }
           install -m 700 -d ~/.ssh
           printf '%s\n' "$SSH_KEY" > ~/.ssh/id_deploy
           chmod 600 ~/.ssh/id_deploy
           printf '%s\n' "$KNOWN_HOSTS" > ~/.ssh/known_hosts
-          printf 'Host vps\n  HostName %s\n  User root\n  IdentityFile ~/.ssh/id_deploy\n  IdentitiesOnly yes\n' "$HOST" > ~/.ssh/config
+          printf 'Host vps\n  HostName %s\n  User %s\n  IdentityFile ~/.ssh/id_deploy\n  IdentitiesOnly yes\n' "$HOST" "$VPS_USER" > ~/.ssh/config
 
       - name: Quellcode übertragen
+        if: steps.ziel.outputs.ok
         run: |
           ssh vps "mkdir -p $TARGET && rm -rf $TARGET/src.new && mkdir $TARGET/src.new"
           git archive --format=tar HEAD | ssh vps "tar -x -C $TARGET/src.new"
           ssh vps "cd $TARGET && rm -rf src.old && { [ -d src ] && mv src src.old || true; } && mv src.new src && cp src/docker/compose.prod.yaml docker-compose.yml"
 
       - name: Bauen und starten
+        if: steps.ziel.outputs.ok
         run: |
-          ssh vps "cd $TARGET && touch .env && grep -q '^INTRANET_HOST=' .env || echo 'INTRANET_HOST=$INTRANET_HOST' >> .env"
+          # Instanz und Hostname bei jedem Deploy nachführen (Änderungen der Variablen kommen so auf dem Server an)
+          ssh vps "cd $TARGET && touch .env && chmod 600 .env && sed -i '/^INTRANET_HOST=/d;/^INTRANET_INSTANZ=/d' .env && echo 'INTRANET_HOST=$INTRANET_HOST' >> .env && echo 'INTRANET_INSTANZ=$INSTANZ' >> .env"
+          if [ "${{ inputs.environment }}" != production ]; then
+            ssh vps "cd $TARGET && grep -q '^INTRANET_ACCESS_PASSWORD=.' .env" \
+              || echo "::warning title=Kein Zugangspasswort::$INTRANET_HOST ist ohne INTRANET_ACCESS_PASSWORD öffentlich mit Demo-Login erreichbar."
+            ssh vps "cd $TARGET && ! grep -q '^INTRANET_SERVER_IN_SWITZERLAND=true' .env" \
+              || { echo "::error title=Echte Daten auf ${{ inputs.environment }}::INTRANET_SERVER_IN_SWITZERLAND gehört nur auf Live."; exit 1; }
+          fi
           # Build-Angaben für die Versionsanzeige (Commit und Zeitpunkt)
           # Developer Release: Commits nach dem Tag v<VERSION> (leer, wenn es noch keinen Tag gibt)
           describe="$(git describe --tags --long --match 'v[0-9]*' 2>/dev/null || true)"
           ssh vps "cd $TARGET && sed -i '/^INTRANET_BUILD/d' .env && echo 'INTRANET_BUILD=${GITHUB_SHA::7}' >> .env && echo 'INTRANET_BUILD_DATE=$(date -u +%Y-%m-%dT%H:%M:%SZ)' >> .env && echo 'INTRANET_BUILD_DESCRIBE=$describe' >> .env"
-          ssh vps "cd $TARGET && docker compose up -d --build --remove-orphans && docker image prune -f"
+          ssh vps "cd $TARGET && docker compose -p $INSTANZ up -d --build --remove-orphans && docker image prune -f"
 
       # Massgebend ist die Prüfung auf dem Server selbst (Traefik, Zertifikat, App).
       # Der Aufruf von GitHub aus kann an Netz-/Firewall-Regeln scheitern und gibt nur eine Warnung.
       - name: Erreichbarkeit prüfen
+        if: steps.ziel.outputs.ok
         run: |
           ok=
           for i in $(seq 1 36); do
@@ -66,10 +104,10 @@ jobs:
             sleep 5
           done
           if [ -z "$ok" ]; then
-            ssh vps "cd $TARGET && docker compose ps && docker compose logs --tail=60 app" > app-logs.txt 2>&1 || true
+            ssh vps "cd $TARGET && docker compose -p $INSTANZ ps && docker compose -p $INSTANZ logs --tail=60 app" > app-logs.txt 2>&1 || true
             cat check-error.txt app-logs.txt
             cat check-error.txt app-logs.txt > failure.txt
-            .github/scripts/report-failure.sh failure.txt 'Intranet startet nicht'
+            .github/scripts/report-failure.sh failure.txt "Intranet startet nicht (${{ inputs.environment }})"
             exit 1
           fi
           echo "Online auf dem Server: https://$INTRANET_HOST"
@@ -77,4 +115,21 @@ jobs:
             echo "Auch von aussen erreichbar."
           else
             echo "::warning title=Von GitHub aus nicht erreichbar::$(tr '\n' ' ' < outside-error.txt)"
+          fi
+
+      - name: Sicherung prüfen
+        if: steps.ziel.outputs.ok
+        run: |
+          # Status schreibt docker/server/backup.sh (#172); fehlt er, ist auf diesem Server keine Sicherung eingerichtet
+          status="$(ssh vps "cat /var/lib/sekbuelach/backup-status 2>/dev/null" || true)"
+          if [ -z "$status" ]; then
+            echo "::notice title=Sicherung::Auf diesem Server ist keine Sicherung mit backup.sh eingerichtet."
+            exit 0
+          fi
+          echo "$status"
+          zeit="$(printf '%s\n' "$status" | sed -n 's/^zeit=//p')"
+          ergebnis="$(printf '%s\n' "$status" | sed -n 's/^ergebnis=//p')"
+          alter=$(( ( $(date +%s) - $(date -d "$zeit" +%s 2>/dev/null || echo 0) ) / 3600 ))
+          if [ "$ergebnis" != ok ] || [ "$alter" -gt 36 ]; then
+            echo "::warning title=Sicherung prüfen::Letzte Sicherung: $ergebnis, vor $alter Stunden."
           fi
