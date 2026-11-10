@@ -67,6 +67,7 @@ export default defineConfig({
             'resources/js/wayfinder/**',
             // Testmodul (erzeugt mit intranet:make-module), nur für PHPUnit
             'tests/Fixtures/**',
+            'docs/inspektionsmanager/**',
         ],
         options: {
             denyWarnings: true,
@@ -86,6 +87,8 @@ export default defineConfig({
             'resources/js/components/ui/*',
             'resources/views/mail/*',
             'tests/Fixtures/**',
+            // Unverändertes Ausgangspaket Inspektionsmanager V39 (Prüfsumme in SHA256.txt)
+            'docs/inspektionsmanager/**',
         ],
         sortTailwindcss: {
             functions: ['clsx', 'cn', 'cva'],

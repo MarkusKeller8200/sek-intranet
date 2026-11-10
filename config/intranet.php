@@ -687,6 +687,12 @@ return [
                     'features' => ['Meine Geräte', 'Geräte je Klasse', 'Defekt melden'],
                     'plugin' => 'jamf',
                 ],
+                'inspektionen' => [
+                    'title' => 'Inspektionsmanager',
+                    'icon' => 'ClipboardCheck',
+                    'description' => 'Inspektionen, Mutationen und Mängel der Fachstelle Infrastruktur zentral erfassen – auf PC, Tablet und Handy.',
+                    'features' => ['Einzel- und Sammelkontrollen mit Prüfkatalog', 'Fotos, Unterschrift und PDF-Bericht', 'Mutationen und Mängelübersicht'],
+                ],
                 'lizenzen' => [
                     'title' => 'Lizenzen',
                     'icon' => 'KeyRound',

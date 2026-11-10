@@ -11,6 +11,9 @@ laufend unter **Unveröffentlicht**. Ab 0.32.0 entsteht eine Version nur bei ein
 
 ### Neu
 
+- **Inspektionsmanager – Konzept (#175):** Konzept mit Lösungsvorschlag, Datenmodell, Rechten, Etappen und
+  Abnahmekriterien (`docs/KONZEPT-INSPEKTIONSMANAGER.md`); Ausgangspaket V39 unverändert in
+  `docs/inspektionsmanager/`; Menüpunkt «Räume & Geräte → Inspektionsmanager» als Platzhalter.
 - **Sicherung herunterladen und wiederherstellen (#174):** Einstellungen → Sicherung (nur Administration). Ganze
   Installation (alle Sammlungen inkl. Module, Dokumente und Dateien; ohne Schlüssel des Servers, Logs, Sitzungen)
   als ZIP oder – mit Passwort – verschlüsselt (Argon2id, XChaCha20-Poly1305) inkl. Plugin-Zugangsdaten. Sicherungen

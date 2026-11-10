@@ -416,5 +416,22 @@
     "Nur ein Menü offen: Aufklappen eines Menüs klappt alle anderen zu": [
         "Only one menu open: opening a menu closes all others",
         "Nur eis Menü offe: Wänn mer es Menü uftuet, gönd alli andere zue"
+    ],
+    "Inspektionsmanager": ["Inspection manager", "Inspektionsmanager"],
+    "Inspektionen, Mutationen und Mängel der Fachstelle Infrastruktur zentral erfassen – auf PC, Tablet und Handy.": [
+        "Record inspections, asset changes and defects of the infrastructure unit centrally – on PC, tablet and phone.",
+        "Inspektione, Mutatione und Mängel vo de Fachstell Infrastruktur zentral erfasse – uf em PC, Tablet und Handy."
+    ],
+    "Einzel- und Sammelkontrollen mit Prüfkatalog": [
+        "Single and group checks with inspection catalogue",
+        "Einzel- und Sammelkontrolle mit Prüefkatalog"
+    ],
+    "Fotos, Unterschrift und PDF-Bericht": [
+        "Photos, signature and PDF report",
+        "Fotos, Unterschrift und PDF-Bricht"
+    ],
+    "Mutationen und Mängelübersicht": [
+        "Asset changes and defect overview",
+        "Mutatione und Mängelübersicht"
     ]
 }

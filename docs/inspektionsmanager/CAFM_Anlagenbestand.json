@@ -1,0 +1,5126 @@
+[
+  {
+    "id": "81c15f02-f142-44ee-aed3-27c3c1ec774e",
+    "name": "D01.04 Niederspannungs-Hauptverteilung (NHV) HV U01-01",
+    "number": "HV U01-01",
+    "location": "Hibi Infra Gebäude · 01 Untergeschoss, 003 Zentrale Elektro",
+    "site": "HIBI"
+  },
+  {
+    "id": "f6366d98-1675-4530-a44a-c9f21c8d49a8",
+    "name": "D 8 Enthärtungs-, Entkalkungsanlage",
+    "number": "801350-01",
+    "location": "Hibi Infra Gebäude · 01 Untergeschoss, 004 Zentrale Sanitär",
+    "site": "HIBI"
+  },
+  {
+    "id": "22e00bc2-f0d8-4308-a0c6-c13482523f06",
+    "name": "C Konstruktion Gebäude (Sammelposition)",
+    "number": "CAFM-22E00BC2",
+    "location": "Hibi Infra Gebäude",
+    "site": "HIBI"
+  },
+  {
+    "id": "8c406d3e-0e84-4638-91b0-5e7b4f8aeafb",
+    "name": "E 3 Äussere Wandbekleidung Gebäude (Fenster usw.) (Sammelposition)",
+    "number": "CAFM-8C406D3E",
+    "location": "Hibi Trakt C",
+    "site": "HIBI"
+  },
+  {
+    "id": "4e0494d3-3f06-429a-ba52-47795284eaef",
+    "name": "F.1.2 Bedachung zu Aussenwand - Flachdächer/Terrassen (Sammelposition)",
+    "number": "CAFM-4E0494D3",
+    "location": "Hibi Trakt C",
+    "site": "HIBI"
+  },
+  {
+    "id": "97256598-070e-424b-a344-43d12cb4a31e",
+    "name": "G.1  Ausbau Gebäude - Innenausbau (Sammelposition)",
+    "number": "CAFM-97256598",
+    "location": "Hibi Trakt C",
+    "site": "HIBI"
+  },
+  {
+    "id": "d25c4793-4247-4cac-896d-238fe8764fe8",
+    "name": "C Konstruktion Gebäude (Sammelposition)",
+    "number": "CAFM-D25C4793",
+    "location": "Hibi Trakt C",
+    "site": "HIBI"
+  },
+  {
+    "id": "df16b49d-0cc4-468a-a5f0-5de4306e22e4",
+    "name": "D 2.2 KNX-Anlage (UKV-Installationen)",
+    "number": "CAFM-DF16B49D",
+    "location": "Hibi Trakt C",
+    "site": "HIBI"
+  },
+  {
+    "id": "224783fd-7942-4bc6-946a-74520d50901b",
+    "name": "D 7.3 Lüftung Kanäle (Lufthauptverteilung)",
+    "number": "CAFM-224783FD",
+    "location": "Hibi Trakt C",
+    "site": "HIBI"
+  },
+  {
+    "id": "b45a8ddf-7ba2-47af-a44c-bf97b8a499af",
+    "name": "E 3 Äussere Wandbekleidung Gebäude (Fassade) (Sammelposition)",
+    "number": "CAFM-B45A8DDF",
+    "location": "Hibi Trakt C",
+    "site": "HIBI"
+  },
+  {
+    "id": "7978c865-c43b-4c82-8522-11bbb3f44604",
+    "name": "G 2-G4 Ausbau Gebäude - Oberflächen (Sammelposition)",
+    "number": "CAFM-7978C865",
+    "location": "Hibi Trakt C",
+    "site": "HIBI"
+  },
+  {
+    "id": "9d974c53-091a-4f44-95c6-4e73dd2c2d62",
+    "name": "D 1.1 Elektroinst. Niederspannungs El.- Hauptverteilung",
+    "number": "CAFM-9D974C53",
+    "location": "Hibi Trakt C · SH Schulhaus, -1. SH Untergeschoss, 030 Technik, Kommunikaton",
+    "site": "HIBI"
+  },
+  {
+    "id": "20011654-abee-46fd-90aa-cb55c8087f72",
+    "name": "D 1.1 Elektroinstallationen Niederspannungs-Unterverteilungen",
+    "number": "CAFM-20011654",
+    "location": "Hibi Trakt C · SH Schulhaus, 1. SH Obergeschoss, SH Schulhaus, 0. SH Erdgeschoss, SH Schulhaus, -1. SH Untergeschoss,  Lift\n Treppe 1.1\n201 Korridor 2.1",
+    "site": "HIBI"
+  },
+  {
+    "id": "452bb082-ca52-4ec1-bebd-9cb513dc5dd2",
+    "name": "C 1Konstruktion Gebäude (Sammelposition)",
+    "number": "CAFM-452BB082",
+    "location": "Hibi Trakt A",
+    "site": "HIBI"
+  },
+  {
+    "id": "6b97fb08-095c-42d5-88dd-d46fd26b2469",
+    "name": "D 5.4 Heizung Heizleitungsnetz, Untervert., Wärmeabgabe, Heizkörper",
+    "number": "CAFM-6B97FB08",
+    "location": "Hibi Trakt B",
+    "site": "HIBI"
+  },
+  {
+    "id": "d768dbcb-4fba-4580-bad5-03eda614ca4a",
+    "name": "C Konstruktion Gebäude (Sammelposition)",
+    "number": "CAFM-D768DBCB",
+    "location": "Hibi Trakt B",
+    "site": "HIBI"
+  },
+  {
+    "id": "87ea9234-f317-4ac1-9c0b-d0cd0c77c448",
+    "name": "E Äussere Wandbekleidung Gebäude (Fassade) (Sammelposition)",
+    "number": "CAFM-87EA9234",
+    "location": "Hibi Trakt B",
+    "site": "HIBI"
+  },
+  {
+    "id": "bd1bce4b-a08c-46b0-a00f-72b7ef4181ae",
+    "name": "G Ausbau Gebäude - Oberflächen (Sammelposition)",
+    "number": "CAFM-BD1BCE4B",
+    "location": "Hibi Trakt B",
+    "site": "HIBI"
+  },
+  {
+    "id": "4fed57d0-7ddb-44a0-a9b8-4e478dee5b7d",
+    "name": "Äussere Wandbekleidung Gebäude (Fenster usw.) (Sammelposition)",
+    "number": "CAFM-4FED57D0",
+    "location": "Hibi Trakt B",
+    "site": "HIBI"
+  },
+  {
+    "id": "f76bd6d1-94d3-420b-9123-8eeed87a1f51",
+    "name": "Automatische Aussentüranlage",
+    "number": "1141050-1 (Ost)",
+    "location": "Hibi Trakt B · 0. Erdgeschoss,  Eingangshalle",
+    "site": "HIBI"
+  },
+  {
+    "id": "30a084f1-8c46-4f98-9d39-857fa1167f90",
+    "name": "Bedachung zu Aussenwand - Steildächer (Sammelposition)",
+    "number": "CAFM-30A084F1",
+    "location": "Hibi Trakt B",
+    "site": "HIBI"
+  },
+  {
+    "id": "e82231f3-5877-43c8-b8a0-04121fb1edc7",
+    "name": "Wetterstation / Storen-Steuerung B 203 Teamzimmer",
+    "number": "CAFM-E82231F3",
+    "location": "Hibi Trakt B",
+    "site": "HIBI"
+  },
+  {
+    "id": "d17e7cda-0a6e-4fe1-a0eb-edc7413a6133",
+    "name": "Evakuationsanlage",
+    "number": "1801152 / 9606124",
+    "location": "Schulanlage Hibi",
+    "site": "HIBI"
+  },
+  {
+    "id": "a194787f-bfda-4098-bea0-651e3766a87f",
+    "name": "Beleuchtungen Installation (Leuchten)",
+    "number": "CAFM-A194787F",
+    "location": "Hibi Trakt B",
+    "site": "HIBI"
+  },
+  {
+    "id": "0b255849-327a-477c-90e9-af68cad3d829",
+    "name": "Zentrale Uhren- und Gonganlage",
+    "number": "CAFM-0B255849",
+    "location": "Schulanlage Hibi",
+    "site": "HIBI"
+  },
+  {
+    "id": "40fa0493-71d4-40f5-b9f8-8260d829b522",
+    "name": "Elektro-Boiler, Elektro Durchlauferhitzer",
+    "number": "CAFM-40FA0493",
+    "location": "Hibi Trakt B · -1. Untergeschoss\n0. Erdgeschoss\n1. Obergeschoss",
+    "site": "HIBI"
+  },
+  {
+    "id": "adca9d8a-1837-48f6-8026-4640d7cf73f1",
+    "name": "Elektroinstallationen Niederspannungs-Unterverteilungen El.- UV",
+    "number": "CAFM-ADCA9D8A",
+    "location": "Hibi Trakt B · 1. Obergeschoss, -1. Untergeschoss\n Korridor",
+    "site": "HIBI"
+  },
+  {
+    "id": "42866ec5-4403-450b-bea8-3ede626a9fbb",
+    "name": "Ausbau Gebäude - Innenausbau (Sammelposition)",
+    "number": "CAFM-42866EC5",
+    "location": "Hibi Trakt B",
+    "site": "HIBI"
+  },
+  {
+    "id": "b8c5fcc5-0e70-48b2-8288-9e014936516b",
+    "name": "Äussere Wandbekleidung Gebäude (Fassade) (Sammelposition)",
+    "number": "CAFM-B8C5FCC5",
+    "location": "Hibi Trakt A",
+    "site": "HIBI"
+  },
+  {
+    "id": "a8712c55-775d-4747-a928-4c3725066c6f",
+    "name": "Beleuchtungen Installation (Leuchten)",
+    "number": "CAFM-A8712C55",
+    "location": "Hibi Trakt A",
+    "site": "HIBI"
+  },
+  {
+    "id": "c0616268-9a68-4d67-8129-41c92cbe69ae",
+    "name": "Wetterstation / Storen-Steuerung",
+    "number": "CAFM-C0616268",
+    "location": "Hibi Trakt A",
+    "site": "HIBI"
+  },
+  {
+    "id": "d5a47aad-c3ff-4b0d-9f17-31d217f00c21",
+    "name": "Elektroinstallationen Niederspannungs-Unterverteilungen El.- UV",
+    "number": "CAFM-D5A47AAD",
+    "location": "Hibi Trakt A",
+    "site": "HIBI"
+  },
+  {
+    "id": "63546b67-85ad-48da-903c-1e082344db3b",
+    "name": "Kälte Erzeugung/Produktion (Kältemaschine)",
+    "number": "CAFM-63546B67",
+    "location": "Hibi Trakt A",
+    "site": "HIBI"
+  },
+  {
+    "id": "f633978d-84bf-4c38-bcd1-7bbcc7b38127",
+    "name": "Ausbau Gebäude - Innenausbau (Sammelposition)",
+    "number": "CAFM-F633978D",
+    "location": "Hibi Trakt A",
+    "site": "HIBI"
+  },
+  {
+    "id": "9b7d37dc-1b33-4d41-9bbb-f711a660a34c",
+    "name": "Ausbau Gebäude - Oberflächen (Sammelposition)",
+    "number": "CAFM-9B7D37DC",
+    "location": "Hibi Trakt A",
+    "site": "HIBI"
+  },
+  {
+    "id": "526d1f1a-f88c-413b-a2bb-0276e81a9ea8",
+    "name": "Schliessanlage SZ7531 Hibi",
+    "number": "CAFM-526D1F1A",
+    "location": "Schulanlage Hibi",
+    "site": "HIBI"
+  },
+  {
+    "id": "7e5f0236-e8f6-46eb-997d-1d68b990d65c",
+    "name": "Temperaturfühler - TT-551BT3 Grundwasserkreis Austritt Temp.-Fühler",
+    "number": "CAFM-7E5F0236",
+    "location": "Hibi Infra Gebäude · 01 Untergeschoss, 002 Zentrale Wärmeerzeugung",
+    "site": "HIBI"
+  },
+  {
+    "id": "b3d19402-b7de-4f8b-aca7-e30cf7650424",
+    "name": "Temperaturfühler - TT-551BT1 Grundwasserkreis Eintritt Temp.-Fühler",
+    "number": "CAFM-B3D19402",
+    "location": "Hibi Infra Gebäude · 01 Untergeschoss, 002 Zentrale Wärmeerzeugung",
+    "site": "HIBI"
+  },
+  {
+    "id": "ad790d23-4feb-4e32-9b1b-724f7fdf6c31",
+    "name": "Temperaturfühler - TT-551BT6 Zwischenkreis Eintritt Temp.-Fühler",
+    "number": "CAFM-AD790D23",
+    "location": "Hibi Infra Gebäude · 01 Untergeschoss, 002 Zentrale Wärmeerzeugung",
+    "site": "HIBI"
+  },
+  {
+    "id": "8a3e3369-7c74-4e16-916f-d4efa62eca84",
+    "name": "Temperaturfühler - PS-500BP1 Zwischenkreis Sicherheitspressostat",
+    "number": "CAFM-8A3E3369",
+    "location": "Hibi Infra Gebäude · 01 Untergeschoss, 002 Zentrale Wärmeerzeugung",
+    "site": "HIBI"
+  },
+  {
+    "id": "ddd1495d-e99f-4445-a6e7-7c84424f767f",
+    "name": "Temperaturfühler - TT-551BT8 Zwischenkreis Austritt Temp.-Fühler",
+    "number": "CAFM-DDD1495D",
+    "location": "Hibi Infra Gebäude · 01 Untergeschoss, 002 Zentrale Wärmeerzeugung",
+    "site": "HIBI"
+  },
+  {
+    "id": "6a8dc6b3-fe6b-4d7e-bfe9-f6a78bead56a",
+    "name": "Temperaturfühler - TT-552BT6 PWT KW-Kreis Austritt Temp.-Fühler",
+    "number": "CAFM-6A8DC6B3",
+    "location": "Hibi Infra Gebäude · 01 Untergeschoss, 002 Zentrale Wärmeerzeugung",
+    "site": "HIBI"
+  },
+  {
+    "id": "01a8bb2c-3a15-4724-8f41-a781748e2970",
+    "name": "Temperaturfühler - TT-552BT1 PWT Zwischenkreis Eintritt Temp.-Fühler",
+    "number": "CAFM-01A8BB2C",
+    "location": "Hibi Infra Gebäude · 01 Untergeschoss, 002 Zentrale Wärmeerzeugung",
+    "site": "HIBI"
+  },
+  {
+    "id": "0a9295b4-46d4-469f-8679-5402c2655461",
+    "name": "Temperaturfühler - TT-553BT3 Kühlgruppe Vorlauf Temp.-Fühler",
+    "number": "CAFM-0A9295B4",
+    "location": "Hibi Infra Gebäude · 01 Untergeschoss, 002 Zentrale Wärmeerzeugung",
+    "site": "HIBI"
+  },
+  {
+    "id": "7ce1627e-f651-4e77-b19a-04a217c23372",
+    "name": "Temperaturfühler - TT-553BT1 KW-Speicher unten Temp.-Fühler",
+    "number": "CAFM-7CE1627E",
+    "location": "Hibi Infra Gebäude · 01 Untergeschoss, 002 Zentrale Wärmeerzeugung",
+    "site": "HIBI"
+  },
+  {
+    "id": "e0a225ea-3bf9-40fa-a3af-e3680f7aff70",
+    "name": "Temperaturfühler - TT-553BT1 KW-Speicher unten Temp.-Fühler",
+    "number": "CAFM-E0A225EA",
+    "location": "Hibi Infra Gebäude · 01 Untergeschoss, 002 Zentrale Wärmeerzeugung",
+    "site": "HIBI"
+  },
+  {
+    "id": "15c7be9a-d2bd-496a-badd-d73def242980",
+    "name": "Temperaturfühler - TT-552BT8 KW-Speicher oben Temp.-Fühler",
+    "number": "CAFM-15C7BE9A",
+    "location": "Hibi Infra Gebäude · 01 Untergeschoss, 002 Zentrale Wärmeerzeugung",
+    "site": "HIBI"
+  },
+  {
+    "id": "ed423977-616e-47e5-aed7-0a1acdd01e36",
+    "name": "Temperaturfühler - TT-552BT3 PWT KW-Kreis Eintritt Temp.-Fühler",
+    "number": "CAFM-ED423977",
+    "location": "Hibi Infra Gebäude · 01 Untergeschoss, 002 Zentrale Wärmeerzeugung",
+    "site": "HIBI"
+  },
+  {
+    "id": "a1206868-4bb0-4195-8f3f-fb619985a5a1",
+    "name": "Mobiles Entfeuchtungsgerät",
+    "number": "20160102",
+    "location": "Hibi Infra Gebäude · 01 Untergeschoss, 003 Zentrale Elektro\n01 Untergeschoss",
+    "site": "HIBI"
+  },
+  {
+    "id": "8791fc34-954e-4cd7-8e8f-0e1d122adc05",
+    "name": "Mobiles Entfeuchtungsgerät",
+    "number": "20160103",
+    "location": "Hibi Infra Gebäude · 01 Untergeschoss, 004 Zentrale Sanitär",
+    "site": "HIBI"
+  },
+  {
+    "id": "0def2922-8e54-4407-bb1e-7f361105abef",
+    "name": "Mobiles Entfeuchtungsgerät",
+    "number": "20160098",
+    "location": "Hibi Infra Gebäude · 01 Untergeschoss, 002 Zentrale Wärmeerzeugung",
+    "site": "HIBI"
+  },
+  {
+    "id": "cda393d6-ad26-471d-82c7-d999e82b7243",
+    "name": "Notbeleuchtungsanlage mit zentraler Batterieanlage (Zentrale und Leuchten)",
+    "number": "KA247033/1 / PR100317",
+    "location": "Hibi Trakt C · SH Schulhaus, -1. SH Untergeschoss, 030 Technik, Kommunikaton",
+    "site": "HIBI"
+  },
+  {
+    "id": "ac670980-57da-44de-9019-8f7edb73be6e",
+    "name": "Grundwasserpumpe für Wärmepumpe (FU)",
+    "number": "CAFM-AC670980",
+    "location": "Hibi Infra Gebäude · 01 Untergeschoss, 003 Zentrale Elektro",
+    "site": "HIBI"
+  },
+  {
+    "id": "f1ab2b44-5057-4035-bee6-0726d5a5373b",
+    "name": "Niederspannungs-Hauptverteilung (NHV)",
+    "number": "CAFM-F1AB2B44",
+    "location": "Schulanlage Mettmi",
+    "site": "METTMI"
+  },
+  {
+    "id": "891cbffd-c763-4cd3-b8bd-ba38f04b0c68",
+    "name": "Hebebühne",
+    "number": "25008",
+    "location": "Schulanlage Hibi",
+    "site": "HIBI"
+  },
+  {
+    "id": "45ccb18f-cc7b-4f7e-810a-c82763fdd555",
+    "name": "Einbruchmeldeanlage",
+    "number": "CAFM-45CCB18F",
+    "location": "BWS Berufswahlschule",
+    "site": "BWS"
+  },
+  {
+    "id": "212bb76f-6628-4ae7-bcb4-155ddeec90d3",
+    "name": "Entsorgung: Kehricht, Karton, Grüngut",
+    "number": "CAFM-212BB76F",
+    "location": "Schulanlage Hibi",
+    "site": "HIBI"
+  },
+  {
+    "id": "f84a19ce-1e66-4b55-bf2d-04400f34fc5a",
+    "name": "Automatische Aussentüranlage",
+    "number": "1073526-1",
+    "location": "Hibi Trakt C · SH Schulhaus, 0. SH Erdgeschoss, 102 Eingangshalle",
+    "site": "HIBI"
+  },
+  {
+    "id": "8d6c6f2c-2c38-4d71-bd18-0bdc6d938283",
+    "name": "Automatische Aussentüranlage",
+    "number": "1141050-2 (West)",
+    "location": "Hibi Trakt B · 0. Erdgeschoss,  Korridor",
+    "site": "HIBI"
+  },
+  {
+    "id": "7ef81958-f5a4-438e-a610-b7ef6440610e",
+    "name": "Automatische Aussentüranlage",
+    "number": "1031583-1",
+    "location": "Hibi Trakt A · 0. Erdgeschoss, Trakt A Haupteingang",
+    "site": "HIBI"
+  },
+  {
+    "id": "1ac197d9-b5f4-45b1-9e58-79cb63c38f65",
+    "name": "Rückensauger",
+    "number": "CAFM-1AC197D9",
+    "location": "Schulanlage Hibi",
+    "site": "HIBI"
+  },
+  {
+    "id": "a204ba7a-84c8-4b18-9ea7-e0ff8bff7d84",
+    "name": "Aufzugsanlage",
+    "number": "15008895062",
+    "location": "Hibi Trakt A",
+    "site": "HIBI"
+  },
+  {
+    "id": "ffeae7d3-96f1-4be8-902a-751a18127214",
+    "name": "Handfeuerlöscher",
+    "number": "11078051",
+    "location": "Hibi Trakt A · 1. Obergeschoss, 111 Vorbereitung / Kopie",
+    "site": "HIBI"
+  },
+  {
+    "id": "77e709cc-c64d-477f-8592-e6c97f390cbc",
+    "name": "Handfeuerlöscher",
+    "number": "1066754",
+    "location": "Hibi Infra Gebäude",
+    "site": "HIBI"
+  },
+  {
+    "id": "3bf8bdd1-a50f-4ec1-b20c-6d0ba00678c7",
+    "name": "Handfeuerlöscher",
+    "number": "1066755",
+    "location": "Hibi Trakt B · -1. Untergeschoss, 003 Werken Hobeln Klassenzimmer",
+    "site": "HIBI"
+  },
+  {
+    "id": "688418d3-5301-4e50-9f84-13788996fc1a",
+    "name": "Handfeuerlöscher",
+    "number": "833187",
+    "location": "Hibi Trakt C · SH Schulhaus, -1. SH Untergeschoss, 024 Werkstatt Metall Klassenzimmer",
+    "site": "HIBI"
+  },
+  {
+    "id": "eac5d8ac-e3d7-435d-82ab-2c1d955b18c9",
+    "name": "Handfeuerlöscher",
+    "number": "833188",
+    "location": "Hibi Trakt B",
+    "site": "HIBI"
+  },
+  {
+    "id": "bd60417f-a14d-442e-bf95-23b2eb5d7809",
+    "name": "Handfeuerlöscher",
+    "number": "888270",
+    "location": "Hibi Trakt A · 1. Obergeschoss, 208 NT-Zimmer (Chemie)",
+    "site": "HIBI"
+  },
+  {
+    "id": "5c286532-987d-48dd-b9db-ebc77389c1bd",
+    "name": "Handfeuerlöscher",
+    "number": "888275",
+    "location": "Hibi Trakt A · DG Dachgeschoss",
+    "site": "HIBI"
+  },
+  {
+    "id": "8872a4df-9ffe-4e75-be44-c5ce1aabe60c",
+    "name": "Handfeuerlöscher",
+    "number": "1242394",
+    "location": "Hibi Trakt B · DG Dachgeschoss,  Dachboden",
+    "site": "HIBI"
+  },
+  {
+    "id": "e4fe80ae-6b69-43c9-8afe-4b7ef07c406d",
+    "name": "Handfeuerlöscher",
+    "number": "1502295",
+    "location": "Hibi Trakt A · -1. Untergeschoss, 002 Schulküche",
+    "site": "HIBI"
+  },
+  {
+    "id": "e640ef79-aa7d-44db-816f-1e494ab69d83",
+    "name": "Handfeuerlöscher",
+    "number": "1502301",
+    "location": "Hibi Trakt A · -1. Untergeschoss, 003 Schulküche",
+    "site": "HIBI"
+  },
+  {
+    "id": "b1957db6-7018-40bf-8432-65f16934997f",
+    "name": "Rauch- und Wärmeabzugsanlage RWA",
+    "number": "CAFM-B1957DB6",
+    "location": "Hibi Trakt C",
+    "site": "HIBI"
+  },
+  {
+    "id": "8a655929-73f9-4f42-b7b4-867f5a0cf154",
+    "name": "Rauch- und Wärmeabzugsanlage RWA",
+    "number": "CAFM-8A655929",
+    "location": "Hibi Trakt C",
+    "site": "HIBI"
+  },
+  {
+    "id": "97e9f7d4-2b6f-467c-a646-b949078cb9e1",
+    "name": "Rauch- und Wärmeabzugsanlage RWA",
+    "number": "CAFM-97E9F7D4",
+    "location": "Hibi Trakt C",
+    "site": "HIBI"
+  },
+  {
+    "id": "fe7ff12c-b84f-44ae-afa7-64b0427b8e47",
+    "name": "Rauch- und Wärmeabzugsanlage RWA",
+    "number": "CAFM-FE7FF12C",
+    "location": "Hibi Trakt C · TH Turnhalle",
+    "site": "HIBI"
+  },
+  {
+    "id": "2a1a09ea-6929-49c7-bd2a-c4d589b360ac",
+    "name": "Rauch- und Wärmeabzugsanlage RWA",
+    "number": "CAFM-2A1A09EA",
+    "location": "Hibi Trakt C",
+    "site": "HIBI"
+  },
+  {
+    "id": "91f1de37-7180-4c6e-8bc3-604fc5eea818",
+    "name": "Wasserzähler",
+    "number": "14709058",
+    "location": "Hibi Infra Gebäude · 01 Untergeschoss, 004 Zentrale Sanitär",
+    "site": "HIBI"
+  },
+  {
+    "id": "a2df9b7f-d54d-4ea7-82a4-ce6a5ff0261e",
+    "name": "Wasserzähler Wassererwärmer",
+    "number": "513000047",
+    "location": "Hibi Infra Gebäude · 01 Untergeschoss, 004 Zentrale Sanitär",
+    "site": "HIBI"
+  },
+  {
+    "id": "70329eac-520e-4c27-b07f-0247c8d52dfc",
+    "name": "Wasserzähler Kaltwasser Klassentrakt 1 und 2 Ersatzbau",
+    "number": "525001094",
+    "location": "Hibi Infra Gebäude · 01 Untergeschoss, 004 Zentrale Sanitär",
+    "site": "HIBI"
+  },
+  {
+    "id": "12e3884b-044a-4832-9e59-cc64356882c8",
+    "name": "Wasserzähler Enthärtung",
+    "number": "430001981",
+    "location": "Hibi Infra Gebäude · 01 Untergeschoss, 004 Zentrale Sanitär",
+    "site": "HIBI"
+  },
+  {
+    "id": "af3ea4d4-4382-4ce4-a720-1f01b6240cdf",
+    "name": "Wärmepumpe 2",
+    "number": "33122920",
+    "location": "Hibi Infra Gebäude · 01 Untergeschoss, 002 Zentrale Wärmeerzeugung",
+    "site": "HIBI"
+  },
+  {
+    "id": "5bb0abd0-386b-4870-a6fc-6f5dcefbd590",
+    "name": "Wärmepumpe 1",
+    "number": "33122919",
+    "location": "Hibi Infra Gebäude · 01 Untergeschoss, 002 Zentrale Wärmeerzeugung",
+    "site": "HIBI"
+  },
+  {
+    "id": "b2fbe949-7b6c-423f-8c3b-1946362d9505",
+    "name": "Wärmepumpe 3",
+    "number": "33122921",
+    "location": "Hibi Infra Gebäude · 01 Untergeschoss, 002 Zentrale Wärmeerzeugung",
+    "site": "HIBI"
+  },
+  {
+    "id": "bf2d990b-6908-45fc-a550-076c26c4c872",
+    "name": "Hauptpumpen Kälte / Kühlgruppe Ersatzbau: Lüftung Umwälzpumpe (M-205MA1)",
+    "number": "CAFM-BF2D990B",
+    "location": "Hibi Infra Gebäude · 01 Untergeschoss, 002 Zentrale Wärmeerzeugung",
+    "site": "HIBI"
+  },
+  {
+    "id": "946db94f-76a3-48b1-b146-0c9bd2a5cdf8",
+    "name": "Nasssauger / Wassersauger",
+    "number": "CAFM-946DB94F",
+    "location": "Hibi Infra Gebäude · 01 Untergeschoss, 002 Zentrale Wärmeerzeugung",
+    "site": "HIBI"
+  },
+  {
+    "id": "3304c32d-b9c0-479d-84b2-81c1d20c17dc",
+    "name": "Wärmetauscher Brauchwarmwasser BWW",
+    "number": "CAFM-3304C32D",
+    "location": "Hibi Infra Gebäude · 01 Untergeschoss, 002 Zentrale Wärmeerzeugung",
+    "site": "HIBI"
+  },
+  {
+    "id": "4c3125bd-828b-4561-b1b9-bd36ebc04d30",
+    "name": "Hauptpumpen Kälte / Ladung KWKaltwasserkreis Umwälzpumpe (M-204MA1)",
+    "number": "CAFM-4C3125BD",
+    "location": "Hibi Infra Gebäude · 01 Untergeschoss, 002 Zentrale Wärmeerzeugung",
+    "site": "HIBI"
+  },
+  {
+    "id": "b877aa41-19eb-453e-9635-02cdb5f0310a",
+    "name": "Hauptpumpen Kälte / Ladung KW Zwischenkreis Umwälzpumpe (M-203MA1)",
+    "number": "CAFM-B877AA41",
+    "location": "Hibi Infra Gebäude · 01 Untergeschoss, 002 Zentrale Wärmeerzeugung",
+    "site": "HIBI"
+  },
+  {
+    "id": "3abbc213-92cd-4001-93b8-5ae806e4605c",
+    "name": "Ventil: Kühlgruppe Ersatzbau: Lüftung Regelventil (M-460MA5)",
+    "number": "CAFM-3ABBC213",
+    "location": "Hibi Infra Gebäude · 01 Untergeschoss, 002 Zentrale Wärmeerzeugung",
+    "site": "HIBI"
+  },
+  {
+    "id": "aff8e0a9-f28a-4d73-bddd-104b398a7d20",
+    "name": "Ventil: Ladung KW Zwischenkreis Regelventil (M-460MA1)",
+    "number": "CAFM-AFF8E0A9",
+    "location": "Hibi Infra Gebäude · 01 Untergeschoss, 002 Zentrale Wärmeerzeugung",
+    "site": "HIBI"
+  },
+  {
+    "id": "3ecd9114-e7b2-4a5c-bca7-20097d716427",
+    "name": "Brandabschottungen",
+    "number": "CAFM-3ECD9114",
+    "location": "Hibi Infra Gebäude",
+    "site": "HIBI"
+  },
+  {
+    "id": "39f18d57-014c-42f0-be20-80b88d63c854",
+    "name": "Brandabschottungen",
+    "number": "CAFM-39F18D57",
+    "location": "Hibi Trakt C",
+    "site": "HIBI"
+  },
+  {
+    "id": "7b7adcea-8e3a-412c-a463-4c645bb8525c",
+    "name": "Brandabschottungen",
+    "number": "CAFM-7B7ADCEA",
+    "location": "Hibi Trakt A",
+    "site": "HIBI"
+  },
+  {
+    "id": "9548bade-d5ca-45b4-900b-83962bf1235b",
+    "name": "Brandabschottungen",
+    "number": "CAFM-9548BADE",
+    "location": "Hibi Trakt B",
+    "site": "HIBI"
+  },
+  {
+    "id": "7b4bdc94-df05-4646-b2e6-ea1818925cfb",
+    "name": "Brandabschottungen",
+    "number": "CAFM-7B4BDC94",
+    "location": "Hibi Trakt P",
+    "site": "HIBI"
+  },
+  {
+    "id": "49d813a6-bc3a-4d02-9319-91f37a3e5672",
+    "name": "Rückspülautomat Filteranlage",
+    "number": "CAFM-49D813A6",
+    "location": "Hibi Infra Gebäude · 01 Untergeschoss, 002 Zentrale Wärmeerzeugung",
+    "site": "HIBI"
+  },
+  {
+    "id": "5d8627a3-4b0c-44bb-bbd9-2a8e1d326859",
+    "name": "Benzin-Laubbläser / Blasgerät",
+    "number": "CAFM-5D8627A3",
+    "location": "Schulanlage Hibi",
+    "site": "HIBI"
+  },
+  {
+    "id": "b8a01990-7b69-4a52-9e5a-2701ccc91035",
+    "name": "Heckenschere",
+    "number": "42379673300A S",
+    "location": "Schulanlage Hibi",
+    "site": "HIBI"
+  },
+  {
+    "id": "4879ef7d-14b4-4cd0-93bf-0b143fce326f",
+    "name": "Beleuchtungen Installation (Leuchten)",
+    "number": "CAFM-4879EF7D",
+    "location": "Hibi Infra Gebäude",
+    "site": "HIBI"
+  },
+  {
+    "id": "2be0b1d0-d6be-4d2f-aba3-1c66ccf0a8b8",
+    "name": "Brauchwarmwasserspeicher BWW (mit elektrischem Wärmeregister)",
+    "number": "425120409",
+    "location": "Hibi Trakt A · -1. Untergeschoss, 001 Schulküche",
+    "site": "HIBI"
+  },
+  {
+    "id": "bd3ffd37-7549-4f67-aa87-4d8958074368",
+    "name": "Brauchwarmwasserspeicher BWW (mit elektrischem Wärmeregister)",
+    "number": "33397753",
+    "location": "Hibi Trakt A · -1. Untergeschoss, 002 Schulküche",
+    "site": "HIBI"
+  },
+  {
+    "id": "40e6328f-57c9-4164-9858-f3451e1a03e4",
+    "name": "Regelventil M-461MA1 / GR. Klassentr. / Berufssch.",
+    "number": "M-461MA1 / GR. Klassentr. / Berufssch.",
+    "location": "Hibi Infra Gebäude · 01 Untergeschoss, 002 Zentrale Wärmeerzeugung",
+    "site": "HIBI"
+  },
+  {
+    "id": "83b5d80e-b4ba-426b-b28f-f342aeb48be2",
+    "name": "Umwälzpumpe M-207MA1 / Gr. Klassentr. / Berufssch.",
+    "number": "M-207MA1 / Gr. Klassentr. / Berufssch.",
+    "location": "Hibi Infra Gebäude · 01 Untergeschoss, 002 Zentrale Wärmeerzeugung",
+    "site": "HIBI"
+  },
+  {
+    "id": "12079792-cf57-418a-b10c-b2a8e9abcb3a",
+    "name": "Temperaturfühler TT-551BT1 PWT BWW Eintritt Temp. - Fühler",
+    "number": "CAFM-12079792",
+    "location": "Hibi Infra Gebäude · 01 Untergeschoss, 002 Zentrale Wärmeerzeugung",
+    "site": "HIBI"
+  },
+  {
+    "id": "87c21a33-aeef-4d8a-94c7-bfc53a0601a1",
+    "name": "Temperaturfühler TT-551BT2 BWW Austritt Temp. -Fühler",
+    "number": "CAFM-87C21A33",
+    "location": "Hibi Infra Gebäude · 01 Untergeschoss, 002 Zentrale Wärmeerzeugung",
+    "site": "HIBI"
+  },
+  {
+    "id": "4e006758-a3b5-411e-aeca-8628a2079d93",
+    "name": "Plattentauscher BWW",
+    "number": "CAFM-4E006758",
+    "location": "Hibi Infra Gebäude · 01 Untergeschoss, 002 Zentrale Wärmeerzeugung",
+    "site": "HIBI"
+  },
+  {
+    "id": "b4b1dad4-f7c5-4ee3-a8ea-002bee706c62",
+    "name": "Brauchwarmwasserspeicher BWW (mit Heizungs-Wärmeregister)",
+    "number": "1407 / 410087 / A90339",
+    "location": "Hibi Infra Gebäude · 01 Untergeschoss, 002 Zentrale Wärmeerzeugung",
+    "site": "HIBI"
+  },
+  {
+    "id": "f2daccaf-7af4-4b35-a8ca-daf0860069de",
+    "name": "Temperaturfühler TT-551BT6 BWW Speicher oben Temp. -Fühler",
+    "number": "CAFM-F2DACCAF",
+    "location": "Hibi Infra Gebäude · 01 Untergeschoss, 002 Zentrale Wärmeerzeugung",
+    "site": "HIBI"
+  },
+  {
+    "id": "ae00e702-c37b-4657-8bc8-cf62add1e236",
+    "name": "Temperaturfühler TT-551BT8 BWW Speicher unten Temp. -Fühler",
+    "number": "CAFM-AE00E702",
+    "location": "Hibi Infra Gebäude · 01 Untergeschoss, 002 Zentrale Wärmeerzeugung",
+    "site": "HIBI"
+  },
+  {
+    "id": "73cf66a5-0475-4df7-9d9d-a9675f32f016",
+    "name": "Umwälzpumpe M-204MA1 Brauchwarmwasser",
+    "number": "10000346",
+    "location": "Hibi Infra Gebäude · 01 Untergeschoss, 002 Zentrale Wärmeerzeugung",
+    "site": "HIBI"
+  },
+  {
+    "id": "32469e6a-d81b-4f5a-946a-4d91f0e30774",
+    "name": "Temperaturfühler TT-552BT8 Energiespeicher unten Temp. -Fühler",
+    "number": "CAFM-32469E6A",
+    "location": "Hibi Infra Gebäude · 01 Untergeschoss, 002 Zentrale Wärmeerzeugung",
+    "site": "HIBI"
+  },
+  {
+    "id": "7cdcb265-8bef-4040-9547-747443a8ba43",
+    "name": "Temperaturfühler TT-552BT6 Energiespeicher oben Temp. -Fühler",
+    "number": "CAFM-7CDCB265",
+    "location": "Hibi Infra Gebäude · 01 Untergeschoss, 002 Zentrale Wärmeerzeugung",
+    "site": "HIBI"
+  },
+  {
+    "id": "a61bb478-177a-4eeb-b1e7-85c3cb7db4ff",
+    "name": "Kaltwasserspeicher 1",
+    "number": "CAFM-A61BB478",
+    "location": "Hibi Infra Gebäude · 01 Untergeschoss, 002 Zentrale Wärmeerzeugung",
+    "site": "HIBI"
+  },
+  {
+    "id": "e443f162-78c1-4b9e-911e-8147a05dd97a",
+    "name": "Kaltwasserspeicher 2",
+    "number": "CAFM-E443F162",
+    "location": "Hibi Infra Gebäude · 01 Untergeschoss, 002 Zentrale Wärmeerzeugung",
+    "site": "HIBI"
+  },
+  {
+    "id": "2df94c0b-b0f6-4c10-bfc4-51bde77a400c",
+    "name": "Temperaturfühler TT-552BT1 Energiespeicher oben Temp. -Fühler",
+    "number": "CAFM-2DF94C0B",
+    "location": "Hibi Infra Gebäude · 01 Untergeschoss, 002 Zentrale Wärmeerzeugung",
+    "site": "HIBI"
+  },
+  {
+    "id": "761ee86f-28ef-49b3-9889-85931d5f1aeb",
+    "name": "Garagentore",
+    "number": "CAFM-761EE86F",
+    "location": "Hibi Infra Gebäude · 0. Erdgeschoss, 101 Geräteschopf",
+    "site": "HIBI"
+  },
+  {
+    "id": "1d12cc88-d629-436c-a207-914c5fe86469",
+    "name": "Garagentore",
+    "number": "CAFM-1D12CC88",
+    "location": "Hibi Infra Gebäude · 0. Erdgeschoss, 101 Geräteschopf",
+    "site": "HIBI"
+  },
+  {
+    "id": "0591bffb-c353-47c4-8f11-9192c492b356",
+    "name": "Temperaturfühler TT552BT3 Energiespeicher unten Temp. -Fühler",
+    "number": "CAFM-0591BFFB",
+    "location": "Hibi Infra Gebäude · 01 Untergeschoss, 002 Zentrale Wärmeerzeugung",
+    "site": "HIBI"
+  },
+  {
+    "id": "c6a237c0-3edd-4408-b7b2-b997fe8f9c2e",
+    "name": "Expansion / Nachspeisung mit automatischem Druckhaltesystem Heizung",
+    "number": "2015-94702",
+    "location": "Hibi Infra Gebäude · 01 Untergeschoss, 002 Zentrale Wärmeerzeugung",
+    "site": "HIBI"
+  },
+  {
+    "id": "19c6cb20-d000-4fab-8025-a11efac2e977",
+    "name": "Expansion / Nachspeisung mit automatischem Druckhaltesystem Heizung",
+    "number": "2015-94701",
+    "location": "Hibi Infra Gebäude · 01 Untergeschoss, 002 Zentrale Wärmeerzeugung",
+    "site": "HIBI"
+  },
+  {
+    "id": "08ba12a9-4569-4529-8d2a-17dfd707408b",
+    "name": "Temperaturfühler TT-553BT3 Ersatzbau Vorlauf Temp. -Fühler",
+    "number": "CAFM-08BA12A9",
+    "location": "Hibi Infra Gebäude · 01 Untergeschoss, 002 Zentrale Wärmeerzeugung",
+    "site": "HIBI"
+  },
+  {
+    "id": "1bc5d6bd-3ab3-42ab-b73a-8c870bb2ad9c",
+    "name": "Temperaturfühler TT-553BT8 Klassentrakt Vorlauf Temp. -Fühler",
+    "number": "CAFM-1BC5D6BD",
+    "location": "Hibi Infra Gebäude · 01 Untergeschoss, 002 Zentrale Wärmeerzeugung",
+    "site": "HIBI"
+  },
+  {
+    "id": "d15a2991-6c32-41ef-91fa-fe44be11b8da",
+    "name": "Kaltwasserspeicher 3",
+    "number": "CAFM-D15A2991",
+    "location": "Hibi Infra Gebäude · 01 Untergeschoss, 002 Zentrale Wärmeerzeugung",
+    "site": "HIBI"
+  },
+  {
+    "id": "4d70fac5-7f4b-4023-97cf-7caaae07d125",
+    "name": "Demineralisierungsstation (für Heiz- und Kältewasser)",
+    "number": "CAFM-4D70FAC5",
+    "location": "Hibi Infra Gebäude · 01 Untergeschoss, 002 Zentrale Wärmeerzeugung",
+    "site": "HIBI"
+  },
+  {
+    "id": "e53ab0d7-ada0-48e5-8744-e058fd3d0431",
+    "name": "Trimmer / Freischneider",
+    "number": "CAFM-E53AB0D7",
+    "location": "Schulanlage Hibi",
+    "site": "HIBI"
+  },
+  {
+    "id": "c20a3e0a-eb1d-4670-b18f-6ed82f15b1a3",
+    "name": "Benzin-Laubbläser / Blasgerät",
+    "number": "CAFM-C20A3E0A",
+    "location": "Schulanlage Hibi",
+    "site": "HIBI"
+  },
+  {
+    "id": "888b4bc2-facb-4dfd-83cb-0926cf64b5e2",
+    "name": "Akku-Laubbläser / Blasgerät",
+    "number": "CAFM-888B4BC2",
+    "location": "Schulanlage Hibi",
+    "site": "HIBI"
+  },
+  {
+    "id": "9f4edfdd-f85a-42a6-afcc-9f905023bb43",
+    "name": "Trimmer / Freischneider",
+    "number": "CAFM-9F4EDFDD",
+    "location": "Schulanlage Hibi",
+    "site": "HIBI"
+  },
+  {
+    "id": "a0cdd40d-235e-405d-9a24-e7b1a4bc6dd6",
+    "name": "Strömungswächter FS-500BP7 Grundwasser Strömungswächter",
+    "number": "5900",
+    "location": "Hibi Infra Gebäude · 01 Untergeschoss, 002 Zentrale Wärmeerzeugung",
+    "site": "HIBI"
+  },
+  {
+    "id": "e9e11159-de72-4603-a666-7b4952ee6466",
+    "name": "Anstellleiter mit Auszug",
+    "number": "CAFM-E9E11159",
+    "location": "Hibi Infra Gebäude · 0. Erdgeschoss, 101 Geräteschopf",
+    "site": "HIBI"
+  },
+  {
+    "id": "6456ecbe-284f-4dd0-981a-c9fa1e9ff4e3",
+    "name": "Anstellleiter",
+    "number": "CAFM-6456ECBE",
+    "location": "Hibi Infra Gebäude · 0. Erdgeschoss, 101 Geräteschopf",
+    "site": "HIBI"
+  },
+  {
+    "id": "c884f77e-904f-4568-88c0-23b15ef9753a",
+    "name": "Salzstreuer für Traktor",
+    "number": "CAFM-C884F77E",
+    "location": "Hibi Infra Gebäude · 0. Erdgeschoss, 101 Geräteschopf",
+    "site": "HIBI"
+  },
+  {
+    "id": "ba27c04a-943c-4968-9272-e0ef2e4005d9",
+    "name": "Schneeschild für Traktor",
+    "number": "CAFM-BA27C04A",
+    "location": "Hibi Infra Gebäude · 0. Erdgeschoss, 101 Geräteschopf",
+    "site": "HIBI"
+  },
+  {
+    "id": "f9adc174-09b2-420b-8df9-cd830653a9ce",
+    "name": "Abflammgerät",
+    "number": "IW192745",
+    "location": "Hibi Infra Gebäude · 0. Erdgeschoss, 101 Geräteschopf",
+    "site": "HIBI"
+  },
+  {
+    "id": "0543d918-c145-4588-b393-951d22a4bc41",
+    "name": "Laubsauger",
+    "number": "839629",
+    "location": "Hibi Infra Gebäude · 0. Erdgeschoss, 101 Geräteschopf",
+    "site": "HIBI"
+  },
+  {
+    "id": "f566615b-d193-4fce-abf0-9a1bfe6e02bd",
+    "name": "Traktor",
+    "number": "22578",
+    "location": "Hibi Infra Gebäude · 0. Erdgeschoss, 101 Geräteschopf",
+    "site": "HIBI"
+  },
+  {
+    "id": "c3fc4c65-0e89-42d2-85e9-670f8a67d4b9",
+    "name": "Kehrsaugmaschine",
+    "number": "SN 650250108175",
+    "location": "Hibi Infra Gebäude · 0. Erdgeschoss, 101 Geräteschopf",
+    "site": "HIBI"
+  },
+  {
+    "id": "271783b6-f31c-42c9-b366-b10d8e97c9ba",
+    "name": "Rasenmäher",
+    "number": "SN 2303SA2266210007128",
+    "location": "Hibi Infra Gebäude · 0. Erdgeschoss, 101 Geräteschopf",
+    "site": "HIBI"
+  },
+  {
+    "id": "49879ad7-ef62-46d2-91e9-e8afb6f26780",
+    "name": "Palettrolli / Handhubwagen",
+    "number": "CAFM-49879AD7",
+    "location": "Hibi Infra Gebäude · 0. Erdgeschoss, 101 Geräteschopf",
+    "site": "HIBI"
+  },
+  {
+    "id": "bf574a6a-7314-4407-a385-b40ae54d8651",
+    "name": "Tauchpumpe",
+    "number": "SN01387",
+    "location": "Hibi Infra Gebäude · 0. Erdgeschoss, 101 Geräteschopf",
+    "site": "HIBI"
+  },
+  {
+    "id": "5bc9d74c-b980-422d-9153-4476dc8c253e",
+    "name": "Tauchpumpe",
+    "number": "SN000083",
+    "location": "Hibi Infra Gebäude · 0. Erdgeschoss, 101 Geräteschopf",
+    "site": "HIBI"
+  },
+  {
+    "id": "3b973b3f-12cc-4a54-8759-c04d0ce7dc66",
+    "name": "Heckenschere",
+    "number": "1E34F-2",
+    "location": "Hibi Infra Gebäude · 0. Erdgeschoss, 101 Geräteschopf",
+    "site": "HIBI"
+  },
+  {
+    "id": "77483fe3-7e37-4aec-8854-03226a57b00c",
+    "name": "Heckenschere",
+    "number": "CAFM-77483FE3",
+    "location": "Hibi Infra Gebäude · 0. Erdgeschoss, 101 Geräteschopf",
+    "site": "HIBI"
+  },
+  {
+    "id": "3da22eab-7e81-46b2-8760-ded961b7cae4",
+    "name": "Druckluftanlage",
+    "number": "SN0202278029 D",
+    "location": "Hibi Infra Gebäude · 0. Erdgeschoss, 101 Geräteschopf",
+    "site": "HIBI"
+  },
+  {
+    "id": "c2997c62-619a-426d-92ab-b1e228b2dc2c",
+    "name": "Hebebühne / Autolift",
+    "number": "CLN007496S",
+    "location": "Hibi Infra Gebäude · 0. Erdgeschoss, 101 Geräteschopf",
+    "site": "HIBI"
+  },
+  {
+    "id": "a0578a86-b01f-4813-8091-10a134ed4b33",
+    "name": "Labor Gefahrenstoff- und Sicherheitsschrank mit Abluft",
+    "number": "A0101-157965-0116-8",
+    "location": "Hibi Infra Gebäude · 0. Erdgeschoss, 101 Geräteschopf",
+    "site": "HIBI"
+  },
+  {
+    "id": "fa5fa3d8-a7d9-4bd4-b0ef-cab011e247f8",
+    "name": "Labor Gefahrenstoff- und Sicherheitsschrank mit Abluft",
+    "number": "A0108-157949-0116-5",
+    "location": "Hibi Infra Gebäude · 0. Erdgeschoss, 101 Geräteschopf",
+    "site": "HIBI"
+  },
+  {
+    "id": "5cefbf96-029d-42cb-9d8b-9e09b798ad9d",
+    "name": "Rasentraktor",
+    "number": "SN 13415",
+    "location": "Hibi Infra Gebäude · 0. Erdgeschoss, 101 Geräteschopf",
+    "site": "HIBI"
+  },
+  {
+    "id": "5e0badba-2700-45bf-80d9-2449310f6f26",
+    "name": "Beleuchtungen Installation (Leuchten)",
+    "number": "CAFM-5E0BADBA",
+    "location": "Mettmi Trakt S",
+    "site": "METTMI"
+  },
+  {
+    "id": "c112e187-acee-4c12-b053-88b444b3ad7d",
+    "name": "Beleuchtungen Installation (Leuchten)",
+    "number": "CAFM-C112E187",
+    "location": "Mettmi Trakt TH",
+    "site": "METTMI"
+  },
+  {
+    "id": "9812bca3-e129-439c-83aa-cd6fa8e1f63e",
+    "name": "Handfeuerlöscher",
+    "number": "10321",
+    "location": "Hibi Trakt C · SH Schulhaus, -1. SH Untergeschoss, 018 Zentrale Reinigung",
+    "site": "HIBI"
+  },
+  {
+    "id": "594ac897-6117-4745-a259-0202342e70e0",
+    "name": "Kanalisation Grundleitung bis Werkanschluss",
+    "number": "CAFM-594AC897",
+    "location": "BWS Berufswahlschule",
+    "site": "BWS"
+  },
+  {
+    "id": "10fc7b6d-27b2-4b23-bffe-3c45da6125b0",
+    "name": "Kanalisation Grundleitung bis Werkanschluss",
+    "number": "CAFM-10FC7B6D",
+    "location": "Hibi Trakt A",
+    "site": "HIBI"
+  },
+  {
+    "id": "0008d29e-1808-43b9-aa8a-743fd2e6e5ca",
+    "name": "Kanalisation Grundleitung bis Werkanschluss",
+    "number": "CAFM-0008D29E",
+    "location": "Hibi Trakt B",
+    "site": "HIBI"
+  },
+  {
+    "id": "e9fcf81c-2558-4d38-a082-1629b1bad4cc",
+    "name": "Kanalisation Grundleitung bis Werkanschluss",
+    "number": "CAFM-E9FCF81C",
+    "location": "Hibi Trakt C",
+    "site": "HIBI"
+  },
+  {
+    "id": "b445a669-3584-45e7-9c02-15332c3cd2c1",
+    "name": "Kanalisation Grundleitung bis Werkanschluss",
+    "number": "CAFM-B445A669",
+    "location": "Hibi Trakt P",
+    "site": "HIBI"
+  },
+  {
+    "id": "4df6abb1-aecc-41db-a189-d86af093fb2d",
+    "name": "Kanalisation Grundleitung bis Werkanschluss",
+    "number": "CAFM-4DF6ABB1",
+    "location": "Mettmi Trakt O",
+    "site": "METTMI"
+  },
+  {
+    "id": "ad6240a4-2636-4b30-b55f-30841e1d962f",
+    "name": "Kanalisation Grundleitung bis Werkanschluss",
+    "number": "CAFM-AD6240A4",
+    "location": "Mettmi Trakt S",
+    "site": "METTMI"
+  },
+  {
+    "id": "daa8790c-d9fe-47f8-9d71-fe7c46f4a2e6",
+    "name": "Kanalisation Grundleitung bis Werkanschluss",
+    "number": "CAFM-DAA8790C",
+    "location": "Mettmi Trakt TH",
+    "site": "METTMI"
+  },
+  {
+    "id": "b5d3e68d-fd40-4f93-9421-61f7481be758",
+    "name": "Kanalisation Grundleitung bis Werkanschluss",
+    "number": "CAFM-B5D3E68D",
+    "location": "Mettmi Trakt W",
+    "site": "METTMI"
+  },
+  {
+    "id": "ad1c7253-b506-4e9d-b6db-5ca3dfb1add0",
+    "name": "Kanalisation Grundleitung bis Werkanschluss",
+    "number": "CAFM-AD1C7253",
+    "location": "Mettmi Trakt Z",
+    "site": "METTMI"
+  },
+  {
+    "id": "29fe730c-0e94-4fe6-80e9-cd2d3a8bc498",
+    "name": "Kanalisation Grundleitung bis Werkanschluss",
+    "number": "CAFM-29FE730C",
+    "location": "Hibi Trakt D",
+    "site": "HIBI"
+  },
+  {
+    "id": "a1233910-db2e-4bc2-8ecc-ed1bb75c6608",
+    "name": "Flachdach",
+    "number": "CAFM-A1233910",
+    "location": "Hibi Infra Gebäude · Flachdach",
+    "site": "HIBI"
+  },
+  {
+    "id": "0a9107e1-d9e4-48bf-ae81-ec45c6ca1fd2",
+    "name": "Flachdach",
+    "number": "CAFM-0A9107E1",
+    "location": "Hibi Trakt C · Flachdach",
+    "site": "HIBI"
+  },
+  {
+    "id": "fc913acd-b35f-4943-9e8b-d268ad1d8f7b",
+    "name": "Schrägdach",
+    "number": "CAFM-FC913ACD",
+    "location": "Hibi Trakt A · Schrägdach",
+    "site": "HIBI"
+  },
+  {
+    "id": "c6128f3e-b084-4e05-8113-d04149c6a74f",
+    "name": "Schrägdach",
+    "number": "CAFM-C6128F3E",
+    "location": "Hibi Trakt B · Schrägdach",
+    "site": "HIBI"
+  },
+  {
+    "id": "462afffd-65fa-4029-9dac-8202bf1cca12",
+    "name": "Flachdach",
+    "number": "CAFM-462AFFFD",
+    "location": "Mettmi Trakt O · Flachdach",
+    "site": "METTMI"
+  },
+  {
+    "id": "f7ce1fae-1fe0-4ab1-9e5c-93afbf4dd2ef",
+    "name": "Flachdach",
+    "number": "CAFM-F7CE1FAE",
+    "location": "Mettmi Trakt S · Flachdach",
+    "site": "METTMI"
+  },
+  {
+    "id": "f98c5f95-7f57-4a05-9b65-25d9bd95763a",
+    "name": "Flachdach",
+    "number": "CAFM-F98C5F95",
+    "location": "Mettmi Trakt TH · Flachdach",
+    "site": "METTMI"
+  },
+  {
+    "id": "c5db7cb3-d749-4fc5-aaf9-34efa9620656",
+    "name": "Flachdach",
+    "number": "CAFM-C5DB7CB3",
+    "location": "Mettmi Trakt W · Flachdach",
+    "site": "METTMI"
+  },
+  {
+    "id": "c0cb4c90-a0a4-4ec8-82be-6cbcc0a05e46",
+    "name": "Flachdach",
+    "number": "CAFM-C0CB4C90",
+    "location": "Mettmi Trakt Z · Flachdach",
+    "site": "METTMI"
+  },
+  {
+    "id": "68351b47-51ca-4aec-9e3f-80676145e11e",
+    "name": "Nasslöschposten",
+    "number": "CAFM-68351B47",
+    "location": "Hibi Trakt B · 0. Erdgeschoss,  Korridor",
+    "site": "HIBI"
+  },
+  {
+    "id": "af5f606b-d6ea-4d7c-ab01-2226cf07af95",
+    "name": "Nasslöschposten",
+    "number": "CAFM-AF5F606B",
+    "location": "Hibi Trakt B · 1. Obergeschoss,  Korridor",
+    "site": "HIBI"
+  },
+  {
+    "id": "d076f310-9def-4e1c-b946-d843ab3160b7",
+    "name": "Nasslöschposten",
+    "number": "CAFM-D076F310",
+    "location": "Hibi Trakt A · 0. Erdgeschoss,  EG. Korridor",
+    "site": "HIBI"
+  },
+  {
+    "id": "55acaa78-dfd7-4c7a-a9d4-8d6056d4c34e",
+    "name": "Nasslöschposten",
+    "number": "CAFM-55ACAA78",
+    "location": "Hibi Trakt A · 1. Obergeschoss,  Korridor",
+    "site": "HIBI"
+  },
+  {
+    "id": "0c7febf9-5271-44c9-98ca-4477c49296d8",
+    "name": "Nasslöschposten",
+    "number": "CAFM-0C7FEBF9",
+    "location": "Hibi Trakt A · DG Dachgeschoss,  Korridor",
+    "site": "HIBI"
+  },
+  {
+    "id": "85026219-f115-4a43-a251-5fcc7338d868",
+    "name": "Nasslöschposten",
+    "number": "CAFM-85026219",
+    "location": "Hibi Trakt C · SH Schulhaus, -1. SH Untergeschoss, 008 Korridor",
+    "site": "HIBI"
+  },
+  {
+    "id": "7ae105b7-a726-4869-909c-2b64b7533648",
+    "name": "Nasslöschposten",
+    "number": "CAFM-7AE105B7",
+    "location": "Hibi Trakt C · TH Turnhalle, -1. TH Untergeschoss, 004 Korridor",
+    "site": "HIBI"
+  },
+  {
+    "id": "4afcfdf6-8947-4d73-adb5-eb2e9949cefb",
+    "name": "Nasslöschposten",
+    "number": "CAFM-4AFCFDF6",
+    "location": "Hibi Trakt C · SH Schulhaus, 0. SH Erdgeschoss, 104 Gang / Korridor hinten",
+    "site": "HIBI"
+  },
+  {
+    "id": "8b699e10-ad5d-4533-b34d-99c59db284a8",
+    "name": "Nasslöschposten",
+    "number": "CAFM-8B699E10",
+    "location": "Hibi Trakt C · SH Schulhaus, 0. SH Erdgeschoss, 101 Galerie",
+    "site": "HIBI"
+  },
+  {
+    "id": "b32d21e7-1d84-4b4b-af1a-755b7b6d35e0",
+    "name": "Nasslöschposten",
+    "number": "CAFM-B32D21E7",
+    "location": "Hibi Trakt C · SH Schulhaus, 1. SH Obergeschoss, 202 Korridor 2.2",
+    "site": "HIBI"
+  },
+  {
+    "id": "ea3aa1bb-b528-4c38-bb13-26d7d2ca17e0",
+    "name": "Nasslöschposten",
+    "number": "CAFM-EA3AA1BB",
+    "location": "Hibi Trakt C · SH Schulhaus, 1. SH Obergeschoss, 201 Korridor 2.1",
+    "site": "HIBI"
+  },
+  {
+    "id": "74f18982-0ccc-4471-b46b-93ccaa3daba2",
+    "name": "Mechanische Brandschutztüren Trakt A",
+    "number": "CAFM-74F18982",
+    "location": "Hibi Trakt A",
+    "site": "HIBI"
+  },
+  {
+    "id": "9e0582ba-8d7e-4ce0-8f40-235107195cf8",
+    "name": "Mechanische Brandschutztüren Trakt B",
+    "number": "CAFM-9E0582BA",
+    "location": "Hibi Trakt B",
+    "site": "HIBI"
+  },
+  {
+    "id": "340a56bf-c056-4166-936e-46049b72d057",
+    "name": "Mechanische Brandschutztüren Trakt C",
+    "number": "CAFM-340A56BF",
+    "location": "Hibi Trakt C",
+    "site": "HIBI"
+  },
+  {
+    "id": "44953829-e672-4510-bee9-45a73607e974",
+    "name": "Mechanische Brandschutztüren Infrastrukturgebäude",
+    "number": "CAFM-44953829",
+    "location": "Hibi Infra Gebäude",
+    "site": "HIBI"
+  },
+  {
+    "id": "c61f4726-4d7f-4e0d-87d0-f3eca40681bd",
+    "name": "Mechanische Brandschutztüren Trakt P",
+    "number": "CAFM-C61F4726",
+    "location": "Hibi Trakt P",
+    "site": "HIBI"
+  },
+  {
+    "id": "560adefa-32f7-476c-a23f-5ffdf480b79f",
+    "name": "Automatische Brandschutztür mit Rückhaltemagnet",
+    "number": "CAFM-560ADEFA",
+    "location": "Mettmi Trakt O · O.2 Obergeschoss",
+    "site": "METTMI"
+  },
+  {
+    "id": "ff96e234-92d9-4ecb-8227-dd148fd110a3",
+    "name": "Mechanische Brandschutztüren Trakt S",
+    "number": "CAFM-FF96E234",
+    "location": "Mettmi Trakt S",
+    "site": "METTMI"
+  },
+  {
+    "id": "3bd6c33e-88fa-470d-92a8-1c5634d2c5ab",
+    "name": "Mechanische Brandschutztüren Turnhalle",
+    "number": "CAFM-3BD6C33E",
+    "location": "Mettmi Trakt TH",
+    "site": "METTMI"
+  },
+  {
+    "id": "1594ba9f-0c95-44d7-a156-3b347097280e",
+    "name": "Mechanische Brandschutztüren Trakt W",
+    "number": "CAFM-1594BA9F",
+    "location": "Mettmi Trakt W",
+    "site": "METTMI"
+  },
+  {
+    "id": "a180d8b4-1251-4fe5-86e8-1638abe4170a",
+    "name": "Mechanische Brandschutztüren Trakt Z",
+    "number": "CAFM-A180D8B4",
+    "location": "Mettmi Trakt Z",
+    "site": "METTMI"
+  },
+  {
+    "id": "ceae87c2-31a3-4eef-ab12-8637bdea78bb",
+    "name": "Mechanische Brandschutztüren BWS",
+    "number": "CAFM-CEAE87C2",
+    "location": "BWS Berufswahlschule",
+    "site": "BWS"
+  },
+  {
+    "id": "b7faf407-7397-4741-a595-3121f044f24f",
+    "name": "Nasslöschposten",
+    "number": "CAFM-B7FAF407",
+    "location": "BWS Berufswahlschule · 1 Obergeschoss, 09/ Podest / Treppe",
+    "site": "BWS"
+  },
+  {
+    "id": "ec787e1b-ab1b-4a55-b159-22555d74630f",
+    "name": "Nasslöschposten",
+    "number": "CAFM-EC787E1B",
+    "location": "BWS Berufswahlschule · -1 Untergeschoss, U17 / Vorplatz zug. Gard.",
+    "site": "BWS"
+  },
+  {
+    "id": "91102228-2bf7-4b7a-b153-8d3f60d484f6",
+    "name": "Nasslöschposten",
+    "number": "CAFM-91102228",
+    "location": "BWS Berufswahlschule · -2 Untergeschoss, U008 Vorplatz 1 + 2",
+    "site": "BWS"
+  },
+  {
+    "id": "40192849-ec7e-4a17-a28f-8e7341581c0b",
+    "name": "Nasslöschposten",
+    "number": "CAFM-40192849",
+    "location": "BWS Berufswahlschule · 0 Erdgeschoss, E13/ Podest / Treppe",
+    "site": "BWS"
+  },
+  {
+    "id": "0fd38e87-8961-4497-bce1-84068d4ae328",
+    "name": "Handfeuerlöscher",
+    "number": "CAFM-0FD38E87",
+    "location": "Hibi Trakt B · -1. Untergeschoss, 004 Werken Töpfern Klassenzimmer",
+    "site": "HIBI"
+  },
+  {
+    "id": "04bc56f6-feef-4b06-a7ef-11027579c60e",
+    "name": "Handfeuerlöscher",
+    "number": "10712",
+    "location": "Hibi Trakt C · TH Turnhalle, -1. TH Untergeschoss, 004 Korridor",
+    "site": "HIBI"
+  },
+  {
+    "id": "17afd780-0a9c-48d7-a994-97564588744a",
+    "name": "Handfeuerlöscher",
+    "number": "10594",
+    "location": "Hibi Trakt C · SH Schulhaus, 1. SH Obergeschoss, 201 Korridor 2.1",
+    "site": "HIBI"
+  },
+  {
+    "id": "e74357f5-a82d-44d7-a9f2-ae0ea9e2847a",
+    "name": "Handfeuerlöscher",
+    "number": "10548",
+    "location": "Hibi Trakt C · SH Schulhaus, 1. SH Obergeschoss, 202 Korridor 2.2",
+    "site": "HIBI"
+  },
+  {
+    "id": "1d1f4fa8-8a41-495d-9900-7490b5f7dd1d",
+    "name": "Handfeuerlöscher",
+    "number": "10469",
+    "location": "Hibi Trakt C · SH Schulhaus, 0. SH Erdgeschoss, 104 Gang / Korridor hinten",
+    "site": "HIBI"
+  },
+  {
+    "id": "f75a17b0-6d01-4f47-80ae-9c591bed8aa2",
+    "name": "Handfeuerlöscher",
+    "number": "1893464",
+    "location": "Hibi Trakt B · -1. Untergeschoss, 004 Werken Töpfern Klassenzimmer",
+    "site": "HIBI"
+  },
+  {
+    "id": "85b7bed8-245c-4e0b-abdc-df2ac9af71b8",
+    "name": "Nasslöschposten",
+    "number": "37942",
+    "location": "Mettmi Trakt W · O.0 Untergeschoss,  Korridor",
+    "site": "METTMI"
+  },
+  {
+    "id": "38ff0246-7179-4048-b6f6-64ebafae7c71",
+    "name": "Nasslöschposten",
+    "number": "37936",
+    "location": "Mettmi Trakt TH · Korridor",
+    "site": "METTMI"
+  },
+  {
+    "id": "99266c69-7e06-46de-9f04-0d5b6253f12a",
+    "name": "Nasslöschposten",
+    "number": "37836",
+    "location": "Mettmi Trakt S · O.0 Untergeschoss,  Korridor",
+    "site": "METTMI"
+  },
+  {
+    "id": "5f821954-1a33-4feb-9700-6a746cc26dc0",
+    "name": "Nasslöschposten",
+    "number": "CAFM-5F821954",
+    "location": "Mettmi Trakt O · O.0 Untergeschoss,  Korridor",
+    "site": "METTMI"
+  },
+  {
+    "id": "4cd20770-01ce-4824-8203-989b11402e1c",
+    "name": "Nasslöschposten",
+    "number": "37978",
+    "location": "Mettmi Trakt W · O.4 Obergeschoss,  Korridor",
+    "site": "METTMI"
+  },
+  {
+    "id": "d10b4446-fda9-45d4-abf2-d61bd83d6225",
+    "name": "Nasslöschposten",
+    "number": "37833",
+    "location": "Mettmi Trakt O · O.1 Erdgeschoss,  Korridor",
+    "site": "METTMI"
+  },
+  {
+    "id": "15475765-0c63-4d4a-9015-31fb42f97253",
+    "name": "Nasslöschposten",
+    "number": "37941",
+    "location": "Mettmi Trakt W · O.1 Erdgeschoss,  Treppe",
+    "site": "METTMI"
+  },
+  {
+    "id": "df04021c-eab3-43a5-b801-f9ebd1243bea",
+    "name": "Nasslöschposten",
+    "number": "379937",
+    "location": "Mettmi Trakt S · O.2 Obergeschoss, O.2 Obergeschoss\n Korridor",
+    "site": "METTMI"
+  },
+  {
+    "id": "9a2c9413-966e-4b2d-bcb7-4a85958e390b",
+    "name": "Nasslöschposten",
+    "number": "37844",
+    "location": "Mettmi Trakt O · O.2 Obergeschoss, O.2 Obergeschoss\n Treppe",
+    "site": "METTMI"
+  },
+  {
+    "id": "d3825ef4-62c1-43d1-98c9-576847e6e73c",
+    "name": "Nasslöschposten",
+    "number": "37940",
+    "location": "Mettmi Trakt W · O.2 Obergeschoss,  Treppe",
+    "site": "METTMI"
+  },
+  {
+    "id": "8aac70be-10bb-4773-8f10-aff878f80730",
+    "name": "Nasslöschposten",
+    "number": "37939",
+    "location": "Mettmi Trakt W · O.3 Obergeschoss,  Treppe",
+    "site": "METTMI"
+  },
+  {
+    "id": "4841ce5d-ec3b-4a11-8816-89070d709626",
+    "name": "Nasslöschposten",
+    "number": "37843",
+    "location": "Mettmi Trakt O · O.3 Obergeschoss,  Treppe",
+    "site": "METTMI"
+  },
+  {
+    "id": "dd3039ed-e46e-46a8-b8fe-9933a51fd5b5",
+    "name": "Aufzugsanlage",
+    "number": "10880660",
+    "location": "Hibi Trakt C",
+    "site": "HIBI"
+  },
+  {
+    "id": "8bda6079-95be-4c91-90ad-b2c3cac2c6d2",
+    "name": "Notbeleuchtungsanlage mit zentraler Batterieanlage (Zentrale und Leuchten)",
+    "number": "KA203994/1 / PR13000451.02",
+    "location": "Hibi Infra Gebäude · 01 Untergeschoss, 003 Zentrale Elektro",
+    "site": "HIBI"
+  },
+  {
+    "id": "8d07ce3d-9376-43a5-840b-8670e99fd994",
+    "name": "Brandschutztor",
+    "number": "CAFM-8D07CE3D",
+    "location": "Mettmi Trakt S · O.0 Untergeschoss",
+    "site": "METTMI"
+  },
+  {
+    "id": "e919d736-4080-4478-adc6-1e20e2ef3438",
+    "name": "Brandschutztor",
+    "number": "CAFM-E919D736",
+    "location": "Mettmi Trakt S · O.1 Erdgeschoss",
+    "site": "METTMI"
+  },
+  {
+    "id": "26ed21cd-a37e-4674-9ce6-bd0e3f6fbff7",
+    "name": "Brandschutztor",
+    "number": "CAFM-26ED21CD",
+    "location": "Mettmi Trakt S · O.2 Obergeschoss",
+    "site": "METTMI"
+  },
+  {
+    "id": "64d9c494-8e64-423f-9eea-d64a343ca45d",
+    "name": "Automatische Aussentoranlage",
+    "number": "32183",
+    "location": "Mettmi Trakt Z · O.0 Untergeschoss,  Einstellhalle",
+    "site": "METTMI"
+  },
+  {
+    "id": "ded0a269-dd8f-4f82-ad16-74027cb12632",
+    "name": "Gaswarnanlage für Erdgas",
+    "number": "15567",
+    "location": "Mettmi Trakt Z · O.0 Untergeschoss,  Heizung",
+    "site": "METTMI"
+  },
+  {
+    "id": "f705481e-b214-4507-9d07-dea6b9bdcf9b",
+    "name": "Natürliche Rauch- und Wärmeabzugsanlage NRWA",
+    "number": "CAFM-F705481E",
+    "location": "Schulanlage Mettmi",
+    "site": "METTMI"
+  },
+  {
+    "id": "0a195464-b895-43ff-8b44-a79403f2d5bb",
+    "name": "Wärmeerzeugung Gas Brenner",
+    "number": "40754808",
+    "location": "Mettmi Trakt Z · O.0 Untergeschoss,  Heizung",
+    "site": "METTMI"
+  },
+  {
+    "id": "1c97cb01-3ec0-4744-bda8-78f336e3c99f",
+    "name": "Handfeuerlöscher",
+    "number": "1115971",
+    "location": "Mettmi Trakt O · O.0 Untergeschoss, O0.1 Informatik Informatik",
+    "site": "METTMI"
+  },
+  {
+    "id": "c2281001-fa11-4cc7-82ed-3abb8dde0221",
+    "name": "Handfeuerlöscher",
+    "number": "1397597",
+    "location": "Mettmi Trakt S · O.1 Erdgeschoss, S1.3 Schulunsraum Physik",
+    "site": "METTMI"
+  },
+  {
+    "id": "c5932460-8e07-4970-8e43-190a341f3b63",
+    "name": "Handfeuerlöscher",
+    "number": "1397598",
+    "location": "Mettmi Trakt O · O.0 Untergeschoss",
+    "site": "METTMI"
+  },
+  {
+    "id": "36ae904d-2a2d-485a-9af7-08f0991a73f9",
+    "name": "Handfeuerlöscher",
+    "number": "CAFM-36AE904D",
+    "location": "Mettmi Trakt TH · Elektroverteilung",
+    "site": "METTMI"
+  },
+  {
+    "id": "ddde5c78-abab-47c0-9e32-4e117e3879ed",
+    "name": "Handfeuerlöscher",
+    "number": "147141",
+    "location": "Mettmi Trakt Z · O.0 Untergeschoss,  Einstellhalle",
+    "site": "METTMI"
+  },
+  {
+    "id": "b33037b0-ee14-4811-bd9c-77006e9f2002",
+    "name": "Handfeuerlöscher",
+    "number": "147174",
+    "location": "Mettmi Trakt Z · O.0 Untergeschoss,  Einstellhalle",
+    "site": "METTMI"
+  },
+  {
+    "id": "1b5a59f7-1787-4d30-8065-193ebae18f6c",
+    "name": "Handfeuerlöscher",
+    "number": "1675399",
+    "location": "Mettmi Trakt S · O.0 Untergeschoss, S0.1 Schulküche",
+    "site": "METTMI"
+  },
+  {
+    "id": "33d0f7ab-826c-475f-84e4-c6ce3e90b10a",
+    "name": "Handfeuerlöscher",
+    "number": "831613",
+    "location": "Mettmi Trakt Z · O.0 Untergeschoss, Werkstatt HW",
+    "site": "METTMI"
+  },
+  {
+    "id": "7c2f4ba3-c81a-438e-a17e-1de326d7d7b0",
+    "name": "Handfeuerlöscher",
+    "number": "831614",
+    "location": "Schulanlage Mettmi",
+    "site": "METTMI"
+  },
+  {
+    "id": "51282141-981f-4c1a-89d7-87970ae82eb6",
+    "name": "Handfeuerlöscher",
+    "number": "879574",
+    "location": "Mettmi Trakt Z · O.2 Obergeschoss,  Lehrerzimmer",
+    "site": "METTMI"
+  },
+  {
+    "id": "944c641a-b72e-4ee3-a4b8-ebcb88e5c89c",
+    "name": "Handfeuerlöscher",
+    "number": "49498",
+    "location": "Mettmi Trakt S · O.0 Untergeschoss, S0.2 Schulküche",
+    "site": "METTMI"
+  },
+  {
+    "id": "80db7486-49a2-406e-a75e-c7baa1e81e16",
+    "name": "Handfeuerlöscher",
+    "number": "49775",
+    "location": "Mettmi Trakt S · O.0 Untergeschoss, S0.5 Schulküche",
+    "site": "METTMI"
+  },
+  {
+    "id": "e785f66a-88ac-4850-af4f-0aeb885719a4",
+    "name": "Handfeuerlöscher",
+    "number": "43175",
+    "location": "Mettmi Trakt S · O.1 Erdgeschoss, S1.3 Schulunsraum Physik",
+    "site": "METTMI"
+  },
+  {
+    "id": "e6498683-adef-4a2b-87ff-177563662a0e",
+    "name": "Handfeuerlöscher",
+    "number": "11007",
+    "location": "Mettmi Trakt S · O.1 Erdgeschoss, O.1 Erdgeschoss, S1.12 Werken Metall Klassenzimmer\nWerken Metall Klassenzimmer",
+    "site": "METTMI"
+  },
+  {
+    "id": "c155ed6d-c5bb-47f4-80a1-66491c0d626b",
+    "name": "Handfeuerlöscher",
+    "number": "11108",
+    "location": "Mettmi Trakt Z · O.3 Obergeschoss,  Singsaal",
+    "site": "METTMI"
+  },
+  {
+    "id": "b57d5f25-3b1c-418a-addd-d486d2ca31e5",
+    "name": "Handfeuerlöscher",
+    "number": "11194",
+    "location": "Schulanlage Mettmi",
+    "site": "METTMI"
+  },
+  {
+    "id": "7a3152b1-8437-43ef-a774-3d01dbcb684c",
+    "name": "Notbeleuchtungsanlage mit Einzelbatterie-Notleuchten",
+    "number": "CAFM-7A3152B1",
+    "location": "Hibi Trakt B",
+    "site": "HIBI"
+  },
+  {
+    "id": "122c5397-db05-41d0-864d-c1f1ef416cf5",
+    "name": "Kanalisation Abwasserhebeanlage",
+    "number": "TP108063",
+    "location": "Hibi Infra Gebäude",
+    "site": "HIBI"
+  },
+  {
+    "id": "4be9acc8-a6ae-45af-8fdc-bd7f4398c677",
+    "name": "Videoüberwachungsanlage",
+    "number": "CAFM-4BE9ACC8",
+    "location": "Schulanlage Hibi",
+    "site": "HIBI"
+  },
+  {
+    "id": "b80a878a-6b4a-4763-9041-089a75996e55",
+    "name": "Lüftungsanlage Turnhalle Nord",
+    "number": "CAFM-B80A878A",
+    "location": "Hibi Trakt C",
+    "site": "HIBI"
+  },
+  {
+    "id": "d23588c1-71f4-4224-8612-3d0745720229",
+    "name": "Lüftungsanlage Turnhalle Süd",
+    "number": "CAFM-D23588C1",
+    "location": "Hibi Trakt C",
+    "site": "HIBI"
+  },
+  {
+    "id": "a76a935a-7bf4-4aa5-b363-32655e63ae4b",
+    "name": "Lüftungsanlage Nebenräume",
+    "number": "CAFM-A76A935A",
+    "location": "Hibi Trakt C",
+    "site": "HIBI"
+  },
+  {
+    "id": "118457f1-2ac3-4905-9c81-da90312466e1",
+    "name": "Lüftungsanlage Küche",
+    "number": "CAFM-118457F1",
+    "location": "Hibi Trakt C",
+    "site": "HIBI"
+  },
+  {
+    "id": "429541da-2fa5-4772-8631-b096ea75e1b7",
+    "name": "Lüftungsanlage Foyer",
+    "number": "CAFM-429541DA",
+    "location": "Hibi Trakt C",
+    "site": "HIBI"
+  },
+  {
+    "id": "9773ec5f-802e-4fb1-b1da-5110d48f214c",
+    "name": "Lüftungsanlage Garderoben",
+    "number": "CAFM-9773EC5F",
+    "location": "Hibi Trakt C",
+    "site": "HIBI"
+  },
+  {
+    "id": "8dc46e39-4323-4353-8c62-60229fbfd8a7",
+    "name": "Lüftungsanlage WC-Anlagen",
+    "number": "CAFM-8DC46E39",
+    "location": "Hibi Trakt C",
+    "site": "HIBI"
+  },
+  {
+    "id": "0fd5f6c7-3aad-454b-8c99-ffec556c797b",
+    "name": "Lüftungsanlage Schulküchen",
+    "number": "CAFM-0FD5F6C7",
+    "location": "Hibi Trakt A",
+    "site": "HIBI"
+  },
+  {
+    "id": "24a22be0-c283-421f-8b9a-a3d5e55ea13d",
+    "name": "Demineralisierungsstation Elysator Heizung",
+    "number": "CAFM-24A22BE0",
+    "location": "Mettmi Trakt Z · O.0 Untergeschoss,  Heizung",
+    "site": "METTMI"
+  },
+  {
+    "id": "1575d586-ee7c-4a37-bd45-49413060d349",
+    "name": "Entschlämmungsanlage Heizung",
+    "number": "CAFM-1575D586",
+    "location": "Mettmi Trakt Z · O.0 Untergeschoss,  Heizung",
+    "site": "METTMI"
+  },
+  {
+    "id": "f5e7eaa6-3f79-47d5-8e27-d16359c5de69",
+    "name": "Rauch- und Wärmeabzugsanlage NRWA Aufzugsanlage",
+    "number": "CAFM-F5E7EAA6",
+    "location": "Hibi Trakt C · Liftschacht",
+    "site": "HIBI"
+  },
+  {
+    "id": "ffe1f8af-25e8-4739-ac03-72493189b562",
+    "name": "Absturzsicherung / Höhensicherung / Seilanlage",
+    "number": "CAFM-FFE1F8AF",
+    "location": "Schulanlage Mettmi",
+    "site": "METTMI"
+  },
+  {
+    "id": "4b329a09-b5ee-4985-ab10-25fd565f95fd",
+    "name": "Absturzsicherung / Höhensicherung / Seilanlage",
+    "number": "CAFM-4B329A09",
+    "location": "Hibi Trakt C",
+    "site": "HIBI"
+  },
+  {
+    "id": "e11fc021-f1ce-48e4-b97e-f2c704de0f35",
+    "name": "Absturzsicherung / Höhensicherung / Seilanlage",
+    "number": "CAFM-E11FC021",
+    "location": "Hibi Infra Gebäude",
+    "site": "HIBI"
+  },
+  {
+    "id": "d268e6f1-0405-4e97-b0ba-26acb6cfd8b5",
+    "name": "Enthärtungsanlage",
+    "number": "CAFM-D268E6F1",
+    "location": "Schulanlage Mettmi",
+    "site": "METTMI"
+  },
+  {
+    "id": "6485a245-df1e-4c17-9574-3b2afda4e5b0",
+    "name": "Brauchwarmwasserspeicher BWW 2",
+    "number": "CAFM-6485A245",
+    "location": "BWS Berufswahlschule · -2 Untergeschoss, U005 Technikraum",
+    "site": "BWS"
+  },
+  {
+    "id": "186352c2-c71d-4740-8ec1-25a41f3b056c",
+    "name": "Brauchwarmwasserspeicher BWW 3",
+    "number": "CAFM-186352C2",
+    "location": "BWS Berufswahlschule · -2 Untergeschoss, U005 Technikraum",
+    "site": "BWS"
+  },
+  {
+    "id": "1dd72772-b30f-4e44-b0ff-5c55802ee458",
+    "name": "Brauchwarmwasserspeicher BWW 1",
+    "number": "CAFM-1DD72772",
+    "location": "BWS Berufswahlschule · -2 Untergeschoss, U005 Technikraum",
+    "site": "BWS"
+  },
+  {
+    "id": "812076bc-9b68-49a4-b8d6-835abd4a21b2",
+    "name": "Sanitärverteilbatterie",
+    "number": "CAFM-812076BC",
+    "location": "BWS Berufswahlschule · -2 Untergeschoss, U005 Technikraum",
+    "site": "BWS"
+  },
+  {
+    "id": "b5f4e8af-2e69-41c9-b175-ce48846b8da4",
+    "name": "Heizverteiler",
+    "number": "CAFM-B5F4E8AF",
+    "location": "BWS Berufswahlschule · -2 Untergeschoss, U005 Technikraum",
+    "site": "BWS"
+  },
+  {
+    "id": "0d5e3e8d-99d7-4931-a9cb-69cf2252c092",
+    "name": "Evakuationsanlage",
+    "number": "CAFM-0D5E3E8D",
+    "location": "Schulanlage Mettmi",
+    "site": "METTMI"
+  },
+  {
+    "id": "488753d1-918c-46e0-a2b1-3f73068ac06a",
+    "name": "Entsorgung: Kehricht, Karton, Grüngut",
+    "number": "CAFM-488753D1",
+    "location": "Schulanlage Mettmi",
+    "site": "METTMI"
+  },
+  {
+    "id": "defe0e91-2dfc-479c-9de3-42fb53dc1a01",
+    "name": "Akkuladestation",
+    "number": "2607225845",
+    "location": "Hibi Trakt B",
+    "site": "HIBI"
+  },
+  {
+    "id": "ab2c3329-12a4-4646-a492-ad430a5612bc",
+    "name": "Akkuladestation",
+    "number": "2607225965",
+    "location": "Hibi Trakt B",
+    "site": "HIBI"
+  },
+  {
+    "id": "8d985d94-8fe9-44a8-afdd-b9db77f7ec9e",
+    "name": "Akkuschrauber",
+    "number": "408000473",
+    "location": "Schulanlage Hibi",
+    "site": "HIBI"
+  },
+  {
+    "id": "bb14441f-722f-4333-9fe5-9c7028d8deb5",
+    "name": "Akkuschrauber",
+    "number": "223765310",
+    "location": "Schulanlage Hibi",
+    "site": "HIBI"
+  },
+  {
+    "id": "30a7fc26-8b35-4902-8dcf-094e3db05396",
+    "name": "Akkuschrauber",
+    "number": "227217473",
+    "location": "Schulanlage Hibi",
+    "site": "HIBI"
+  },
+  {
+    "id": "af397bed-1200-4f57-b335-1ad119ad427e",
+    "name": "Akkubohrhammer",
+    "number": "603261504",
+    "location": "Schulanlage Hibi",
+    "site": "HIBI"
+  },
+  {
+    "id": "28c5ab32-9262-4fb9-93ba-6a97b29f01bb",
+    "name": "Akku",
+    "number": "LF2 - 603062502",
+    "location": "Schulanlage Hibi",
+    "site": "HIBI"
+  },
+  {
+    "id": "e3c76473-6521-4cd0-9a29-f92a9e86c229",
+    "name": "Akku",
+    "number": "TF11 - 22321 5850",
+    "location": "Schulanlage Hibi",
+    "site": "HIBI"
+  },
+  {
+    "id": "49f292ee-fe83-4a11-aa30-d470fee7f14e",
+    "name": "Akku",
+    "number": "YF5 - 227284581",
+    "location": "Schulanlage Hibi",
+    "site": "HIBI"
+  },
+  {
+    "id": "9214dad8-307f-4f7c-a8da-9cfcbd2f10c8",
+    "name": "Akku",
+    "number": "OM38- 410060191",
+    "location": "Schulanlage Hibi",
+    "site": "HIBI"
+  },
+  {
+    "id": "37ee6ba3-e344-4364-94ab-fecea2971f51",
+    "name": "Akku",
+    "number": "OM38- 410060182",
+    "location": "Schulanlage Hibi",
+    "site": "HIBI"
+  },
+  {
+    "id": "da6eff01-00d0-4ac3-bf5b-05f605e01a70",
+    "name": "Rasentraktor",
+    "number": "ZH 781349",
+    "location": "Schulanlage Mettmi",
+    "site": "METTMI"
+  },
+  {
+    "id": "f3e8c86a-200a-4195-ba2c-9b7562ae47ff",
+    "name": "Rasenmäher",
+    "number": "2502SA322720012026",
+    "location": "Schulanlage Mettmi",
+    "site": "METTMI"
+  },
+  {
+    "id": "756f485b-c3a9-4cb6-94b8-c18ae85287d6",
+    "name": "Turnhallen-Einrichtung / Turngeräte",
+    "number": "CAFM-756F485B",
+    "location": "Schulanlage Mettmi",
+    "site": "METTMI"
+  },
+  {
+    "id": "7328a881-1544-4492-99fd-4cb6b6c79f8b",
+    "name": "Turnhallen-Einrichtung / Turngerät",
+    "number": "CAFM-7328A881",
+    "location": "Schulanlage Hibi",
+    "site": "HIBI"
+  },
+  {
+    "id": "28154b1c-9bc4-450f-bd62-ee8ed173ca00",
+    "name": "Schleifmaschine",
+    "number": "VK2601/44",
+    "location": "Hibi Trakt C · SH Schulhaus, -1. SH Untergeschoss, 015 Werkstatt Hauswart",
+    "site": "HIBI"
+  },
+  {
+    "id": "be7096d4-98b6-4af4-9180-4433c208b240",
+    "name": "Druckluftkompressor",
+    "number": "CAFM-BE7096D4",
+    "location": "Hibi Trakt C · SH Schulhaus, -1. SH Untergeschoss, 015 Werkstatt Hauswart",
+    "site": "HIBI"
+  },
+  {
+    "id": "2bb2bc0d-a4cc-4ae1-971e-6b341a95d08a",
+    "name": "Rohrreinigungsmaschine",
+    "number": "75001641",
+    "location": "Hibi Trakt C · SH Schulhaus, -1. SH Untergeschoss, 015 Werkstatt Hauswart",
+    "site": "HIBI"
+  },
+  {
+    "id": "cd0f515e-9921-432e-82dc-a842a937ce2a",
+    "name": "Ständerbohrmaschine / Tischbohrmaschine",
+    "number": "1404222",
+    "location": "Hibi Trakt C · SH Schulhaus, -1. SH Untergeschoss, 015 Werkstatt Hauswart",
+    "site": "HIBI"
+  },
+  {
+    "id": "4224b9e8-c39a-47c4-9ca6-c26964cf7848",
+    "name": "Kapp- und Gehrungssäge",
+    "number": "CAFM-4224B9E8",
+    "location": "Hibi Trakt C · SH Schulhaus, -1. SH Untergeschoss, 015 Werkstatt Hauswart",
+    "site": "HIBI"
+  },
+  {
+    "id": "9b4095fd-f091-45a1-9039-507e13cc4d41",
+    "name": "Multischleifer",
+    "number": "608477165",
+    "location": "Schulanlage Hibi",
+    "site": "HIBI"
+  },
+  {
+    "id": "a4c33983-71a3-46ef-bdd8-7694d26cce74",
+    "name": "Mauernutfräse",
+    "number": "300577 2011 29-59",
+    "location": "Schulanlage Hibi",
+    "site": "HIBI"
+  },
+  {
+    "id": "9c9f4d71-12b6-476c-ab9e-0c15f3861bd5",
+    "name": "Oberfräse",
+    "number": "907006645",
+    "location": "Schulanlage Hibi",
+    "site": "HIBI"
+  },
+  {
+    "id": "f38a92fb-907a-48ad-8228-cd275591124d",
+    "name": "Handkreissäge",
+    "number": "7704",
+    "location": "Schulanlage Hibi",
+    "site": "HIBI"
+  },
+  {
+    "id": "811db814-708b-4dc5-8f92-6abe881c65fd",
+    "name": "Rückensauger",
+    "number": "1217 00027",
+    "location": "Schulanlage Hibi",
+    "site": "HIBI"
+  },
+  {
+    "id": "84a21863-f432-45bb-b08e-19642ed84583",
+    "name": "Hochdruckreiniger",
+    "number": "CAFM-84A21863",
+    "location": "Schulanlage Hibi",
+    "site": "HIBI"
+  },
+  {
+    "id": "92f3faab-4520-4cba-8824-2c2b34559487",
+    "name": "Rückensauger",
+    "number": "60314307",
+    "location": "Schulanlage Hibi",
+    "site": "HIBI"
+  },
+  {
+    "id": "eda4fc2b-7335-40d4-9482-25210e305f55",
+    "name": "Nasssauger / Wassersauger",
+    "number": "429SX1E",
+    "location": "Schulanlage Hibi",
+    "site": "HIBI"
+  },
+  {
+    "id": "aa43ce08-d64d-43bb-9ff9-c7711d42a39d",
+    "name": "Anstellleiter mit Auszug",
+    "number": "20190508CIS140285760",
+    "location": "Schulanlage Hibi",
+    "site": "HIBI"
+  },
+  {
+    "id": "1cc89d4b-60c4-4876-a14f-35b770f96ee4",
+    "name": "Brandschutztore Trakt C",
+    "number": "CAFM-1CC89D4B",
+    "location": "Hibi Trakt C",
+    "site": "HIBI"
+  },
+  {
+    "id": "2584829a-b37d-4b60-bfe7-c7aadba65215",
+    "name": "Videoüberwachungsanlage",
+    "number": "CAFM-2584829A",
+    "location": "Schulanlage Mettmi",
+    "site": "METTMI"
+  },
+  {
+    "id": "e8b50702-fabe-4cc7-aa73-2663aaee01de",
+    "name": "Zentrale Uhren- und Gonganlage",
+    "number": "CAFM-E8B50702",
+    "location": "Schulanlage Mettmi",
+    "site": "METTMI"
+  },
+  {
+    "id": "bb0b1979-01e2-4587-bafd-2446208ed0bb",
+    "name": "Elektro-Heizung",
+    "number": "CAFM-BB0B1979",
+    "location": "Hibi Trakt C · SH Schulhaus, -1. SH Untergeschoss, 015 Werkstatt Hauswart",
+    "site": "HIBI"
+  },
+  {
+    "id": "4bee357a-ce24-4ae6-a8db-7881326967ed",
+    "name": "Hochdruckreiniger",
+    "number": "12963",
+    "location": "Hibi Trakt C · SH Schulhaus, -1. SH Untergeschoss, 015 Werkstatt Hauswart",
+    "site": "HIBI"
+  },
+  {
+    "id": "5fb23008-d921-42ee-8993-3cb6464321df",
+    "name": "Hochdruckreiniger",
+    "number": "302462",
+    "location": "Hibi Trakt C · SH Schulhaus, -1. SH Untergeschoss, 015 Werkstatt Hauswart",
+    "site": "HIBI"
+  },
+  {
+    "id": "aa23ab11-ad53-4c74-bd37-3f9668e4a19a",
+    "name": "Schwingschleifer",
+    "number": "CAFM-AA23AB11",
+    "location": "Hibi Trakt C · SH Schulhaus, -1. SH Untergeschoss, 015 Werkstatt Hauswart",
+    "site": "HIBI"
+  },
+  {
+    "id": "e93b6501-6bf5-40a6-b3fb-cb2501ae95c9",
+    "name": "Kabelrolle 25m",
+    "number": "CAFM-E93B6501",
+    "location": "Hibi Trakt C · SH Schulhaus, -1. SH Untergeschoss, 015 Werkstatt Hauswart",
+    "site": "HIBI"
+  },
+  {
+    "id": "a6f87c71-3981-45c6-949c-1c72e01d92d9",
+    "name": "Stichsäge",
+    "number": "3374",
+    "location": "Hibi Trakt C · SH Schulhaus, -1. SH Untergeschoss, 015 Werkstatt Hauswart",
+    "site": "HIBI"
+  },
+  {
+    "id": "23eb2d0b-a043-465a-a72a-6b2d6d324395",
+    "name": "Winkelschleifer",
+    "number": "8120093080",
+    "location": "Hibi Trakt C · SH Schulhaus, -1. SH Untergeschoss, 015 Werkstatt Hauswart",
+    "site": "HIBI"
+  },
+  {
+    "id": "d4dcaaaa-fd57-4373-ba76-1299d3ed9189",
+    "name": "Starthilfegerät",
+    "number": "CAFM-D4DCAAAA",
+    "location": "Hibi Trakt C · SH Schulhaus, -1. SH Untergeschoss, 015 Werkstatt Hauswart",
+    "site": "HIBI"
+  },
+  {
+    "id": "83e5e408-d151-4b2b-8a52-889b28f3ed3b",
+    "name": "Batterieladegerät (12/24 V)",
+    "number": "CAFM-83E5E408",
+    "location": "Hibi Infra Gebäude · 0. Erdgeschoss, 102 Werkstatt",
+    "site": "HIBI"
+  },
+  {
+    "id": "f740c2b9-d683-41f1-914d-8ef366e7d7f3",
+    "name": "Akkuladegerät",
+    "number": "711391187",
+    "location": "Hibi Infra Gebäude · 0. Erdgeschoss, 102 Werkstatt",
+    "site": "HIBI"
+  },
+  {
+    "id": "6267b1b4-2c64-4e32-9b3a-7290654a1d64",
+    "name": "Akkuschrauber",
+    "number": "CAFM-6267B1B4",
+    "location": "Hibi Infra Gebäude · 0. Erdgeschoss, 102 Werkstatt",
+    "site": "HIBI"
+  },
+  {
+    "id": "4e0b8599-0b8e-4cc7-baaa-170e06b264b7",
+    "name": "Akku",
+    "number": "CAFM-4E0B8599",
+    "location": "Hibi Infra Gebäude · 0. Erdgeschoss, 102 Werkstatt",
+    "site": "HIBI"
+  },
+  {
+    "id": "57334d4d-57ef-4484-a671-dfd1a7a9d49d",
+    "name": "Akkuladegerät",
+    "number": "27056000 0003900000",
+    "location": "Hibi Infra Gebäude · 0. Erdgeschoss, 102 Werkstatt",
+    "site": "HIBI"
+  },
+  {
+    "id": "85ede17f-e0d8-45a3-a94f-7408dbf67ffe",
+    "name": "Akkuladegerät",
+    "number": "55618EG",
+    "location": "Hibi Infra Gebäude · 0. Erdgeschoss, 102 Werkstatt",
+    "site": "HIBI"
+  },
+  {
+    "id": "91e92111-561a-4a21-9631-050213999c25",
+    "name": "Akku",
+    "number": "CAFM-91E92111",
+    "location": "Hibi Infra Gebäude · 0. Erdgeschoss, 102 Werkstatt",
+    "site": "HIBI"
+  },
+  {
+    "id": "1d51847f-8a28-4ebb-b093-18fe003328ef",
+    "name": "Motorsäge",
+    "number": "TS5611/61",
+    "location": "Hibi Infra Gebäude · 0. Erdgeschoss, 101 Geräteschopf",
+    "site": "HIBI"
+  },
+  {
+    "id": "dd2f3c4a-6c1b-476a-b557-6ee3b0266272",
+    "name": "Hochentaster",
+    "number": "444897839",
+    "location": "Hibi Infra Gebäude · 0. Erdgeschoss, 101 Geräteschopf",
+    "site": "HIBI"
+  },
+  {
+    "id": "7a8f2262-b4f3-4f95-903a-ac3ec1da5650",
+    "name": "Heckenschere",
+    "number": "2022105/EB081969",
+    "location": "Hibi Infra Gebäude · 0. Erdgeschoss, 101 Geräteschopf",
+    "site": "HIBI"
+  },
+  {
+    "id": "3c13c294-1c71-43f5-8155-8e18c43154a6",
+    "name": "Scheuersaugmaschine / Hartbodenreiniger",
+    "number": "109801/01",
+    "location": "Hibi Infra Gebäude · 0. Erdgeschoss, 102 Werkstatt",
+    "site": "HIBI"
+  },
+  {
+    "id": "ecc0444f-de96-4804-8ab2-b186fa979bb7",
+    "name": "Staubsauger",
+    "number": "MHK 3916",
+    "location": "Hibi Infra Gebäude · 0. Erdgeschoss, 102 Werkstatt",
+    "site": "HIBI"
+  },
+  {
+    "id": "961334c9-75b1-4021-9d86-df02b4a5d9f1",
+    "name": "Akkuladegerät",
+    "number": "2021047PQ",
+    "location": "Hibi Infra Gebäude · 0. Erdgeschoss, 102 Werkstatt",
+    "site": "HIBI"
+  },
+  {
+    "id": "0c630f09-5b3d-45a8-aff6-9f00a4bc92fc",
+    "name": "Bandschleifer",
+    "number": "CAFM-0C630F09",
+    "location": "Hibi Infra Gebäude · 0. Erdgeschoss, 102 Werkstatt",
+    "site": "HIBI"
+  },
+  {
+    "id": "b1f8e135-d612-4447-9fc6-6cf566d3e6a9",
+    "name": "Schlagschrauber",
+    "number": "44877",
+    "location": "Hibi Infra Gebäude · 0. Erdgeschoss, 102 Werkstatt",
+    "site": "HIBI"
+  },
+  {
+    "id": "6feccfb0-b480-4a8a-8ac2-26de7ef707cf",
+    "name": "Dampfreiniger",
+    "number": "CAFM-6FECCFB0",
+    "location": "Hibi Trakt C · SH Schulhaus, -1. SH Untergeschoss, 015 Werkstatt Hauswart",
+    "site": "HIBI"
+  },
+  {
+    "id": "09948495-37e0-4679-97d7-087d4f96bd47",
+    "name": "Scheuersaugmaschine",
+    "number": "8004741013284",
+    "location": "Hibi Trakt C · SH Schulhaus, -1. SH Untergeschoss, 017 Lager Reinigung*",
+    "site": "HIBI"
+  },
+  {
+    "id": "f5fa1080-1ea5-4cd8-b51f-3ec26893ff58",
+    "name": "Schutzgasschweissgerät",
+    "number": "DST140 94031",
+    "location": "Hibi Infra Gebäude · 0. Erdgeschoss, 102 Werkstatt",
+    "site": "HIBI"
+  },
+  {
+    "id": "f9762132-d3c3-4f11-9681-5f698a2062b1",
+    "name": "Tumbler / Wäschetrockner",
+    "number": "12007 003466",
+    "location": "Hibi Trakt C · SH Schulhaus, -1. SH Untergeschoss, 016 Waschküche",
+    "site": "HIBI"
+  },
+  {
+    "id": "352af047-5acc-40fa-8fb2-8472f51e3e51",
+    "name": "Tumbler / Wäschetrockner",
+    "number": "173005093",
+    "location": "Hibi Trakt C · SH Schulhaus, -1. SH Untergeschoss, 016 Waschküche",
+    "site": "HIBI"
+  },
+  {
+    "id": "740d61b1-16c7-43d7-9a69-096db75b3e86",
+    "name": "Tumbler / Wäschetrockner",
+    "number": "12037000748",
+    "location": "Hibi Trakt C · SH Schulhaus, -1. SH Untergeschoss, 016 Waschküche",
+    "site": "HIBI"
+  },
+  {
+    "id": "23849243-71af-430e-b78e-def26574c88d",
+    "name": "Waschmaschine",
+    "number": "11019004321",
+    "location": "Hibi Trakt C · SH Schulhaus, -1. SH Untergeschoss, 016 Waschküche",
+    "site": "HIBI"
+  },
+  {
+    "id": "3ae7dc40-cb12-4abe-9bb4-e53e4dc7aa9c",
+    "name": "Waschmaschine",
+    "number": "288011550",
+    "location": "Hibi Trakt C · SH Schulhaus, -1. SH Untergeschoss, 016 Waschküche",
+    "site": "HIBI"
+  },
+  {
+    "id": "f3f3e0e3-1775-442f-81c0-88aaec3bbaf8",
+    "name": "Waschmaschine",
+    "number": "11019012866",
+    "location": "Hibi Trakt C · SH Schulhaus, -1. SH Untergeschoss, 016 Waschküche",
+    "site": "HIBI"
+  },
+  {
+    "id": "de76ec5b-1557-48dd-904e-6cfa27bd1181",
+    "name": "Entfeuchtungsgerät",
+    "number": "1812981022",
+    "location": "Hibi Trakt C · SH Schulhaus, -1. SH Untergeschoss, 016 Waschküche",
+    "site": "HIBI"
+  },
+  {
+    "id": "13d8a7de-2ced-4df9-af43-2071813ed72f",
+    "name": "Einscheibenmaschine",
+    "number": "8004010102731",
+    "location": "Hibi Trakt C · SH Schulhaus, -1. SH Untergeschoss, 017 Lager Reinigung*",
+    "site": "HIBI"
+  },
+  {
+    "id": "3714cec5-0f4c-4674-a0a9-633216759140",
+    "name": "Einscheibenmaschine",
+    "number": "8004010151073",
+    "location": "Hibi Trakt C · SH Schulhaus, -1. SH Untergeschoss, 017 Lager Reinigung*",
+    "site": "HIBI"
+  },
+  {
+    "id": "4a32c82c-4048-49d9-b9ac-01d4867296f7",
+    "name": "Nasssauger / Wassersauger",
+    "number": "30427",
+    "location": "Hibi Trakt C · SH Schulhaus, -1. SH Untergeschoss, 017 Lager Reinigung*",
+    "site": "HIBI"
+  },
+  {
+    "id": "cef999be-76cd-4e8d-98f1-f7255160787e",
+    "name": "Staubsauger",
+    "number": "5310253400008",
+    "location": "Hibi Trakt C · SH Schulhaus, -1. SH Untergeschoss, 017 Lager Reinigung*",
+    "site": "HIBI"
+  },
+  {
+    "id": "a5fe74c7-4504-4f25-8256-5382aa4c8eb8",
+    "name": "Rückensauger",
+    "number": "211129686",
+    "location": "Hibi Trakt C · SH Schulhaus, -1. SH Untergeschoss, 017 Lager Reinigung*",
+    "site": "HIBI"
+  },
+  {
+    "id": "928ba80e-af8e-482a-bbfc-1f12b06d61b2",
+    "name": "Rückensauger",
+    "number": "241317303",
+    "location": "Hibi Trakt C · SH Schulhaus, -1. SH Untergeschoss, 017 Lager Reinigung*",
+    "site": "HIBI"
+  },
+  {
+    "id": "a34bafb5-0dc4-4bad-8625-f553bfc43c92",
+    "name": "i-mop XL Scheuersaugmaschine",
+    "number": "708719",
+    "location": "Hibi Trakt C · SH Schulhaus, -1. SH Untergeschoss, 017 Lager Reinigung*",
+    "site": "HIBI"
+  },
+  {
+    "id": "b293dab5-9d09-42a4-85a9-fc034da8db0e",
+    "name": "Staubsauger",
+    "number": "13602314",
+    "location": "Hibi Trakt C · SH Schulhaus, -1. SH Untergeschoss, 017 Lager Reinigung*",
+    "site": "HIBI"
+  },
+  {
+    "id": "2095f62b-c5a1-40da-a2c3-6342b5237455",
+    "name": "i-mop XL Scheuersaugmaschine",
+    "number": "CAFM-2095F62B",
+    "location": "Hibi Trakt A · 0. Erdgeschoss,  107 Putzraum",
+    "site": "HIBI"
+  },
+  {
+    "id": "bab48a22-1792-446e-b47f-290e438a94cc",
+    "name": "Rückensauger",
+    "number": "121700028",
+    "location": "Hibi Trakt A · 0. Erdgeschoss,  107 Putzraum",
+    "site": "HIBI"
+  },
+  {
+    "id": "614bb9e4-a7ad-4c5f-b6a7-a97db86c8afc",
+    "name": "Staubsauger",
+    "number": "CAFM-614BB9E4",
+    "location": "Hibi Trakt A · 0. Erdgeschoss,  107 Putzraum",
+    "site": "HIBI"
+  },
+  {
+    "id": "5dea81ab-5300-4f46-ad0c-5cd2e7fb9c19",
+    "name": "Staubsauger",
+    "number": "CAFM-5DEA81AB",
+    "location": "Hibi Trakt A · 0. Erdgeschoss,  107 Putzraum",
+    "site": "HIBI"
+  },
+  {
+    "id": "ccd1bdbb-285b-45fc-a90a-9fd596906555",
+    "name": "Fenstersauger",
+    "number": "CAFM-CCD1BDBB",
+    "location": "Hibi Trakt C · SH Schulhaus, -1. SH Untergeschoss, 017 Lager Reinigung*",
+    "site": "HIBI"
+  },
+  {
+    "id": "36738801-5ce9-4cd9-92ee-3c9e36e87e1f",
+    "name": "Fenstersauger",
+    "number": "CAFM-36738801",
+    "location": "Hibi Trakt C · SH Schulhaus, -1. SH Untergeschoss, 017 Lager Reinigung*",
+    "site": "HIBI"
+  },
+  {
+    "id": "d14817f8-403e-4c6a-96f6-feeb0966ae28",
+    "name": "Fenstersauger",
+    "number": "CAFM-D14817F8",
+    "location": "Hibi Trakt C · SH Schulhaus, -1. SH Untergeschoss, 017 Lager Reinigung*",
+    "site": "HIBI"
+  },
+  {
+    "id": "4f3f0ca2-29d5-4a95-9f84-68d66b8480cb",
+    "name": "Akkuladegerät",
+    "number": "CAFM-4F3F0CA2",
+    "location": "Hibi Trakt C · SH Schulhaus, -1. SH Untergeschoss, 017 Lager Reinigung*",
+    "site": "HIBI"
+  },
+  {
+    "id": "aa0cedd0-12dc-4523-a8f5-def912600f3e",
+    "name": "Akkuladegerät",
+    "number": "CAFM-AA0CEDD0",
+    "location": "Hibi Trakt C · SH Schulhaus, -1. SH Untergeschoss, 017 Lager Reinigung*",
+    "site": "HIBI"
+  },
+  {
+    "id": "597257e4-7ccc-4e4e-b92d-d1f16f42428b",
+    "name": "Akku",
+    "number": "CAFM-597257E4",
+    "location": "Hibi Trakt C · SH Schulhaus, -1. SH Untergeschoss, 018 Zentrale Reinigung",
+    "site": "HIBI"
+  },
+  {
+    "id": "aa1dc20b-5123-4c1d-99b9-f1cbed73ee3e",
+    "name": "Akku",
+    "number": "CAFM-AA1DC20B",
+    "location": "Hibi Trakt C · SH Schulhaus, -1. SH Untergeschoss, 017 Lager Reinigung*",
+    "site": "HIBI"
+  },
+  {
+    "id": "d24ee2fc-8ab1-42f9-b1ee-77f752fb677d",
+    "name": "Akkuladegerät",
+    "number": "CAFM-D24EE2FC",
+    "location": "Hibi Trakt C · SH Schulhaus, -1. SH Untergeschoss, 017 Lager Reinigung*",
+    "site": "HIBI"
+  },
+  {
+    "id": "a176db81-df23-4b60-ba0d-685d8227298c",
+    "name": "Akkuladegerät",
+    "number": "CAFM-A176DB81",
+    "location": "Hibi Trakt C · SH Schulhaus, -1. SH Untergeschoss, 017 Lager Reinigung*",
+    "site": "HIBI"
+  },
+  {
+    "id": "85a04cb9-9dfb-4376-af63-d0f2c1abccb0",
+    "name": "Akku",
+    "number": "CAFM-85A04CB9",
+    "location": "Hibi Trakt C · SH Schulhaus, -1. SH Untergeschoss, 017 Lager Reinigung*",
+    "site": "HIBI"
+  },
+  {
+    "id": "abf733be-ede2-4b11-9da8-4f9393189c15",
+    "name": "Akku",
+    "number": "CAFM-ABF733BE",
+    "location": "Hibi Trakt C · SH Schulhaus, -1. SH Untergeschoss, 017 Lager Reinigung*",
+    "site": "HIBI"
+  },
+  {
+    "id": "c525b684-4878-4cc7-9601-25707e9b6fc8",
+    "name": "Akku",
+    "number": "CAFM-C525B684",
+    "location": "Hibi Trakt C · SH Schulhaus, -1. SH Untergeschoss, 017 Lager Reinigung*",
+    "site": "HIBI"
+  },
+  {
+    "id": "aa1b22b3-ec40-4ca3-942c-c3054585c4d0",
+    "name": "Akku",
+    "number": "CAFM-AA1B22B3",
+    "location": "Hibi Trakt C · SH Schulhaus, -1. SH Untergeschoss, 017 Lager Reinigung*",
+    "site": "HIBI"
+  },
+  {
+    "id": "9531d857-ef84-4782-864b-9c3972663c3d",
+    "name": "Lüftungsanlage 1. OG",
+    "number": "CAFM-9531D857",
+    "location": "BWS Berufswahlschule · 2 Dachgeschoss",
+    "site": "BWS"
+  },
+  {
+    "id": "5b9a8c66-79fd-4aa8-a2c9-45fc2d0016ff",
+    "name": "Plattentauscher Kälte",
+    "number": "CAFM-5B9A8C66",
+    "location": "Hibi Trakt C · SH Schulhaus, -1. SH Untergeschoss, 006 Anschluss- / Verbindungskorridor Trakt B und C",
+    "site": "HIBI"
+  },
+  {
+    "id": "65477867-e1ef-4641-84c5-3a3375e17429",
+    "name": "Plattentauscher Heizung",
+    "number": "CAFM-65477867",
+    "location": "Hibi Trakt C · SH Schulhaus, -1. SH Untergeschoss, 006 Anschluss- / Verbindungskorridor Trakt B und C",
+    "site": "HIBI"
+  },
+  {
+    "id": "069f0e91-40d0-4ea9-b7ae-3de56822d5a2",
+    "name": "Expansionsgefäss",
+    "number": "CAFM-069F0E91",
+    "location": "Hibi Trakt C · SH Schulhaus, -1. SH Untergeschoss, 006 Anschluss- / Verbindungskorridor Trakt B und C",
+    "site": "HIBI"
+  },
+  {
+    "id": "6442dc75-9a02-40a8-83cb-349af0d753b5",
+    "name": "Umwelzpumpe Wasserglykol Vorlauf",
+    "number": "CAFM-6442DC75",
+    "location": "Hibi Trakt C · SH Schulhaus, -1. SH Untergeschoss, 006 Anschluss- / Verbindungskorridor Trakt B und C",
+    "site": "HIBI"
+  },
+  {
+    "id": "33604459-71fd-4e6b-897f-93188fea3fcb",
+    "name": "Gebäudeautomationssystem",
+    "number": "CAFM-33604459",
+    "location": "BWS Berufswahlschule",
+    "site": "BWS"
+  },
+  {
+    "id": "8d3216a6-a943-40f1-a0fd-e33b50a2ba40",
+    "name": "Gebäudeautomationssystem  / Gebäudeleitsystem",
+    "number": "CAFM-8D3216A6",
+    "location": "Schulanlage Hibi",
+    "site": "HIBI"
+  },
+  {
+    "id": "640b0ad7-f106-444d-a72e-60989a0cea38",
+    "name": "Brandschutztüre mit Rückhaltemagnet",
+    "number": "CAFM-640B0AD7",
+    "location": "Hibi Trakt B · 1. Obergeschoss, 201 Seketariat Empfang",
+    "site": "HIBI"
+  },
+  {
+    "id": "e2ebf2c4-061d-4ff7-be01-654f65828537",
+    "name": "Brandschutztüre mit Rückhaltemagnet",
+    "number": "CAFM-E2EBF2C4",
+    "location": "Hibi Trakt B · 1. Obergeschoss, 204 Büro Schulleitung",
+    "site": "HIBI"
+  },
+  {
+    "id": "874a8769-2b8b-4ef7-b77e-24975ecebd3c",
+    "name": "Brandschutztüre mit Rückhaltemagnet",
+    "number": "CAFM-874A8769",
+    "location": "Hibi Trakt B · 1. Obergeschoss, 205 Vorraum Büro Hausdienst",
+    "site": "HIBI"
+  },
+  {
+    "id": "ffc50804-2ec1-4b91-b0b8-eeb10c321d1e",
+    "name": "Bockleiter",
+    "number": "CAFM-FFC50804",
+    "location": "Hibi Trakt B · 1. Obergeschoss, 207 Büro Hausdienst",
+    "site": "HIBI"
+  },
+  {
+    "id": "dea78321-57a3-48da-9fcd-6301edb120a8",
+    "name": "Mikrowellengerät",
+    "number": "AC925EBY",
+    "location": "Hibi Trakt B · 1. Obergeschoss, 203 Lehrer Küche und Teamzimmer",
+    "site": "HIBI"
+  },
+  {
+    "id": "58cd0b74-8ba9-46d6-8981-92ec7de086bd",
+    "name": "Mikrowellengerät",
+    "number": "AC925EBY",
+    "location": "Hibi Trakt B · 1. Obergeschoss, 203 Lehrer Küche und Teamzimmer",
+    "site": "HIBI"
+  },
+  {
+    "id": "27cdec69-9834-4214-94ac-f2e92ee3ebed",
+    "name": "Kochfeld / Kochherd",
+    "number": "CAFM-27CDEC69",
+    "location": "Hibi Trakt B · 1. Obergeschoss, 203 Lehrer Küche und Teamzimmer",
+    "site": "HIBI"
+  },
+  {
+    "id": "b033c23f-23df-4869-8926-4534a98c2255",
+    "name": "Backofen",
+    "number": "21108000104",
+    "location": "Hibi Trakt B · 1. Obergeschoss, 203 Lehrer Küche und Teamzimmer",
+    "site": "HIBI"
+  },
+  {
+    "id": "32cbdeb8-7945-44e8-810d-e1c8d922969d",
+    "name": "Geschirrspüler / Geschirrwaschautomat",
+    "number": "41156000052",
+    "location": "Hibi Trakt B · 1. Obergeschoss, 203 Lehrer Küche und Teamzimmer",
+    "site": "HIBI"
+  },
+  {
+    "id": "04e83127-0eac-4921-848c-6fd22048c0c4",
+    "name": "Steamer",
+    "number": "23011006525",
+    "location": "Hibi Trakt B · 1. Obergeschoss, 203 Lehrer Küche und Teamzimmer",
+    "site": "HIBI"
+  },
+  {
+    "id": "9cd6e2b0-80a9-418f-9384-d8eda9dcd33f",
+    "name": "Mikrowellengerät",
+    "number": "CAFM-9CD6E2B0",
+    "location": "Hibi Trakt B · 1. Obergeschoss, 203 Lehrer Küche und Teamzimmer",
+    "site": "HIBI"
+  },
+  {
+    "id": "dacfdc6d-1120-45bd-b9f7-ce8892470ffb",
+    "name": "Mikrowellengerät",
+    "number": "CAFM-DACFDC6D",
+    "location": "Hibi Trakt B · 1. Obergeschoss, 203 Lehrer Küche und Teamzimmer",
+    "site": "HIBI"
+  },
+  {
+    "id": "b2a86141-2d15-48a5-9d1b-09c6b7d035ab",
+    "name": "Mikrowellengerät",
+    "number": "CAFM-B2A86141",
+    "location": "Hibi Trakt B · 1. Obergeschoss, 203 Lehrer Küche und Teamzimmer",
+    "site": "HIBI"
+  },
+  {
+    "id": "329f08a7-0980-4f15-93ee-ae587211ddd2",
+    "name": "Kühlschrank",
+    "number": "902011928",
+    "location": "Hibi Trakt B · 1. Obergeschoss, 203 Lehrer Küche und Teamzimmer",
+    "site": "HIBI"
+  },
+  {
+    "id": "00104fa7-e33a-4b27-883c-609023b92ca9",
+    "name": "Kühlschrank",
+    "number": "51088105939",
+    "location": "Hibi Trakt B · 1. Obergeschoss, 203 Lehrer Küche und Teamzimmer",
+    "site": "HIBI"
+  },
+  {
+    "id": "d6687705-1d9b-4ffa-af62-365f3dc6820a",
+    "name": "Gasgrill",
+    "number": "CAFM-D6687705",
+    "location": "Hibi Trakt B · 1. Obergeschoss,  Terrasse",
+    "site": "HIBI"
+  },
+  {
+    "id": "17faa684-729c-4427-9900-3ea2b975f1ef",
+    "name": "Geschirrspüler / Geschirrwaschautomat",
+    "number": "41162016478",
+    "location": "Hibi Trakt A · -1. Untergeschoss, 001 Schulküche",
+    "site": "HIBI"
+  },
+  {
+    "id": "764cb88e-175e-4ceb-b0d0-13742f748a4b",
+    "name": "Backofen",
+    "number": "21047002243",
+    "location": "Hibi Trakt A · -1. Untergeschoss, 001 Schulküche",
+    "site": "HIBI"
+  },
+  {
+    "id": "0731d36f-c179-4db4-af09-d193b6785249",
+    "name": "Backofen",
+    "number": "21047002246",
+    "location": "Hibi Trakt A · -1. Untergeschoss, 001 Schulküche",
+    "site": "HIBI"
+  },
+  {
+    "id": "c18e7ef6-e731-4f5d-a4a3-a40bcb4e21cd",
+    "name": "Kochfeld / Kochherd",
+    "number": "CAFM-C18E7EF6",
+    "location": "Hibi Trakt A · -1. Untergeschoss, 001 Schulküche",
+    "site": "HIBI"
+  },
+  {
+    "id": "55215780-c207-42bd-8760-a5b5972c9e07",
+    "name": "Kochfeld / Kochherd",
+    "number": "CAFM-55215780",
+    "location": "Hibi Trakt A · -1. Untergeschoss, 001 Schulküche",
+    "site": "HIBI"
+  },
+  {
+    "id": "2e96242b-6f22-48d7-a7c9-94651ec3612a",
+    "name": "Kochfeld / Kochherd",
+    "number": "CAFM-2E96242B",
+    "location": "Hibi Trakt A · -1. Untergeschoss, 001 Schulküche",
+    "site": "HIBI"
+  },
+  {
+    "id": "b68d794a-7094-432f-8079-9ee78d365f10",
+    "name": "Kochfeld / Kochherd",
+    "number": "CAFM-B68D794A",
+    "location": "Hibi Trakt A · -1. Untergeschoss, 001 Schulküche",
+    "site": "HIBI"
+  },
+  {
+    "id": "881f1d17-785a-4a9a-b157-07cca4d75b33",
+    "name": "Backofen",
+    "number": "21047002240",
+    "location": "Hibi Trakt A · -1. Untergeschoss, 001 Schulküche",
+    "site": "HIBI"
+  },
+  {
+    "id": "f2639db8-f3b2-4d86-94be-135e6f88e64f",
+    "name": "Backofen",
+    "number": "21047002246",
+    "location": "Hibi Trakt A · -1. Untergeschoss, 001 Schulküche",
+    "site": "HIBI"
+  },
+  {
+    "id": "29e9ea8e-c7fd-42b9-acf4-a2589d572de5",
+    "name": "Backofen",
+    "number": "21047002254",
+    "location": "Hibi Trakt A · -1. Untergeschoss, 001 Schulküche",
+    "site": "HIBI"
+  },
+  {
+    "id": "f2480c76-5903-4370-a35c-ae94fb146366",
+    "name": "Kühlschrank",
+    "number": "51114104136",
+    "location": "Hibi Trakt A · -1. Untergeschoss, 001 Schulküche",
+    "site": "HIBI"
+  },
+  {
+    "id": "d45fdab5-6886-4f2d-9fe3-774715a09157",
+    "name": "Kühlschrank",
+    "number": "51114103960",
+    "location": "Hibi Trakt A · -1. Untergeschoss, 001 Schulküche",
+    "site": "HIBI"
+  },
+  {
+    "id": "4cef7f78-6ec4-40dd-a9ce-dac0aacd1472",
+    "name": "Handfeuerlöscher",
+    "number": "1783231",
+    "location": "Hibi Trakt A · -1. Untergeschoss, 001 Schulküche",
+    "site": "HIBI"
+  },
+  {
+    "id": "173049ce-301e-4c7d-bd7b-4a1d1c829878",
+    "name": "Waschmaschine",
+    "number": "11042030900",
+    "location": "Hibi Trakt A · -1. Untergeschoss, 001 Schulküche",
+    "site": "HIBI"
+  },
+  {
+    "id": "da49be24-209b-4473-b47c-288a2b18e20b",
+    "name": "Tumbler / Wäschetrockner",
+    "number": "12032000480",
+    "location": "Hibi Trakt A · -1. Untergeschoss, 001 Schulküche",
+    "site": "HIBI"
+  },
+  {
+    "id": "af731541-2cac-44eb-ad9a-6464634f3335",
+    "name": "Geschirrspüler / Geschirrwaschautomat",
+    "number": "CAFM-AF731541",
+    "location": "Hibi Trakt A · -1. Untergeschoss, 002 Schulküche",
+    "site": "HIBI"
+  },
+  {
+    "id": "ea602189-24f3-45d6-b889-493e236f68fb",
+    "name": "Backofen",
+    "number": "21022000540",
+    "location": "Hibi Trakt A · -1. Untergeschoss, 002 Schulküche",
+    "site": "HIBI"
+  },
+  {
+    "id": "7ea7961e-16e0-48e6-a1f7-6ed7f227c2e0",
+    "name": "Backofen",
+    "number": "21022000529",
+    "location": "Hibi Trakt A · -1. Untergeschoss, 002 Schulküche",
+    "site": "HIBI"
+  },
+  {
+    "id": "ef75c77a-2d94-4910-8b23-a87e145fd8cb",
+    "name": "Backofen",
+    "number": "21022000530",
+    "location": "Hibi Trakt A · -1. Untergeschoss, 002 Schulküche",
+    "site": "HIBI"
+  },
+  {
+    "id": "28273c3f-ac9d-4889-9bd9-f242859cd3ce",
+    "name": "Backofen",
+    "number": "21022000531",
+    "location": "Hibi Trakt A · -1. Untergeschoss, 002 Schulküche",
+    "site": "HIBI"
+  },
+  {
+    "id": "8d3f22fb-e437-40f5-b8ce-b54272971d2b",
+    "name": "Steamer",
+    "number": "23004000582",
+    "location": "Hibi Trakt A · -1. Untergeschoss, 002 Schulküche",
+    "site": "HIBI"
+  },
+  {
+    "id": "c46dadb7-4cc7-4073-be13-0d47e02673b0",
+    "name": "Mikrowellengerät",
+    "number": "24009100722",
+    "location": "Hibi Trakt A · -1. Untergeschoss, 002 Schulküche",
+    "site": "HIBI"
+  },
+  {
+    "id": "c36bf453-7609-4c35-a61b-cd7c622ce9d5",
+    "name": "Kühlschrank",
+    "number": "51029104073",
+    "location": "Hibi Trakt A · -1. Untergeschoss, 002 Schulküche",
+    "site": "HIBI"
+  },
+  {
+    "id": "b14f9a60-9d6e-40f5-a898-e270b80441b6",
+    "name": "Kühlschrank",
+    "number": "51029104075",
+    "location": "Hibi Trakt A · -1. Untergeschoss, 002 Schulküche",
+    "site": "HIBI"
+  },
+  {
+    "id": "8c8568f2-77fc-4b65-a4cc-fefdde7a4d72",
+    "name": "Tumbler / Wäschetrockner",
+    "number": "12001036819",
+    "location": "Hibi Trakt A · -1. Untergeschoss, 002 Schulküche, 002/b Abstellraum / Waschküche / Technik",
+    "site": "HIBI"
+  },
+  {
+    "id": "2f824bd1-114b-4bbe-ae60-e743741c0f6c",
+    "name": "Waschmaschine",
+    "number": "11002016153",
+    "location": "Hibi Trakt A · -1. Untergeschoss, 002 Schulküche, 002/b Abstellraum / Waschküche / Technik",
+    "site": "HIBI"
+  },
+  {
+    "id": "3efb2337-7b73-46a6-8145-8cd41df33471",
+    "name": "Kochfeld / Kochherd",
+    "number": "CAFM-3EFB2337",
+    "location": "Hibi Trakt A · -1. Untergeschoss, 002 Schulküche",
+    "site": "HIBI"
+  },
+  {
+    "id": "67085ae0-4ab2-46df-932b-05969326c826",
+    "name": "Kochfeld / Kochherd",
+    "number": "CAFM-67085AE0",
+    "location": "Hibi Trakt A · -1. Untergeschoss, 002 Schulküche",
+    "site": "HIBI"
+  },
+  {
+    "id": "66973203-f00d-44b3-a7bd-c77664f08296",
+    "name": "Kochfeld / Kochherd",
+    "number": "CAFM-66973203",
+    "location": "Hibi Trakt A · -1. Untergeschoss, 002 Schulküche",
+    "site": "HIBI"
+  },
+  {
+    "id": "a82a9e5c-5b3a-4871-95ab-56e0b958efb2",
+    "name": "Kochfeld / Kochherd",
+    "number": "CAFM-A82A9E5C",
+    "location": "Hibi Trakt A · -1. Untergeschoss, 002 Schulküche",
+    "site": "HIBI"
+  },
+  {
+    "id": "3703c65e-1271-4ec4-8fb7-8b32760847ac",
+    "name": "Kochfeld / Kochherd",
+    "number": "CAFM-3703C65E",
+    "location": "Hibi Trakt A · -1. Untergeschoss, 003 Schulküche",
+    "site": "HIBI"
+  },
+  {
+    "id": "e48de62a-11d3-40bc-b586-aadff5a4b41e",
+    "name": "Kochfeld / Kochherd",
+    "number": "CAFM-E48DE62A",
+    "location": "Hibi Trakt A · -1. Untergeschoss, 003 Schulküche",
+    "site": "HIBI"
+  },
+  {
+    "id": "a2b24254-15c1-4c3a-a18a-503d4804d128",
+    "name": "Kochfeld / Kochherd",
+    "number": "CAFM-A2B24254",
+    "location": "Hibi Trakt A · -1. Untergeschoss, 003 Schulküche",
+    "site": "HIBI"
+  },
+  {
+    "id": "3d1268d0-c309-4b48-9b7f-ea94598e408c",
+    "name": "Kochfeld / Kochherd",
+    "number": "CAFM-3D1268D0",
+    "location": "Hibi Trakt A · -1. Untergeschoss, 003 Schulküche",
+    "site": "HIBI"
+  },
+  {
+    "id": "5647135f-4459-4c9c-958e-242a5d582352",
+    "name": "Geschirrspüler / Geschirrwaschautomat",
+    "number": "182071705",
+    "location": "Hibi Trakt A · -1. Untergeschoss, 003 Schulküche",
+    "site": "HIBI"
+  },
+  {
+    "id": "f3f3b5db-dfef-467a-821e-f1079e959fbd",
+    "name": "Backofen",
+    "number": "21021000199",
+    "location": "Hibi Trakt A · -1. Untergeschoss, 003 Schulküche",
+    "site": "HIBI"
+  },
+  {
+    "id": "b67728eb-79b8-4930-a90e-19c521a9967d",
+    "name": "Steamer",
+    "number": "23003001052",
+    "location": "Hibi Trakt A · -1. Untergeschoss, 003 Schulküche",
+    "site": "HIBI"
+  },
+  {
+    "id": "3b5925df-4a68-46d0-9c86-b889ca4ec12e",
+    "name": "Backofen",
+    "number": "21021000200",
+    "location": "Hibi Trakt A · -1. Untergeschoss, 003 Schulküche",
+    "site": "HIBI"
+  },
+  {
+    "id": "895df9e7-7048-49c8-9db7-fd05fc1b6a1d",
+    "name": "Backofen",
+    "number": "21021000198",
+    "location": "Hibi Trakt A · -1. Untergeschoss, 003 Schulküche",
+    "site": "HIBI"
+  },
+  {
+    "id": "38e3d40c-c56d-4710-ba77-80f30fcf702a",
+    "name": "Steamer",
+    "number": "21021000121",
+    "location": "Hibi Trakt A · -1. Untergeschoss, 003 Schulküche",
+    "site": "HIBI"
+  },
+  {
+    "id": "ef53c453-16a8-4d9b-a5a2-8baa1b6812e6",
+    "name": "Steamer",
+    "number": "23014000046",
+    "location": "Hibi Trakt A · -1. Untergeschoss, 003 Schulküche",
+    "site": "HIBI"
+  },
+  {
+    "id": "73b5667c-07ef-44e6-b296-39b7b8f3228d",
+    "name": "Geschirrspüler / Geschirrwaschautomat",
+    "number": "182071717",
+    "location": "Hibi Trakt A · -1. Untergeschoss, 003 Schulküche",
+    "site": "HIBI"
+  },
+  {
+    "id": "f21c6ba2-adde-4914-ade1-94788cf510aa",
+    "name": "Kühlschrank",
+    "number": "910200102",
+    "location": "Hibi Trakt A · -1. Untergeschoss, -1. Untergeschoss\n003 Schulküche",
+    "site": "HIBI"
+  },
+  {
+    "id": "54622daa-6c42-4e89-9794-a50e5d9a108a",
+    "name": "Kühlschrank",
+    "number": "910002397",
+    "location": "Hibi Trakt A · -1. Untergeschoss, 003 Schulküche",
+    "site": "HIBI"
+  },
+  {
+    "id": "829a32b3-829f-466a-8576-199d672273f4",
+    "name": "Tumbler / Wäschetrockner",
+    "number": "12001036758",
+    "location": "Hibi Trakt A · -1. Untergeschoss, 004 Lager / Waschküche",
+    "site": "HIBI"
+  },
+  {
+    "id": "9ca19487-fe3c-4991-bf37-d5f289c7c42a",
+    "name": "Waschmaschine",
+    "number": "11001029183",
+    "location": "Hibi Trakt A · -1. Untergeschoss, 004 Lager / Waschküche",
+    "site": "HIBI"
+  },
+  {
+    "id": "383fa62b-7e3a-4e21-b1a2-eecb1e170ce7",
+    "name": "Tiefkühler",
+    "number": "42209307",
+    "location": "Hibi Trakt A · -1. Untergeschoss, 004 Lager / Waschküche",
+    "site": "HIBI"
+  },
+  {
+    "id": "30e399a4-4694-4c49-af60-1694f5de7765",
+    "name": "Kühlschrank",
+    "number": "EK0612 1111 000164 / 10161283000164",
+    "location": "Schulanlage Mettmi · Bürocontainer Leitung Hausdienst",
+    "site": "METTMI"
+  },
+  {
+    "id": "ce15b41f-0422-4bf7-95ae-a225b3571b19",
+    "name": "Staubsauger",
+    "number": "EU013783M",
+    "location": "Schulanlage Mettmi · Bürocontainer Leitung Hausdienst",
+    "site": "METTMI"
+  },
+  {
+    "id": "5cd9e590-f667-47e9-add4-dc5c484887ce",
+    "name": "Akkuschrauber",
+    "number": "301111142",
+    "location": "Schulanlage Mettmi · Bürocontainer Leitung Hausdienst",
+    "site": "METTMI"
+  },
+  {
+    "id": "26ed696a-93c5-4a02-bd84-81773c1d6a1d",
+    "name": "Heckenschere",
+    "number": "434366138",
+    "location": "Mettmi Trakt Z · O.0 Untergeschoss, Werkstatt HW",
+    "site": "METTMI"
+  },
+  {
+    "id": "42649b7e-9de7-49ce-8676-6ec633b2d62b",
+    "name": "Akkuladegerät",
+    "number": "CAFM-42649B7E",
+    "location": "Mettmi Trakt Z · O.0 Untergeschoss, Werkstatt HW",
+    "site": "METTMI"
+  },
+  {
+    "id": "619fe486-db36-48c0-a73f-555ee93de9de",
+    "name": "Akku",
+    "number": "982 144 641",
+    "location": "Mettmi Trakt Z · O.0 Untergeschoss, Werkstatt HW",
+    "site": "METTMI"
+  },
+  {
+    "id": "80a3e223-2099-4093-9c81-676539172a37",
+    "name": "Motorsäge",
+    "number": "433402330",
+    "location": "Mettmi Trakt Z · O.0 Untergeschoss, Werkstatt HW",
+    "site": "METTMI"
+  },
+  {
+    "id": "a0ffda10-8a72-4ad9-b817-30ae4f2037a1",
+    "name": "Motorsäge",
+    "number": "407000031",
+    "location": "Mettmi Trakt Z · O.0 Untergeschoss, Werkstatt HW",
+    "site": "METTMI"
+  },
+  {
+    "id": "5b6b7452-cd5f-47b0-bb6a-34353798d8f3",
+    "name": "Kabelrolle (400 V CEE 16A)",
+    "number": "CAFM-5B6B7452",
+    "location": "Mettmi Trakt Z · O.0 Untergeschoss, Werkstatt HW",
+    "site": "METTMI"
+  },
+  {
+    "id": "e495b508-86f9-4f32-9f7d-e7a3295b650a",
+    "name": "Kabelrolle  (400 V CEE 16A)",
+    "number": "CAFM-E495B508",
+    "location": "Mettmi Trakt Z · O.0 Untergeschoss, Werkstatt HW",
+    "site": "METTMI"
+  },
+  {
+    "id": "69a2c3ec-cd98-44ea-8366-5c3289a96363",
+    "name": "Hochentaster",
+    "number": "530721297",
+    "location": "Mettmi Trakt Z · O.0 Untergeschoss, Werkstatt HW",
+    "site": "METTMI"
+  },
+  {
+    "id": "c16ea304-3c29-47e7-8547-2c62a0c8f68b",
+    "name": "Hochdruckreiniger",
+    "number": "20170500630",
+    "location": "Mettmi Trakt Z · O.0 Untergeschoss, Werkstatt HW",
+    "site": "METTMI"
+  },
+  {
+    "id": "8076960b-8986-4bc3-bbda-b78c1fd971c3",
+    "name": "FI / RCD / Fehlerstromschutzschalter",
+    "number": "CAFM-8076960B",
+    "location": "Mettmi Trakt Z · O.0 Untergeschoss, Werkstatt HW",
+    "site": "METTMI"
+  },
+  {
+    "id": "2732f31d-0a9f-4ee2-806a-e2a29a128c73",
+    "name": "Kabelrolle (230 V T13 10A)",
+    "number": "CAFM-2732F31D",
+    "location": "Mettmi Trakt Z · O.0 Untergeschoss, Werkstatt HW",
+    "site": "METTMI"
+  },
+  {
+    "id": "e296fa0f-f387-4857-9f14-0f0464deb26e",
+    "name": "Kabelrolle (230 V T13 10A)",
+    "number": "CAFM-E296FA0F",
+    "location": "Mettmi Trakt Z · O.0 Untergeschoss, Werkstatt HW",
+    "site": "METTMI"
+  },
+  {
+    "id": "b36d8c56-84d0-42ac-a144-711a38c2166f",
+    "name": "Kabelrolle (400 V CEE 16A)",
+    "number": "CAFM-B36D8C56",
+    "location": "Mettmi Trakt Z · O.0 Untergeschoss, Werkstatt HW",
+    "site": "METTMI"
+  },
+  {
+    "id": "033d00e0-26a6-41f1-ae7e-5f32a3e52b0a",
+    "name": "Kabelrolle (400 V CEE 16A)",
+    "number": "CAFM-033D00E0",
+    "location": "Mettmi Trakt Z · O.0 Untergeschoss, Werkstatt HW",
+    "site": "METTMI"
+  },
+  {
+    "id": "6d64d12d-2693-4057-85a0-1d9b208132c8",
+    "name": "Bauprovisorium (Eingang 2 × CEE 16 A, 400 V / Ausgänge 2 × CEE 16 A 400 V, 2 × CEE 16 A 230 V (blau), 2 × Typ 23 230 V)",
+    "number": "CAFM-6D64D12D",
+    "location": "Mettmi Trakt Z · O.0 Untergeschoss, Werkstatt HW",
+    "site": "METTMI"
+  },
+  {
+    "id": "ecd69f1f-c3b5-4951-95e8-0d808e051fda",
+    "name": "Bauprovisorium (Eingang CEE 16 A / 400 V / Ausgänge 1 × CEE 16 A 400 V, 1 × CEE 16 A 230 V, 1 × CEE 230 V)",
+    "number": "CAFM-ECD69F1F",
+    "location": "Mettmi Trakt Z · O.0 Untergeschoss, Werkstatt HW",
+    "site": "METTMI"
+  },
+  {
+    "id": "4b111753-cefc-42d3-ad22-7f235aac2277",
+    "name": "Sanitärverteilbatterie",
+    "number": "CAFM-4B111753",
+    "location": "Mettmi Trakt Z · O.0 Untergeschoss, Werkstatt HW",
+    "site": "METTMI"
+  },
+  {
+    "id": "e2a9d9d2-b225-4135-8bd6-13dc799d3dbd",
+    "name": "Defibrillator",
+    "number": "1335S146",
+    "location": "Mettmi Trakt TH · Korridor",
+    "site": "METTMI"
+  },
+  {
+    "id": "f9eba980-db7d-4f74-8f96-da8e8228ab42",
+    "name": "Fensterreinigungsgerät Stratos",
+    "number": "CAFM-F9EBA980",
+    "location": "Schulanlage Hibi",
+    "site": "HIBI"
+  },
+  {
+    "id": "dc99381a-dfce-4587-b6e3-3276770f41b9",
+    "name": "Steamer",
+    "number": "ELN135551 / EL6213005-2X",
+    "location": "Hibi Trakt C · SH Schulhaus, 0. SH Erdgeschoss, 106 Aufwärmküche",
+    "site": "HIBI"
+  },
+  {
+    "id": "6a80ae2e-5681-4c04-bc69-f5a6ca6763b4",
+    "name": "Geschirrspüler / Geschirrwaschautomat",
+    "number": "CAFM-6A80AE2E",
+    "location": "Hibi Trakt C · SH Schulhaus, 0. SH Erdgeschoss, 106 Aufwärmküche",
+    "site": "HIBI"
+  },
+  {
+    "id": "ff23089a-d409-4ffc-b6b7-f1f649e2a0db",
+    "name": "Kochherd / Kochfeld",
+    "number": "CAFM-FF23089A",
+    "location": "Hibi Trakt C · SH Schulhaus, 0. SH Erdgeschoss, 106 Aufwärmküche",
+    "site": "HIBI"
+  },
+  {
+    "id": "8a569469-0164-4ffc-b9ef-16bd6371b5d2",
+    "name": "Kühlschrank",
+    "number": "51068101081",
+    "location": "Hibi Trakt C · SH Schulhaus, 0. SH Erdgeschoss, 106 Aufwärmküche",
+    "site": "HIBI"
+  },
+  {
+    "id": "c195d08a-167a-44ab-95ee-a904ab4d4dad",
+    "name": "Kühlschrank",
+    "number": "51072100925",
+    "location": "Hibi Trakt C · SH Schulhaus, 0. SH Erdgeschoss, 107 SSA-Büro klein",
+    "site": "HIBI"
+  },
+  {
+    "id": "bfcacb73-24d2-4925-a1b4-6078e841d680",
+    "name": "Sanitärverteilbatterie",
+    "number": "CAFM-BFCACB73",
+    "location": "Hibi Trakt P · 0. Erdgeschoss, 008 Technik",
+    "site": "HIBI"
+  },
+  {
+    "id": "9770f89a-b623-44fd-9df8-3cd5617ee520",
+    "name": "Kühlschrank",
+    "number": "11 9926 014897",
+    "location": "Hibi Trakt P · 0. Erdgeschoss, 007 Lager / Putzraum",
+    "site": "HIBI"
+  },
+  {
+    "id": "b471189c-0c47-4715-bc67-d62fd07eb74b",
+    "name": "Staubsauger",
+    "number": "123900015",
+    "location": "Hibi Trakt P",
+    "site": "HIBI"
+  },
+  {
+    "id": "02a652ed-a1ed-4392-a215-7b67adc06a65",
+    "name": "Bockleiter",
+    "number": "42426",
+    "location": "Mettmi Trakt Z · O.0 Untergeschoss, Werkstatt HW",
+    "site": "METTMI"
+  },
+  {
+    "id": "314000ac-9d97-4aec-9b79-8f1c3dfc1050",
+    "name": "Bockleiter",
+    "number": "32123",
+    "location": "Mettmi Trakt Z · O.0 Untergeschoss, Werkstatt HW",
+    "site": "METTMI"
+  },
+  {
+    "id": "dfb73c7b-69d0-47c5-818f-494684f438a1",
+    "name": "Schlauch und Haspel",
+    "number": "CAFM-DFB73C7B",
+    "location": "Mettmi Trakt Z · O.0 Untergeschoss, Werkstatt HW",
+    "site": "METTMI"
+  },
+  {
+    "id": "979b402d-f48f-4854-bf94-7127d21a5716",
+    "name": "Rückenspritze / Drucksprühgerät",
+    "number": "CAFM-979B402D",
+    "location": "Mettmi Trakt Z · O.0 Untergeschoss, Werkstatt HW",
+    "site": "METTMI"
+  },
+  {
+    "id": "e53c2fde-9e39-42e0-9060-a8ba0adcb41b",
+    "name": "Hauseinführung Gas",
+    "number": "GE-92-0063-001-02 / 85272550 / B27.98-30867",
+    "location": "Mettmi Trakt Z · O.0 Untergeschoss, Werkstatt HW",
+    "site": "METTMI"
+  },
+  {
+    "id": "3e0d6c13-d311-4f19-a472-1136dce75a64",
+    "name": "Akku-Schlagbohrschrauber",
+    "number": "N472982",
+    "location": "Mettmi Trakt Z · O.0 Untergeschoss, Werkstatt HW",
+    "site": "METTMI"
+  },
+  {
+    "id": "83008062-321f-4a0f-b190-f25fee390c8a",
+    "name": "Akku-Winkelschleifer",
+    "number": "N499035",
+    "location": "Mettmi Trakt Z · O.0 Untergeschoss, Werkstatt HW",
+    "site": "METTMI"
+  },
+  {
+    "id": "f8b69c89-e1a7-41ad-9727-76bfbed0adcf",
+    "name": "Schliessanlage Schulverwaltung",
+    "number": "CAFM-F8B69C89",
+    "location": "Schulverwaltung",
+    "site": "Schulverwaltung"
+  },
+  {
+    "id": "1ed0f53b-5e33-4326-b5a0-476014e68da9",
+    "name": "Akku-Rohrreinigungsgerät / Rohrreinigungsspirale",
+    "number": "N429893",
+    "location": "Mettmi Trakt Z · O.0 Untergeschoss, Werkstatt HW",
+    "site": "METTMI"
+  },
+  {
+    "id": "21e81653-4265-41cc-93de-f62dca27ef6b",
+    "name": "Kühlschrank",
+    "number": "CAFM-21E81653",
+    "location": "Mettmi Trakt Z · O.0 Untergeschoss,  Büro HW",
+    "site": "METTMI"
+  },
+  {
+    "id": "f47e0ba2-400a-4a2b-8728-21446f4999a6",
+    "name": "Akku-Bohrschrauber",
+    "number": "NA071420",
+    "location": "Mettmi Trakt Z · O.0 Untergeschoss, Werkstatt HW",
+    "site": "METTMI"
+  },
+  {
+    "id": "ea166b04-521e-4302-9c0b-b7f86d5ff135",
+    "name": "Akku Schlagschrauber",
+    "number": "N472874",
+    "location": "Mettmi Trakt Z · O.0 Untergeschoss, Werkstatt HW",
+    "site": "METTMI"
+  },
+  {
+    "id": "d5fd2641-5945-4431-a753-88aafcd5fc4a",
+    "name": "Akku-Bohrhammer / Kombihammer",
+    "number": "N402814",
+    "location": "Mettmi Trakt Z · O.0 Untergeschoss, Werkstatt HW",
+    "site": "METTMI"
+  },
+  {
+    "id": "d82c8bbb-23d3-41e7-b296-e1b40d5f2922",
+    "name": "Ventilator",
+    "number": "CAFM-D82C8BBB",
+    "location": "Schulverwaltung · 4. OG",
+    "site": "Schulverwaltung"
+  },
+  {
+    "id": "c083e391-152d-4579-9c0b-cd70b69e4988",
+    "name": "Brandschutztüren mit Rauchmelder",
+    "number": "CAFM-C083E391",
+    "location": "Hibi Trakt B · 1. Obergeschoss, 1. Obergeschoss, 1. Obergeschoss, 1. Obergeschoss\n201 Seketariat Empfang\n202 Büro Schulleitung\n205 Vorraum Büro Hausdienst",
+    "site": "HIBI"
+  },
+  {
+    "id": "f0221fe3-85ad-4994-a726-0cb6f99766e6",
+    "name": "Akku",
+    "number": "CAFM-F0221FE3",
+    "location": "Mettmi Trakt Z · O.0 Untergeschoss, Werkstatt HW",
+    "site": "METTMI"
+  },
+  {
+    "id": "8524f72a-4a32-47c8-8894-e787c7c2d46d",
+    "name": "Akkuladegerät",
+    "number": "201737PQ",
+    "location": "Mettmi Trakt Z · O.0 Untergeschoss, Werkstatt HW",
+    "site": "METTMI"
+  },
+  {
+    "id": "4d7f45ff-6448-4e80-aef4-062d75f84d17",
+    "name": "Akkuladegerät",
+    "number": "2 607 226 219",
+    "location": "Mettmi Trakt Z · O.0 Untergeschoss, Werkstatt HW",
+    "site": "METTMI"
+  },
+  {
+    "id": "c1904520-8bf3-4258-8f86-d36af37ddea8",
+    "name": "Photovoltaikanlage / PV Anlage / Solaranlage",
+    "number": "CAFM-C1904520",
+    "location": "Mettmi Trakt Z",
+    "site": "METTMI"
+  },
+  {
+    "id": "a6102df1-1327-466c-8015-6d4d6522597a",
+    "name": "Akku",
+    "number": "CAFM-A6102DF1",
+    "location": "Mettmi Trakt Z · O.0 Untergeschoss, Werkstatt HW",
+    "site": "METTMI"
+  },
+  {
+    "id": "a96183b1-d130-4f28-bb67-f0ec3f93e9ce",
+    "name": "Akku",
+    "number": "1 600 A00 X7H",
+    "location": "Mettmi Trakt Z · O.0 Untergeschoss, Werkstatt HW",
+    "site": "METTMI"
+  },
+  {
+    "id": "459b1834-6512-4e59-8abc-a08ed4583f12",
+    "name": "Akku",
+    "number": "1 607 A35 06F",
+    "location": "Mettmi Trakt Z · O.0 Untergeschoss, Werkstatt HW",
+    "site": "METTMI"
+  },
+  {
+    "id": "2476cff5-7235-4588-95cb-c981530f9579",
+    "name": "Stichsäge",
+    "number": "3 601 EA1 001",
+    "location": "Mettmi Trakt Z · O.0 Untergeschoss, Werkstatt HW",
+    "site": "METTMI"
+  },
+  {
+    "id": "1ec24437-edc3-41a8-b1df-07cf3a03ef21",
+    "name": "Akku",
+    "number": "CAFM-1EC24437",
+    "location": "Mettmi Trakt Z · O.0 Untergeschoss, Werkstatt HW",
+    "site": "METTMI"
+  },
+  {
+    "id": "f4cda9a1-986a-455c-8e7e-7d6b684ec108",
+    "name": "Akku",
+    "number": "CAFM-F4CDA9A1",
+    "location": "Mettmi Trakt Z · O.0 Untergeschoss, Werkstatt HW",
+    "site": "METTMI"
+  },
+  {
+    "id": "ab8ec00a-02e4-4ce4-b4e7-092d4e5bf302",
+    "name": "Fahrzeugladestation",
+    "number": "CAFM-AB8EC00A",
+    "location": "Schulanlage Hibi · Umgebung Umgebung",
+    "site": "HIBI"
+  },
+  {
+    "id": "fba4ec6f-b5a6-467b-8a09-ac5fa289bbc8",
+    "name": "Staubsauger",
+    "number": "181460",
+    "location": "Mettmi Trakt Z · O.0 Untergeschoss, Werkstatt HW",
+    "site": "METTMI"
+  },
+  {
+    "id": "c7b73796-19e9-48cf-947b-3c0a0fc36e59",
+    "name": "Staubsauger",
+    "number": "3520201401708",
+    "location": "Mettmi Trakt Z · O.0 Untergeschoss,  Lagerraum",
+    "site": "METTMI"
+  },
+  {
+    "id": "1f208891-bd69-413d-a35e-dd3fc45413c4",
+    "name": "Staubsauger",
+    "number": "3520202702996",
+    "location": "Mettmi Trakt Z · O.0 Untergeschoss,  Lagerraum",
+    "site": "METTMI"
+  },
+  {
+    "id": "aebc64a7-f131-44b5-94f7-0f10bda6abe0",
+    "name": "Staubsauger",
+    "number": "3520202702996",
+    "location": "Mettmi Trakt Z · O.0 Untergeschoss,  Lagerraum",
+    "site": "METTMI"
+  },
+  {
+    "id": "56251f25-521c-4714-8c09-4c39787849f6",
+    "name": "Lüftungsanlage",
+    "number": "CAFM-56251F25",
+    "location": "Mettmi Trakt S · O.3 Obergeschoss, 328 Technikraum Technikraum",
+    "site": "METTMI"
+  },
+  {
+    "id": "3ea60485-b57b-414b-9888-9919bd5eace4",
+    "name": "Akkuladegerät",
+    "number": "201737PQ",
+    "location": "Mettmi Trakt Z · O.0 Untergeschoss, Werkstatt HW",
+    "site": "METTMI"
+  },
+  {
+    "id": "9c22621a-d17f-4c9d-a707-1a98d93db281",
+    "name": "Heizverteiler",
+    "number": "CAFM-9C22621A",
+    "location": "Mettmi Trakt Z · O.0 Untergeschoss,  Heizung",
+    "site": "METTMI"
+  },
+  {
+    "id": "f4dfa889-1533-401c-9d1f-7c59dec7af5f",
+    "name": "Heissluftföhn",
+    "number": "CAFM-F4DFA889",
+    "location": "Mettmi Trakt Z · O.0 Untergeschoss, Werkstatt HW",
+    "site": "METTMI"
+  },
+  {
+    "id": "0b8783ec-e126-4712-9604-8db6271cbef1",
+    "name": "Handkreissäge",
+    "number": "42060031",
+    "location": "Mettmi Trakt Z · O.0 Untergeschoss, Werkstatt HW",
+    "site": "METTMI"
+  },
+  {
+    "id": "e25f9ae5-1d57-4ddf-b5b0-49fa1f4f354a",
+    "name": "Bandschleif- und Poliermaschine",
+    "number": "VK 2517/041",
+    "location": "Mettmi Trakt Z · O.0 Untergeschoss, Werkstatt HW",
+    "site": "METTMI"
+  },
+  {
+    "id": "de84cc72-ddaf-4244-8d89-dffecf471545",
+    "name": "Druckluftkompressor",
+    "number": "0145-217968",
+    "location": "Mettmi Trakt Z · O.0 Untergeschoss, Werkstatt HW",
+    "site": "METTMI"
+  },
+  {
+    "id": "ae71d29e-1cab-46d2-94e1-22258667c93d",
+    "name": "MIG/MAG-Schweissgerät",
+    "number": "406-947-2665",
+    "location": "Mettmi Trakt Z · O.0 Untergeschoss, Werkstatt HW",
+    "site": "METTMI"
+  },
+  {
+    "id": "dc6265c4-729a-46b9-9a55-0932ff44b1f8",
+    "name": "Staubsauger",
+    "number": "CAFM-DC6265C4",
+    "location": "Mettmi Trakt Z · O.0 Untergeschoss,  Lagerraum",
+    "site": "METTMI"
+  },
+  {
+    "id": "ec808672-9d44-4738-a63a-67ae3523d0d3",
+    "name": "Staubsauger",
+    "number": "CAFM-EC808672",
+    "location": "Mettmi Trakt Z · O.0 Untergeschoss,  Lagerraum",
+    "site": "METTMI"
+  },
+  {
+    "id": "ac85e971-70fd-40bc-beca-a3c86c448f46",
+    "name": "Mobile Hubarbeitsbühne / Manueller Hochhubwagen",
+    "number": "46383",
+    "location": "Mettmi Trakt Z · O.0 Untergeschoss,  Lagerraum",
+    "site": "METTMI"
+  },
+  {
+    "id": "f9ae0917-b1ab-45b4-8bc8-0ee038288564",
+    "name": "Akku",
+    "number": "CAFM-F9AE0917",
+    "location": "Mettmi Trakt Z · O.0 Untergeschoss, Werkstatt HW",
+    "site": "METTMI"
+  },
+  {
+    "id": "e8ea5912-6111-46ab-a12d-4cc140fa65d7",
+    "name": "Mobiles Entfeuchtungsgerät",
+    "number": "CAFM-E8EA5912",
+    "location": "Mettmi Trakt Z · O.0 Untergeschoss, Werkstatt HW",
+    "site": "METTMI"
+  },
+  {
+    "id": "8b45ca38-a5a0-441b-9bbc-623134aa103b",
+    "name": "Rückensauger",
+    "number": "1733 00037",
+    "location": "Mettmi Trakt Z · O.0 Untergeschoss,  Lagerraum",
+    "site": "METTMI"
+  },
+  {
+    "id": "094370e6-d8bd-4157-8c4a-304bfafe6363",
+    "name": "Rückensauger",
+    "number": "183900049",
+    "location": "Mettmi Trakt Z · O.0 Untergeschoss,  Lagerraum",
+    "site": "METTMI"
+  },
+  {
+    "id": "2e201a80-dbe7-4b4f-bbbd-26c342d0d5d4",
+    "name": "Staubsauger",
+    "number": "CAFM-2E201A80",
+    "location": "Mettmi Trakt Z · O.0 Untergeschoss,  Lagerraum",
+    "site": "METTMI"
+  },
+  {
+    "id": "abe6216c-258f-4564-8379-630858f09471",
+    "name": "Staubsauger",
+    "number": "EU019290N",
+    "location": "Mettmi Trakt Z · O.0 Untergeschoss,  Lagerraum",
+    "site": "METTMI"
+  },
+  {
+    "id": "990df21b-b5da-4639-8c56-4294f7decbb3",
+    "name": "Endoskop Kamera",
+    "number": "CAFM-990DF21B",
+    "location": "Hibi Trakt B · 1. Obergeschoss, 207 Büro Hausdienst",
+    "site": "HIBI"
+  },
+  {
+    "id": "586adeaa-1186-422e-973e-319bb673fa79",
+    "name": "Handfeuerlöscher",
+    "number": "16563",
+    "location": "Mettmi Trakt Z · O.0 Untergeschoss,  Einstellhalle",
+    "site": "METTMI"
+  },
+  {
+    "id": "a186adb4-7f70-429d-981d-537dc605d0e7",
+    "name": "Handfeuerlöscher",
+    "number": "1471740",
+    "location": "Mettmi Trakt Z · O.0 Untergeschoss,  Einstellhalle",
+    "site": "METTMI"
+  },
+  {
+    "id": "df61f785-7622-4545-86b7-b7937fe48f8e",
+    "name": "Handfeuerlöscher",
+    "number": "1674256",
+    "location": "Mettmi Trakt S · O.1 Erdgeschoss,  Korridor",
+    "site": "METTMI"
+  },
+  {
+    "id": "e8defc20-f634-4bb7-980a-8a605819c15a",
+    "name": "Handfeuerlöscher",
+    "number": "11008",
+    "location": "Mettmi Trakt Z · O.3 Obergeschoss,  Kleiner Saal",
+    "site": "METTMI"
+  },
+  {
+    "id": "cd2eff2b-40fe-4e3e-ab7d-1f528b3b7e10",
+    "name": "Nasssauger / Wassersauger",
+    "number": "00000/05",
+    "location": "Mettmi Trakt Z · O.0 Untergeschoss,  Heizung",
+    "site": "METTMI"
+  },
+  {
+    "id": "74f5d236-33f9-4d59-9490-382196a9434b",
+    "name": "Podestleiter",
+    "number": "CAFM-74F5D236",
+    "location": "Mettmi Trakt Z · O.0 Untergeschoss, Werkstatt HW",
+    "site": "METTMI"
+  },
+  {
+    "id": "ad4b74be-f010-491b-b99c-b3b13c071ea4",
+    "name": "Akku-Fenstersauger",
+    "number": "CAFM-AD4B74BE",
+    "location": "Mettmi Trakt Z · O.0 Untergeschoss,  Büro HW",
+    "site": "METTMI"
+  },
+  {
+    "id": "40500d73-2f35-4c11-8361-45bf95ba8a7a",
+    "name": "Bockleiter",
+    "number": "CAFM-40500D73",
+    "location": "Mettmi Trakt Z · O.0 Untergeschoss,  Lagerraum",
+    "site": "METTMI"
+  },
+  {
+    "id": "f03c773b-85fc-472c-a08b-80cf16a79b1f",
+    "name": "Rollgerüst",
+    "number": "CAFM-F03C773B",
+    "location": "Mettmi Trakt Z · O.0 Untergeschoss,  Korridor",
+    "site": "METTMI"
+  },
+  {
+    "id": "2a08fe76-a2d0-4bc4-9719-ea8ee97183c9",
+    "name": "Tauchpumpe mit Schwimmerschalter",
+    "number": "CAFM-2A08FE76",
+    "location": "Mettmi Trakt Z · O.0 Untergeschoss,  Lagerraum",
+    "site": "METTMI"
+  },
+  {
+    "id": "bc40050a-f2e1-4dc8-8e11-909afca2c67b",
+    "name": "Bockleiter",
+    "number": "CAFM-BC40050A",
+    "location": "Mettmi Trakt Z · O.0 Untergeschoss,  Korridor",
+    "site": "METTMI"
+  },
+  {
+    "id": "a3331e12-ec9e-4289-a3a1-c542448707ec",
+    "name": "Scheuersaugmaschine",
+    "number": "400750 002",
+    "location": "Schulanlage Mettmi",
+    "site": "METTMI"
+  },
+  {
+    "id": "5a2473fa-3932-4db1-a3f7-e0e869bcf56f",
+    "name": "Scheuersaugmaschine",
+    "number": "751037504029",
+    "location": "Schulanlage Mettmi",
+    "site": "METTMI"
+  },
+  {
+    "id": "0376cb2e-5183-4bbf-bac6-b742bfe56e84",
+    "name": "Bockleiter",
+    "number": "CAFM-0376CB2E",
+    "location": "Schulanlage Mettmi",
+    "site": "METTMI"
+  },
+  {
+    "id": "7713729d-b3b0-4473-b44e-35ac8bdf8827",
+    "name": "Bockleiter",
+    "number": "CAFM-7713729D",
+    "location": "Schulanlage Mettmi",
+    "site": "METTMI"
+  },
+  {
+    "id": "6ce9fd51-13d9-43fb-9940-b89cb3b63b9f",
+    "name": "Staubsauger",
+    "number": "319",
+    "location": "Mettmi Trakt Z · O.0 Untergeschoss,  Geräteraum",
+    "site": "METTMI"
+  },
+  {
+    "id": "b43bf932-faa2-4b80-8836-3f2640dd4f94",
+    "name": "Einscheibenmaschine",
+    "number": "8004010325239",
+    "location": "Mettmi Trakt Z · O.0 Untergeschoss,  Geräteraum",
+    "site": "METTMI"
+  },
+  {
+    "id": "88458bf8-2dc5-4754-8b65-1d4e1a4b8d55",
+    "name": "Einscheibenmaschine",
+    "number": "8004010034818",
+    "location": "Mettmi Trakt Z · O.0 Untergeschoss,  Geräteraum",
+    "site": "METTMI"
+  },
+  {
+    "id": "9afa0aaa-b1f1-4c6f-a6aa-e7aaabd125fd",
+    "name": "Staubsauger",
+    "number": "11166",
+    "location": "Mettmi Trakt Z · O.0 Untergeschoss,  Geräteraum",
+    "site": "METTMI"
+  },
+  {
+    "id": "7d277c1a-d02d-4ad1-9e19-2856bb553638",
+    "name": "Nasssaueger / Wassersauger",
+    "number": "CAFM-7D277C1A",
+    "location": "Mettmi Trakt Z · O.0 Untergeschoss,  Geräteraum",
+    "site": "METTMI"
+  },
+  {
+    "id": "1496fefb-42bc-4100-b17e-65b53ed29049",
+    "name": "Staubsauger",
+    "number": "CAFM-1496FEFB",
+    "location": "Schulanlage Mettmi",
+    "site": "METTMI"
+  },
+  {
+    "id": "60c92978-2976-4357-b0ba-70acbc361768",
+    "name": "Staubsauger",
+    "number": "762425206",
+    "location": "Mettmi Trakt Z · O.2 Obergeschoss,  Putzraum",
+    "site": "METTMI"
+  },
+  {
+    "id": "7643d647-bbe7-405d-8b36-248ccd3c01ad",
+    "name": "Staubsauger",
+    "number": "2704",
+    "location": "Mettmi Trakt W · O.0 Untergeschoss",
+    "site": "METTMI"
+  },
+  {
+    "id": "d6f2293e-a30f-40e0-8262-c75645197783",
+    "name": "Staubsauger",
+    "number": "CAFM-D6F2293E",
+    "location": "Mettmi Trakt W · O.4 Obergeschoss,  Putzraum",
+    "site": "METTMI"
+  },
+  {
+    "id": "afaf203e-02f7-46ca-9812-3e3ec64b79db",
+    "name": "Staubsauger",
+    "number": "CAFM-AFAF203E",
+    "location": "Mettmi Trakt W · O.3 Obergeschoss,  Putzraum",
+    "site": "METTMI"
+  },
+  {
+    "id": "e5cccdf7-42c7-42c0-8809-2a1c422c6894",
+    "name": "Staubsauger",
+    "number": "300699",
+    "location": "Mettmi Trakt W · O.0 Untergeschoss,  Waschraum ZS",
+    "site": "METTMI"
+  },
+  {
+    "id": "6038cadd-033d-4045-8971-b62e37ef8121",
+    "name": "i-mop XL Scheuersaugmaschine",
+    "number": "CAFM-6038CADD",
+    "location": "Mettmi Trakt TH · Putzraum",
+    "site": "METTMI"
+  },
+  {
+    "id": "f09567a6-ce29-4cdd-a6ee-e153fe240c45",
+    "name": "Rückensauger",
+    "number": "200100065",
+    "location": "Mettmi Trakt TH · Putzraum",
+    "site": "METTMI"
+  },
+  {
+    "id": "7635a550-dccc-408b-ae59-bcbadd554f9f",
+    "name": "Scheuersaugmaschine",
+    "number": "7518369032215",
+    "location": "Schulanlage Mettmi",
+    "site": "METTMI"
+  },
+  {
+    "id": "13d8b623-3e68-4ad6-9c19-f1c62a470b00",
+    "name": "Kühlschrank",
+    "number": "73430042",
+    "location": "Mettmi Trakt TH · Garderobe Lehrer",
+    "site": "METTMI"
+  },
+  {
+    "id": "a29fb88c-0690-4655-bedc-67ffd9782534",
+    "name": "Kühlschrank",
+    "number": "CAFM-A29FB88C",
+    "location": "Mettmi Trakt TH · Sanitätszimmer",
+    "site": "METTMI"
+  },
+  {
+    "id": "2572b46a-67e6-40f5-831e-2540b7614bbe",
+    "name": "Scheuersaugmaschine",
+    "number": "7516830023617",
+    "location": "Mettmi Trakt TH · Putzraum",
+    "site": "METTMI"
+  },
+  {
+    "id": "b4e01764-2e57-4ef8-81dd-ce9b37a1efb5",
+    "name": "Staubsauger",
+    "number": "355583",
+    "location": "Mettmi Trakt TH · Putzraum",
+    "site": "METTMI"
+  },
+  {
+    "id": "06be84d8-8803-4eae-9d08-5ee8fc7c4f0f",
+    "name": "Elektrische Treppenkarre / Treppensteiger",
+    "number": "20185344",
+    "location": "Mettmi Trakt Z · O.0 Untergeschoss,  Korridor",
+    "site": "METTMI"
+  },
+  {
+    "id": "92c469dd-60bc-4121-b380-95a829769110",
+    "name": "Gefrierschrank / Tiefkühler",
+    "number": "862200006",
+    "location": "Mettmi Trakt Z · O.0 Untergeschoss,  Korridor",
+    "site": "METTMI"
+  },
+  {
+    "id": "6bc4d2c4-7b3c-4d68-b37e-2af4a8f6604f",
+    "name": "Treppenlift",
+    "number": "3052",
+    "location": "Mettmi Trakt Z · O.0 Untergeschoss,  Korridor",
+    "site": "METTMI"
+  },
+  {
+    "id": "f533f89a-0ef4-4c66-97ef-cf6f25471824",
+    "name": "Staubsauger",
+    "number": "90494",
+    "location": "Mettmi Trakt S · O.2 Obergeschoss,  Putzraum",
+    "site": "METTMI"
+  },
+  {
+    "id": "1f74c210-69fa-4a4c-b3a8-760efa5aa9c0",
+    "name": "i-mop XL Scheuersaugmaschine",
+    "number": "CAFM-1F74C210",
+    "location": "Mettmi Trakt S · O.2 Obergeschoss,  Putzraum",
+    "site": "METTMI"
+  },
+  {
+    "id": "5f73b352-654e-4cea-8e30-484ef0725399",
+    "name": "Staubsauger",
+    "number": "CAFM-5F73B352",
+    "location": "Mettmi Trakt S · O.2 Obergeschoss,  Putzraum",
+    "site": "METTMI"
+  },
+  {
+    "id": "31ed8a07-9d3f-48ff-b771-a11bb589aba7",
+    "name": "Nasslöschposten",
+    "number": "37835",
+    "location": "Mettmi Trakt S · O.1 Erdgeschoss,  Korridor",
+    "site": "METTMI"
+  },
+  {
+    "id": "da2f4d48-0285-42aa-971e-9b258c9cbcb1",
+    "name": "Nasslöschposten",
+    "number": "37834",
+    "location": "Mettmi Trakt S · O.3 Obergeschoss,  Korridor",
+    "site": "METTMI"
+  },
+  {
+    "id": "69f2f370-243b-4b8d-aef8-cfd5137aea96",
+    "name": "Hochdruckreiniger",
+    "number": "201829",
+    "location": "Mettmi Trakt TH · Geräteraum",
+    "site": "METTMI"
+  },
+  {
+    "id": "86c7a435-7ba9-43ab-b407-0b9265c0e318",
+    "name": "Benzin-Laubbläser / Blasgerät",
+    "number": "201801000643",
+    "location": "Mettmi Trakt Z · O.0 Untergeschoss,  Geräteraum",
+    "site": "METTMI"
+  },
+  {
+    "id": "61815cf3-7195-4b7a-abbf-25233124df73",
+    "name": "Benzin-Laubbläser / Blasgerät",
+    "number": "CAFM-61815CF3",
+    "location": "Mettmi Trakt Z · O.0 Untergeschoss,  Geräteraum",
+    "site": "METTMI"
+  },
+  {
+    "id": "d6fda7d6-2ede-4b42-8ac7-bd4dcac9f155",
+    "name": "Benzin-Laubbläser / Blasgerät",
+    "number": "EH025-73-256926",
+    "location": "Mettmi Trakt Z · O.0 Untergeschoss,  Geräteraum",
+    "site": "METTMI"
+  },
+  {
+    "id": "4ab17e0c-61f8-45fb-ae32-cefb926665b6",
+    "name": "Akku-Laubbläser / Blasgerät",
+    "number": "489206704",
+    "location": "Mettmi Trakt Z · O.0 Untergeschoss,  Geräteraum",
+    "site": "METTMI"
+  },
+  {
+    "id": "49bbd376-8c3c-4135-a1ae-4f2fcf3eb40c",
+    "name": "Benzin-Laubbläser / Blasgerät",
+    "number": "CAFM-49BBD376",
+    "location": "Mettmi Trakt Z · O.0 Untergeschoss,  Geräteraum",
+    "site": "METTMI"
+  },
+  {
+    "id": "19f77b05-fd44-4e55-96fc-9426cdd89244",
+    "name": "Akku-Motorsense / Freischneider / Trimmer",
+    "number": "483822365",
+    "location": "Mettmi Trakt Z · O.0 Untergeschoss,  Geräteraum",
+    "site": "METTMI"
+  },
+  {
+    "id": "0e5a191a-406e-4805-ad24-ef0ceeea738a",
+    "name": "Aufsitzkehrmaschine",
+    "number": "650250510592",
+    "location": "Mettmi Trakt Z · O.0 Untergeschoss,  Einstellhalle",
+    "site": "METTMI"
+  },
+  {
+    "id": "03bd37be-3a8b-420a-a872-8833c62d650c",
+    "name": "Transportanhänger mit Holzaufbau",
+    "number": "8731420",
+    "location": "Mettmi Trakt Z · O.0 Untergeschoss,  Einstellhalle",
+    "site": "METTMI"
+  },
+  {
+    "id": "e6b667d0-a9c2-4a63-b06f-390d14f147a9",
+    "name": "Salzstreuer",
+    "number": "CAFM-E6B667D0",
+    "location": "Mettmi Trakt Z · O.0 Untergeschoss,  Einstellhalle",
+    "site": "METTMI"
+  },
+  {
+    "id": "42c755dd-932f-4c89-bc7d-4072b12d25d0",
+    "name": "Rasenmäher",
+    "number": "2502SA322720012026",
+    "location": "Mettmi Trakt Z · O.0 Untergeschoss,  Einstellhalle",
+    "site": "METTMI"
+  },
+  {
+    "id": "9d5b0245-dc1b-4bd2-bd68-3a2fc8b34dba",
+    "name": "Rasenkantenschneider",
+    "number": "80097694",
+    "location": "Mettmi Trakt Z · O.0 Untergeschoss,  Einstellhalle",
+    "site": "METTMI"
+  },
+  {
+    "id": "0d50afbb-8f8a-4f82-8aa3-11767584e0e4",
+    "name": "Bodenfräse / Motorhacke",
+    "number": "CAFM-0D50AFBB",
+    "location": "Mettmi Trakt Z · O.0 Untergeschoss,  Einstellhalle",
+    "site": "METTMI"
+  },
+  {
+    "id": "e8945156-ee30-4e25-8acb-f23b6058f09e",
+    "name": "Laubsauger",
+    "number": "CAFM-E8945156",
+    "location": "Mettmi Trakt Z · O.0 Untergeschoss,  Einstellhalle",
+    "site": "METTMI"
+  },
+  {
+    "id": "f6db7027-1565-4539-b813-e74f09d30faf",
+    "name": "Luftdruckkompressor",
+    "number": "CAFM-F6DB7027",
+    "location": "Mettmi Trakt Z · O.0 Untergeschoss,  Geräteraum",
+    "site": "METTMI"
+  },
+  {
+    "id": "013be07b-5acd-4e63-9ccb-f574499e7788",
+    "name": "Lüftungsanlage/Abluftanlage Schulküchen",
+    "number": "CAFM-013BE07B",
+    "location": "Mettmi Trakt S · O.0 Untergeschoss,  Lüftungsraum",
+    "site": "METTMI"
+  },
+  {
+    "id": "1d460ee8-c87b-4339-b747-794fc40d1f7f",
+    "name": "Staubsauger",
+    "number": "032.969.008",
+    "location": "Mettmi Trakt Z · O.2 Obergeschoss,  Putzraum",
+    "site": "METTMI"
+  },
+  {
+    "id": "43d79ded-f7c9-46d2-b578-535b595cf1aa",
+    "name": "Palettrolli / Handhubwagen",
+    "number": "CAFM-43D79DED",
+    "location": "Schulanlage Mettmi",
+    "site": "METTMI"
+  },
+  {
+    "id": "322e503c-aca1-43c7-aee0-200c58ff0a85",
+    "name": "Lüftungsanlage / Abluftanlage / Abluftventilator / Chemikalienschrankabsaugung",
+    "number": "CAFM-322E503C",
+    "location": "Mettmi Trakt S · O.1 Erdgeschoss, S1.1 Schulungsraum Chemie",
+    "site": "METTMI"
+  },
+  {
+    "id": "7ac32848-2c7c-4da9-99f6-a797350831c0",
+    "name": "Geschirrspüler / Geschirrwaschautomat / Laborspüler",
+    "number": "00 / 748462328",
+    "location": "Mettmi Trakt S · O.1 Erdgeschoss, S1.1 Schulungsraum Chemie",
+    "site": "METTMI"
+  },
+  {
+    "id": "7b495ae3-4118-47a4-82b8-eae087211947",
+    "name": "i-mop XL Scheuersaugmaschine",
+    "number": "CAFM-7B495AE3",
+    "location": "Mettmi Trakt Z · O.2 Obergeschoss,  Putzraum",
+    "site": "METTMI"
+  },
+  {
+    "id": "0fe9ea4c-92fd-447e-be7d-96b2783f438f",
+    "name": "Staubsauger",
+    "number": "CAFM-0FE9EA4C",
+    "location": "Mettmi Trakt Z · O.2 Obergeschoss,  Putzraum",
+    "site": "METTMI"
+  },
+  {
+    "id": "0a5cce7c-f4f1-4788-afd8-60b56572c7e6",
+    "name": "Bockleiter",
+    "number": "CAFM-0A5CCE7C",
+    "location": "Mettmi Trakt Z · O.2 Obergeschoss,  Putzraum",
+    "site": "METTMI"
+  },
+  {
+    "id": "f1f2d0d8-0e32-41da-8218-9bae6ac2f3ec",
+    "name": "Staubsauger",
+    "number": "CAFM-F1F2D0D8",
+    "location": "Mettmi Trakt W · O.1 Erdgeschoss,  Putzraum",
+    "site": "METTMI"
+  },
+  {
+    "id": "474befef-db78-46d3-aa1c-e11293982e3d",
+    "name": "Bockleiter",
+    "number": "CAFM-474BEFEF",
+    "location": "Mettmi Trakt W",
+    "site": "METTMI"
+  },
+  {
+    "id": "baa1dbb9-b4d5-4094-982a-b65c0318411f",
+    "name": "Staubsauger",
+    "number": "CAFM-BAA1DBB9",
+    "location": "Mettmi Trakt O · O.3 Obergeschoss,  Putzraum",
+    "site": "METTMI"
+  },
+  {
+    "id": "f1c7e274-1061-413e-bb18-2cb16357f830",
+    "name": "Automatische Brandschutztür mit Rückhaltemagnet",
+    "number": "CAFM-F1C7E274",
+    "location": "Mettmi Trakt O · O.3 Obergeschoss",
+    "site": "METTMI"
+  },
+  {
+    "id": "29ae2532-5df2-415f-9987-5dc27b7171d3",
+    "name": "Mechanische Brandschutztüren Trakt O",
+    "number": "CAFM-29AE2532",
+    "location": "Mettmi Trakt O",
+    "site": "METTMI"
+  },
+  {
+    "id": "9a34780f-aa90-4180-a234-8fdb897b68ac",
+    "name": "Automatische Brandschutztür mit Rückhaltemagnet",
+    "number": "CAFM-9A34780F",
+    "location": "Mettmi Trakt O · O.1 Erdgeschoss",
+    "site": "METTMI"
+  },
+  {
+    "id": "f7552bac-4959-4478-b558-dbd17fe7b53e",
+    "name": "Bockleiter",
+    "number": "CAFM-F7552BAC",
+    "location": "Mettmi Trakt O · O.1 Erdgeschoss,  Putzraum",
+    "site": "METTMI"
+  },
+  {
+    "id": "37c22eab-ceca-4cd2-8914-851345d4b7ba",
+    "name": "Staubsauger",
+    "number": "CAFM-37C22EAB",
+    "location": "Mettmi Trakt O · O.1 Erdgeschoss,  Putzraum",
+    "site": "METTMI"
+  },
+  {
+    "id": "9b4d3cb8-5d7c-4652-a8a0-aed185593d30",
+    "name": "Elektroverteilung",
+    "number": "CAFM-9B4D3CB8",
+    "location": "Mettmi Trakt O · O.0 Untergeschoss,  Waschküche",
+    "site": "METTMI"
+  },
+  {
+    "id": "b0d1fc1e-f66e-466d-9d8f-c9bb9caeff0b",
+    "name": "Staubsauger",
+    "number": "CAFM-B0D1FC1E",
+    "location": "Mettmi Trakt O · O.0 Untergeschoss,  Waschküche",
+    "site": "METTMI"
+  },
+  {
+    "id": "4f10695b-0475-4823-a6f0-d05301eba9c4",
+    "name": "Tumbler / Wäschetrockner",
+    "number": "3110093417450094",
+    "location": "Mettmi Trakt O · O.0 Untergeschoss,  Waschküche",
+    "site": "METTMI"
+  },
+  {
+    "id": "2096e626-65ff-460a-b63d-19c1455e5892",
+    "name": "Waschmaschine",
+    "number": "265014606",
+    "location": "Mettmi Trakt O · O.0 Untergeschoss,  Waschküche",
+    "site": "METTMI"
+  },
+  {
+    "id": "e4f1f078-978c-455b-887c-d0e4579845b1",
+    "name": "Tumbler / Wäschetrockner",
+    "number": "935205082",
+    "location": "Mettmi Trakt O · O.0 Untergeschoss,  Waschküche",
+    "site": "METTMI"
+  },
+  {
+    "id": "91dfa196-eb63-48a3-82d3-8d96192646c2",
+    "name": "Waschmaschine",
+    "number": "255014344",
+    "location": "Mettmi Trakt O · O.0 Untergeschoss,  Waschküche",
+    "site": "METTMI"
+  },
+  {
+    "id": "4cf71e2a-07ef-4570-a1c8-282a41b4940f",
+    "name": "Tumbler / Wäschetrockner",
+    "number": "199043723",
+    "location": "Mettmi Trakt O · O.0 Untergeschoss,  Waschküche",
+    "site": "METTMI"
+  },
+  {
+    "id": "5a35dc5e-1d82-4ab1-8d8a-52f0caa581fc",
+    "name": "Waschmaschine",
+    "number": "287068824",
+    "location": "Mettmi Trakt O · O.0 Untergeschoss,  Waschküche",
+    "site": "METTMI"
+  },
+  {
+    "id": "b0ef8470-708f-4739-bdcf-6092576d81ec",
+    "name": "Elektroverteilung",
+    "number": "CAFM-B0EF8470",
+    "location": "Mettmi Trakt TH · Putzraum",
+    "site": "METTMI"
+  },
+  {
+    "id": "ad74c3d9-7732-4db8-80e0-da367801846c",
+    "name": "Automatische Brandschutztür mit Rückhaltemagnet",
+    "number": "CAFM-AD74C3D9",
+    "location": "Mettmi Trakt W · O.3 Obergeschoss",
+    "site": "METTMI"
+  },
+  {
+    "id": "8f555d52-de05-4437-8a32-2756f8a74c00",
+    "name": "Automatische Brandschutztür mit Rückhaltemagnet",
+    "number": "CAFM-8F555D52",
+    "location": "Mettmi Trakt W · O.2 Obergeschoss",
+    "site": "METTMI"
+  },
+  {
+    "id": "4c06eb01-b447-4efe-b277-21745c5ee119",
+    "name": "Automatische Brandschutztür mit Rückhaltemagnet",
+    "number": "CAFM-4C06EB01",
+    "location": "Mettmi Trakt W · O.4 Obergeschoss",
+    "site": "METTMI"
+  },
+  {
+    "id": "071eb8fc-a199-483e-9ac1-3392ed15a642",
+    "name": "Automatische Brandschutztür mit Rückhaltemagnet",
+    "number": "CAFM-071EB8FC",
+    "location": "Mettmi Trakt W · O.1 Erdgeschoss",
+    "site": "METTMI"
+  },
+  {
+    "id": "8ea03551-6c47-4d6b-a058-8527b80c8040",
+    "name": "Automatische Brandschutztür mit Rückhaltemagnet",
+    "number": "CAFM-8EA03551",
+    "location": "Mettmi Trakt W · O.0 Untergeschoss",
+    "site": "METTMI"
+  },
+  {
+    "id": "3a33bbc1-8b43-4ca1-8266-29eabd00d0f5",
+    "name": "Kühlschrank",
+    "number": "14130005",
+    "location": "Mettmi Trakt Z · O.0 Untergeschoss,  Lagerraum",
+    "site": "METTMI"
+  },
+  {
+    "id": "7f3d0b9c-525f-4ec9-a727-55980509a720",
+    "name": "Kühlschrank",
+    "number": "CAFM-7F3D0B9C",
+    "location": "Mettmi Trakt Z · O.0 Untergeschoss,  Lagerraum",
+    "site": "METTMI"
+  },
+  {
+    "id": "358ba3fb-4937-4c65-99a1-0fcacc621256",
+    "name": "Mikrowellengerät",
+    "number": "CAFM-358BA3FB",
+    "location": "Mettmi Trakt Z · O.0 Untergeschoss,  Lagerraum",
+    "site": "METTMI"
+  },
+  {
+    "id": "1c5a81af-e29b-4e57-9f53-712e6717bc43",
+    "name": "Mikrowellengerät",
+    "number": "MHK2122",
+    "location": "Mettmi Trakt Z · O.0 Untergeschoss,  Lagerraum",
+    "site": "METTMI"
+  },
+  {
+    "id": "86d745a5-5ff9-409a-91e7-44abff39235c",
+    "name": "Mikrowellengerät",
+    "number": "DR22120008-2-0677",
+    "location": "Mettmi Trakt S · O.0 Untergeschoss,  Mittagstisch",
+    "site": "METTMI"
+  },
+  {
+    "id": "e0cdc7e7-7918-4820-9b2b-580c43316b98",
+    "name": "Mikrowellengerät",
+    "number": "41800580",
+    "location": "Mettmi Trakt S · O.0 Untergeschoss,  Mittagstisch",
+    "site": "METTMI"
+  },
+  {
+    "id": "1b5c4251-b066-4a82-9e6a-dacb1b71bfcd",
+    "name": "Mikrowellengerät",
+    "number": "41800616",
+    "location": "Mettmi Trakt S · O.0 Untergeschoss,  Mittagstisch",
+    "site": "METTMI"
+  },
+  {
+    "id": "c87279a4-2492-4f10-925d-ac1975068a7b",
+    "name": "Kühlschrank",
+    "number": "CAFM-C87279A4",
+    "location": "Mettmi Trakt S · O.0 Untergeschoss,  Mittagstisch",
+    "site": "METTMI"
+  },
+  {
+    "id": "431ea9b3-f2e5-40a6-9299-a1e042ba1bbb",
+    "name": "Gefrierschrank / Tiefkühler",
+    "number": "40806040",
+    "location": "Mettmi Trakt S · O.0 Untergeschoss,  Lagerraum",
+    "site": "METTMI"
+  },
+  {
+    "id": "53a6a64b-c030-469e-9827-6c95c7807ca6",
+    "name": "Geschirrspüler / Geschirrwaschautomat",
+    "number": "CAFM-53A6A64B",
+    "location": "Mettmi Trakt S · O.0 Untergeschoss,  Mittagstisch",
+    "site": "METTMI"
+  },
+  {
+    "id": "962aa945-d7d8-41f7-95d8-1f87813fc3de",
+    "name": "Dampfabzug / Dunstabzug",
+    "number": "CAFM-962AA945",
+    "location": "Mettmi Trakt S · O.0 Untergeschoss,  Mittagstisch",
+    "site": "METTMI"
+  },
+  {
+    "id": "024fe330-1a2d-4e45-acbb-4d1ccd1f3664",
+    "name": "Kochherd / Kochfeld",
+    "number": "CAFM-024FE330",
+    "location": "Mettmi Trakt S · O.0 Untergeschoss,  Mittagstisch",
+    "site": "METTMI"
+  },
+  {
+    "id": "745c8f69-5600-4b70-be44-58f0d3858efb",
+    "name": "Kochherd / Kochfeld",
+    "number": "CAFM-745C8F69",
+    "location": "Mettmi Trakt S · O.0 Untergeschoss, S0.1 Schulküche",
+    "site": "METTMI"
+  },
+  {
+    "id": "2ea2e28e-9187-4270-98a8-8129cf81da21",
+    "name": "Backofen",
+    "number": "727001913",
+    "location": "Mettmi Trakt S · O.0 Untergeschoss, S0.1 Schulküche",
+    "site": "METTMI"
+  },
+  {
+    "id": "7206599e-4b4e-4b82-93ee-88181b700764",
+    "name": "Geschirrspüler / Geschirrwaschautomat",
+    "number": "76/110691443",
+    "location": "Mettmi Trakt S · O.0 Untergeschoss, S0.1 Schulküche",
+    "site": "METTMI"
+  },
+  {
+    "id": "2824875d-3b0a-471f-9d48-a7c4411bd13d",
+    "name": "Kochherd / Kochfeld",
+    "number": "CAFM-2824875D",
+    "location": "Mettmi Trakt S · O.0 Untergeschoss, S0.1 Schulküche",
+    "site": "METTMI"
+  },
+  {
+    "id": "97afd3b6-b536-4b0b-adfc-1c47e6d429f6",
+    "name": "Kochherd / Kochfeld",
+    "number": "CAFM-97AFD3B6",
+    "location": "Mettmi Trakt S · O.0 Untergeschoss, S0.1 Schulküche",
+    "site": "METTMI"
+  },
+  {
+    "id": "c80a82dd-2e00-447a-9373-a16b5d42a1ee",
+    "name": "Kochherd / Kochfeld",
+    "number": "CAFM-C80A82DD",
+    "location": "Mettmi Trakt S · O.0 Untergeschoss, S0.1 Schulküche",
+    "site": "METTMI"
+  },
+  {
+    "id": "68c716ab-234a-436f-a859-78917500b61d",
+    "name": "Kochherd / Kochfeld",
+    "number": "CAFM-68C716AB",
+    "location": "Mettmi Trakt S · O.0 Untergeschoss, S0.1 Schulküche",
+    "site": "METTMI"
+  },
+  {
+    "id": "ce4d99d6-a692-416f-8d1c-826834d85256",
+    "name": "Kochherd / Kochfeld",
+    "number": "CAFM-CE4D99D6",
+    "location": "Mettmi Trakt S · O.0 Untergeschoss, S0.1 Schulküche",
+    "site": "METTMI"
+  },
+  {
+    "id": "ecb2a01a-e546-45ce-9ac7-57859abd4b72",
+    "name": "Kochherd / Kochfeld",
+    "number": "CAFM-ECB2A01A",
+    "location": "Mettmi Trakt S · O.0 Untergeschoss, S0.1 Schulküche",
+    "site": "METTMI"
+  },
+  {
+    "id": "e92e8c04-bc5a-4f41-8e2a-f85d6fe8ea3d",
+    "name": "Kochherd / Kochfeld",
+    "number": "CAFM-E92E8C04",
+    "location": "Mettmi Trakt S · O.0 Untergeschoss, S0.1 Schulküche",
+    "site": "METTMI"
+  },
+  {
+    "id": "f1d36650-d2d9-466f-ac41-2faf7e2eb586",
+    "name": "Kochherd / Kochfeld",
+    "number": "CAFM-F1D36650",
+    "location": "Mettmi Trakt S · O.0 Untergeschoss, S0.1 Schulküche",
+    "site": "METTMI"
+  },
+  {
+    "id": "a8173fc9-adef-4306-ad69-96a26deeae53",
+    "name": "Backofen",
+    "number": "727001917",
+    "location": "Mettmi Trakt S · O.0 Untergeschoss, S0.1 Schulküche",
+    "site": "METTMI"
+  },
+  {
+    "id": "b2a25542-2068-4136-b072-7cc66e700315",
+    "name": "Backofen",
+    "number": "727001915",
+    "location": "Mettmi Trakt S · O.0 Untergeschoss, S0.1 Schulküche",
+    "site": "METTMI"
+  },
+  {
+    "id": "dfdf8de2-e8fa-4946-9469-583efe6591ff",
+    "name": "Backofen",
+    "number": "727001918",
+    "location": "Mettmi Trakt S · O.0 Untergeschoss, S0.1 Schulküche",
+    "site": "METTMI"
+  },
+  {
+    "id": "cd7089bd-7e7f-43be-853e-4cfb9d119456",
+    "name": "Einbauküche Mikrowelle",
+    "number": "945002306",
+    "location": "Mettmi Trakt S · O.0 Untergeschoss, S0.1 Schulküche",
+    "site": "METTMI"
+  },
+  {
+    "id": "27c7336a-e016-4239-ae70-b96b4b342e19",
+    "name": "Steamer",
+    "number": "864008529",
+    "location": "Mettmi Trakt S · O.0 Untergeschoss, S0.1 Schulküche",
+    "site": "METTMI"
+  },
+  {
+    "id": "604bf340-1f1c-4b8e-86ed-15e4f2e7a2b5",
+    "name": "Geschirrspüler / Geschirrwaschautomat",
+    "number": "64/105274187",
+    "location": "Mettmi Trakt S · O.0 Untergeschoss, S0.1 Schulküche",
+    "site": "METTMI"
+  },
+  {
+    "id": "e683b32c-cdbd-491d-bd0e-55cc6ab09658",
+    "name": "Kühlschrank",
+    "number": "000088 / 9107",
+    "location": "Mettmi Trakt S · O.0 Untergeschoss, S0.1 Schulküche",
+    "site": "METTMI"
+  },
+  {
+    "id": "4c948f6f-d375-46d9-85a6-67a736e69db9",
+    "name": "Kühlschrank",
+    "number": "000001 9107",
+    "location": "Mettmi Trakt S · O.0 Untergeschoss, S0.1 Schulküche",
+    "site": "METTMI"
+  },
+  {
+    "id": "51e3597d-8ad2-4cc9-921f-9b4e7578d6eb",
+    "name": "Waschmaschine",
+    "number": "34330019",
+    "location": "Mettmi Trakt S · O.0 Untergeschoss, S0.1 Schulküche",
+    "site": "METTMI"
+  },
+  {
+    "id": "4100df7e-f49d-42a6-b7c5-70a7aba3cb67",
+    "name": "Tumbler / Wäschetrockner",
+    "number": "955008242",
+    "location": "Mettmi Trakt S · O.0 Untergeschoss, S0.1 Schulküche",
+    "site": "METTMI"
+  },
+  {
+    "id": "8901d6e6-4822-42b9-a70a-6c1f00a50fa8",
+    "name": "Tiefkühler",
+    "number": "9107  00148",
+    "location": "Mettmi Trakt S · O.0 Untergeschoss, S0.1 Schulküche",
+    "site": "METTMI"
+  },
+  {
+    "id": "2b6cad27-9671-4075-8aaf-997c4b0bf102",
+    "name": "Kochherd / Kochfeld",
+    "number": "CAFM-2B6CAD27",
+    "location": "Mettmi Trakt S · O.0 Untergeschoss, S0.2 Schulküche",
+    "site": "METTMI"
+  },
+  {
+    "id": "aebec2d3-a4c6-450f-89b3-9a0c56b3a58a",
+    "name": "Backofen",
+    "number": "727001813",
+    "location": "Mettmi Trakt S · O.0 Untergeschoss, S0.2 Schulküche",
+    "site": "METTMI"
+  },
+  {
+    "id": "3637262e-4fae-4003-9ebc-dd3e3a68368a",
+    "name": "Geschirrspüler / Geschirrwaschautomat",
+    "number": "64/104933277",
+    "location": "Mettmi Trakt S · O.0 Untergeschoss, S0.2 Schulküche",
+    "site": "METTMI"
+  },
+  {
+    "id": "24a75344-4b4d-4ed5-8476-bc9ceca9ba03",
+    "name": "Kochherd / Kochfeld",
+    "number": "CAFM-24A75344",
+    "location": "Mettmi Trakt S · O.0 Untergeschoss, S0.2 Schulküche",
+    "site": "METTMI"
+  },
+  {
+    "id": "0916b89b-6c96-4fe0-89f4-40a32c48cf40",
+    "name": "Kochherd / Kochfeld",
+    "number": "CAFM-0916B89B",
+    "location": "Mettmi Trakt S · O.0 Untergeschoss, S0.2 Schulküche",
+    "site": "METTMI"
+  },
+  {
+    "id": "40a5e45e-ac8d-47e6-b9db-a8a219ff986c",
+    "name": "Kochherd / Kochfeld",
+    "number": "CAFM-40A5E45E",
+    "location": "Mettmi Trakt S · O.0 Untergeschoss, S0.2 Schulküche",
+    "site": "METTMI"
+  },
+  {
+    "id": "1dd5fbc4-695b-46f1-9bc2-75ce639ee011",
+    "name": "Kochherd / Kochfeld",
+    "number": "CAFM-1DD5FBC4",
+    "location": "Mettmi Trakt S · O.0 Untergeschoss, S0.2 Schulküche",
+    "site": "METTMI"
+  },
+  {
+    "id": "185878f0-3ca0-4278-90ff-3ea27a6e3277",
+    "name": "Kochherd / Kochfeld",
+    "number": "CAFM-185878F0",
+    "location": "Mettmi Trakt S · O.0 Untergeschoss, S0.2 Schulküche",
+    "site": "METTMI"
+  },
+  {
+    "id": "7cba1135-7567-441c-bd98-616dcd231d61",
+    "name": "Kochherd / Kochfeld",
+    "number": "CAFM-7CBA1135",
+    "location": "Mettmi Trakt S · O.0 Untergeschoss, S0.2 Schulküche",
+    "site": "METTMI"
+  },
+  {
+    "id": "a5d649f3-0bb0-4361-af68-bc21e4a9f0ad",
+    "name": "Kochherd / Kochfeld",
+    "number": "CAFM-A5D649F3",
+    "location": "Mettmi Trakt S · O.0 Untergeschoss, S0.2 Schulküche",
+    "site": "METTMI"
+  },
+  {
+    "id": "8e19e17a-2ba3-49f1-bbeb-5122e32f3c0e",
+    "name": "Backofen",
+    "number": "727001909",
+    "location": "Mettmi Trakt S · O.0 Untergeschoss, S0.2 Schulküche",
+    "site": "METTMI"
+  },
+  {
+    "id": "4b0843ba-6740-44d6-954e-4ca93e253d06",
+    "name": "Backofen",
+    "number": "727001911",
+    "location": "Mettmi Trakt S · O.0 Untergeschoss, S0.2 Schulküche",
+    "site": "METTMI"
+  },
+  {
+    "id": "21e4c3aa-8885-4640-b7d7-c666ba5865a7",
+    "name": "Backofen",
+    "number": "727001912",
+    "location": "Mettmi Trakt S · O.0 Untergeschoss, S0.2 Schulküche",
+    "site": "METTMI"
+  },
+  {
+    "id": "1859fcff-5d67-4e0d-81dc-e9dbec99a66f",
+    "name": "Geschirrspüler / Geschirrwaschautomat",
+    "number": "76/10891441",
+    "location": "Mettmi Trakt S · O.0 Untergeschoss, S0.2 Schulküche",
+    "site": "METTMI"
+  },
+  {
+    "id": "f2f1c482-7fea-4d84-9169-a97bce7b8e82",
+    "name": "Einbauküche Mikrowelle",
+    "number": "945002305",
+    "location": "Mettmi Trakt S · O.0 Untergeschoss, S0.2 Schulküche",
+    "site": "METTMI"
+  },
+  {
+    "id": "f315cd44-2867-4a65-ba30-cc1493dc1fdb",
+    "name": "Steamer",
+    "number": "864008530",
+    "location": "Mettmi Trakt S · O.0 Untergeschoss, S0.2 Schulküche",
+    "site": "METTMI"
+  },
+  {
+    "id": "8b9598a6-3839-4340-90ee-d852ec1c4c95",
+    "name": "Kühlschrank",
+    "number": "9000630549 / 9707",
+    "location": "Mettmi Trakt S · O.0 Untergeschoss, S0.2 Schulküche",
+    "site": "METTMI"
+  },
+  {
+    "id": "56307abb-cc6c-4bba-b074-06cace5d9124",
+    "name": "Kühlschrank",
+    "number": "9000630549 / 9107",
+    "location": "Mettmi Trakt S · O.0 Untergeschoss, S0.2 Schulküche",
+    "site": "METTMI"
+  },
+  {
+    "id": "1237a605-4741-4830-945c-6a626beec01e",
+    "name": "Gefrierschrank / Tiefkühler",
+    "number": "326",
+    "location": "Mettmi Trakt S · O.0 Untergeschoss, S0.2 Schulküche",
+    "site": "METTMI"
+  },
+  {
+    "id": "34375e77-3776-4170-8a7c-5444a6bd66d2",
+    "name": "Tumbler / Wäschetrockner",
+    "number": "955008213",
+    "location": "Mettmi Trakt S · O.0 Untergeschoss, S0.2 Schulküche",
+    "site": "METTMI"
+  },
+  {
+    "id": "c4fdb6ea-653b-49a8-a01d-6efbc2bfa8a3",
+    "name": "Waschmaschine",
+    "number": "11010024285",
+    "location": "Mettmi Trakt S · O.0 Untergeschoss, S0.2 Schulküche",
+    "site": "METTMI"
+  },
+  {
+    "id": "802372c8-7d32-4607-a46b-d0468fc03701",
+    "name": "Geschirrspüler / Geschirrwaschautomat",
+    "number": "76/10688225",
+    "location": "Mettmi Trakt S · O.0 Untergeschoss, S0.5 Schulküche",
+    "site": "METTMI"
+  },
+  {
+    "id": "26c4a32c-ab30-43a9-b203-5cb9c7a12337",
+    "name": "Kochherd / Kochfeld",
+    "number": "CAFM-26C4A32C",
+    "location": "Mettmi Trakt S · O.0 Untergeschoss, S0.5 Schulküche",
+    "site": "METTMI"
+  },
+  {
+    "id": "c77ca20b-7f2d-48cd-ba5f-c9d0a5c31fc2",
+    "name": "Backofen",
+    "number": "727001914",
+    "location": "Mettmi Trakt S · O.0 Untergeschoss, S0.5 Schulküche",
+    "site": "METTMI"
+  },
+  {
+    "id": "bffed26f-cea6-4f3b-afe8-96cd09c10aa5",
+    "name": "Kochherd / Kochfeld",
+    "number": "CAFM-BFFED26F",
+    "location": "Mettmi Trakt S · O.0 Untergeschoss, S0.5 Schulküche",
+    "site": "METTMI"
+  },
+  {
+    "id": "48046bcd-8048-4c16-b5e3-52335ead25bb",
+    "name": "Kochherd / Kochfeld",
+    "number": "CAFM-48046BCD",
+    "location": "Mettmi Trakt S · O.0 Untergeschoss, S0.5 Schulküche",
+    "site": "METTMI"
+  },
+  {
+    "id": "1e439892-a4db-4df9-b065-5d1980243824",
+    "name": "Kochherd / Kochfeld",
+    "number": "CAFM-1E439892",
+    "location": "Mettmi Trakt S · O.0 Untergeschoss, S0.5 Schulküche",
+    "site": "METTMI"
+  },
+  {
+    "id": "674c4e2c-8087-4e02-a1f3-ec762dd94f7b",
+    "name": "Kochherd / Kochfeld",
+    "number": "CAFM-674C4E2C",
+    "location": "Mettmi Trakt S · O.0 Untergeschoss, S0.5 Schulküche",
+    "site": "METTMI"
+  },
+  {
+    "id": "32a25cdb-a6a6-45b0-9f51-84ed7244d53d",
+    "name": "Kochherd / Kochfeld",
+    "number": "CAFM-32A25CDB",
+    "location": "Mettmi Trakt S · O.0 Untergeschoss, S0.5 Schulküche",
+    "site": "METTMI"
+  },
+  {
+    "id": "2f146e4e-b372-482d-a9fd-6eaea4eba020",
+    "name": "Kochherd / Kochfeld",
+    "number": "CAFM-2F146E4E",
+    "location": "Mettmi Trakt S · O.0 Untergeschoss, S0.5 Schulküche",
+    "site": "METTMI"
+  },
+  {
+    "id": "7c436452-d722-40ad-a9ab-e7b6482bf0ec",
+    "name": "Kochherd / Kochfeld",
+    "number": "CAFM-7C436452",
+    "location": "Mettmi Trakt S · O.0 Untergeschoss, S0.5 Schulküche",
+    "site": "METTMI"
+  },
+  {
+    "id": "d45748f7-d576-4da6-9390-2dd8903bb3a2",
+    "name": "Backofen",
+    "number": "727001916",
+    "location": "Mettmi Trakt S · O.0 Untergeschoss, S0.5 Schulküche",
+    "site": "METTMI"
+  },
+  {
+    "id": "6174a6ce-5555-446e-97a3-611fb7cb0e6d",
+    "name": "Backofen",
+    "number": "727001919",
+    "location": "Mettmi Trakt S · O.0 Untergeschoss, S0.5 Schulküche",
+    "site": "METTMI"
+  },
+  {
+    "id": "585e70ea-35db-4185-b50a-820844452e75",
+    "name": "Backofen",
+    "number": "727001920",
+    "location": "Mettmi Trakt S · O.0 Untergeschoss, S0.5 Schulküche",
+    "site": "METTMI"
+  },
+  {
+    "id": "5f154107-d682-48d0-91d9-30b9668620ee",
+    "name": "Geschirrspüler / Geschirrwaschautomat",
+    "number": "64/104933302",
+    "location": "Mettmi Trakt S · O.0 Untergeschoss, S0.5 Schulküche",
+    "site": "METTMI"
+  },
+  {
+    "id": "711ddaa1-9b98-41a0-beb5-2463bb6c3fda",
+    "name": "Einbauküche Mikrowelle",
+    "number": "CAFM-711DDAA1",
+    "location": "Mettmi Trakt S · O.0 Untergeschoss, S0.5 Schulküche",
+    "site": "METTMI"
+  },
+  {
+    "id": "8d31deca-1733-4385-a27e-69d7c465448d",
+    "name": "Steamer",
+    "number": "864008558",
+    "location": "Mettmi Trakt S · O.0 Untergeschoss, S0.5 Schulküche",
+    "site": "METTMI"
+  },
+  {
+    "id": "7a4dc698-4404-4f92-8dab-c9b7575ec155",
+    "name": "Kühlschrank",
+    "number": "12",
+    "location": "Mettmi Trakt S · O.0 Untergeschoss, S0.5 Schulküche",
+    "site": "METTMI"
+  },
+  {
+    "id": "ad589275-f401-474c-826d-50d6606f131c",
+    "name": "Kühlschrank",
+    "number": "9",
+    "location": "Mettmi Trakt S · O.0 Untergeschoss, S0.5 Schulküche",
+    "site": "METTMI"
+  },
+  {
+    "id": "9eeeef22-821e-4dba-b525-3b10e57ef57f",
+    "name": "Waschmaschine",
+    "number": "25030088",
+    "location": "Mettmi Trakt S · O.0 Untergeschoss, S0.5 Schulküche",
+    "site": "METTMI"
+  },
+  {
+    "id": "fb95ac10-be63-4a0f-a89f-12c6003648c3",
+    "name": "Tumbler / Wäschetrockner",
+    "number": "955008216",
+    "location": "Mettmi Trakt S · O.0 Untergeschoss, S0.5 Schulküche",
+    "site": "METTMI"
+  },
+  {
+    "id": "a42941e0-3295-4175-aefb-aa9362f346e6",
+    "name": "Gefrierschrank / Tiefkühler",
+    "number": "67",
+    "location": "Mettmi Trakt S · O.0 Untergeschoss, S0.5 Schulküche",
+    "site": "METTMI"
+  },
+  {
+    "id": "f884bfbf-b072-4731-b4b7-c8c0f417c4f9",
+    "name": "Kühlschrank",
+    "number": "50 0614 006581",
+    "location": "Mettmi Trakt S · O.2 Obergeschoss, S2.3 Förderzentrum Förderzentrum",
+    "site": "METTMI"
+  },
+  {
+    "id": "d6865a1b-286f-40c8-b6b7-18ca73d44b5a",
+    "name": "Kühlschrank",
+    "number": "86.714.213.4",
+    "location": "Mettmi Trakt S · O.3 Obergeschoss, 323 S.3.24 Büro S.3.24 Büro",
+    "site": "METTMI"
+  },
+  {
+    "id": "32fbeba9-d42e-46d1-843b-267038b1f901",
+    "name": "Kochherd / Kochfeld",
+    "number": "CAFM-32FBEBA9",
+    "location": "Mettmi Trakt S · O.3 Obergeschoss, 323 S.3.24 Büro S.3.24 Büro",
+    "site": "METTMI"
+  },
+  {
+    "id": "34678123-c1e6-4c01-8413-8ad4c758abff",
+    "name": "Dampfabzug / Dunstabzug",
+    "number": "CAFM-34678123",
+    "location": "Mettmi Trakt S · O.3 Obergeschoss, 323 S.3.24 Büro S.3.24 Büro",
+    "site": "METTMI"
+  },
+  {
+    "id": "cc7b6fa2-909e-470c-87a3-4cc42f8b51f9",
+    "name": "Decken-Klimagerät / Klimakassette",
+    "number": "CAFM-CC7B6FA2",
+    "location": "Mettmi Trakt S · O.3 Obergeschoss, 323 S.3.24 Büro S.3.24 Büro",
+    "site": "METTMI"
+  },
+  {
+    "id": "94daa3a5-378c-48bd-933c-2f30c8180b14",
+    "name": "Decken-Klimagerät / Klimakassette",
+    "number": "CAFM-94DAA3A5",
+    "location": "Mettmi Trakt S · O.3 Obergeschoss, 325 S.3.23 Büro S.3.23 Büro",
+    "site": "METTMI"
+  },
+  {
+    "id": "8e939b73-67bf-48cd-9987-6d1336c829b2",
+    "name": "Decken-Klimagerät / Klimakassette",
+    "number": "CAFM-8E939B73",
+    "location": "Mettmi Trakt S · O.3 Obergeschoss, 327 S.3.21 Büro/Empfang S.3.21 Büro / Empfang",
+    "site": "METTMI"
+  },
+  {
+    "id": "96f13e91-7d28-4952-8dbf-7ee7fb90a098",
+    "name": "Mikrowellengerät",
+    "number": "494144",
+    "location": "Mettmi Trakt Z · O.2 Obergeschoss,  Lehrerküche",
+    "site": "METTMI"
+  },
+  {
+    "id": "661d5dba-008d-464e-a4eb-7526996ce35a",
+    "name": "Mikrowellengerät",
+    "number": "494402",
+    "location": "Mettmi Trakt Z · O.2 Obergeschoss,  Lehrerküche",
+    "site": "METTMI"
+  },
+  {
+    "id": "9a2029e8-805b-4957-a962-47e22d2f6a27",
+    "name": "Geschirrspüler / Geschirrwaschautomat",
+    "number": "CAFM-9A2029E8",
+    "location": "Mettmi Trakt Z · O.2 Obergeschoss,  Lehrerküche",
+    "site": "METTMI"
+  },
+  {
+    "id": "071865b3-7dca-4f03-8208-e1bbb36419cd",
+    "name": "Kochherd / Kochfeld",
+    "number": "CAFM-071865B3",
+    "location": "Mettmi Trakt Z · O.2 Obergeschoss,  Lehrerküche",
+    "site": "METTMI"
+  },
+  {
+    "id": "67cc0ac5-e7eb-4fda-84dd-0103953c989e",
+    "name": "Backofen",
+    "number": "22007 006661",
+    "location": "Mettmi Trakt Z · O.2 Obergeschoss,  Lehrerküche",
+    "site": "METTMI"
+  },
+  {
+    "id": "4c345ea0-cf7c-4fb6-8210-595f44505015",
+    "name": "Mikrowellengerät",
+    "number": "24001 100999",
+    "location": "Mettmi Trakt Z · O.2 Obergeschoss,  Lehrerküche",
+    "site": "METTMI"
+  },
+  {
+    "id": "4bb8d7d7-9440-4792-af13-559383ab3fa9",
+    "name": "Mikrowellengerät",
+    "number": "24001 101001",
+    "location": "Mettmi Trakt Z · O.2 Obergeschoss,  Lehrerküche",
+    "site": "METTMI"
+  },
+  {
+    "id": "09b4ce44-d86c-45bb-83a0-54bc7cc61b41",
+    "name": "Dampfabzug / Dunstabzug",
+    "number": "CAFM-09B4CE44",
+    "location": "Mettmi Trakt Z · O.2 Obergeschoss,  Lehrerküche",
+    "site": "METTMI"
+  },
+  {
+    "id": "a9e5fc7d-ecf0-4fa6-9be8-ea1c2a90350a",
+    "name": "Kühlschrank",
+    "number": "51052 100729",
+    "location": "Mettmi Trakt Z · O.2 Obergeschoss,  Lehrerküche",
+    "site": "METTMI"
+  },
+  {
+    "id": "7bbd6d50-9045-45c9-a336-21e16fc02230",
+    "name": "Akku-Fenstersauger",
+    "number": "CAFM-7BBD6D50",
+    "location": "Mettmi Trakt Z · O.0 Untergeschoss,  Büro HW",
+    "site": "METTMI"
+  },
+  {
+    "id": "df618963-aa0a-42de-bb3d-6a7a7abe11b5",
+    "name": "Digitaler Bewässerungscomputer, 2 Ausgänge",
+    "number": "77489",
+    "location": "Mettmi Trakt Z · O.3 Obergeschoss,  Terasse",
+    "site": "METTMI"
+  },
+  {
+    "id": "62aedd29-c423-4119-9ee2-165a95304525",
+    "name": "Elektroverteilung",
+    "number": "CAFM-62AEDD29",
+    "location": "Mettmi Trakt Z · O.1 Erdgeschoss",
+    "site": "METTMI"
+  },
+  {
+    "id": "f890e27c-f9c7-4e02-a797-7ed882d8583d",
+    "name": "Akkuladegerät",
+    "number": "CAFM-F890E27C",
+    "location": "Mettmi Trakt O · O.0 Untergeschoss,  Waschküche",
+    "site": "METTMI"
+  },
+  {
+    "id": "417e65a6-f904-4830-8c43-5b3bc8fdeabd",
+    "name": "Dampfbügeleisen",
+    "number": "CAFM-417E65A6",
+    "location": "Mettmi Trakt O · O.0 Untergeschoss,  Waschküche",
+    "site": "METTMI"
+  },
+  {
+    "id": "a94f10ec-6fe0-49ed-a304-65a71102b0fb",
+    "name": "Kehrmaschine",
+    "number": "EU018916M",
+    "location": "Mettmi Trakt O · O.0 Untergeschoss,  Waschküche",
+    "site": "METTMI"
+  },
+  {
+    "id": "72b32b7f-8527-47ac-bcef-e9faff17bdee",
+    "name": "Wasserbrunnen aussen",
+    "number": "CAFM-72B32B7F",
+    "location": "Schulanlage Mettmi · Umgebung",
+    "site": "METTMI"
+  },
+  {
+    "id": "70fa6808-1744-40ab-af5a-61060eee45ad",
+    "name": "Gartenhahn, Aussenbewässerung",
+    "number": "CAFM-70FA6808",
+    "location": "Schulanlage Mettmi · Umgebung",
+    "site": "METTMI"
+  },
+  {
+    "id": "7675827d-8e17-4831-b63a-fb8a17652f8e",
+    "name": "Gartenhahn, Aussenbewässerung",
+    "number": "CAFM-7675827D",
+    "location": "Schulanlage Hibi · Umgebung Umgebung",
+    "site": "HIBI"
+  },
+  {
+    "id": "85e5adaf-a045-416c-b92b-aac588a58f9b",
+    "name": "Schlauchhaspel",
+    "number": "CAFM-85E5ADAF",
+    "location": "Mettmi Trakt Z · O.0 Untergeschoss,  Geräteraum",
+    "site": "METTMI"
+  },
+  {
+    "id": "a0199b1b-0c3a-4a39-b98c-abe6cab8ff17",
+    "name": "Schlauchhaspel",
+    "number": "CAFM-A0199B1B",
+    "location": "Mettmi Trakt Z · O.0 Untergeschoss,  Geräteraum",
+    "site": "METTMI"
+  },
+  {
+    "id": "b18283e4-fdb6-401e-b93e-586452af18bf",
+    "name": "Schlauchhaspel",
+    "number": "CAFM-B18283E4",
+    "location": "Mettmi Trakt Z · O.0 Untergeschoss,  Geräteraum",
+    "site": "METTMI"
+  },
+  {
+    "id": "87e2b4fd-c749-48c8-a4b3-469f3d91d744",
+    "name": "Kabelrolle",
+    "number": "CAFM-87E2B4FD",
+    "location": "Mettmi Trakt Z · O.0 Untergeschoss,  Geräteraum",
+    "site": "METTMI"
+  },
+  {
+    "id": "cc489ed2-9df6-4134-b778-531f013f007f",
+    "name": "Motorisierter Bühnenzug / Bühnenvorhangantrieb",
+    "number": "CAFM-CC489ED2",
+    "location": "Mettmi Trakt Z · O.3 Obergeschoss,  Hinterbühne",
+    "site": "METTMI"
+  },
+  {
+    "id": "b5be5db9-844c-4ceb-9b54-9a8e9923a89a",
+    "name": "Bühnentechnik Lichtsteuerpult / Bühnenlichtmischpult",
+    "number": "CAFM-B5BE5DB9",
+    "location": "Mettmi Trakt Z · O.3 Obergeschoss,  Hinterbühne",
+    "site": "METTMI"
+  },
+  {
+    "id": "6a4bde5c-a920-47ea-bafc-15efe8d41844",
+    "name": "i-mop XL Scheuersaugmaschine",
+    "number": "CAFM-6A4BDE5C",
+    "location": "Mettmi Trakt O · O.2 Obergeschoss,  Putzraum",
+    "site": "METTMI"
+  },
+  {
+    "id": "74b6cf6d-e845-4fb8-9d9d-68e6ce45c82b",
+    "name": "Bockleiter",
+    "number": "CAFM-74B6CF6D",
+    "location": "Mettmi Trakt O · O.2 Obergeschoss,  Putzraum",
+    "site": "METTMI"
+  },
+  {
+    "id": "382f977b-0206-40a4-85c6-6fa4cfc6fe4e",
+    "name": "Bockleiter",
+    "number": "CAFM-382F977B",
+    "location": "Mettmi Trakt O · O.0 Untergeschoss,  Waschküche",
+    "site": "METTMI"
+  },
+  {
+    "id": "3ec54b5b-4113-4b39-882c-cf43e98207de",
+    "name": "Bockleiter",
+    "number": "CAFM-3EC54B5B",
+    "location": "Mettmi Trakt O · O.0 Untergeschoss,  Waschküche",
+    "site": "METTMI"
+  },
+  {
+    "id": "8d9f36bb-0a5f-4959-9a36-c0dc6219e607",
+    "name": "Bockleiter",
+    "number": "CAFM-8D9F36BB",
+    "location": "Mettmi Trakt O · O.0 Untergeschoss,  Waschküche",
+    "site": "METTMI"
+  },
+  {
+    "id": "a7a4bf63-a3ba-40de-975b-f0791d734b91",
+    "name": "Bockleiter",
+    "number": "CAFM-A7A4BF63",
+    "location": "Mettmi Trakt W · O.4 Obergeschoss,  Putzraum",
+    "site": "METTMI"
+  },
+  {
+    "id": "c3c133f2-fefa-41d7-be70-c7c1aa55a65b",
+    "name": "Bockleiter",
+    "number": "CAFM-C3C133F2",
+    "location": "Mettmi Trakt W · O.3 Obergeschoss,  Putzraum",
+    "site": "METTMI"
+  },
+  {
+    "id": "805dbca2-1a97-443d-99cd-082b4230cbe8",
+    "name": "Hebeanlage Pumpenschacht",
+    "number": "CAFM-805DBCA2",
+    "location": "Mettmi Trakt W · O.0 Untergeschoss",
+    "site": "METTMI"
+  },
+  {
+    "id": "2716a7ae-52f8-4cec-9466-92b901b35453",
+    "name": "Rollgerüst",
+    "number": "CAFM-2716A7AE",
+    "location": "Mettmi Trakt Z · O.0 Untergeschoss,  Einstellhalle",
+    "site": "METTMI"
+  },
+  {
+    "id": "b285a115-443e-48b4-ace0-639bfa18fa60",
+    "name": "Anstellleiter mit Auszug",
+    "number": "2686",
+    "location": "Mettmi Trakt Z · O.0 Untergeschoss,  Einstellhalle",
+    "site": "METTMI"
+  },
+  {
+    "id": "b0f8d5fd-a9b6-4366-8525-9b833906e4c2",
+    "name": "Anstellleiter mit Auszug",
+    "number": "CAFM-B0F8D5FD",
+    "location": "Mettmi Trakt Z · O.0 Untergeschoss,  Einstellhalle",
+    "site": "METTMI"
+  },
+  {
+    "id": "4a107b16-723b-46be-adc5-f1496da11731",
+    "name": "Rasenbewässerungswagen",
+    "number": "CAFM-4A107B16",
+    "location": "Schulanlage Mettmi · Umgebung",
+    "site": "METTMI"
+  },
+  {
+    "id": "80f115d9-33a4-4124-b027-d9d9c41a874c",
+    "name": "Materialtransportwagen",
+    "number": "SW-1300.415",
+    "location": "Mettmi Trakt Z · O.0 Untergeschoss,  Einstellhalle",
+    "site": "METTMI"
+  },
+  {
+    "id": "c2c328af-c3ea-4797-80ef-385321863bc9",
+    "name": "Anhänger",
+    "number": "CAFM-C2C328AF",
+    "location": "Mettmi Trakt Z · O.0 Untergeschoss,  Einstellhalle",
+    "site": "METTMI"
+  },
+  {
+    "id": "08a8f2f9-0c36-483b-b70e-7a056746a117",
+    "name": "Handstreuwagen / Schleuderstreuer",
+    "number": "CAFM-08A8F2F9",
+    "location": "Mettmi Trakt Z · O.0 Untergeschoss,  Einstellhalle",
+    "site": "METTMI"
+  },
+  {
+    "id": "5664bb11-75d3-4e35-a97d-e80ae43de862",
+    "name": "Elektroverteilung",
+    "number": "CAFM-5664BB11",
+    "location": "Mettmi Trakt S · O.0 Untergeschoss,  Elektroraum",
+    "site": "METTMI"
+  },
+  {
+    "id": "043663e7-b87b-4ce3-b466-11a1929a9643",
+    "name": "Absauganlage",
+    "number": "CAFM-043663E7",
+    "location": "Schulanlage Mettmi",
+    "site": "METTMI"
+  },
+  {
+    "id": "a83e554c-da25-480c-a1ab-8749682d7304",
+    "name": "Schutzraum-Belüftungsanlage MENGE",
+    "number": "4152",
+    "location": "Mettmi Trakt W · O.0 Untergeschoss",
+    "site": "METTMI"
+  },
+  {
+    "id": "17f16ff2-f52b-47bd-80b1-c83092118b91",
+    "name": "Schutzraum-Belüftungsanlage MENGE",
+    "number": "6381",
+    "location": "Mettmi Trakt W · O.0 Untergeschoss",
+    "site": "METTMI"
+  },
+  {
+    "id": "08fc98df-ea16-4997-be8e-38a2a599457f",
+    "name": "Schutzraum-Belüftungsanlage MENGE",
+    "number": "6379",
+    "location": "Mettmi Trakt W · O.0 Untergeschoss",
+    "site": "METTMI"
+  },
+  {
+    "id": "28890ba8-376b-4af9-90ae-6e7d8d3ee21c",
+    "name": "Schutzraum-Belüftungsanlage MENGE",
+    "number": "5804",
+    "location": "Mettmi Trakt O · O.0 Untergeschoss",
+    "site": "METTMI"
+  },
+  {
+    "id": "7c8a0c38-d66e-4b08-b0fc-3c4e127956dc",
+    "name": "Schutzraum-Belüftungsanlage O. Mengeu",
+    "number": "3744",
+    "location": "Mettmi Trakt O · O.0 Untergeschoss",
+    "site": "METTMI"
+  },
+  {
+    "id": "a4ca1648-ab1f-4c0c-81d4-3e3bb31dec06",
+    "name": "Schutzraum-Belüftungsanlage Lunor VA 150",
+    "number": "9556",
+    "location": "Mettmi Trakt O · O.0 Untergeschoss",
+    "site": "METTMI"
+  },
+  {
+    "id": "c9debb85-b56e-410e-8c52-bf96b1b92b52",
+    "name": "Schutzraum-Belüftungsanlage O. Mengeu",
+    "number": "6322",
+    "location": "Mettmi Trakt O · O.0 Untergeschoss",
+    "site": "METTMI"
+  },
+  {
+    "id": "b947089e-5214-4973-aa5a-b7cc27a87a38",
+    "name": "Notbeleuchtungs-Nothandleuchte",
+    "number": "CAFM-B947089E",
+    "location": "Mettmi Trakt O · O.0 Untergeschoss",
+    "site": "METTMI"
+  },
+  {
+    "id": "86da5152-4279-48b5-8c5e-ea37a7f66b84",
+    "name": "Höhensicherheitsgerät und Auffanggurt",
+    "number": "87 203191",
+    "location": "Schulanlage Mettmi",
+    "site": "METTMI"
+  },
+  {
+    "id": "ce2b030c-085d-4643-94a1-c425a55cb2aa",
+    "name": "Scheinwerfer mit Stativ",
+    "number": "CAFM-CE2B030C",
+    "location": "Mettmi Trakt Z · O.0 Untergeschoss,  Lagerraum (gross)",
+    "site": "METTMI"
+  },
+  {
+    "id": "42f0b9bb-6a3e-482c-8471-1294a65fed29",
+    "name": "Scheinwerfer mit Stativ",
+    "number": "CAFM-42F0B9BB",
+    "location": "Mettmi Trakt Z · O.0 Untergeschoss,  Lagerraum (gross)",
+    "site": "METTMI"
+  },
+  {
+    "id": "9a72444c-e757-4793-bfa9-d217efbf949d",
+    "name": "Scheinwerfer Ballonstrahler",
+    "number": "CAFM-9A72444C",
+    "location": "Mettmi Trakt Z · O.0 Untergeschoss,  Lagerraum (gross)",
+    "site": "METTMI"
+  },
+  {
+    "id": "c11ccfc7-381c-4b38-9b88-093786aa998c",
+    "name": "Scheinwerfer Ballonstrahler",
+    "number": "CAFM-C11CCFC7",
+    "location": "Mettmi Trakt Z · O.0 Untergeschoss,  Lagerraum (gross)",
+    "site": "METTMI"
+  },
+  {
+    "id": "61c8d16d-6ff2-4380-ab94-0b9a8b5903eb",
+    "name": "Scheinwerfer",
+    "number": "CAFM-61C8D16D",
+    "location": "Mettmi Trakt Z · O.0 Untergeschoss,  Lagerraum (gross)",
+    "site": "METTMI"
+  },
+  {
+    "id": "49c97c43-3f63-4c40-9897-5cc8d79fd349",
+    "name": "Scheinwerfer",
+    "number": "CAFM-49C97C43",
+    "location": "Mettmi Trakt Z · O.0 Untergeschoss,  Lagerraum (gross)",
+    "site": "METTMI"
+  },
+  {
+    "id": "7f1a4573-1497-4826-bd0f-5dfe353344f5",
+    "name": "Gebäudeautomationssystem",
+    "number": "CAFM-7F1A4573",
+    "location": "Mettmi Trakt Z · O.0 Untergeschoss,  Büro HW",
+    "site": "METTMI"
+  },
+  {
+    "id": "55e7db41-4d85-458a-b9b8-649ebadd403a",
+    "name": "Flachdach",
+    "number": "CAFM-55E7DB41",
+    "location": "Hibi Trakt B",
+    "site": "HIBI"
+  },
+  {
+    "id": "ae2d980d-7809-4824-b8af-1f4856a8221c",
+    "name": "Brandabschottungen Mettmi",
+    "number": "CAFM-AE2D980D",
+    "location": "Schulanlage Mettmi",
+    "site": "METTMI"
+  }
+]
