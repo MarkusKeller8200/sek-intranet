@@ -34,7 +34,7 @@ RUN composer dump-autoload --no-dev --optimize --classmap-authoritative \
 # ---------- Laufzeit ----------
 FROM php:8.4-apache AS app
 
-# zip: Excel-Dateien (.xlsx) im Escola-Import lesen
+# zip: Excel-Dateien (.xlsx) im Escola-Import lesen, Sicherungen (#174)
 RUN apt-get update \
     && apt-get install -y --no-install-recommends libzip-dev \
     && rm -rf /var/lib/apt/lists/* \
@@ -60,9 +60,10 @@ RUN apt-get update \
     && cp "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini" \
     && printf '%s\n' \
         'expose_php=Off' \
-        'upload_max_filesize=20M' \
-        'post_max_size=24M' \
+        'upload_max_filesize=512M' \
+        'post_max_size=520M' \
         'memory_limit=256M' \
+        'max_execution_time=300' \
         'opcache.enable=1' \
         'opcache.validate_timestamps=0' \
         > "$PHP_INI_DIR/conf.d/intranet.ini"

@@ -871,6 +871,7 @@ return [
                 'browser-erweiterung' => ['title' => 'Browser-Erweiterung', 'icon' => 'Puzzle', 'href' => '/einstellungen/browser-erweiterung'],
                 'modulverwaltung' => ['title' => 'Module', 'icon' => 'Boxes', 'href' => '/einstellungen/module'],
                 'zugang' => ['title' => 'Zugang (PIN)', 'icon' => 'KeyRound', 'href' => '/einstellungen/zugang'],
+                'sicherung' => ['title' => 'Sicherung', 'icon' => 'DatabaseBackup', 'href' => '/einstellungen/sicherung'],
             ],
         ],
         'prototyp' => [

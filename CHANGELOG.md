@@ -11,6 +11,12 @@ laufend unter **Unveröffentlicht**. Ab 0.32.0 entsteht eine Version nur bei ein
 
 ### Neu
 
+- **Sicherung herunterladen und wiederherstellen (#174):** Einstellungen → Sicherung (nur Administration). Ganze
+  Installation (alle Sammlungen inkl. Module, Dokumente und Dateien; ohne Schlüssel des Servers, Logs, Sitzungen)
+  als ZIP oder – mit Passwort – verschlüsselt (Argon2id, XChaCha20-Poly1305) inkl. Plugin-Zugangsdaten. Sicherungen
+  auf dem Server anlegen, herunterladen, löschen. Wiederherstellen mit Prüfung (Prüfsummen, Version, erlaubte
+  Pfade), Vorschau je Sammlung und Bestätigung; der aktuelle Stand wird vorher automatisch auf dem Server gesichert.
+  Upload-Grenze im Container auf 512 MB erhöht.
 - **Betrieb: Infomaniak-Server (#170–#172):** Einrichtungsskript für Ubuntu 26.04 (Docker, Benutzer «deploy», SSH
   nur mit Schlüssel, ufw, fail2ban, automatische Sicherheitsupdates, Traefik), mehrere Instanzen pro Server
   (`INTRANET_INSTANZ`), Deploy zusätzlich nach `intranet-dev.sekbuelach.ch` (Environment «dev») und tägliche

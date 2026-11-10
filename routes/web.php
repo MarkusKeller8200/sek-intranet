@@ -6,6 +6,7 @@ use App\Http\Controllers\ApiDocsController;
 use App\Http\Controllers\ApiRecorderController;
 use App\Http\Controllers\ApiViewController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\BackupController;
 use App\Http\Controllers\BrowserExtensionController;
 use App\Http\Controllers\ConnectorController;
 use App\Http\Controllers\DashboardController;
@@ -156,6 +157,16 @@ Route::middleware('auth')->group(function () {
         Route::delete('api-doku/tokens/{id}', [ApiDocsController::class, 'destroy'])->name('api-docs.tokens.destroy');
 
         // Plugins (Anbindung anderer Systeme per API)
+        // Sicherung der ganzen Installation (#174)
+        Route::get('einstellungen/sicherung', [BackupController::class, 'index'])->name('backup.index');
+        Route::post('einstellungen/sicherung/herunterladen', [BackupController::class, 'download'])->middleware('throttle:10,1')->name('backup.download');
+        Route::post('einstellungen/sicherung/server', [BackupController::class, 'store'])->middleware('throttle:10,1')->name('backup.store');
+        Route::get('einstellungen/sicherung/server/{name}', [BackupController::class, 'serverDownload'])->name('backup.server-download');
+        Route::delete('einstellungen/sicherung/server/{name}', [BackupController::class, 'destroy'])->name('backup.destroy');
+        Route::post('einstellungen/sicherung/server/{name}/vorbereiten', [BackupController::class, 'prepareServer'])->middleware('throttle:10,1')->name('backup.prepare-server');
+        Route::post('einstellungen/sicherung/vorbereiten', [BackupController::class, 'prepare'])->middleware('throttle:10,1')->name('backup.prepare');
+        Route::delete('einstellungen/sicherung/vorbereitung', [BackupController::class, 'cancel'])->name('backup.cancel');
+        Route::post('einstellungen/sicherung/wiederherstellen', [BackupController::class, 'restore'])->middleware('throttle:5,1')->name('backup.restore');
         Route::get('einstellungen/zugang', [AccessPinController::class, 'index'])->name('access.index');
         Route::put('einstellungen/zugang/{role}', [AccessPinController::class, 'update'])->middleware('throttle:20,1')->name('access.update');
         Route::delete('einstellungen/zugang/{role}', [AccessPinController::class, 'destroy'])->name('access.destroy');

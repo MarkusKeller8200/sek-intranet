@@ -453,5 +453,104 @@
         "Glossar: EduKSX-Glossary"
     ],
     "Letzter Sync": ["Last sync", "Letschte Sync"],
-    "Vorschläge": ["Proposals", "Vorschläg"]
+    "Vorschläge": ["Proposals", "Vorschläg"],
+    "Sicherung herunterladen": ["Download backup", "Sicherig abelade"],
+    "Alle Daten, Dokumente und Dateien als eine Datei – zum Ablegen auf dem eigenen Rechner.": [
+        "All data, documents and files as one file – to keep on your own computer.",
+        "Alli Date, Dokumänt und Dateie als ei Datei – zum uf em eigete Rächner ablegge."
+    ],
+    "Verschlüsselt mit Passwort": [
+        "Encrypted with password",
+        "Mit Passwort verschlüsslet"
+    ],
+    "Die Datei enthält auch die Zugangsdaten der Plugins. Ohne das Passwort lässt sie sich nicht öffnen und nicht wiederherstellen – Passwort im Passwort-Manager ablegen.": [
+        "The file also contains the plugin credentials. Without the password it cannot be opened or restored – keep the password in a password manager.",
+        "D Datei hät au d Zuegangsdate vo de Plugins. Ohni s Passwort chame si nöd öffne und nöd widerherstelle – Passwort im Passwort-Manager ablegge."
+    ],
+    "Auf dem Server": ["On the server", "Uf em Server"],
+    "Vor jeder Wiederherstellung wird der aktuelle Stand hier automatisch gesichert. Zugangsdaten bleiben mit dem Schlüssel dieses Servers verschlüsselt.": [
+        "Before every restore, the current state is backed up here automatically. Credentials stay encrypted with this server's key.",
+        "Vor jedere Widerherstellig wird de aktuelli Stand da automatisch gsicheret. Zuegangsdate bliibed mit em Schlüssel vo dem Server verschlüsslet."
+    ],
+    "Noch keine Sicherungen auf dem Server.": [
+        "No backups on the server yet.",
+        "No kei Sicherige uf em Server."
+    ],
+    "Erstellt": ["Created", "Erstellt"],
+    "Grösse": ["Size", "Grössi"],
+    "Wiederherstellen …": ["Restore …", "Widerherstelle …"],
+    "Sicherung geprüft": ["Backup checked", "Sicherig prüeft"],
+    "In der Sicherung": ["In the backup", "I de Sicherig"],
+    "Alle Daten werden ersetzt": [
+        "All data will be replaced",
+        "Alli Date werdet ersetzt"
+    ],
+    "Alle aktuellen Daten, Dokumente und Dateien werden durch diesen Stand ersetzt. Der aktuelle Stand wird vorher auf dem Server gesichert. Danach ist eine neue Anmeldung nötig.": [
+        "All current data, documents and files will be replaced by this state. The current state is backed up on the server first. You will need to sign in again afterwards.",
+        "Alli aktuelle Date, Dokumänt und Dateie werdet dur de Stand ersetzt. De aktuelli Stand wird vorher uf em Server gsicheret. Dänn mues mer sich neu aamälde."
+    ],
+    "Zuerst wird die Sicherung geprüft (Prüfsummen, Version, Inhalt) – geändert wird erst nach der Bestätigung.": [
+        "The backup is checked first (checksums, version, content) – nothing changes until you confirm.",
+        "Zerscht wird d Sicherig prüeft (Prüefsumme, Version, Inhalt) – gänderet wird erscht nach de Bestätigung."
+    ],
+    "Passwort (optional)": ["Password (optional)", "Passwort (freiwillig)"],
+    "Passwort wiederholen": ["Repeat password", "Passwort widerhole"],
+    "Sicherung löschen?": ["Delete backup?", "Sicherig lösche?"],
+    "Die Sicherung wird vom Server entfernt und lässt sich nicht zurückholen.": [
+        "The backup is removed from the server and cannot be recovered.",
+        "D Sicherig wird vom Server entfernt und chan nöd zruggholt werde."
+    ],
+    "Sicherungsdatei": ["Backup file", "Sicherigsdatei"],
+    "Passwort (bei verschlüsselter Sicherung)": [
+        "Password (for an encrypted backup)",
+        "Passwort (bi verschlüsslete Sicherig)"
+    ],
+    "Zur Bestätigung «WIEDERHERSTELLEN» eintippen": [
+        "Type «WIEDERHERSTELLEN» to confirm",
+        "Zur Bestätigung «WIEDERHERSTELLEN» iitippe"
+    ],
+    "Jetzt wiederherstellen?": ["Restore now?", "Jetzt widerherstelle?"],
+    "Alle Daten werden durch die Sicherung ersetzt. Der aktuelle Stand wird vorher auf dem Server gesichert.": [
+        "All data will be replaced by the backup. The current state is backed up on the server first.",
+        "Alli Date werdet dur d Sicherig ersetzt. De aktuelli Stand wird vorher uf em Server gsicheret."
+    ],
+    "Sicherung": ["Backup", "Sicherig"],
+    "Ganze Installation sichern und wiederherstellen: alle Sammlungen, Dokumente und Dateien. Nicht enthalten sind der Schlüssel des Servers, Logs und Sitzungen.": [
+        "Back up and restore the whole installation: all collections, documents and files. Not included: the server key, logs and sessions.",
+        "Di ganz Installation sichere und widerherstelle: alli Sammlige, Dokumänt und Dateie. Nöd debii sind de Schlüssel vom Server, Logs und Sitzige."
+    ],
+    "Sicherung heruntergeladen.": ["Backup downloaded.", "Sicherig abeglade."],
+    "Enthalten (Sicherung mit Passwort) – werden mit dem Schlüssel dieses Servers neu verschlüsselt.": [
+        "Included (backup with password) – re-encrypted with this server's key.",
+        "Debii (Sicherig mit Passwort) – werdet mit em Schlüssel vo dem Server neu verschlüsslet."
+    ],
+    "Nicht enthalten – Plugin-Zugangsdaten danach neu eingeben.": [
+        "Not included – enter the plugin credentials again afterwards.",
+        "Nöd debii – Plugin-Zuegangsdate dänn neu iigäh."
+    ],
+    "Mit dem Schlüssel des Servers verschlüsselt – nur auf diesem Server lesbar.": [
+        "Encrypted with the server key – readable only on this server.",
+        "Mit em Schlüssel vom Server verschlüsslet – nur uf dem Server läsbar."
+    ],
+    "Die beiden Eingaben stimmen nicht überein.": [
+        "The two entries do not match.",
+        "Di beide Iigabe stimmed nöd überein."
+    ],
+    "Sicherung wird erstellt …": [
+        "Creating backup …",
+        "Sicherig wird erstellt …"
+    ],
+    "Verschlüsselt herunterladen": [
+        "Download encrypted",
+        "Verschlüsslet abelade"
+    ],
+    "Als ZIP herunterladen": ["Download as ZIP", "Als ZIP abelade"],
+    "Jetzt auf dem Server sichern": [
+        "Back up on the server now",
+        "Jetzt uf em Server sichere"
+    ],
+    "Vor Wiederherstellung": ["Before restore", "Vor Widerherstellig"],
+    "Wird geprüft …": ["Checking …", "Wird prüeft …"],
+    "Hochladen und prüfen": ["Upload and check", "Uelade und prüefe"],
+    "Wird wiederhergestellt …": ["Restoring …", "Wird widerhergstellt …"]
 }

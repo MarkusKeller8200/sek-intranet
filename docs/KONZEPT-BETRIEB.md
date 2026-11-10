@@ -363,6 +363,11 @@ Regeln (gelten für alle Speicher, siehe auch `docs/KONZEPT-VERSIONIERUNG.md`):
 - **Löschen:** nach Kündigung und Frist laufen auch die Sicherungen ab; der Export für die Schule (#109) ist davon
   getrennt.
 - **On-Premise:** derselbe Ablauf, Ziel wählt der Betreiber (NAS oder S3).
+- **In der Oberfläche (#174, umgesetzt 10.11.2026):** Einstellungen → Sicherung – herunterladen (optional mit
+  Passwort verschlüsselt, dann mit Plugin-Zugangsdaten), Sicherungen auf dem Server, Wiederherstellen mit Prüfung und
+  automatischer Sicherung des vorherigen Stands. Format: ZIP mit `manifest.json` (Version, Inhalt, SHA-256 je
+  Eintrag); verschlüsselt als `.intranet-backup` (Argon2id + XChaCha20-Poly1305, libsodium). Grundlage für #109 und
+  #143.
 
 ## Reihenfolge
 
