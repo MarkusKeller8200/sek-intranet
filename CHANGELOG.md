@@ -11,6 +11,8 @@ laufend unter **Unveröffentlicht**. Ab 0.32.0 entsteht eine Version nur bei ein
 
 ### Neu
 
+- **ClickTime: Scopes je Endpunkt (#196):** Jeder Endpunkt im Plugin (0.8) trägt seinen Scope wie in ClickTime
+  (`<RESSOURCE>_READ`/`_WRITE`); Hinweis zur Einrichtung nennt nur die Scopes, die das Intranet braucht.
 - **Inspektionsmanager – Konzept (#175):** Konzept mit Lösungsvorschlag, Datenmodell, Rechten, Etappen und
   Abnahmekriterien (`docs/KONZEPT-INSPEKTIONSMANAGER.md`); Ausgangspaket V39 unverändert in
   `docs/inspektionsmanager/`; Menüpunkt «Räume & Geräte → Inspektionsmanager» als Platzhalter.

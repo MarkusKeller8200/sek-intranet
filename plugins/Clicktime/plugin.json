@@ -1,7 +1,7 @@
 {
     "id": "clicktime",
     "name": "ClickTime",
-    "version": "0.7",
+    "version": "0.8",
     "api": 1,
     "category": "other",
     "author": "SekBülach Intranet",
@@ -17,7 +17,7 @@
             "client_id_setting": "client_id",
             "client_secret_setting": "client_secret"
         },
-        "auth_note": "In ClickTime unter Einstellungen › OpenAPI Clients einen Client mit den nötigen Scopes anlegen (z. B. employees_read, departments_read, cumulatives_read, balances_read). client_id und client_secret werden verschlüsselt gespeichert und nie angezeigt; das Token (1 Stunde) wird zwischengespeichert.",
+        "auth_note": "In ClickTime unter Einstellungen › OpenAPI Clients einen Client nur mit den Scopes anlegen, die das Intranet braucht: EMPLOYEES_READ, DEPARTMENTS_READ, ENTRIES_READ, CUMULATIVES_READ, BALANCES_READ, PUBLIC_HOLIDAY_CALENDARS_READ; für «Mitarbeitende anlegen» zusätzlich EMPLOYEES_WRITE. Übrige Scopes nicht vergeben. client_id und client_secret werden verschlüsselt gespeichert und nie angezeigt; das Token (1 Stunde) wird zwischengespeichert.",
         "endpoints": [
             {
                 "id": "departments",
@@ -26,7 +26,7 @@
                 "label": "Abteilungen",
                 "status": "full",
                 "use": "Verbindung testen, Abgleich",
-                "scope": "departments_read"
+                "scope": "DEPARTMENTS_READ"
             },
             {
                 "id": "department-managers",
@@ -35,7 +35,7 @@
                 "label": "Vorgesetzte einer Abteilung",
                 "status": "full",
                 "use": "Vorgesetzte",
-                "scope": "departments_read",
+                "scope": "DEPARTMENTS_READ",
                 "personal_data": true,
                 "params": [
                     {
@@ -60,7 +60,8 @@
                         "example": "year::EQ::2026|active::EQ::true",
                         "help": "Filter feld::OP::wert (OP: EQ, IN, LIKE, GE, LE); mehrere mit «|» trennen."
                     }
-                ]
+                ],
+                "scope": "PUBLIC_HOLIDAY_CALENDARS_READ"
             },
             {
                 "id": "employees",
@@ -69,7 +70,7 @@
                 "label": "Mitarbeitende",
                 "status": "full",
                 "use": "Abgleich",
-                "scope": "employees_read",
+                "scope": "EMPLOYEES_READ",
                 "personal_data": true,
                 "params": [
                     {
@@ -88,7 +89,7 @@
                 "label": "Mitarbeitende Person",
                 "status": "full",
                 "use": "Nachschlagen",
-                "scope": "employees_read",
+                "scope": "EMPLOYEES_READ",
                 "personal_data": true,
                 "params": [
                     {
@@ -105,7 +106,7 @@
                 "path": "/employees/{employee_no}/employments",
                 "label": "Anstellungen einer Person",
                 "status": "full",
-                "scope": "employees_read",
+                "scope": "EMPLOYEES_READ",
                 "personal_data": true,
                 "params": [
                     {
@@ -123,7 +124,7 @@
                 "path": "/employees/{employee_no}/permission-groups",
                 "label": "Berechtigungsgruppen einer Person",
                 "status": "full",
-                "scope": "employees_read",
+                "scope": "EMPLOYEES_READ",
                 "personal_data": true,
                 "params": [
                     {
@@ -140,7 +141,7 @@
                 "path": "/employees/{employee_no}/roles",
                 "label": "Rollen einer Person",
                 "status": "full",
-                "scope": "employees_read",
+                "scope": "EMPLOYEES_READ",
                 "personal_data": true,
                 "params": [
                     {
@@ -167,7 +168,8 @@
                         "help": "Filter feld::OP::wert (OP: EQ, IN, LIKE, GE, LE); mehrere mit «|» trennen."
                     }
                 ],
-                "note": "Höchstens ein Monat pro Abfrage. Weitere Filter: entry_type::IN::1000,2000, last_update::GE::2026-10-01_00:00:00, deleted::EQ::true, activity_number::IN::2000, source::IN::PC,A (PC = Web, A = Mobile, T = Terminal)."
+                "note": "Höchstens ein Monat pro Abfrage. Weitere Filter: entry_type::IN::1000,2000, last_update::GE::2026-10-01_00:00:00, deleted::EQ::true, activity_number::IN::2000, source::IN::PC,A (PC = Web, A = Mobile, T = Terminal).",
+                "scope": "ENTRIES_READ"
             },
             {
                 "id": "cumulatives",
@@ -176,7 +178,7 @@
                 "label": "Kumulative (Summen je Buchungsart)",
                 "status": "full",
                 "use": "Monatsdaten",
-                "scope": "cumulatives_read",
+                "scope": "CUMULATIVES_READ",
                 "personal_data": true,
                 "params": [
                     {
@@ -195,7 +197,7 @@
                 "label": "Salden an einem Stichtag",
                 "status": "full",
                 "use": "Monatsdaten",
-                "scope": "balances_read",
+                "scope": "BALANCES_READ",
                 "personal_data": true,
                 "params": [
                     {
@@ -222,14 +224,16 @@
                         "help": "Filter feld::OP::wert (OP: EQ, IN, LIKE, GE, LE); mehrere mit «|» trennen."
                     }
                 ],
-                "note": "Weitere Filter: entry_type::IN::2300, last_update::GE::2026-10-01_00:00:00."
+                "note": "Weitere Filter: entry_type::IN::2300, last_update::GE::2026-10-01_00:00:00.",
+                "scope": "EXPENSES_READ"
             },
             {
                 "id": "entities",
                 "method": "GET",
                 "path": "/entities",
                 "label": "Projekte/Objekte (entities)",
-                "status": "full"
+                "status": "full",
+                "scope": "ENTITIES_READ"
             },
             {
                 "id": "entity",
@@ -244,7 +248,8 @@
                         "example": "1001",
                         "help": "Projekt-/Objektnummer (number)."
                     }
-                ]
+                ],
+                "scope": "ENTITIES_READ"
             },
             {
                 "id": "entity-activities",
@@ -259,7 +264,8 @@
                         "example": "1001",
                         "help": "Projekt-/Objektnummer (number)."
                     }
-                ]
+                ],
+                "scope": "ENTITIES_READ"
             },
             {
                 "id": "entity-categories",
@@ -274,7 +280,8 @@
                         "example": "1001",
                         "help": "Projekt-/Objektnummer (number)."
                     }
-                ]
+                ],
+                "scope": "ENTITIES_READ"
             },
             {
                 "id": "clients",
@@ -290,7 +297,8 @@
                         "help": "Filter feld::OP::wert (OP: EQ, IN, LIKE, GE, LE); mehrere mit «|» trennen."
                     }
                 ],
-                "note": "Weitere Filter: name::LIKE::Muster, full_name::LIKE::Muster Anna, number::IN::1, entities::IN::1234, last_update::GE::2026-04-01_00:00:00."
+                "note": "Weitere Filter: name::LIKE::Muster, full_name::LIKE::Muster Anna, number::IN::1, entities::IN::1234, last_update::GE::2026-04-01_00:00:00.",
+                "scope": "CLIENTS_READ"
             },
             {
                 "id": "addresses",
@@ -461,7 +469,8 @@
                         "department_number": "20"
                     }
                 ],
-                "note": "Antwort ClickTime (09.11.2026, #28): nur nach Freischaltung der Schreibrechte. Abgelehnt, wenn employee_no, username oder batch_number (Badge) schon vergeben sind. Die Antwort enthält die angelegte Person mit employee_no. Übrige Felder noch nicht dokumentiert."
+                "note": "Antwort ClickTime (09.11.2026, #28): nur nach Freischaltung der Schreibrechte. Abgelehnt, wenn employee_no, username oder batch_number (Badge) schon vergeben sind. Die Antwort enthält die angelegte Person mit employee_no. Übrige Felder noch nicht dokumentiert.",
+                "scope": "EMPLOYEES_WRITE"
             },
             {
                 "id": "employees-update",
@@ -481,7 +490,8 @@
                         "department_number": "SEK"
                     }
                 ],
-                "note": "Body noch nicht dokumentiert (#28) – Beispiel geraten. Laut ClickTime nur nach Freischaltung durch den Support."
+                "note": "Body noch nicht dokumentiert (#28) – Beispiel geraten. Laut ClickTime nur nach Freischaltung durch den Support.",
+                "scope": "EMPLOYEES_WRITE"
             },
             {
                 "id": "employee-update",
@@ -505,7 +515,8 @@
                     "last_name": "Beispiel",
                     "email": "beat.beispiel@sekbuelach.example"
                 },
-                "note": "Body noch nicht dokumentiert (#28) – Beispiel geraten. Laut ClickTime nur nach Freischaltung durch den Support."
+                "note": "Body noch nicht dokumentiert (#28) – Beispiel geraten. Laut ClickTime nur nach Freischaltung durch den Support.",
+                "scope": "EMPLOYEES_WRITE"
             },
             {
                 "id": "employee-employments-update",
@@ -531,7 +542,8 @@
                         "workload_percent": 80
                     }
                 ],
-                "note": "Felder noch nicht dokumentiert (#28) – Beispiel geraten. Laut ClickTime nur nach Freischaltung durch den Support."
+                "note": "Felder noch nicht dokumentiert (#28) – Beispiel geraten. Laut ClickTime nur nach Freischaltung durch den Support.",
+                "scope": "EMPLOYEES_WRITE"
             },
             {
                 "id": "employee-permission-groups-update",
@@ -555,7 +567,8 @@
                         "number": 10
                     }
                 ],
-                "note": "Laut ClickTime nur nach Freischaltung durch den Support. Body-Format nicht dokumentiert – Beispiel geraten."
+                "note": "Laut ClickTime nur nach Freischaltung durch den Support. Body-Format nicht dokumentiert – Beispiel geraten.",
+                "scope": "EMPLOYEES_WRITE"
             },
             {
                 "id": "employee-roles-update",
@@ -579,7 +592,8 @@
                         "number": 1
                     }
                 ],
-                "note": "Laut ClickTime nur nach Freischaltung durch den Support. Body-Format nicht dokumentiert – Beispiel geraten."
+                "note": "Laut ClickTime nur nach Freischaltung durch den Support. Body-Format nicht dokumentiert – Beispiel geraten.",
+                "scope": "EMPLOYEES_WRITE"
             },
             {
                 "id": "entries-create",
@@ -638,7 +652,8 @@
                         "custom_string_10": null
                     }
                 ],
-                "note": "In der Feldtabelle heisst das Feld entry_number, im Beispiel entry_type_number – zu prüfen. Laut ClickTime nur nach Freischaltung durch den Support."
+                "note": "In der Feldtabelle heisst das Feld entry_number, im Beispiel entry_type_number – zu prüfen. Laut ClickTime nur nach Freischaltung durch den Support.",
+                "scope": "ENTRIES_WRITE"
             },
             {
                 "id": "entries-update",
@@ -698,7 +713,8 @@
                         "custom_string_10": null
                     }
                 ],
-                "note": "number = Buchung, die geändert wird. Feldname entry_number/entry_type_number zu prüfen. Laut ClickTime nur nach Freischaltung durch den Support."
+                "note": "number = Buchung, die geändert wird. Feldname entry_number/entry_type_number zu prüfen. Laut ClickTime nur nach Freischaltung durch den Support.",
+                "scope": "ENTRIES_WRITE"
             },
             {
                 "id": "entry-delete",
@@ -717,7 +733,8 @@
                 ],
                 "danger": true,
                 "test": false,
-                "note": "Laut ClickTime nur nach Freischaltung durch den Support."
+                "note": "Laut ClickTime nur nach Freischaltung durch den Support.",
+                "scope": "ENTRIES_WRITE"
             },
             {
                 "id": "entities-update",
@@ -751,7 +768,8 @@
                         "custom_string_09": null,
                         "custom_string_10": null
                     }
-                ]
+                ],
+                "scope": "ENTITIES_WRITE"
             },
             {
                 "id": "entity-activities-update",
@@ -775,7 +793,8 @@
                         "internal_rate": null,
                         "external_rate": null
                     }
-                ]
+                ],
+                "scope": "ENTITIES_WRITE"
             },
             {
                 "id": "entity-categories-update",
@@ -800,7 +819,8 @@
                         "external_rate": null
                     }
                 ],
-                "note": "In der Doku zeigt die Adresse auf …/activities – Pfad zu prüfen."
+                "note": "In der Doku zeigt die Adresse auf …/activities – Pfad zu prüfen.",
+                "scope": "ENTITIES_WRITE"
             },
             {
                 "id": "clients-create",
@@ -825,7 +845,8 @@
                         "entities": ["1012"]
                     }
                 ],
-                "note": "Laut ClickTime nur nach Freischaltung durch den Support."
+                "note": "Laut ClickTime nur nach Freischaltung durch den Support.",
+                "scope": "CLIENTS_WRITE"
             },
             {
                 "id": "clients-update",
@@ -850,7 +871,8 @@
                         "entities": ["1012"]
                     }
                 ],
-                "note": "Laut ClickTime nur nach Freischaltung durch den Support."
+                "note": "Laut ClickTime nur nach Freischaltung durch den Support.",
+                "scope": "CLIENTS_WRITE"
             },
             {
                 "id": "client-delete",
@@ -868,7 +890,8 @@
                 ],
                 "danger": true,
                 "test": false,
-                "note": "Laut ClickTime nur nach Freischaltung durch den Support."
+                "note": "Laut ClickTime nur nach Freischaltung durch den Support.",
+                "scope": "CLIENTS_WRITE"
             },
             {
                 "id": "addresses-update",
