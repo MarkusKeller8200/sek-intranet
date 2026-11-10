@@ -136,16 +136,21 @@ sudo backup.sh pruefen                    # Wiederherstellungstest
 
 ## Betrieb
 
-| Aufgabe                    | Befehl                                                                                    |
-| -------------------------- | ----------------------------------------------------------------------------------------- |
-| Status Dev                 | `cd /docker/intranet-dev && docker compose ps`                                            |
-| Logs Dev                   | `cd /docker/intranet-dev && docker compose logs -f app`                                   |
-| Traefik-Logs               | `cd /docker/traefik && docker compose logs --tail=100`                                    |
-| Letzte Version zurückholen | `cd /docker/intranet-dev && rm -rf src && mv src.old src && docker compose up -d --build` |
-| Sicherungsstände           | `sudo backup.sh liste`                                                                    |
-| Wiederherstellen           | `sudo backup.sh zurueck intranet-live [Stand]` (fragt nach, sichert vorher)               |
-| Gesperrte IPs (fail2ban)   | `sudo fail2ban-client status sshd`                                                        |
-| Firewall                   | `sudo ufw status`                                                                         |
+Die Ordner der Instanzen gehören dem Benutzer `deploy` – Befehle darin mit `sudo -u deploy …`; für die
+Produktion `intranet-dev` durch `intranet-live` ersetzen.
+
+| Aufgabe                    | Befehl                                                                           |
+| -------------------------- | -------------------------------------------------------------------------------- |
+| Status                     | `sudo -u deploy bash -c 'cd /docker/intranet-dev && docker compose ps'`          |
+| Logs                       | `sudo -u deploy bash -c 'cd /docker/intranet-dev && docker compose logs -f app'` |
+| Neu starten (nach `.env`)  | `sudo -u deploy bash -c 'cd /docker/intranet-live && docker compose up -d'`      |
+| `.env` bearbeiten          | `sudo -u deploy nano /docker/intranet-live/.env`                                 |
+| Traefik-Logs               | `cd /docker/traefik && docker compose logs --tail=100`                           |
+| Letzte Version zurückholen | Dev: nächster Push; Produktion: deploy-live mit der früheren Version             |
+| Sicherungsstände           | `sudo backup.sh liste`                                                           |
+| Wiederherstellen           | `sudo backup.sh zurueck intranet-live [Stand]` (fragt nach, sichert vorher)      |
+| Gesperrte IPs (fail2ban)   | `sudo fail2ban-client status sshd`                                               |
+| Firewall                   | `sudo ufw status`                                                                |
 
 Die Daten liegen im Docker-Volumen `<Instanz>_intranet-storage` (z. B. `intranet-dev_intranet-storage`);
 ein Deploy überschreibt sie nie.
