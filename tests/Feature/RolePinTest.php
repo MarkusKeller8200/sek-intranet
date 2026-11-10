@@ -90,6 +90,7 @@ class RolePinTest extends TestCase
 
     public function test_too_many_wrong_pins_are_blocked(): void
     {
+        $this->freezeTime(); // Wartezeit sonst an der Sekundengrenze 59 statt 60
         $this->pins()->set('admin', self::ADMIN_PIN, null);
         for ($i = 0; $i < 5; $i++) {
             $this->post('/anmelden/pin', ['role' => 'admin', 'pin' => '0000000'.$i]);
