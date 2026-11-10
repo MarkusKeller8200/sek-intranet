@@ -9,6 +9,8 @@ laufend unter **Unveröffentlicht**. Ab 0.32.0 entsteht eine Version nur bei ein
 
 ## [Unveröffentlicht]
 
+## [0.39.0] – 2026-11-10
+
 ### Für Mitarbeitende
 
 - Die Zeiterfassung markiert Tage ohne Buchung und fehlende Ein- oder Austrittsbuchungen mit einem Hinweis.
