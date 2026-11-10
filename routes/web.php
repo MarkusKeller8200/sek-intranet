@@ -166,7 +166,7 @@ Route::middleware('auth')->group(function () {
         Route::post('einstellungen/sicherung/server/{name}/vorbereiten', [BackupController::class, 'prepareServer'])->middleware('throttle:10,1')->name('backup.prepare-server');
         Route::post('einstellungen/sicherung/vorbereiten', [BackupController::class, 'prepare'])->middleware('throttle:10,1')->name('backup.prepare');
         Route::delete('einstellungen/sicherung/vorbereitung', [BackupController::class, 'cancel'])->name('backup.cancel');
-        Route::post('einstellungen/sicherung/wiederherstellen', [BackupController::class, 'restore'])->middleware('throttle:5,1')->name('backup.restore');
+        Route::post('einstellungen/sicherung/wiederherstellen', [BackupController::class, 'restore'])->middleware('throttle:10,1')->name('backup.restore');
         Route::get('einstellungen/zugang', [AccessPinController::class, 'index'])->name('access.index');
         Route::put('einstellungen/zugang/{role}', [AccessPinController::class, 'update'])->middleware('throttle:20,1')->name('access.update');
         Route::delete('einstellungen/zugang/{role}', [AccessPinController::class, 'destroy'])->name('access.destroy');

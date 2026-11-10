@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Data\Store\JsonStore;
 use App\Support\Backups;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Routing\Middleware\ThrottleRequests;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Testing\TestResponse;
@@ -25,6 +26,8 @@ class BackupTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
+        // Der Zähler der Begrenzung gilt je Person über alle begrenzten Routen – hier nicht Gegenstand des Tests
+        $this->withoutMiddleware(ThrottleRequests::class);
         Storage::fake('local');
         Storage::fake('public');
     }
