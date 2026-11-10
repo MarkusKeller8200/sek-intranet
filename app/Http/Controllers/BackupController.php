@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Auth\IntranetUser;
 use App\Support\AuditLog;
 use App\Support\Backups;
 use Illuminate\Http\RedirectResponse;
@@ -208,7 +209,7 @@ class BackupController extends Controller
     {
         $user = $request->user();
 
-        return $user !== null && method_exists($user, 'name') ? (string) $user->name() : null;
+        return $user instanceof IntranetUser ? $user->name() : null;
     }
 
     /** Grösste Datei, die PHP annimmt (upload_max_filesize bzw. post_max_size), in MB. */

@@ -650,7 +650,7 @@ final class Backups
     {
         $data = '';
         while (strlen($data) < $size && is_resource($handle) && ! feof($handle)) {
-            $part = fread($handle, $size - strlen($data));
+            $part = fread($handle, max(1, $size - strlen($data)));
             if ($part === false || $part === '') {
                 break;
             }
