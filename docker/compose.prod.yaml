@@ -1,4 +1,4 @@
-# Produktion: Hostinger-VPS (Instanz «intranet», hostinger.sekbuelach.ch) und Infomaniak-Server (#171: Instanzen
+# Produktion: Hostinger-VPS (Instanz «intranet», intranet.markussx.ch) und Infomaniak-Server (#171: Instanzen
 # «intranet-dev», später «intranet-live»). Traefik läuft jeweils als eigenes Projekt «traefik».
 # Liegt auf dem Server als /docker/<Instanz>/docker-compose.yml, der Quellcode in ./src.
 # Wird bei jedem Deployment von GitHub Actions überschrieben – Einstellungen in ./.env ändern.

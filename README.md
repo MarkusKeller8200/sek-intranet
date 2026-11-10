@@ -46,7 +46,7 @@ korrigieren: `npm run check:fix`.
 
 ## Online stellen
 
-Automatisches Deployment auf `https://hostinger.sekbuelach.ch` (Hostinger-VPS) und `https://intranet-dev.sekbuelach.ch` (Infomaniak, siehe [docs/SERVER-INFOMANIAK.md](docs/SERVER-INFOMANIAK.md))
+Automatisches Deployment auf `https://intranet.markussx.ch` (Hostinger-VPS) und `https://intranet-dev.sekbuelach.ch` (Infomaniak, siehe [docs/SERVER-INFOMANIAK.md](docs/SERVER-INFOMANIAK.md))
 bei jedem Push auf `main`: siehe [DEPLOY.md](DEPLOY.md).
 
 ## Funktionen

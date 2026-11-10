@@ -3,7 +3,7 @@ name: deploy-steps
 # Gemeinsame Deployment-Schritte, aufgerufen von deploy.yml und deploy-quick.yml.
 # Pro Ziel ein GitHub-Environment mit VPS_HOST, INTRANET_HOST, optional VPS_USER (Variablen) sowie VPS_SSH_KEY und
 # VPS_KNOWN_HOSTS (Secrets):
-#   production – Hostinger, Instanz «intranet» (hostinger.sekbuelach.ch)
+#   production – Hostinger, Instanz «intranet» (intranet.markussx.ch)
 #   dev        – Infomaniak, Instanz «intranet-dev» (intranet-dev.sekbuelach.ch, #171)
 #   live       – Infomaniak, Instanz «intranet-live» (intranet.sekbuelach.ch, #173; nur Releases, mit Freigabe)
 # Ist ein Environment ausser production nicht eingerichtet (VPS_HOST fehlt), wird der Deploy übersprungen.
@@ -36,7 +36,7 @@ jobs:
     environment: ${{ inputs.environment }}
     env:
       HOST: ${{ vars.VPS_HOST || secrets.VPS_HOST || (inputs.environment == 'production' && '76.13.156.138' || '') }}
-      INTRANET_HOST: ${{ vars.INTRANET_HOST || (inputs.environment == 'production' && 'hostinger.sekbuelach.ch' || '') }}
+      INTRANET_HOST: ${{ vars.INTRANET_HOST || (inputs.environment == 'production' && 'intranet.markussx.ch' || '') }}
       VPS_USER: ${{ vars.VPS_USER || 'root' }}
       TARGET: ${{ inputs.target }}
       INSTANZ: ${{ inputs.instanz }}

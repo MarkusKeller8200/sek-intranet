@@ -3,18 +3,18 @@
 Eigener Server bei Infomaniak (Schweiz) für das Intranet, bis Live später auf ein eigenes VPS umzieht.
 Meilenstein «Hosting Infomaniak»: #170 (Grundeinrichtung), #171 (Dev), #172 (Sicherung), #173 (Live).
 
-| Was                | Wert                                                                     |
-| ------------------ | ------------------------------------------------------------------------ |
-| Server             | Infomaniak VPS Lite `sekbuelach-dev`, 4 vCPU, 8 GB, Ubuntu 26.04 LTS     |
-| Dev                | `https://intranet-dev.sekbuelach.ch` – Ordner `/docker/intranet-dev`     |
-| Live               | `https://intranet.sekbuelach.ch` – Ordner `/docker/intranet-live`        |
-| Reverse Proxy      | Traefik in `/docker/traefik` (Let's Encrypt, HTTP → HTTPS)               |
-| Deploy             | GitHub Actions per SSH als Benutzer `deploy` (Environment `dev`)         |
-| Sicherung          | restic nach Swiss Backup, täglich 02:30, Test sonntags 05:15             |
-| Hostinger (bisher) | `https://hostinger.sekbuelach.ch` – läuft weiter, bis Live umgezogen ist |
+| Was                | Wert                                                                   |
+| ------------------ | ---------------------------------------------------------------------- |
+| Server             | Infomaniak VPS Lite `sekbuelach-dev`, 4 vCPU, 8 GB, Ubuntu 26.04 LTS   |
+| Dev                | `https://intranet-dev.sekbuelach.ch` – Ordner `/docker/intranet-dev`   |
+| Live               | `https://intranet.sekbuelach.ch` – Ordner `/docker/intranet-live`      |
+| Reverse Proxy      | Traefik in `/docker/traefik` (Let's Encrypt, HTTP → HTTPS)             |
+| Deploy             | GitHub Actions per SSH als Benutzer `deploy` (Environment `dev`)       |
+| Sicherung          | restic nach Swiss Backup, täglich 02:30, Test sonntags 05:15           |
+| Hostinger (privat) | `https://intranet.markussx.ch` – privater Entwicklungsserver, getrennt |
 
 ```text
-git push ─► GitHub Actions: CI ─┬─► Hostinger  (Environment production) ─► hostinger.sekbuelach.ch
+git push ─► GitHub Actions: CI ─┬─► Hostinger  (Environment production) ─► intranet.markussx.ch
                                 └─► Infomaniak (Environment dev)        ─► intranet-dev.sekbuelach.ch
 ```
 
@@ -32,10 +32,10 @@ Eingehend nur **22, 80 und 443** (TCP) erlauben. Das Skript richtet zusätzlich 
 
 Zone `sekbuelach.ch` → DNS:
 
-| Typ | Name           | Inhalt                    | Proxy-Status |
-| --- | -------------- | ------------------------- | ------------ |
-| A   | `intranet-dev` | IP des Infomaniak-Servers | **Nur DNS**  |
-| A   | `hostinger`    | `76.13.156.138`           | **Nur DNS**  |
+| Typ | Name                            | Inhalt                    | Proxy-Status |
+| --- | ------------------------------- | ------------------------- | ------------ |
+| A   | `intranet-dev`                  | IP des Infomaniak-Servers | **Nur DNS**  |
+| A   | `intranet` (Zone `markussx.ch`) | `76.13.156.138`           | **Nur DNS**  |
 
 Bei IPv6 zusätzlich einen AAAA-Eintrag. «Nur DNS», damit Traefik das Zertifikat selbst holt.
 
@@ -103,7 +103,7 @@ für Ubuntu 26.04.) Der Deploy vergleicht den Fingerabdruck und zeigt bei einer 
 Solange `VPS_HOST` fehlt, überspringt der Deploy das Ziel «dev» (Hinweis im Lauf).
 
 **Hostinger:** Im Environment `production` bzw. in den Repository-Variablen `INTRANET_HOST` auf
-`hostinger.sekbuelach.ch` setzen. Der Deploy trägt den Hostnamen bei jedem Lauf neu in die `.env` ein.
+`intranet.markussx.ch` setzen. Der Deploy trägt den Hostnamen bei jedem Lauf neu in die `.env` ein.
 
 ### 7. Erster Deploy
 
@@ -190,4 +190,3 @@ wie Dev, mit eigenen Daten, eigener `.env` und eigenem Container. Workflow `depl
 2. Sicherung eingerichtet (`sudo backup.sh init`) und einmal wiederhergestellt (`sudo backup.sh pruefen`).
 3. Demo-Daten ersetzen bzw. Live neu aufsetzen (Vorgehen beim Wechsel festlegen).
 4. In `/docker/intranet-live/.env`: `INTRANET_SERVER_IN_SWITZERLAND=true`, `INTRANET_DEMO_LOGIN=false`.
-5. Danach Hostinger abschalten.

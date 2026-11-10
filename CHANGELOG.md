@@ -14,8 +14,8 @@ laufend unter **Unveröffentlicht**. Ab 0.32.0 entsteht eine Version nur bei ein
 - **Betrieb: Infomaniak-Server (#170–#172):** Einrichtungsskript für Ubuntu 26.04 (Docker, Benutzer «deploy», SSH
   nur mit Schlüssel, ufw, fail2ban, automatische Sicherheitsupdates, Traefik), mehrere Instanzen pro Server
   (`INTRANET_INSTANZ`), Deploy zusätzlich nach `intranet-dev.sekbuelach.ch` (Environment «dev») und tägliche
-  verschlüsselte Sicherung mit restic nach Swiss Backup samt Wiederherstellungstest. Hostinger läuft neu unter
-  `hostinger.sekbuelach.ch`; der Hostname wird bei jedem Deploy nachgeführt. Anleitung: `docs/SERVER-INFOMANIAK.md`.
+  verschlüsselte Sicherung mit restic nach Swiss Backup samt Wiederherstellungstest. Hostinger (privater
+  Entwicklungsserver) läuft neu unter `intranet.markussx.ch`; der Hostname wird bei jedem Deploy nachgeführt. Anleitung: `docs/SERVER-INFOMANIAK.md`.
 - **Betrieb: Live auf Infomaniak (#173):** Workflow «deploy-live» für `intranet.sekbuelach.ch` – nur freigegebene
   Releases, mit Freigabe im Environment «live», Sicherung vor dem Deploy und Abbruch, wenn echte Daten mit
   Demo-Login laufen würden.

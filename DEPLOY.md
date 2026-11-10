@@ -1,16 +1,17 @@
-# Deployment: hostinger.sekbuelach.ch
+# Deployment: intranet.markussx.ch
 
 Jeder Push auf `main` wird automatisch geprüft und auf den Hostinger-VPS gebracht
 (GitHub Actions → SSH → Docker Compose). Traefik auf dem VPS liefert HTTPS (Let's Encrypt).
 
 Zusätzlich geht jeder Push auf den Infomaniak-Server (`intranet-dev.sekbuelach.ch`), sobald das Environment
 «dev» eingerichtet ist – Anleitung: [docs/SERVER-INFOMANIAK.md](docs/SERVER-INFOMANIAK.md). Live zieht später
-unter `intranet.sekbuelach.ch` dorthin um; Hostinger läuft bis dahin unter `hostinger.sekbuelach.ch`.
+unter `intranet.sekbuelach.ch` dorthin um. Hostinger bleibt davon getrennt als privater Entwicklungsserver unter
+`intranet.markussx.ch` (eigene Daten, die bei keinem Deploy überschrieben werden).
 
 ```text
 git push ─► GitHub Actions: composer ci:check ─► Code per SSH auf VPS ─► docker compose up --build
                                                                     │
-Browser ─► hostinger.sekbuelach.ch ─► Traefik (HTTPS) ─► Container «intranet» ─► Volume (JSON-Daten, Uploads)
+Browser ─► intranet.markussx.ch ─► Traefik (HTTPS) ─► Container «intranet» ─► Volume (JSON-Daten, Uploads)
 ```
 
 | Was                   | Wert                                                                             |
@@ -18,7 +19,7 @@ Browser ─► hostinger.sekbuelach.ch ─► Traefik (HTTPS) ─► Container �
 | Server                | Hostinger VPS srv1807739, IP `76.13.156.138`                                     |
 | Ordner auf dem Server | `/docker/intranet` (Compose-Datei, `.env`, Quellcode in `src/`)                  |
 | Daten                 | Docker-Volume `intranet_intranet-storage` – bleibt bei jedem Deployment erhalten |
-| Prüfadresse           | `https://hostinger.sekbuelach.ch/up`                                             |
+| Prüfadresse           | `https://intranet.markussx.ch/up`                                                |
 
 ## Einmalige Einrichtung (ca. 30–60 Minuten)
 
@@ -80,15 +81,15 @@ Repository → Settings → Secrets and variables → Actions:
 | Secret   | `VPS_SSH_KEY`     | ganzer Inhalt von `intranet-deploy`      |
 | Secret   | `VPS_KNOWN_HOSTS` | ganzer Inhalt von `intranet-known-hosts` |
 | Variable | `VPS_HOST`        | `76.13.156.138`                          |
-| Variable | `INTRANET_HOST`   | `hostinger.sekbuelach.ch`                |
+| Variable | `INTRANET_HOST`   | `intranet.markussx.ch`                   |
 
 ### 5. DNS bei Cloudflare
 
-Zone `sekbuelach.ch` → DNS → Eintrag hinzufügen:
+Zone `markussx.ch` → DNS → Eintrag hinzufügen (privater Entwicklungsserver, getrennt von `sekbuelach.ch`):
 
-| Typ | Name        | Inhalt          | Proxy-Status              |
-| --- | ----------- | --------------- | ------------------------- |
-| A   | `hostinger` | `76.13.156.138` | **Nur DNS** (graue Wolke) |
+| Typ | Name       | Inhalt          | Proxy-Status              |
+| --- | ---------- | --------------- | ------------------------- |
+| A   | `intranet` | `76.13.156.138` | **Nur DNS** (graue Wolke) |
 
 «Nur DNS», damit Traefik das Let's-Encrypt-Zertifikat direkt beziehen kann.
 Später kann auf Cloudflare Tunnel/Access umgestellt werden (IDA ADR-005).
@@ -96,7 +97,7 @@ Später kann auf Cloudflare Tunnel/Access umgestellt werden (IDA ADR-005).
 ### 6. Deployment starten
 
 GitHub → Actions → «deploy» → «Re-run all jobs» (oder einfach erneut pushen).
-Nach wenigen Minuten ist die Seite unter <https://hostinger.sekbuelach.ch> online.
+Nach wenigen Minuten ist die Seite unter <https://intranet.markussx.ch> online.
 
 ## Neue Version veröffentlichen
 
