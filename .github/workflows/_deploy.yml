@@ -5,7 +5,7 @@ name: deploy-steps
 # VPS_KNOWN_HOSTS (Secrets):
 #   production – Hostinger, Instanz «intranet» (intranet.markussx.ch)
 #   dev        – Infomaniak, Instanz «intranet-dev» (intranet-dev.sekbuelach.ch, #171)
-#   live       – Infomaniak, Instanz «intranet-live» (intranet.sekbuelach.ch, #173; nur Releases, mit Freigabe)
+#   live       – Infomaniak, Instanz «intranet-live» (intranet.sekbuelach.ch, #173; nur von Hand über deploy-live.yml)
 # Ist ein Environment ausser production nicht eingerichtet (VPS_HOST fehlt), wird der Deploy übersprungen.
 on:
   workflow_call:

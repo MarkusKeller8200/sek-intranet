@@ -155,9 +155,11 @@ ein Deploy überschreibt sie nie.
 `https://intranet.sekbuelach.ch`, Instanz `intranet-live`, Ordner `/docker/intranet-live` – auf demselben Server
 wie Dev, mit eigenen Daten, eigener `.env` und eigenem Container. Workflow `deploy-live.yml`:
 
-- **Nur Releases:** läuft, sobald `release.yml` einen Tag `v<Version>` anlegt, und deployt genau diesen Stand.
-  Von Hand: Actions → **deploy-live** → «Run workflow» mit einer Version (auch zum Zurückgehen).
-- **Freigabe:** Das Environment `live` verlangt die Freigabe durch Markus; ohne sie wartet der Lauf.
+- **Nur auf Anweisung von Markus:** kein automatischer Start – weder bei einem Push noch bei einem Release.
+  Start: Actions → **deploy-live** → «Run workflow», Version (Tag, z. B. `v0.38.0`) und «ja» eintippen. Deployt
+  genau den Stand dieser Version; auch zum Zurückgehen auf eine frühere Version.
+- **Zusätzliche Freigabe (empfohlen):** «Required reviewers» im Environment `live` – der Lauf wartet dann noch auf
+  die Bestätigung in GitHub.
 - **Sicherung vorher:** Ist `backup.sh` eingerichtet (`init`), sichert der Deploy zuerst; schlägt das fehl, bricht er
   ab. Mit echten Daten deployt er nie ohne Sicherung.
 - **Schutz:** Mit `INTRANET_SERVER_IN_SWITZERLAND=true` muss `INTRANET_DEMO_LOGIN=false` gesetzt sein, sonst bricht
@@ -181,7 +183,8 @@ wie Dev, mit eigenen Daten, eigener `.env` und eigenem Container. Workflow `depl
     und holt dann den Stand des Tags).
 
 3. **DNS bei Cloudflare:** `intranet` → IP des Infomaniak-Servers, «Nur DNS».
-4. **Erster Deploy:** Actions → **deploy-live** → «Run workflow» mit der aktuellen Version → Freigabe erteilen.
+4. **Erster Deploy:** Actions → **deploy-live** → «Run workflow» mit der aktuellen Version und «ja» → Freigabe
+   erteilen.
    Live startet zuerst mit Demo-Daten (wie Hostinger).
 
 ### Vor echten Daten
