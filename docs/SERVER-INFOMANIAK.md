@@ -145,7 +145,7 @@ Produktion `intranet-dev` durch `intranet-live` ersetzen.
 | Logs                       | `sudo -u deploy bash -c 'cd /docker/intranet-dev && docker compose logs -f app'` |
 | Neu starten (nach `.env`)  | `sudo -u deploy bash -c 'cd /docker/intranet-live && docker compose up -d'`      |
 | `.env` bearbeiten          | `sudo -u deploy nano /docker/intranet-live/.env`                                 |
-| Traefik-Logs               | `cd /docker/traefik && docker compose logs --tail=100`                           |
+| Traefik-Logs               | `sudo bash -c 'cd /docker/traefik && docker compose logs --tail=100'`            |
 | Letzte Version zurückholen | Dev: nächster Push; Produktion: deploy-live mit der früheren Version             |
 | Sicherungsstände           | `sudo backup.sh liste`                                                           |
 | Wiederherstellen           | `sudo backup.sh zurueck intranet-live [Stand]` (fragt nach, sichert vorher)      |
