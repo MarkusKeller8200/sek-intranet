@@ -195,7 +195,9 @@ pruefen() {
     laden
     local tmp i anzahl
     tmp="$(mktemp -d /var/tmp/restore-test.XXXXXX)"
-    trap 'rm -rf "$tmp"' EXIT
+    # Pfad jetzt einsetzen: beim Beenden ist die lokale Variable nicht mehr bekannt
+    # shellcheck disable=SC2064
+    trap "rm -rf '$tmp'" EXIT
     restic check --quiet --read-data-subset=5%
     for i in $INSTANZEN; do
         restic restore latest --quiet --tag "$i" --target "$tmp/$i"
