@@ -1,0 +1,64 @@
+name: deploy-live
+
+# Live auf dem Infomaniak-Server (#173): intranet.sekbuelach.ch, Instanz «intranet-live».
+# Nur freigegebene Releases: läuft, nachdem der Workflow «release» einen Tag v<Version> für den Commit angelegt hat
+# (der Tag entsteht erst, wenn «deploy» für diesen Commit grün ist). Das Environment «live» verlangt die Freigabe
+# durch Markus («Required reviewers») – ohne sie wartet der Lauf.
+# Von Hand: Run workflow mit einer Version (z. B. v0.38.0) – auch zum Zurückgehen auf eine frühere Version.
+# Ist das Environment «live» nicht eingerichtet (VPS_HOST fehlt), wird nichts deployt.
+on:
+  workflow_run:
+    workflows: [release]
+    types: [completed]
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version (Tag), z. B. v0.38.0'
+        required: true
+
+permissions:
+  contents: read
+
+jobs:
+  version:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success'
+    outputs:
+      tag: ${{ steps.tag.outputs.tag }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+
+      - name: Release bestimmen
+        id: tag
+        env:
+          EINGABE: ${{ inputs.version }}
+          SHA: ${{ github.event.workflow_run.head_sha }}
+        run: |
+          if [ -n "$EINGABE" ]; then
+            [[ "$EINGABE" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]] || { echo "::error::Version im Format v1.2.3 angeben."; exit 1; }
+            git rev-parse -q --verify "refs/tags/$EINGABE" > /dev/null || { echo "::error::Tag $EINGABE gibt es nicht."; exit 1; }
+            tag="$EINGABE"
+          else
+            tag="$(git tag --points-at "$SHA" --list 'v[0-9]*' | sort -V | tail -1)"
+          fi
+          if [ -z "$tag" ]; then
+            echo "::notice title=Kein Release::Für diesen Commit gibt es keinen neuen Tag – Live bleibt unverändert."
+          else
+            echo "::notice title=Live-Deploy::$tag wartet auf die Freigabe im Environment «live»."
+          fi
+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
+
+  deploy:
+    needs: version
+    if: needs.version.outputs.tag != ''
+    uses: ./.github/workflows/_deploy.yml
+    secrets: inherit
+    with:
+      environment: live
+      target: /docker/intranet-live
+      instanz: intranet-live
+      ref: ${{ needs.version.outputs.tag }}

@@ -96,7 +96,7 @@ Persistent=true
 WantedBy=timers.target
 EOF
     systemctl daemon-reload
-    echo "Timer werden nach «sudo backup.sh init» eingeschaltet."
+    echo "Timer und die Sicherung vor dem Live-Deploy werden mit «sudo backup.sh init» eingeschaltet."
 }
 
 laden() {
@@ -119,6 +119,20 @@ status() {
     fi
 }
 
+freigabe_deploy() {
+    # Der Live-Deploy (GitHub, Benutzer deploy) sichert vor jedem Update – nur genau dieser Aufruf ist erlaubt
+    if id deploy >/dev/null 2>&1; then
+        printf 'deploy ALL=(root) NOPASSWD: /usr/local/sbin/backup.sh sichern\n' > /etc/sudoers.d/sekbuelach-backup.tmp
+        chmod 440 /etc/sudoers.d/sekbuelach-backup.tmp
+        if visudo -cf /etc/sudoers.d/sekbuelach-backup.tmp >/dev/null; then
+            mv /etc/sudoers.d/sekbuelach-backup.tmp /etc/sudoers.d/sekbuelach-backup
+        else
+            rm -f /etc/sudoers.d/sekbuelach-backup.tmp
+            echo "Hinweis: Freigabe für den Deploy konnte nicht eingerichtet werden."
+        fi
+    fi
+}
+
 init() {
     laden
     if restic cat config >/dev/null 2>&1; then
@@ -127,6 +141,7 @@ init() {
         restic init
     fi
     systemctl enable --now sekbuelach-backup.timer sekbuelach-backup-pruefen.timer
+    freigabe_deploy
     echo "Timer eingeschaltet. Erste Sicherung jetzt: sudo backup.sh"
 }
 

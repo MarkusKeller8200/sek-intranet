@@ -7,7 +7,7 @@ Meilenstein «Hosting Infomaniak»: #170 (Grundeinrichtung), #171 (Dev), #172 (S
 | ------------------ | ------------------------------------------------------------------------ |
 | Server             | Infomaniak VPS Lite `sekbuelach-dev`, 4 vCPU, 8 GB, Ubuntu 26.04 LTS     |
 | Dev                | `https://intranet-dev.sekbuelach.ch` – Ordner `/docker/intranet-dev`     |
-| Live (später)      | `https://intranet.sekbuelach.ch` – Ordner `/docker/intranet-live`        |
+| Live               | `https://intranet.sekbuelach.ch` – Ordner `/docker/intranet-live`        |
 | Reverse Proxy      | Traefik in `/docker/traefik` (Let's Encrypt, HTTP → HTTPS)               |
 | Deploy             | GitHub Actions per SSH als Benutzer `deploy` (Environment `dev`)         |
 | Sicherung          | restic nach Swiss Backup, täglich 02:30, Test sonntags 05:15             |
@@ -150,8 +150,44 @@ sudo backup.sh pruefen                    # Wiederherstellungstest
 Die Daten liegen im Docker-Volumen `<Instanz>_intranet-storage` (z. B. `intranet-dev_intranet-storage`);
 ein Deploy überschreibt sie nie.
 
-## Live (#173, später)
+## Live (#173)
 
-Environment `live` mit «Required reviewers» (Deploy nur nach Freigabe, nur bei einem Release), Instanz
-`intranet-live`, Hostname `intranet.sekbuelach.ch`. Vorher: Auftragsverarbeitungsvertrag mit Infomaniak,
-Sicherung eingerichtet und getestet. Danach Hostinger abschalten.
+`https://intranet.sekbuelach.ch`, Instanz `intranet-live`, Ordner `/docker/intranet-live` – auf demselben Server
+wie Dev, mit eigenen Daten, eigener `.env` und eigenem Container. Workflow `deploy-live.yml`:
+
+- **Nur Releases:** läuft, sobald `release.yml` einen Tag `v<Version>` anlegt, und deployt genau diesen Stand.
+  Von Hand: Actions → **deploy-live** → «Run workflow» mit einer Version (auch zum Zurückgehen).
+- **Freigabe:** Das Environment `live` verlangt die Freigabe durch Markus; ohne sie wartet der Lauf.
+- **Sicherung vorher:** Ist `backup.sh` eingerichtet (`init`), sichert der Deploy zuerst; schlägt das fehl, bricht er
+  ab. Mit echten Daten deployt er nie ohne Sicherung.
+- **Schutz:** Mit `INTRANET_SERVER_IN_SWITZERLAND=true` muss `INTRANET_DEMO_LOGIN=false` gesetzt sein, sonst bricht
+  der Deploy ab. Ohne echte Daten warnt er, wenn kein Zugangspasswort gesetzt ist.
+
+### Einrichtung
+
+1. **Zugangspasswort** für die Demo-Phase (in 1Password erzeugen), auf dem Server:
+   `sudo -u deploy nano /docker/intranet-live/.env` → Zeile `INTRANET_ACCESS_PASSWORD=…`
+2. **GitHub-Environment `live`** (Settings → Environments → New environment):
+
+    | Typ      | Name              | Inhalt                                  |
+    | -------- | ----------------- | --------------------------------------- |
+    | Variable | `VPS_HOST`        | IP des Infomaniak-Servers               |
+    | Variable | `VPS_USER`        | `deploy`                                |
+    | Variable | `INTRANET_HOST`   | `intranet.sekbuelach.ch`                |
+    | Secret   | `VPS_SSH_KEY`     | derselbe Deploy-Schlüssel wie bei `dev` |
+    | Secret   | `VPS_KNOWN_HOSTS` | dieselbe Zeile wie bei `dev`            |
+
+    Dazu **Required reviewers**: Markus; **Deployment branches and tags**: nur `main` (der Lauf startet auf `main`
+    und holt dann den Stand des Tags).
+
+3. **DNS bei Cloudflare:** `intranet` → IP des Infomaniak-Servers, «Nur DNS».
+4. **Erster Deploy:** Actions → **deploy-live** → «Run workflow» mit der aktuellen Version → Freigabe erteilen.
+   Live startet zuerst mit Demo-Daten (wie Hostinger).
+
+### Vor echten Daten
+
+1. Auftragsverarbeitungsvertrag mit Infomaniak.
+2. Sicherung eingerichtet (`sudo backup.sh init`) und einmal wiederhergestellt (`sudo backup.sh pruefen`).
+3. Demo-Daten ersetzen bzw. Live neu aufsetzen (Vorgehen beim Wechsel festlegen).
+4. In `/docker/intranet-live/.env`: `INTRANET_SERVER_IN_SWITZERLAND=true`, `INTRANET_DEMO_LOGIN=false`.
+5. Danach Hostinger abschalten.

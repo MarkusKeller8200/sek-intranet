@@ -16,6 +16,9 @@ laufend unter **Unveröffentlicht**. Ab 0.32.0 entsteht eine Version nur bei ein
   (`INTRANET_INSTANZ`), Deploy zusätzlich nach `intranet-dev.sekbuelach.ch` (Environment «dev») und tägliche
   verschlüsselte Sicherung mit restic nach Swiss Backup samt Wiederherstellungstest. Hostinger läuft neu unter
   `hostinger.sekbuelach.ch`; der Hostname wird bei jedem Deploy nachgeführt. Anleitung: `docs/SERVER-INFOMANIAK.md`.
+- **Betrieb: Live auf Infomaniak (#173):** Workflow «deploy-live» für `intranet.sekbuelach.ch` – nur freigegebene
+  Releases, mit Freigabe im Environment «live», Sicherung vor dem Deploy und Abbruch, wenn echte Daten mit
+  Demo-Login laufen würden.
 - **ClickTime: Mitarbeitende anlegen (#31):** Aktion «Mitarbeitende anlegen» mit Vorschau und Dubletten-Prüfung
   (Datenherkunft, gleiche Personalnummer, Benutzername, Badge-Nummer oder E-Mail → nur verbinden); nach dem Anlegen
   wird die Personalnummer aus der Antwort in der Datenherkunft gespeichert. Echte Aufrufe erst nach Freischaltung der
