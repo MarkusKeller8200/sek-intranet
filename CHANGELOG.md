@@ -9,6 +9,16 @@ laufend unter **Unveröffentlicht**. Ab 0.32.0 entsteht eine Version nur bei ein
 
 ## [Unveröffentlicht]
 
+### Für Mitarbeitende
+
+- Die Zeiterfassung markiert Tage ohne Buchung und fehlende Ein- oder Austrittsbuchungen mit einem Hinweis.
+- Der Monatsrapport (PDF) ist jetzt gleich aufgebaut wie der Rapport aus ClickTime.
+- Wer mit ClickTime arbeitet, schliesst den Monat in ClickTime ab und bestätigt dies im Intranet mit «In ClickTime
+  abgeschlossen».
+- Kompensation zählt wie in ClickTime nicht als Arbeitszeit.
+- [visum-zeiterfassung] Die Visum-Übersicht zeigt je Person die Tage mit Hinweisen; an fehlende Abschlüsse lässt sich
+  erinnern.
+
 ### Neu
 
 - **ClickTime: Scopes je Endpunkt (#196):** Jeder Endpunkt im Plugin (0.8) trägt seinen Scope wie in ClickTime
