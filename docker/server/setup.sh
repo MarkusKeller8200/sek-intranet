@@ -205,8 +205,8 @@ cat <<EOF
 Server eingerichtet: $(hostname), Docker $(docker --version | cut -d' ' -f3 | tr -d ,), Zeitzone $(timedatectl show -p Timezone --value).
 
 Nächste Schritte (docs/SERVER-INFOMANIAK.md):
-  1. Fingerabdruck für GitHub (Secret VPS_KNOWN_HOSTS im Environment «dev»), vom eigenen PC aus:
-       ssh-keyscan -t ed25519 <IP des Servers>
+  1. Zeile für GitHub (Secret VPS_KNOWN_HOSTS im Environment «dev») – IP prüfen:
+       $(awk -v ip="$(hostname -I | awk '{print $1}')" '{print ip, $1, $2}' /etc/ssh/ssh_host_ed25519_key.pub)
   2. GitHub-Environment «dev»: VPS_HOST, VPS_USER=deploy, INTRANET_HOST=intranet-dev.sekbuelach.ch,
      Secrets VPS_SSH_KEY und VPS_KNOWN_HOSTS.
   3. Neue SSH-Sitzung testen, BEVOR diese geschlossen wird.

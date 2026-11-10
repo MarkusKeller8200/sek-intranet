@@ -39,19 +39,22 @@ Zone `sekbuelach.ch` → DNS:
 
 Bei IPv6 zusätzlich einen AAAA-Eintrag. «Nur DNS», damit Traefik das Zertifikat selbst holt.
 
-### 3. Deploy-Schlüssel erzeugen (eigener PC, PowerShell)
+### 3. Deploy-Schlüssel erzeugen
 
-Ein eigener Schlüssel nur für GitHub Actions, nicht der persönliche:
+Ein eigener Schlüssel nur für GitHub Actions, nicht der persönliche. Am einfachsten in **1Password**: Neues Objekt →
+SSH-Schlüssel → Neuen Schlüssel generieren → **Ed25519**, z. B. «GitHub Deploy Infomaniak».
 
-```powershell
-ssh-keygen -t ed25519 -C github-deploy-infomaniak -f $HOME\.ssh\infomaniak-deploy
-# Passphrase leer lassen (2× Enter) – GitHub Actions kann keine eingeben
-ssh-keyscan -t ed25519 <IP des Servers> > $HOME\.ssh\infomaniak-known-hosts
-```
+- Öffentlicher Schlüssel → beim Skript als `--deploy-key` (Schritt 5)
+- Privater Schlüssel → nur in GitHub (Schritt 6): im Eintrag «Privaten Schlüssel kopieren → **OpenSSH-Format**»
+  (das Standardformat PKCS#8 kann SSH nicht lesen)
 
-- `infomaniak-deploy.pub` (öffentlich) → kommt beim Skript als `--deploy-key` auf den Server
-- `infomaniak-deploy` (privat) → nur in GitHub (Schritt 6), sonst nirgends
-- `infomaniak-known-hosts` → GitHub (Schritt 6)
+Ohne 1Password (PowerShell): `ssh-keygen -t ed25519 -C github-deploy-infomaniak -f $HOME\.ssh\infomaniak-deploy`
+(Passphrase leer lassen – GitHub Actions kann keine eingeben).
+
+Der persönliche Schlüssel für die eigene Anmeldung (Benutzer `ubuntu`) wird beim Erstellen bzw. Neuinstallieren
+des VPS im Infomaniak-Manager angegeben: eigenen öffentlichen Schlüssel einfügen, nicht generieren lassen. Ein
+nachträglich im Manager hinzugefügter Schlüssel kommt nicht auf einen bestehenden Server. Mit dem SSH-Agent von
+1Password genügt danach `ssh ubuntu@<IP des Servers>`.
 
 ### 4. Skripte auf den Server bringen
 
@@ -85,13 +88,17 @@ Das Skript kann wiederholt werden. Docker wird bewusst **nicht** automatisch akt
 Repository → Settings → Environments → **New environment** `dev`
 (Deployment branches: nur `main`):
 
-| Typ      | Name              | Inhalt                                     |
-| -------- | ----------------- | ------------------------------------------ |
-| Variable | `VPS_HOST`        | IP des Infomaniak-Servers                  |
-| Variable | `VPS_USER`        | `deploy`                                   |
-| Variable | `INTRANET_HOST`   | `intranet-dev.sekbuelach.ch`               |
-| Secret   | `VPS_SSH_KEY`     | ganzer Inhalt von `infomaniak-deploy`      |
-| Secret   | `VPS_KNOWN_HOSTS` | ganzer Inhalt von `infomaniak-known-hosts` |
+| Typ      | Name              | Inhalt                                                            |
+| -------- | ----------------- | ----------------------------------------------------------------- |
+| Variable | `VPS_HOST`        | IP des Infomaniak-Servers                                         |
+| Variable | `VPS_USER`        | `deploy`                                                          |
+| Variable | `INTRANET_HOST`   | `intranet-dev.sekbuelach.ch`                                      |
+| Secret   | `VPS_SSH_KEY`     | ganzer Inhalt von `infomaniak-deploy`                             |
+| Secret   | `VPS_KNOWN_HOSTS` | Zeile vom Ende des Einrichtungsskripts (`<IP> ssh-ed25519 AAAA…`) |
+
+Die Zeile für `VPS_KNOWN_HOSTS` gibt das Skript am Ende aus; sonst auf dem Server:
+`awk '{print "<IP>", $1, $2}' /etc/ssh/ssh_host_ed25519_key.pub`. (`ssh-keyscan` unter Windows ist oft zu alt
+für Ubuntu 26.04.) Der Deploy vergleicht den Fingerabdruck und zeigt bei einer Abweichung beide an.
 
 Solange `VPS_HOST` fehlt, überspringt der Deploy das Ziel «dev» (Hinweis im Lauf).
 

@@ -62,10 +62,32 @@ jobs:
           test -n "$SSH_KEY" || { echo "Secret VPS_SSH_KEY fehlt"; exit 1; }
           test -n "$KNOWN_HOSTS" || [ "${{ inputs.environment }}" = production ] || { echo "Secret VPS_KNOWN_HOSTS fehlt"; exit 1; }
           install -m 700 -d ~/.ssh
-          printf '%s\n' "$SSH_KEY" > ~/.ssh/id_deploy
+          # Windows-Zeilenenden entfernen (Kopieren aus PowerShell oder 1Password)
+          printf '%s\n' "$SSH_KEY" | tr -d '\r' > ~/.ssh/id_deploy
           chmod 600 ~/.ssh/id_deploy
-          printf '%s\n' "$KNOWN_HOSTS" > ~/.ssh/known_hosts
+          printf '%s\n' "$KNOWN_HOSTS" | tr -d '\r' | sed '/^[[:space:]]*$/d' > ~/.ssh/known_hosts
           printf 'Host vps\n  HostName %s\n  User %s\n  IdentityFile ~/.ssh/id_deploy\n  IdentitiesOnly yes\n' "$HOST" "$VPS_USER" > ~/.ssh/config
+          # Prüfen, ob VPS_KNOWN_HOSTS zum Server passt – nur Vergleich, die Verbindung prüft weiterhin streng
+          if [ -z "$KNOWN_HOSTS" ]; then
+            echo "Kein VPS_KNOWN_HOSTS gesetzt."
+          elif ! ssh-keygen -F "$HOST" -f ~/.ssh/known_hosts > /dev/null; then
+            echo "::error title=VPS_KNOWN_HOSTS passt nicht::Kein Eintrag für $HOST. Erwartet wird eine Zeile «$HOST ssh-ed25519 AAAA…»."
+            exit 1
+          else
+            erwartet="$(ssh-keygen -lf ~/.ssh/known_hosts 2>/dev/null | awk '{print $2, $NF}' | tr '\n' ' ')"
+          gemeldet="$(ssh-keyscan -T 10 -t ed25519 "$HOST" 2>/dev/null | ssh-keygen -lf - 2>/dev/null | awk '{print $2, $NF}')"
+          echo "Fingerabdruck im Secret: $erwartet"
+          echo "Fingerabdruck vom Server: $gemeldet"
+          if [ -n "$gemeldet" ] && ! printf '%s' "$erwartet" | grep -qF "${gemeldet%% *}"; then
+            # Auf Hostinger (production) nur Hinweis: dort kann das Secret einen anderen Schlüsseltyp enthalten
+            if [ "${{ inputs.environment }}" = production ]; then
+              echo "::warning title=VPS_KNOWN_HOSTS prüfen::Secret: $erwartet – Server meldet (ED25519): $gemeldet"
+            else
+              echo "::error title=VPS_KNOWN_HOSTS passt nicht::Secret: $erwartet – Server meldet: $gemeldet. Secret neu setzen (siehe docs/SERVER-INFOMANIAK.md)."
+              exit 1
+            fi
+          fi
+          fi
 
       - name: Quellcode übertragen
         if: steps.ziel.outputs.ok
