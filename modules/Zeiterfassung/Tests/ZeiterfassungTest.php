@@ -418,4 +418,3 @@ class ZeiterfassungTest extends TestCase
         $this->assertFalse(app(Dossiers::class)->active());
     }
 }
-
