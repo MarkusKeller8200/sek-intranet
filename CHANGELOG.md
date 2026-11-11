@@ -11,6 +11,12 @@ laufend unter **Unveröffentlicht**. Ab 0.32.0 entsteht eine Version nur bei ein
 
 ### Neu
 
+- **Zeiterfassung: Erfassung bei ClickTime eingeklappt, Prüfhinweise einstellbar (#204):** Führt ClickTime die
+  Zeiten, ist «Eintrag erfassen» eingeklappt und rot als «ClickTime aktiv – keine manuellen Einträge möglich»
+  markiert. Neue Seite «Zeiterfassung – Einstellungen» (Recht `config-zeiterfassung`): Kommen-/Gehen-Buchung fehlt,
+  keine Buchung, Tagesist über hh:mm, Tagesdifferenz mit XX % Abweichung und keine Mittagsbuchung (Fenster und
+  Mindestpause) ein- und ausschalten. Vorgabe wie bisher (Modul 0.9.0).
+
 - **ClickTime: Aktion «Mapping» (#202):** Zuordnung der Personen Intranet ↔ ClickTime mit Name und ID auf beiden Seiten
   (Plugin 0.10). Beim Öffnen nur Personen mit Zuordnung; «Alle anzeigen» zeigt auch Personen ohne Zuordnung.
 

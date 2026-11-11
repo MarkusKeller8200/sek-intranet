@@ -23,6 +23,7 @@ use Modules\Zeiterfassung\Data\Contracts\MonatRepository;
 use Modules\Zeiterfassung\Feiertage;
 use Modules\Zeiterfassung\Kategorien;
 use Modules\Zeiterfassung\Monatsabschluss;
+use Modules\Zeiterfassung\Pruefregeln;
 use Modules\Zeiterfassung\Sollzeiten;
 use Modules\Zeiterfassung\Unterschriften;
 use Modules\Zeiterfassung\Zeitkonto;
@@ -66,7 +67,7 @@ class ZeiterfassungController extends Controller
             // Vollständigkeit (#33): Arbeitstage ohne Eintrag bis heute
             'fehlend' => Zeitkonto::fehlendeTage($monat, $liste, Feiertage::monat($monat), app(Sollzeiten::class)->monat($person, $monat)),
             // Prüfhinweise je Tag (#167)
-            'pruefungen' => Zeitkonto::pruefungen($monat, $liste, app(Sollzeiten::class)->monat($person, $monat)),
+            'pruefungen' => Zeitkonto::pruefungen($monat, $liste, app(Sollzeiten::class)->monat($person, $monat), null, app(Pruefregeln::class)->regeln()),
             'clicktime' => self::clicktime($request, $person),
             // ClickTime führt (#154): keine eigenen Einträge erfassen oder bearbeiten
             'clicktimeFuehrt' => self::clicktimeNr($person) !== null,

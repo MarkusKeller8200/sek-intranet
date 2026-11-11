@@ -20,7 +20,7 @@ class DataStructureTest extends TestCase
             ->assertInertia(fn (Assert $page) => $page
                 ->component('data-structures')
                 ->where('store', 'json')
-                ->has('collections', 38) // inkl. bes_artikel (Modul Beschaffung, #198)
+                ->has('collections', 39) // inkl. zeit_einstellungen (Zeiterfassung, #204)
                 ->where('catalogs', fn ($c): bool => collect($c)->pluck('name')->contains('concepts') && collect($c)->pluck('name')->contains('ablaeufe') && collect($c)->firstWhere('name', 'concepts')['count'] > 1000)
                 ->where('collections.0.name', 'users')
                 ->where('collections.0.count', 25)

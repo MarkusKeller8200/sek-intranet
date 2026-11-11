@@ -1,7 +1,7 @@
 {
     "key": "zeiterfassung",
     "name": "Zeiterfassung",
-    "version": "0.8.1",
+    "version": "0.9.0",
     "core": ">=0.32.0",
     "description": "Arbeitszeit mit Buchungsart (Arbeitszeit, Homeoffice, Ferien, Krankheit …), Tätigkeiten, Projekte und Abwesenheiten pro Monat erfassen; Monatsvisum durch die Schulleitung, Export für die Lohnbuchhaltung und Monatsblatt als PDF; visierte Monatsrapporte elektronisch unterschreiben (DeepSign).",
     "aktiv": true,
@@ -24,6 +24,10 @@
         "visum-zeiterfassung": {
             "label": "Zeiterfassung aller einsehen, Monate visieren, Export Lohnbuchhaltung",
             "roles": ["admin", "schulleitung"]
+        },
+        "config-zeiterfassung": {
+            "label": "Zeiterfassung einstellen (Prüfhinweise)",
+            "roles": ["admin", "schulleitung"]
         }
     },
     "menu": {
@@ -40,6 +44,12 @@
                 "icon": "ClipboardCheck",
                 "href": "/zeiterfassung/visum",
                 "can": "visum-zeiterfassung"
+            },
+            "einstellungen": {
+                "title": "Zeiterfassung – Einstellungen",
+                "icon": "SlidersHorizontal",
+                "href": "/zeiterfassung/einstellungen",
+                "can": "config-zeiterfassung"
             }
         }
     },
@@ -304,6 +314,67 @@
                     "type": "string",
                     "required": false,
                     "label": "Herkunft (z. B. clicktime)"
+                }
+            }
+        },
+        "zeit_einstellungen": {
+            "label": "Zeiterfassung: Einstellungen",
+            "description": "Einstellungen der Zeiterfassung (id = Bereich, z. B. «pruefungen» für die Prüfhinweise). Ohne Datensatz gilt die Vorgabe.",
+            "fields": {
+                "kommen_fehlt": {
+                    "type": "bool",
+                    "required": false,
+                    "label": "Hinweis: Kommen-Buchung fehlt"
+                },
+                "gehen_fehlt": {
+                    "type": "bool",
+                    "required": false,
+                    "label": "Hinweis: Gehen-Buchung fehlt"
+                },
+                "keine_buchung": {
+                    "type": "bool",
+                    "required": false,
+                    "label": "Hinweis: keine Buchung vorhanden"
+                },
+                "tagesist": {
+                    "type": "bool",
+                    "required": false,
+                    "label": "Hinweis: Tagesist über Grenze"
+                },
+                "tagesist_max": {
+                    "type": "string",
+                    "required": false,
+                    "label": "Grenze Tagesist (hh:mm)"
+                },
+                "abweichung": {
+                    "type": "bool",
+                    "required": false,
+                    "label": "Hinweis: Tagesdifferenz zum Soll"
+                },
+                "abweichung_prozent": {
+                    "type": "int",
+                    "required": false,
+                    "label": "Abweichung in Prozent"
+                },
+                "mittag": {
+                    "type": "bool",
+                    "required": false,
+                    "label": "Hinweis: keine Mittagsbuchung"
+                },
+                "mittag_von": {
+                    "type": "string",
+                    "required": false,
+                    "label": "Mittag von (hh:mm)"
+                },
+                "mittag_bis": {
+                    "type": "string",
+                    "required": false,
+                    "label": "Mittag bis (hh:mm)"
+                },
+                "mittag_min": {
+                    "type": "int",
+                    "required": false,
+                    "label": "Mindestpause (Minuten)"
                 }
             }
         }

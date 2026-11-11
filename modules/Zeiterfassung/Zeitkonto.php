@@ -136,15 +136,21 @@ final class Zeitkonto
      * - Arbeitstag mit Sollzeit (aus ClickTime, Soll > 0, bis heute) ohne Eintrag → Hinweis «Prüfen – keine Buchung»
      * - Beginn ohne Ende → Fehler «Prüfen – Austrittsbuchung fehlt», Ende ohne Beginn → «Prüfen – Eintrittsbuchung fehlt»
      * - Ist weicht mehr als 20 % vom Soll ab → Warnung «Arbeitszeit prüfen»
-     * Einträge ohne Zeiten (z. B. Ferien, Stunden direkt) erzeugen keinen Fehler.
+     * - (#204, einstellbar) Tagesist über hh:mm → Warnung; keine Mittagspause im Zeitfenster → Warnung
+     * Einträge ohne Zeiten (z. B. Ferien, Stunden direkt) erzeugen keinen Fehler. Welche Hinweise erscheinen, steht in
+     * den Prüfregeln (Zeiterfassung → Einstellungen); ohne Angabe gilt die Vorgabe.
      *
      * @param  list<array<string, mixed>>  $eintraege
      * @param  array<string, float>  $soll  Datum → Stunden
+     * @param  array<string, mixed>|null  $regeln  siehe Pruefregeln::VORGABE
      * @return array<string, list<array{art: string, text: string, eintraege: list<string>}>> Datum → Hinweise (art: fehler, hinweis, warnung)
      */
-    public static function pruefungen(string $monat, array $eintraege, array $soll, ?string $heute = null): array
+    public static function pruefungen(string $monat, array $eintraege, array $soll, ?string $heute = null, ?array $regeln = null): array
     {
         $heute ??= now()->format('Y-m-d');
+        $r = $regeln ?? Pruefregeln::VORGABE;
+        $max = Pruefregeln::minuten((string) ($r['tagesist_max'] ?? '10:00')) / 60;
+        $anteil = ((int) ($r['abweichung_prozent'] ?? 20)) / 100;
         $proTag = [];
         foreach ($eintraege as $e) {
             $proTag[(string) ($e['datum'] ?? '')][] = $e;
@@ -156,7 +162,7 @@ final class Zeitkonto
             $liste = $proTag[$tag] ?? [];
             $sollTag = $soll[$tag] ?? null;
             $hinweise = [];
-            if ($liste === [] && $sollTag !== null && $sollTag > 0 && $tag <= $heute) {
+            if (($r['keine_buchung'] ?? true) && $liste === [] && $sollTag !== null && $sollTag > 0 && $tag <= $heute) {
                 $hinweise[] = ['art' => 'hinweis', 'text' => 'Prüfen – keine Buchung', 'eintraege' => []];
             }
             $ohneEnde = [];
@@ -170,19 +176,25 @@ final class Zeitkonto
                     $ohneBeginn[] = (string) ($e['id'] ?? '');
                 }
             }
-            if ($ohneEnde !== []) {
+            if (($r['gehen_fehlt'] ?? true) && $ohneEnde !== []) {
                 $hinweise[] = ['art' => 'fehler', 'text' => 'Prüfen – Austrittsbuchung fehlt', 'eintraege' => $ohneEnde];
             }
-            if ($ohneBeginn !== []) {
+            if (($r['kommen_fehlt'] ?? true) && $ohneBeginn !== []) {
                 $hinweise[] = ['art' => 'fehler', 'text' => 'Prüfen – Eintrittsbuchung fehlt', 'eintraege' => $ohneBeginn];
             }
             // Kompensation (nicht angerechnet, #169) ist eine gewollte Abweichung: keine Warnung an solchen Tagen
             $mitKompensation = array_filter($liste, fn (array $e): bool => ! self::angerechnet($e)) !== [];
-            if ($liste !== [] && ! $mitKompensation && $sollTag !== null && $sollTag > 0) {
+            if (($r['abweichung'] ?? true) && $liste !== [] && ! $mitKompensation && $sollTag !== null && $sollTag > 0) {
                 $ist = self::ist($liste);
-                if (abs($ist - $sollTag) > self::ABWEICHUNG * $sollTag + 0.004) {
+                if (abs($ist - $sollTag) > $anteil * $sollTag + 0.004) {
                     $hinweise[] = ['art' => 'warnung', 'text' => 'Arbeitszeit prüfen', 'eintraege' => []];
                 }
+            }
+            if (($r['tagesist'] ?? false) && $liste !== [] && self::ist($liste) > $max + 0.004) {
+                $hinweise[] = ['art' => 'warnung', 'text' => 'Prüfen – Tagesist über '.self::hhmm($max), 'eintraege' => []];
+            }
+            if (($r['mittag'] ?? false) && self::ohneMittag($liste, $r)) {
+                $hinweise[] = ['art' => 'warnung', 'text' => 'Prüfen – keine Mittagsbuchung', 'eintraege' => []];
             }
             if ($hinweise !== []) {
                 $result[$tag] = $hinweise;
@@ -190,6 +202,63 @@ final class Zeitkonto
         }
 
         return $result;
+    }
+
+    /**
+     * Arbeitstag über das Mittagsfenster ohne Pause (#204): gearbeitet wird vor «von» und nach «bis», aber im Fenster
+     * gibt es weder eine Lücke zwischen den Buchungen noch eine erfasste Pause von mindestens «mittag_min» Minuten.
+     *
+     * @param  list<array<string, mixed>>  $liste
+     * @param  array<string, mixed>  $r
+     */
+    private static function ohneMittag(array $liste, array $r): bool
+    {
+        $von = Pruefregeln::minuten((string) ($r['mittag_von'] ?? '11:30'));
+        $bis = Pruefregeln::minuten((string) ($r['mittag_bis'] ?? '13:30'));
+        $min = (int) ($r['mittag_min'] ?? 30);
+        $bloecke = [];
+        foreach ($liste as $e) {
+            $b = trim((string) ($e['beginn'] ?? ''));
+            $en = trim((string) ($e['ende'] ?? ''));
+            if (($e['art'] ?? 'arbeit') !== 'arbeit' || $b === '' || $en === '') {
+                continue;
+            }
+            $a = Pruefregeln::minuten($b);
+            $z = Pruefregeln::minuten($en);
+            if ($z <= $a) {
+                continue;
+            }
+            // erfasste Pause in einem Block, der ins Fenster reicht, zählt als Mittagsbuchung
+            if ($a < $bis && $z > $von && (int) ($e['pause_min'] ?? 0) >= $min) {
+                return false;
+            }
+            $bloecke[] = [$a, $z];
+        }
+        if ($bloecke === []) {
+            return false;
+        }
+        usort($bloecke, fn (array $x, array $y): int => $x[0] <=> $y[0]);
+        if ($bloecke[0][0] >= $von || max(array_column($bloecke, 1)) <= $bis) {
+            return false; // nicht über das ganze Fenster gearbeitet
+        }
+        // Lücken im Fenster suchen
+        $bisher = $bloecke[0][1];
+        foreach (array_slice($bloecke, 1) as [$a, $z]) {
+            $luecke = min($a, $bis) - max($bisher, $von);
+            if ($luecke >= $min) {
+                return false;
+            }
+            $bisher = max($bisher, $z);
+        }
+
+        return true;
+    }
+
+    private static function hhmm(float $stunden): string
+    {
+        $m = (int) round($stunden * 60);
+
+        return sprintf('%d:%02d', intdiv($m, 60), $m % 60);
     }
 
     public static function gesperrt(string $status): bool
