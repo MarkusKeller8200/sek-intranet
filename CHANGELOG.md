@@ -11,6 +11,9 @@ laufend unter **Unveröffentlicht**. Ab 0.32.0 entsteht eine Version nur bei ein
 
 ### Neu
 
+- **ClickTime: Aktion «Mapping» (#202):** Zuordnung der Personen Intranet ↔ ClickTime mit Name und ID auf beiden Seiten
+  (Plugin 0.10). Beim Öffnen nur Personen mit Zuordnung; «Alle anzeigen» zeigt auch Personen ohne Zuordnung.
+
 - **Zeiterfassung: Genehmigungsstatus aus ClickTime (#200):** Der Import übernimmt `approval_status` je Buchung
   (Plugin ClickTime 0.9, Modul Zeiterfassung 0.8.1). Anzeige in den aufgeklappten Buchungen und zusammengefasst in der
   Tageszeile. Werte werden nach dem Test mit echten Daten übersetzt.

@@ -164,6 +164,33 @@ class PluginClicktimeTest extends TestCase
         $this->assertSame('zuordnen', $again['3']);
     }
 
+    public function test_person_mapping_shows_linked_people_first(): void
+    {
+        Http::fake();
+        $this->enable(['demo' => true]);
+        $this->signInAs('admin');
+        $links = app(PersonLinks::class);
+        $andrea = collect(app(UserRepository::class)->all())->firstWhere('email', 'andrea.muster@sekbuelach.example');
+        $links->recordSync((string) $andrea['id'], 'clicktime', 'source', '1');
+        $beat = collect(app(UserRepository::class)->all())->firstWhere('email', 'beat.beispiel@sekbuelach.example');
+        $links->recordSync((string) $beat['id'], 'clicktime', 'source', '999');
+
+        // Beim Öffnen: nur Personen mit Zuordnung, mit Name und ID auf beiden Seiten (#202)
+        $rows = $this->postJson('/plugins/clicktime/aktion/person-mapping', ['options' => ['all' => false]])->assertOk()
+            ->assertJsonPath('message', fn (string $m): bool => str_contains($m, 'Zuordnungen') && str_contains($m, 'Alle anzeigen'))->json('rows');
+        $byNo = collect($rows)->keyBy('no');
+        $this->assertTrue($byNo->has('1') && $byNo->has('999'));
+        $this->assertFalse(collect($rows)->contains(fn (array $r): bool => in_array($r['status'], ['ohne Intranet-Person', 'ohne ClickTime'], true)), 'gefiltert');
+        $this->assertSame(['Andrea Muster', (string) $andrea['id'], 'Andrea Muster', 'zugeordnet'], [$byNo['1']['person'], $byNo['1']['person_id'], $byNo['1']['employee'], $byNo['1']['status']]);
+        $this->assertSame('in ClickTime nicht gefunden', $byNo['999']['status']);
+
+        // Alle anzeigen: auch ClickTime ohne Intranet-Person und Personal ohne ClickTime
+        $alle = collect($this->postJson('/plugins/clicktime/aktion/person-mapping', ['options' => ['all' => true]])->assertOk()->json('rows'));
+        $this->assertSame('ohne Intranet-Person', $alle->firstWhere('no', '5')['status']);
+        $this->assertTrue($alle->contains('status', 'ohne ClickTime'));
+        $this->assertFalse($alle->contains(fn (array $r): bool => $r['status'] === 'ohne ClickTime' && $r['person_id'] === (string) $andrea['id']));
+    }
+
     public function test_filters_helper(): void
     {
         $this->assertSame(

@@ -1,7 +1,7 @@
 {
     "id": "clicktime",
     "name": "ClickTime",
-    "version": "0.9",
+    "version": "0.10",
     "api": 1,
     "category": "other",
     "author": "SekBülach Intranet",
@@ -1339,6 +1339,20 @@
             "kind": "import",
             "description": "Ordnet ClickTime-Mitarbeitende Intranet-Personen zu (zuerst über die Datenherkunft, sonst über die E-Mail). Vorschau: zugeordnet, neu zuordnen, ohne Treffer. Übernehmen speichert nur die Datenherkunft – es wird nichts angelegt oder gelöscht.",
             "options": []
+        },
+        {
+            "id": "person-mapping",
+            "label": "Mapping",
+            "kind": "read",
+            "description": "Zuordnung der Personen: Intranet-Person mit ID ↔ ClickTime-Person mit Nummer (aus der Datenherkunft). Beim Öffnen nur Personen mit Zuordnung; mit «Alle anzeigen» auch ClickTime-Mitarbeitende ohne Intranet-Person und Intranet-Personal ohne ClickTime. Es wird nichts geändert.",
+            "options": [
+                {
+                    "key": "all",
+                    "type": "check",
+                    "label": "Alle anzeigen (auch ohne Zuordnung)",
+                    "default": false
+                }
+            ]
         },
         {
             "id": "employee-create",
