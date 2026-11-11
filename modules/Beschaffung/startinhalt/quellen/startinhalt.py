@@ -404,7 +404,7 @@ for line in open(os.path.join(os.path.dirname(__file__), 'apps.tsv'), encoding='
         frei = int(total) - int(belegt or 0)
         lizenzen = f'{total} gesamt · {belegt} belegt · {frei} frei'
     hit = itunes.get(name) or {}
-    ok = hit and hit.get('score', 0) >= 0.5
+    ok = hit and hit.get('score', 0) >= 0.9
     preis = float(hit['price']) if ok and hit.get('price') is not None and hit.get('currency') == 'CHF' else None
     status, hinweis = 'aktiv', ''
     if name.startswith('zzz_'):
