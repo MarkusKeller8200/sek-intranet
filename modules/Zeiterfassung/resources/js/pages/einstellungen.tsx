@@ -1,4 +1,4 @@
-import { Head, useForm } from '@inertiajs/react';
+import { Head, router, useForm } from '@inertiajs/react';
 import { RotateCcw, Save } from 'lucide-react';
 import type { FormEvent, ReactNode } from 'react';
 import InputError from '@/components/input-error';
@@ -13,6 +13,7 @@ import {
 } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
+import { NativeSelect } from '@/components/ui/native-select';
 
 type Regeln = {
     kommen_fehlt: boolean;
@@ -39,13 +40,26 @@ type Schalter =
 /**
  * Einstellungen der Zeiterfassung (#204): welche Prüfhinweise je Tag in «Meine Zeiterfassung» und im Visum erscheinen.
  */
+type Zuordnung = { vorgesetzte: string[]; quelle: string | null };
+
 export default function Einstellungen({
     regeln,
     vorgabe,
+    personen = [],
+    vorgesetzte = {},
 }: {
     regeln: Regeln;
     vorgabe: Regeln;
+    personen?: { id: string; name: string }[];
+    vorgesetzte?: Record<string, Zuordnung>;
 }) {
+    const namen = Object.fromEntries(personen.map((p) => [p.id, p.name]));
+    const setzen = (person: string, id: string) =>
+        router.put(
+            `/zeiterfassung/einstellungen/vorgesetzte/${person}`,
+            { vorgesetzte: id },
+            { preserveScroll: true },
+        );
     const form = useForm<Regeln>(regeln);
 
     const submit = (e: FormEvent) => {
@@ -233,6 +247,69 @@ export default function Einstellungen({
                                 <span>Min. Pause</span>
                             </>,
                         )}
+                    </CardContent>
+                </Card>
+                <Card>
+                    <CardHeader>
+                        <CardTitle>Vorgesetzte</CardTitle>
+                        <CardDescription>
+                            Unterschreiben den Monatsrapport nach der Person.
+                            Werden beim Übernehmen aus ClickTime gesetzt; eine
+                            Auswahl hier geht vor.
+                        </CardDescription>
+                    </CardHeader>
+                    <CardContent className="grid gap-2">
+                        {personen.length === 0 && (
+                            <p className="text-sm text-muted-foreground">
+                                Keine Personen.
+                            </p>
+                        )}
+                        {personen.map((p) => {
+                            const z = vorgesetzte[p.id];
+                            const aktuell = z?.vorgesetzte ?? [];
+
+                            return (
+                                <div
+                                    key={p.id}
+                                    className="grid items-center gap-2 border-b py-2 last:border-b-0 sm:grid-cols-[1fr_16rem_8rem]"
+                                >
+                                    <span className="text-sm" translate="no">
+                                        {p.name}
+                                    </span>
+                                    <NativeSelect
+                                        aria-label={`Vorgesetzte:r von ${p.name}`}
+                                        value={
+                                            z?.quelle === 'hand'
+                                                ? (aktuell[0] ?? '')
+                                                : ''
+                                        }
+                                        onChange={(e) =>
+                                            setzen(p.id, e.target.value)
+                                        }
+                                    >
+                                        <option value="">
+                                            {z?.quelle && z.quelle !== 'hand'
+                                                ? `Aus ClickTime: ${aktuell.map((id) => namen[id] ?? id).join(', ')}`
+                                                : '– keine –'}
+                                        </option>
+                                        {personen
+                                            .filter((o) => o.id !== p.id)
+                                            .map((o) => (
+                                                <option key={o.id} value={o.id}>
+                                                    {o.name}
+                                                </option>
+                                            ))}
+                                    </NativeSelect>
+                                    <span className="text-xs text-muted-foreground">
+                                        {z?.quelle === 'hand'
+                                            ? 'von Hand'
+                                            : z?.quelle
+                                              ? 'aus ClickTime'
+                                              : ''}
+                                    </span>
+                                </div>
+                            );
+                        })}
                     </CardContent>
                 </Card>
             </form>

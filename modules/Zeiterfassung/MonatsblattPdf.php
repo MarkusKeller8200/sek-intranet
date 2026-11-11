@@ -12,7 +12,7 @@ use App\Support\SimplePdf;
  *   mit negativer Zeit, Arbeitsblock brutto), darunter das Tagestotal mit Soll und Differenz; Montage grau hinterlegt,
  *   Typ mit Farbfeld. Arbeitstage mit Sollzeit ohne Buchung erscheinen mit «keine Buchung».
  * - Total, Stunden je Buchungsart, Saldi (z. B. aus ClickTime: Vormonat und Ende Monat), Bestätigungen.
- * - Optional zwei Unterschriftsfelder (Mitarbeiter:in, Schulleitung) für DeepSign; die Positionen gehen an den
+ * - Optional zwei Unterschriftsfelder (Mitarbeiter:in, Schulleitung bzw. Vorgesetzte:r) für DeepSign; die Positionen gehen an den
  *   Anbieter (Punkte ab links unten, wie PDF).
  * - Fusszeile «<Datum> (Seite n / m)».
  */
@@ -42,7 +42,7 @@ final class MonatsblattPdf
     /**
      * @param  list<array<string, mixed>>  $eintraege
      * @param  array{arbeit: float, abwesenheit: float, total: float, kategorien: array<string, float>, projekte: array<string, float>, buchungsarten?: array<string, float>, ist?: float}  $summen
-     * @param  array{person: string, schulleitung: string}  $unterzeichnende
+     * @param  array{person: string, schulleitung: string, rolle?: string}  $unterzeichnende  rolle = Bezeichnung des zweiten Felds (Vorgabe Schulleitung)
      * @param  array<string, string>  $buchungsarten  Schlüssel → Bezeichnung (#99)
      * @param  array{vermerke?: list<string>, unterschriftsfelder?: bool, soll?: array<string, float>, untertitel?: string, salden?: list<array{name: string, vormonat: float|null, ende: float|null, einheit: string}>, heute?: string}  $optionen
      * @return array{pdf: string, felder: array<string, array{pageNumber: int, x: float, y: float, width: float, height: float}>}
@@ -187,7 +187,7 @@ final class MonatsblattPdf
         $pdf->text(self::LEFT, $top - 6, 'Unterschriften', 10, true);
         $felder = [
             'person' => self::feld($pdf, self::LEFT, $top, 'Mitarbeiter:in', $unterzeichnende['person']),
-            'schulleitung' => self::feld($pdf, self::RIGHT - 240, $top, 'Schulleitung', $unterzeichnende['schulleitung']),
+            'schulleitung' => self::feld($pdf, self::RIGHT - 240, $top, $unterzeichnende['rolle'] ?? 'Schulleitung', $unterzeichnende['schulleitung']),
         ];
         $pdf->text(self::LEFT, $top + 98, 'Elektronisch unterschrieben über das Intranet SekBülach (DeepSign).', 7.5);
 

@@ -1,7 +1,7 @@
 {
     "key": "zeiterfassung",
     "name": "Zeiterfassung",
-    "version": "0.10.0",
+    "version": "0.11.0",
     "core": ">=0.32.0",
     "description": "Arbeitszeit mit Buchungsart (Arbeitszeit, Homeoffice, Ferien, Krankheit …), Tätigkeiten, Projekte und Abwesenheiten pro Monat erfassen; Monatsvisum durch die Schulleitung, Export für die Lohnbuchhaltung und Monatsblatt als PDF; visierte Monatsrapporte elektronisch unterschreiben (DeepSign).",
     "aktiv": true,
@@ -272,6 +272,28 @@
                     "references": "users",
                     "required": false,
                     "label": "Wieder geöffnet von"
+                },
+                "unterschrift_vorgesetzte": {
+                    "type": "ref",
+                    "references": "users",
+                    "required": false,
+                    "label": "Unterschrift: vorgesetzte Person (von der Person gestartet, #208)"
+                },
+                "dossier_status": {
+                    "type": "enum",
+                    "values": {
+                        "abgelegt": "Im Dossier abgelegt",
+                        "kein_dossier": "Kein Dossier verknüpft",
+                        "ausstehend": "Ausstehend (Schnittstelle nicht aktiv)",
+                        "fehler": "Fehler"
+                    },
+                    "required": false,
+                    "label": "Kopie ins Dossier (CMI)"
+                },
+                "dossier_at": {
+                    "type": "datetime",
+                    "required": false,
+                    "label": "Im Dossier abgelegt am"
                 }
             }
         },
@@ -390,6 +412,22 @@
                     "type": "int",
                     "required": false,
                     "label": "Mindestpause (Minuten)"
+                }
+            }
+        },
+        "zeit_vorgesetzte": {
+            "label": "Zeiterfassung: Vorgesetzte",
+            "description": "Vorgesetzte je Person (id = Person), unterschreiben den Monatsrapport mit. Aus ClickTime oder von Hand (quelle = hand, wird beim Import nicht überschrieben).",
+            "fields": {
+                "vorgesetzte": {
+                    "type": "json",
+                    "required": true,
+                    "label": "Vorgesetzte (Personen-IDs)"
+                },
+                "quelle": {
+                    "type": "string",
+                    "required": false,
+                    "label": "Herkunft (clicktime oder hand)"
                 }
             }
         }

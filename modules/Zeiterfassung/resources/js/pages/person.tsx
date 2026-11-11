@@ -27,7 +27,7 @@ import type {
     Summen,
     Unterschrift,
 } from '../lib/types';
-import { istGesperrt, tageListe } from '../lib/types';
+import { DOSSIER, istGesperrt, tageListe } from '../lib/types';
 
 type Props = {
     monat: string;
@@ -49,6 +49,8 @@ type Props = {
     abgeschlossenVon?: string | null;
     /** Recht oeffnen-zeiterfassung (#206) */
     darfOeffnen?: boolean;
+    /** Kopie ins Dossier (CMI, #208) */
+    dossier?: { status: string | null; aktiv: boolean };
     /** Prüfhinweise je Tag (#167) */
     pruefungen?: Record<string, Pruefung[]>;
     /** Arbeitstage ohne Eintrag (#33) */
@@ -231,6 +233,31 @@ export default function ZeiterfassungPerson(props: Props) {
                         />
                     </CardContent>
                 </Card>
+                {props.dossier?.status && (
+                    <div className="flex flex-wrap items-center gap-3 text-sm">
+                        <span>
+                            CMI-Dossier:{' '}
+                            {DOSSIER[props.dossier.status] ??
+                                props.dossier.status}
+                        </span>
+                        {props.dossier.aktiv &&
+                            props.dossier.status !== 'abgelegt' && (
+                                <Button
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={() =>
+                                        router.post(
+                                            `/zeiterfassung/visum/${person.id}/dossier`,
+                                            { monat },
+                                            { preserveScroll: true },
+                                        )
+                                    }
+                                >
+                                    Ins Dossier senden
+                                </Button>
+                            )}
+                    </div>
+                )}
                 {status.status === 'abgeschlossen' && props.darfOeffnen && (
                     <Card>
                         <CardHeader>

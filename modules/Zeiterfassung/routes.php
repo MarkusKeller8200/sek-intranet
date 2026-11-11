@@ -13,6 +13,7 @@ Route::middleware('can:use-zeiterfassung')->group(function () {
     Route::delete('zeiterfassung/eintraege/{id}', [ZeiterfassungController::class, 'destroy'])->name('zeiterfassung.destroy');
     Route::post('zeiterfassung/einreichen', [ZeiterfassungController::class, 'einreichen'])->name('zeiterfassung.einreichen');
     Route::post('zeiterfassung/aus-clicktime', [ZeiterfassungController::class, 'ausClicktime'])->middleware('throttle:10,1')->name('zeiterfassung.clicktime');
+    Route::post('zeiterfassung/rapport-unterschreiben', [ZeiterfassungController::class, 'rapportUnterschreiben'])->middleware('throttle:10,1')->name('zeiterfassung.rapport-unterschreiben');
     Route::post('zeiterfassung/abschliessen', [ZeiterfassungController::class, 'abschliessen'])->middleware('throttle:10,1')->name('zeiterfassung.abschliessen');
     Route::get('zeiterfassung/monatsblatt/{person}/{monat}', [ZeiterfassungController::class, 'monatsblattPdf'])->name('zeiterfassung.monatsblatt');
     Route::get('zeiterfassung/rapport/{person}/{monat}', [ZeiterfassungController::class, 'rapportPdf'])->middleware('throttle:30,1')->name('zeiterfassung.rapport');
@@ -30,6 +31,7 @@ Route::middleware('can:visum-zeiterfassung')->group(function () {
     Route::post('zeiterfassung/visum/erinnerung', [VisumController::class, 'erinnerung'])->middleware('throttle:10,1')->name('zeiterfassung.erinnerung');
     Route::post('zeiterfassung/visum/{person}/abschliessen', [VisumController::class, 'abschliessen'])->middleware('throttle:10,1')->name('zeiterfassung.abschliessen-stellvertretend');
     Route::post('zeiterfassung/visum/{person}/vergleichen', [VisumController::class, 'vergleichen'])->middleware('throttle:10,1')->name('zeiterfassung.vergleichen');
+    Route::post('zeiterfassung/visum/{person}/dossier', [VisumController::class, 'dossier'])->middleware('throttle:10,1')->name('zeiterfassung.dossier');
     Route::post('zeiterfassung/visum/{person}/unterschrift', [VisumController::class, 'unterschrift'])->middleware('throttle:20,1')->name('zeiterfassung.unterschrift');
 });
 
@@ -37,6 +39,7 @@ Route::middleware('can:visum-zeiterfassung')->group(function () {
 Route::middleware('can:config-zeiterfassung')->group(function () {
     Route::get('zeiterfassung/einstellungen', [EinstellungenController::class, 'index'])->name('zeiterfassung.einstellungen');
     Route::put('zeiterfassung/einstellungen', [EinstellungenController::class, 'update'])->name('zeiterfassung.einstellungen.update');
+    Route::put('zeiterfassung/einstellungen/vorgesetzte/{person}', [EinstellungenController::class, 'vorgesetzte'])->name('zeiterfassung.einstellungen.vorgesetzte');
 });
 
 // Abgeschlossenen Monat wieder öffnen (#206): eigenes Recht, Seite im Visum

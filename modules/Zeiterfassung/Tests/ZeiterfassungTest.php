@@ -2,9 +2,12 @@
 
 namespace Modules\Zeiterfassung\Tests;
 
+use App\Auth\IntranetUser;
 use App\Data\Contracts\UserRepository;
 use App\Plugins\PluginManager;
+use App\Support\Dossiers;
 use App\Support\Notifications;
+use App\Support\PersonLinks;
 use App\Support\Signatures;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
@@ -16,6 +19,7 @@ use Modules\Zeiterfassung\Data\Contracts\EintragRepository;
 use Modules\Zeiterfassung\Data\Contracts\MonatRepository;
 use Modules\Zeiterfassung\Feiertage;
 use Modules\Zeiterfassung\Pruefregeln;
+use Modules\Zeiterfassung\Vorgesetzte;
 use Modules\Zeiterfassung\Zeitkonto;
 use Tests\TestCase;
 
@@ -357,4 +361,61 @@ class ZeiterfassungTest extends TestCase
         $this->post("/zeiterfassung/visum/{$person}/oeffnen", ['monat' => self::MONAT, 'grund' => 'nochmals'])->assertRedirect();
         $this->assertSame('Nachbuchung Weiterbildung', $monate->status($person, self::MONAT)['bemerkung']);
     }
+
+    public function test_person_signs_report_with_supervisor_and_document_at_person(): void
+    {
+        Http::fake();
+        Storage::fake('local');
+        $manager = app(PluginManager::class);
+        $manager->saveSettings('deepsign', ['demo' => true, '_allow_write' => true]);
+        $manager->setEnabled('deepsign', true);
+
+        $lp = $this->signInAs('lehrperson');
+        $id = (string) $lp->getAuthIdentifier();
+        $sl = collect(app(UserRepository::class)->active())->firstWhere('role', 'schulleitung');
+        app(MonatRepository::class)->setzen($id, self::MONAT, ['status' => 'visiert']);
+
+        // ohne vorgesetzte Person: Meldung, kein Auftrag
+        $this->get('/zeiterfassung?monat='.self::MONAT)->assertInertia(fn (Assert $page) => $page->where('vorgesetzte', [])->where('signaturAktiv', true));
+        $this->post('/zeiterfassung/rapport-unterschreiben', ['monat' => self::MONAT])->assertRedirect();
+        $this->assertSame([], app(Signatures::class)->all());
+
+        // von Hand hinterlegt (Einstellungen), Import überschreibt das nicht
+        app(Vorgesetzte::class)->vonHand($id, [(string) $sl['id']]);
+        $this->assertFalse(app(Vorgesetzte::class)->ausQuelle($id, ['andere'], 'clicktime'));
+        $this->post('/zeiterfassung/rapport-unterschreiben', ['monat' => self::MONAT])->assertRedirect();
+        $auftrag = app(Signatures::class)->all()[0];
+        $this->assertSame([$id, (string) $sl['id']], array_column($auftrag['signees'], 'person_id'));
+        $this->assertSame([0, 1], array_column($auftrag['signees'], 'order'));
+        $this->assertSame((string) $sl['id'], app(MonatRepository::class)->status($id, self::MONAT)['unterschrift_vorgesetzte']);
+
+        // Person mit CMI-Dossier, aber ohne CMI-Schnittstelle: ausstehend
+        app(PersonLinks::class)->recordSync($id, 'cmi', 'source', str_repeat('ab', 16));
+        $this->signInAs('admin');
+        $this->post("/unterschriften/{$auftrag['id']}/demo")->assertRedirect();
+        $this->post("/unterschriften/{$auftrag['id']}/demo")->assertRedirect();
+        $status = app(MonatRepository::class)->status($id, self::MONAT);
+        $this->assertSame(['unterschrieben', 'ausstehend'], [$status['unterschrift_status'], $status['dossier_status']]);
+
+        // bei der Person sichtbar: für sie selbst und die vorgesetzte Person, nicht für andere
+        $this->actingAs(new IntranetUser($sl));
+        $this->get("/personen/{$id}")->assertInertia(fn (Assert $page) => $page->where('documents.0.url', "/zeiterfassung/unterschrift/{$id}/".self::MONAT));
+        $this->get("/zeiterfassung/unterschrift/{$id}/".self::MONAT)->assertOk();
+        $this->signInAs('lehrperson');
+        $this->get("/personen/{$id}")->assertInertia(fn (Assert $page) => $page->has('documents', 1));
+        $this->signInAs('redaktion');
+        $this->get("/personen/{$id}")->assertInertia(fn (Assert $page) => $page->where('documents', []));
+    }
+
+    public function test_dossier_status_without_link(): void
+    {
+        $this->signInAs('lehrperson');
+        $id = (string) auth()->id();
+        $r = app(Dossiers::class)->store($id, 'Test', 'test.pdf', '%PDF', null);
+        $this->assertSame('kein_dossier', $r['status']);
+        app(PersonLinks::class)->recordSync($id, 'cmi', 'source', str_repeat('cd', 16));
+        $this->assertSame('ausstehend', app(Dossiers::class)->store($id, 'Test', 'test.pdf', '%PDF', null)['status']);
+        $this->assertFalse(app(Dossiers::class)->active());
+    }
 }
+

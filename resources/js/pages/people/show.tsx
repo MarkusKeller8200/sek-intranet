@@ -3,6 +3,7 @@ import type { PersonLink } from '@/components/person-links-card';
 import { Head, Link, router, usePage } from '@inertiajs/react';
 import {
     ArrowLeft,
+    FileText,
     History as HistoryIcon,
     Lock,
     Mail,
@@ -190,6 +191,14 @@ function History({
     );
 }
 
+type PersonDocument = {
+    module: string;
+    title: string;
+    date: string | null;
+    url: string;
+    kind: string | null;
+};
+
 export default function PersonShow({
     person,
     groups,
@@ -197,6 +206,7 @@ export default function PersonShow({
     links = [],
     systems = {},
     canManageLinks = false,
+    documents = [],
 }: {
     person: Person;
     groups: PersonGroup[];
@@ -204,6 +214,8 @@ export default function PersonShow({
     links?: PersonLink[];
     systems?: Record<string, string>;
     canManageLinks?: boolean;
+    /** Dokumente aus Modulen (#208), z. B. unterschriebene Monatsrapporte */
+    documents?: PersonDocument[];
 }) {
     const { auth } = usePage().props;
     const canManage = auth.can.manageUsers;
@@ -341,6 +353,44 @@ export default function PersonShow({
                         </Card>
                     ))}
                 </div>
+
+                {documents.length > 0 && (
+                    <Card>
+                        <CardHeader>
+                            <CardTitle className="flex items-center gap-2">
+                                <FileText className="size-4" aria-hidden />
+                                Dokumente
+                            </CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <ul className="grid gap-2 text-sm">
+                                {documents.map((d) => (
+                                    <li
+                                        key={d.url}
+                                        className="flex flex-wrap items-center gap-x-3 gap-y-1"
+                                    >
+                                        <a
+                                            href={d.url}
+                                            className="font-medium text-primary underline-offset-4 hover:underline"
+                                        >
+                                            {d.title}
+                                        </a>
+                                        {d.kind && (
+                                            <Badge variant="outline">
+                                                {d.kind}
+                                            </Badge>
+                                        )}
+                                        {d.date && (
+                                            <span className="text-muted-foreground">
+                                                {formatDateTime(d.date)}
+                                            </span>
+                                        )}
+                                    </li>
+                                ))}
+                            </ul>
+                        </CardContent>
+                    </Card>
+                )}
 
                 {(links.length > 0 || canManageLinks) && (
                     <PersonLinksCard

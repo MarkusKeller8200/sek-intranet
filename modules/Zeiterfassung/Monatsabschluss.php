@@ -133,7 +133,7 @@ final class Monatsabschluss
      * Saldi (mit ClickTime: Vormonat und Ende Monat), Bestätigungen. Mit $unterzeichnende zusätzlich die
      * Unterschriftsfelder für DeepSign (#43).
      *
-     * @param  array{person: string, schulleitung: string}|null  $unterzeichnende
+     * @param  array{person: string, schulleitung: string, rolle?: string}|null  $unterzeichnende
      * @return array{pdf: string, felder: array<string, array{pageNumber: int, x: float, y: float, width: float, height: float}>}
      */
     public function pdf(string $person, string $monat, ?array $unterzeichnende = null): array

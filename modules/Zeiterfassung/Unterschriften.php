@@ -2,13 +2,15 @@
 
 namespace Modules\Zeiterfassung;
 
+use App\Support\Dossiers;
 use App\Support\Notifications;
 use Illuminate\Support\Facades\Storage;
 use Modules\Zeiterfassung\Data\Contracts\MonatRepository;
 
 /**
  * Ereignisse der Kern-Schnittstelle «Unterschriften» für die Zeiterfassung (#43). Bezug: «person:<id>:<JJJJ-MM>».
- * Das unterschriebene PDF liegt im Speicher des Moduls (Disk «local», Ordner modules/zeiterfassung/unterschrieben).
+ * Das unterschriebene PDF liegt im Speicher des Moduls (Disk «local», Ordner modules/zeiterfassung/unterschrieben),
+ * erscheint bei der Person (Dokumente, #208) und geht als Kopie ins Dossier, wenn die Dossier-Schnittstelle aktiv ist.
  */
 final class Unterschriften
 {
@@ -52,10 +54,14 @@ final class Unterschriften
                 if (! Storage::disk('local')->put($pfad, $pdf)) {
                     return false;
                 }
+                // Kopie ins Dossier (CMI, #208): nur mit Dossier-ID der Person und eingeschalteter Schnittstelle
+                $dossier = app(Dossiers::class)->store($person, (string) ($auftrag['title'] ?? 'Monatsrapport '.$monat), (string) ($auftrag['file_name'] ?? 'Monatsrapport-'.$monat.'.pdf'), $pdf, null);
                 $this->monate->setzen($person, $monat, [
                     'unterschrift_status' => 'unterschrieben',
                     'unterschrift_at' => now()->toIso8601String(),
                     'unterschrift_pdf' => $pfad,
+                    'dossier_status' => $dossier['status'],
+                    'dossier_at' => $dossier['status'] === 'abgelegt' ? now()->toIso8601String() : null,
                 ]);
                 $this->notifications->toUsers([$person], 'zeit.monat_unterschrieben', "Monatsrapport {$monat} unterschrieben",
                     'Der Monatsrapport ist von allen unterschrieben und liegt in deiner Zeiterfassung.', "/zeiterfassung?monat={$monat}", null);
@@ -64,6 +70,13 @@ final class Unterschriften
             case 'signatur.abgelehnt':
                 $status = in_array($auftrag['status'], ['abgelehnt', 'zurueckgezogen', 'abgelaufen'], true) ? (string) $auftrag['status'] : 'abgelehnt';
                 $this->monate->setzen($person, $monat, ['unterschrift_status' => $status]);
+                // von der Person gestartet (#208): sie kann neu senden
+                if (($this->monate->status($person, $monat)['unterschrift_vorgesetzte'] ?? null) !== null) {
+                    $this->notifications->toUsers([$person], 'zeit.unterschrift_abgelehnt', "Monatsrapport {$monat}: Unterschrift {$status}",
+                        'Der Monatsrapport kann in deiner Zeiterfassung neu zur Unterschrift gesendet werden.', "/zeiterfassung?monat={$monat}", null);
+
+                    return true;
+                }
                 $this->notifications->toAbility('visum-zeiterfassung', 'zeit.unterschrift_abgelehnt', "Monatsrapport {$monat}: Unterschrift {$status}",
                     'Der Monatsrapport kann im Visum neu zur Unterschrift gesendet werden.', "/zeiterfassung/visum/{$person}?monat={$monat}", null);
 

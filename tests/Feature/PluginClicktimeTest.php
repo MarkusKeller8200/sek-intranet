@@ -19,6 +19,7 @@ use Modules\Zeiterfassung\Buchungsarten;
 use Modules\Zeiterfassung\Data\Contracts\EintragRepository;
 use Modules\Zeiterfassung\Data\Contracts\MonatRepository;
 use Modules\Zeiterfassung\Sollzeiten;
+use Modules\Zeiterfassung\Vorgesetzte;
 use Plugins\Clicktime\Importer;
 use Plugins\Clicktime\Months;
 use Plugins\Clicktime\Plugin;
@@ -483,6 +484,9 @@ class PluginClicktimeTest extends TestCase
         $this->postJson('/plugins/clicktime/aktion/import', ['options' => ['month' => '2026-10', 'person' => '1']])->assertOk()->assertJsonPath('status', 'warning');
         $this->get('/zeiterfassung?monat=2026-10')->assertInertia(fn (Assert $page) => $page->where('clicktime', null));
         app(PersonLinks::class)->recordSync((string) $andrea['id'], 'clicktime', 'source', '1');
+        // Beat (ClickTime 2) ist Vorgesetzter der Abteilung von Andrea (#208)
+        $beat = collect(app(UserRepository::class)->all())->firstWhere('email', 'beat.beispiel@sekbuelach.example');
+        app(PersonLinks::class)->recordSync((string) $beat['id'], 'clicktime', 'source', '2');
 
         // Vorschau ändert nichts
         $this->postJson('/plugins/clicktime/aktion/import', ['options' => ['month' => '2026-10', 'person' => '1']])->assertOk()
@@ -495,6 +499,8 @@ class PluginClicktimeTest extends TestCase
         $this->post('/zeiterfassung/aus-clicktime', ['monat' => '2026-10'])->assertRedirect();
         $liste = collect($eintraege->fuerPersonMonat((string) $andrea['id'], '2026-10'));
         $this->assertCount(22, $liste);
+        // Vorgesetzte aus ClickTime übernommen (#208)
+        $this->assertSame(['vorgesetzte' => [(string) $beat['id']], 'quelle' => 'clicktime'], app(Vorgesetzte::class)->fuer((string) $andrea['id']));
         $import = $liste->firstWhere('datum', '2026-10-01');
         $this->assertSame(['clicktime', 'ct_arbeitszeit', 'ct:Arbeitszeit', '07:30', '16:24', 8.4], [$import['quelle'], $import['buchungsart'], $import['kategorie'], $import['beginn'], $import['ende'], (float) $import['stunden']]);
         $this->assertSame('Arbeitszeit (clicktime)', app(Buchungsarten::class)->liste()['ct_arbeitszeit']['name']);

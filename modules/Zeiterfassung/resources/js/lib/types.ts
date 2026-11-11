@@ -64,6 +64,8 @@ export function tageListe(tage: string[]): string {
 export type Unterschrift = {
     status: string | null;
     pdf: string | null;
+    /** Kopie ins Dossier (CMI, #208): abgelegt, kein_dossier, ausstehend, fehler */
+    dossier?: string | null;
     anbieter?: { id: string; name: string; demo: boolean } | null;
     auftrag?: {
         id: string;
@@ -281,3 +283,11 @@ export function buchungsartName(
 
     return k.buchungsarten?.[key]?.name ?? key;
 }
+
+/** Status der Kopie ins Dossier (CMI, #208) als Text. */
+export const DOSSIER: Record<string, string> = {
+    abgelegt: 'im Dossier abgelegt',
+    kein_dossier: 'kein Dossier verknüpft',
+    ausstehend: 'ausstehend – Schnittstelle nicht aktiv',
+    fehler: 'Fehler beim Ablegen',
+};
