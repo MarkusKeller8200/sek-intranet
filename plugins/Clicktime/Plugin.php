@@ -1162,7 +1162,9 @@ class Plugin extends BasePlugin implements DemoResponder
                     // wie die echte Antwort: Nummer leer, Name mehrsprachig, Kategorie in entry_type_type
                     'entry_type_number' => null, 'entry_type_name' => ['de' => 'Arbeitszeit', 'en' => 'Working hours'],
                     'entry_type_short' => null, 'entry_type_type' => 'WORK', 'activity_number' => null, 'source' => 'PC',
-                    'notes' => null, 'deleted' => false, 'approval_status' => null, 'last_update' => date('Y-m-d H:i:s', $t + 64800),
+                    'notes' => null, 'deleted' => false,
+                    // Werte geraten (#200): erste Monatshälfte genehmigt, danach leer
+                    'approval_status' => (int) date('j', $t) <= 15 ? 'APPROVED' : null, 'last_update' => date('Y-m-d H:i:s', $t + 64800),
                 ];
                 if ($workday === 3 && ! ($corrected && $no === 1)) {
                     continue;

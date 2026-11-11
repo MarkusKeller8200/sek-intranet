@@ -14,6 +14,8 @@ export type Eintrag = {
     notiz?: string | null;
     /** Herkunft (#101): «clicktime» = aus ClickTime übernommen */
     quelle?: string | null;
+    /** Genehmigungsstatus in ClickTime (approval_status, #200); leer = ohne Status */
+    quelle_status?: string | null;
 };
 
 export type Status = {
@@ -147,6 +149,19 @@ export function herkunft(quelle: string | null | undefined): string {
     }
 
     return quelle === 'clicktime' ? 'ClickTime' : quelle;
+}
+
+/** Genehmigungsstatus der ClickTime-Buchungen eines Tages (#200): Wert → Anzahl; leer, wenn keine aus ClickTime. */
+export function freigaben(liste: Eintrag[]): [string, number][] {
+    const zaehler = new Map<string, number>();
+    for (const e of liste) {
+        if (e.quelle === 'clicktime') {
+            const wert = e.quelle_status || 'ohne Status';
+            zaehler.set(wert, (zaehler.get(wert) ?? 0) + 1);
+        }
+    }
+
+    return [...zaehler.entries()];
 }
 
 /** Notizen mit Projekt (falls erfasst), z. B. «Lager · Vorbereitung». */

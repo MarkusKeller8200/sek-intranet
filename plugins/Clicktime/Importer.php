@@ -22,13 +22,14 @@ use RuntimeException;
  * - Pause (eigene Buchung, negative Stunden) → Pause des längsten Arbeitsblocks am Tag.
  * - Sollzeit pro Tag (#103): je Tag eine Abfrage der Kumulative, gespeichert für Soll und Delta der Tagestotale.
  * - Nur Monate «offen» oder «zurück»; gesperrte Monate nur als Vergleich (Nachbuchungen, #164).
+ * - Genehmigungsstatus (approval_status) je Buchung als «quelle_status» (#200).
  */
 final class Importer
 {
     public const QUELLE = 'clicktime';
 
     /** Verglichene Felder eines Eintrags. */
-    private const FIELDS = ['datum', 'art', 'buchungsart', 'kategorie', 'beginn', 'ende', 'pause_min', 'stunden', 'notiz'];
+    private const FIELDS = ['datum', 'art', 'buchungsart', 'kategorie', 'beginn', 'ende', 'pause_min', 'stunden', 'notiz', 'quelle_status'];
 
     public function __construct(private readonly PluginContext $ctx) {}
 
@@ -109,6 +110,8 @@ final class Importer
                 'pause_min' => null,
                 'stunden' => round((float) $e['hours'], 2),
                 'notiz' => ($e['notes'] ?? '') !== '' ? mb_substr((string) $e['notes'], 0, 500) : null,
+                // Genehmigungsstatus in ClickTime (#200)
+                'quelle_status' => ($e['approval'] ?? '') !== '' ? mb_substr((string) $e['approval'], 0, 100) : null,
             ];
         }
         foreach ($pause as $day => $hours) {

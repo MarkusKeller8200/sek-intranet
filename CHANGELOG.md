@@ -11,6 +11,10 @@ laufend unter **Unveröffentlicht**. Ab 0.32.0 entsteht eine Version nur bei ein
 
 ### Neu
 
+- **Zeiterfassung: Genehmigungsstatus aus ClickTime (#200):** Der Import übernimmt `approval_status` je Buchung
+  (Plugin ClickTime 0.9, Modul Zeiterfassung 0.8.1). Anzeige in den aufgeklappten Buchungen und zusammengefasst in der
+  Tageszeile. Werte werden nach dem Test mit echten Daten übersetzt.
+
 - **Bestellen: Menüpunkte für die Kataloge (#197):** Das Menü «Bestellen» ist nach den Listen im ICT-Wiki
   gegliedert: Hardware (Zimmerausrüstung; persönliche Ausrüstung für Lehrpersonen, Schüler:innen, Schulverwaltung,
   Hausdienst), Plattformen (Schulunterricht, Schuladministration, Fachstelle ICT, Fachanwendungen Schulbetrieb und

@@ -1,7 +1,7 @@
 {
     "key": "zeiterfassung",
     "name": "Zeiterfassung",
-    "version": "0.8.0",
+    "version": "0.8.1",
     "core": ">=0.32.0",
     "description": "Arbeitszeit mit Buchungsart (Arbeitszeit, Homeoffice, Ferien, Krankheit …), Tätigkeiten, Projekte und Abwesenheiten pro Monat erfassen; Monatsvisum durch die Schulleitung, Export für die Lohnbuchhaltung und Monatsblatt als PDF; visierte Monatsrapporte elektronisch unterschreiben (DeepSign).",
     "aktiv": true,
@@ -122,6 +122,11 @@
                     "type": "string",
                     "required": false,
                     "label": "ID in der Quelle (ClickTime-Nr. der Buchung)"
+                },
+                "quelle_status": {
+                    "type": "string",
+                    "required": false,
+                    "label": "Status in der Quelle (ClickTime: approval_status, Genehmigung)"
                 }
             }
         },

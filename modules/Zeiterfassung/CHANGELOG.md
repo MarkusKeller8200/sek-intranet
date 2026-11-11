@@ -6,6 +6,8 @@ Versionen des Moduls nach SemVer (module.json → «version»).
 
 ### Neu
 
+- **0.8.1 – Genehmigungsstatus aus ClickTime (#200):** Neues Feld `quelle_status` je Eintrag; aufgeklappte Buchungen
+  zeigen den Status bei «Herkunft», die Tageszeile den Status der ClickTime-Buchungen mit Anzahl.
 - **Kompensation nicht angerechnet (#169, 0.8.0):** Wie ClickTime zählt Kompensation im Ist nicht (Tages-Ist 0:00,
   Differenz −Soll); Ferien und übrige Abwesenheiten zählen weiter. `Zeitkonto::angerechnet`/`ist`, Summe `ist` für
   Soll/Delta; in Tabelle, Monatsrapport und Prüfhinweisen (an Kompensationstagen keine Warnung «Arbeitszeit prüfen»).
