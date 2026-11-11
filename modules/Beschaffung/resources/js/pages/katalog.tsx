@@ -153,7 +153,7 @@ export default function BeschaffungKatalog({
     const columns = useMemo<GridColumn<Zeile>[]>(() => {
         const sichtbar = new Set(katalog.spalten);
         const spalte = (
-            id: keyof Zeile & string,
+            id: keyof Zeile,
             opts: Partial<GridColumn<Zeile>> = {},
         ): GridColumn<Zeile> => ({
             id,
