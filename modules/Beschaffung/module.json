@@ -1,0 +1,317 @@
+{
+    "key": "beschaffung",
+    "name": "Beschaffung",
+    "version": "0.1.0",
+    "core": ">=0.39.0",
+    "description": "Kataloge für Bestellungen: Hardware (Zimmer- und persönliche Ausrüstung), Plattformen und Fachanwendungen, Mobile Apps sowie Material PICTS/TICTS. Alle Listen mit gleichem Aufbau, gepflegt durch die Fachstelle ICT. Startinhalt aus dem ICT-Wiki (Confluence).",
+    "aktiv": true,
+    "datenklasse": "intern",
+    "db_schema": "bes",
+    "provider": "Modules\\Beschaffung\\ModuleServiceProvider",
+    "rechte": {
+        "view-beschaffung": {
+            "label": "Kataloge (Bestellen) ansehen",
+            "roles": [
+                "admin",
+                "schulleitung",
+                "verwaltung",
+                "ict",
+                "lehrperson"
+            ]
+        },
+        "edit-beschaffung": {
+            "label": "Kataloge (Bestellen) pflegen: Einträge, Preise, Bilder",
+            "roles": ["admin", "ict"]
+        }
+    },
+    "menu": {
+        "gruppe": "bestellen",
+        "eintraege": {
+            "hardware": {
+                "title": "Hardware",
+                "icon": "Laptop",
+                "can": "view-beschaffung",
+                "items": {
+                    "zimmer-ausruestung": {
+                        "title": "Zimmerausrüstung",
+                        "icon": "Projector",
+                        "href": "/beschaffung/zimmer-ausruestung",
+                        "can": "view-beschaffung"
+                    },
+                    "ausruestung-lehrpersonen": {
+                        "title": "Persönliche Ausrüstung – Lehrpersonen",
+                        "icon": "GraduationCap",
+                        "href": "/beschaffung/ausruestung-lehrpersonen",
+                        "can": "view-beschaffung"
+                    },
+                    "ausruestung-schuelerinnen": {
+                        "title": "Persönliche Ausrüstung – Schüler:innen",
+                        "icon": "Tablet",
+                        "href": "/beschaffung/ausruestung-schuelerinnen",
+                        "can": "view-beschaffung"
+                    },
+                    "ausruestung-schulverwaltung": {
+                        "title": "Persönliche Ausrüstung – Schulverwaltung",
+                        "icon": "Landmark",
+                        "href": "/beschaffung/ausruestung-schulverwaltung",
+                        "can": "view-beschaffung"
+                    },
+                    "ausruestung-hausdienst": {
+                        "title": "Persönliche Ausrüstung – Hausdienst",
+                        "icon": "Wrench",
+                        "href": "/beschaffung/ausruestung-hausdienst",
+                        "can": "view-beschaffung"
+                    }
+                }
+            },
+            "plattformen": {
+                "title": "Plattformen",
+                "icon": "Globe",
+                "can": "view-beschaffung",
+                "items": {
+                    "plattformen-unterricht": {
+                        "title": "Plattformen im Schulunterricht",
+                        "icon": "School",
+                        "href": "/beschaffung/plattformen-unterricht",
+                        "can": "view-beschaffung"
+                    },
+                    "plattformen-administration": {
+                        "title": "Plattformen in der Schuladministration",
+                        "icon": "Building2",
+                        "href": "/beschaffung/plattformen-administration",
+                        "can": "view-beschaffung"
+                    },
+                    "plattformen-ict": {
+                        "title": "Plattformen der Fachstelle ICT",
+                        "icon": "ShieldCheck",
+                        "href": "/beschaffung/plattformen-ict",
+                        "can": "view-beschaffung"
+                    },
+                    "fachanwendungen-schulbetrieb": {
+                        "title": "Fachanwendungen – Schulbetrieb",
+                        "icon": "AppWindow",
+                        "href": "/beschaffung/fachanwendungen-schulbetrieb",
+                        "can": "view-beschaffung"
+                    },
+                    "fachanwendungen-schulverwaltung": {
+                        "title": "Fachanwendungen – Schulverwaltung",
+                        "icon": "FileStack",
+                        "href": "/beschaffung/fachanwendungen-schulverwaltung",
+                        "can": "view-beschaffung"
+                    }
+                }
+            },
+            "software-apps": {
+                "title": "Software – Apps",
+                "icon": "Store",
+                "can": "view-beschaffung",
+                "items": {
+                    "mobile-apps": {
+                        "title": "Mobile Apps",
+                        "icon": "MonitorSmartphone",
+                        "href": "/beschaffung/mobile-apps",
+                        "can": "view-beschaffung"
+                    }
+                }
+            },
+            "material-picts-ticts": {
+                "title": "Material – PICTS / TICTS",
+                "icon": "Boxes",
+                "href": "/beschaffung/material-picts-ticts",
+                "can": "view-beschaffung"
+            },
+            "lehrmittel": {
+                "title": "Lehrmittel",
+                "icon": "BookMarked",
+                "description": "Lehrmittel für Klassen bestellen, gedruckt und digital.",
+                "features": [
+                    "Bestellung je Klasse und Fach",
+                    "Digitale Lizenzen für Schülerinnen und Schüler",
+                    "Sammelbestellung zum Schuljahresbeginn"
+                ],
+                "plugin": "ida"
+            },
+            "antrag-hw-sw": {
+                "title": "Antrag neue HW/SW",
+                "icon": "FilePlus2",
+                "description": "Neue Hardware oder Software beantragen, die noch nicht im Angebot ist.",
+                "features": [
+                    "Antrag mit pädagogischem Nutzen",
+                    "Prüfung Datenschutz und Kosten durch die Fachstelle ICT",
+                    "Entscheid und Rückmeldung"
+                ]
+            }
+        }
+    },
+    "sammlungen": {
+        "bes_artikel": {
+            "label": "Beschaffung: Katalogeinträge",
+            "description": "Ein Eintrag eines Katalogs unter «Bestellen» (Gerät, Plattform, App, Material). Alle Kataloge mit gleichem Aufbau; fehlende Angaben werden später ergänzt.",
+            "fields": {
+                "katalog": {
+                    "type": "enum",
+                    "required": true,
+                    "label": "Katalog",
+                    "values": {
+                        "zimmer-ausruestung": "Zimmerausrüstung",
+                        "ausruestung-lehrpersonen": "Persönliche Ausrüstung – Lehrpersonen",
+                        "ausruestung-schuelerinnen": "Persönliche Ausrüstung – Schüler:innen",
+                        "ausruestung-schulverwaltung": "Persönliche Ausrüstung – Schulverwaltung",
+                        "ausruestung-hausdienst": "Persönliche Ausrüstung – Hausdienst",
+                        "plattformen-unterricht": "Plattformen im Schulunterricht",
+                        "plattformen-administration": "Plattformen in der Schuladministration",
+                        "plattformen-ict": "Plattformen der Fachstelle ICT",
+                        "fachanwendungen-schulbetrieb": "Fachanwendungen – Schulbetrieb",
+                        "fachanwendungen-schulverwaltung": "Fachanwendungen – Schulverwaltung",
+                        "mobile-apps": "Mobile Apps",
+                        "material-picts-ticts": "Material – PICTS / TICTS"
+                    }
+                },
+                "position": {
+                    "type": "int",
+                    "required": true,
+                    "label": "Reihenfolge"
+                },
+                "gruppe": {
+                    "type": "string",
+                    "required": false,
+                    "label": "Gruppe / Kategorie"
+                },
+                "bestellnummer": {
+                    "type": "string",
+                    "required": false,
+                    "label": "Bestellnummer"
+                },
+                "bezeichnung": {
+                    "type": "string",
+                    "required": true,
+                    "label": "Bezeichnung"
+                },
+                "modell": {
+                    "type": "string",
+                    "required": false,
+                    "label": "Modell / Produkt"
+                },
+                "beschreibung": {
+                    "type": "text",
+                    "required": false,
+                    "label": "Beschreibung"
+                },
+                "bild": {
+                    "type": "string",
+                    "required": false,
+                    "label": "Bild (Startinhalt «start:…» oder hochgeladen «upload:…»)"
+                },
+                "preis": {
+                    "type": "decimal",
+                    "required": false,
+                    "label": "Preis CHF"
+                },
+                "kosten": {
+                    "type": "enum",
+                    "required": false,
+                    "label": "Kostenstufe",
+                    "values": {
+                        "kostenlos": "kostenlos",
+                        "niedrig": "niedrig",
+                        "moderat": "moderat",
+                        "hoch": "hoch",
+                        "variabel": "variabel",
+                        "ausstehend": "ausstehend"
+                    }
+                },
+                "preis_hinweis": {
+                    "type": "string",
+                    "required": false,
+                    "label": "Hinweis zum Preis"
+                },
+                "zubehoer": {
+                    "type": "text",
+                    "required": false,
+                    "label": "Zubehör"
+                },
+                "standort": {
+                    "type": "string",
+                    "required": false,
+                    "label": "Standort / Schulhaus"
+                },
+                "menge": {
+                    "type": "string",
+                    "required": false,
+                    "label": "Menge"
+                },
+                "zugang": {
+                    "type": "string",
+                    "required": false,
+                    "label": "Zugang / Ausleihe"
+                },
+                "nutzerkreis": {
+                    "type": "string",
+                    "required": false,
+                    "label": "Nutzerkreis / Zuweisung"
+                },
+                "verantwortung": {
+                    "type": "string",
+                    "required": false,
+                    "label": "Verantwortung"
+                },
+                "lizenzen": {
+                    "type": "string",
+                    "required": false,
+                    "label": "Lizenzen / Geräte"
+                },
+                "url": {
+                    "type": "url",
+                    "required": false,
+                    "label": "Webseite"
+                },
+                "wiki": {
+                    "type": "url",
+                    "required": false,
+                    "label": "Beschreibung im ICT-Wiki"
+                },
+                "angaben": {
+                    "type": "text",
+                    "required": false,
+                    "label": "Weitere Angaben"
+                },
+                "status": {
+                    "type": "enum",
+                    "required": true,
+                    "label": "Status",
+                    "values": {
+                        "aktiv": "aktiv",
+                        "entwurf": "Entwurf",
+                        "gestrichen": "gestrichen"
+                    }
+                },
+                "pruefen": {
+                    "type": "bool",
+                    "required": true,
+                    "label": "Prüfen"
+                },
+                "pruef_hinweis": {
+                    "type": "text",
+                    "required": false,
+                    "label": "Hinweis zur Prüfung"
+                },
+                "quelle": {
+                    "type": "url",
+                    "required": false,
+                    "label": "Quelle (ICT-Wiki)"
+                },
+                "geaendert_von": {
+                    "type": "ref",
+                    "required": false,
+                    "label": "Zuletzt geändert von",
+                    "references": "users"
+                }
+            }
+        }
+    },
+    "ereignisse": {
+        "sendet": [],
+        "empfaengt": []
+    },
+    "plugins": ["inventory360", "jamf"]
+}

@@ -17,6 +17,11 @@ laufend unter **Unveröffentlicht**. Ab 0.32.0 entsteht eine Version nur bei ein
   Schulverwaltung), Software – Apps (Mobile Apps) sowie Material – PICTS / TICTS. Vorerst Platzhalterseiten; die
   bisherigen Platzhalter «Persönliche Ausrüstung (HW)», «Schulplattformen» und «Fachanwendungen» gehen darin auf.
   Die Listen selbst folgen nach Prüfung (#198).
+- **Bestellen: Kataloge bearbeitbar (#198):** Neues Modul «Beschaffung» (0.1.0). Alle Listen aus dem ICT-Wiki als
+  Tabellen mit gleichem Aufbau (Bild, Bezeichnung, Preis, weitere Angaben), bearbeitbar direkt in der Tabelle durch
+  Administration und ICT, Bilder hochladen. Startinhalt aus Confluence bereinigt; Unklares ist mit «Prüfen» markiert.
+  Je Katalog bleiben die Kästen «Geplante Funktionen» und «So geht es weiter», darunter die Quellen im ICT-Wiki.
+  Das Menü «Bestellen» kommt aus dem Modul; Lehrmittel und «Antrag neue HW/SW» bleiben Platzhalter.
 
 ## [0.39.0] – 2026-11-10
 
