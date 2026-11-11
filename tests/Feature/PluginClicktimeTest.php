@@ -499,7 +499,10 @@ class PluginClicktimeTest extends TestCase
         $this->post('/zeiterfassung/aus-clicktime', ['monat' => '2026-10'])->assertRedirect();
         $liste = collect($eintraege->fuerPersonMonat((string) $andrea['id'], '2026-10'));
         $this->assertCount(22, $liste);
-        // Vorgesetzte aus ClickTime übernommen (#208)
+        // Vorgesetzte aus ClickTime (#208): Andrea leitet ihre Abteilung selbst (Demo) – sich selbst nie als Vorgesetzte
+        $this->assertSame([], app(Vorgesetzte::class)->fuer((string) $andrea['id'])['vorgesetzte']);
+        $this->assertSame([(string) $beat['id']], Plugin::managerPersonsFor(app(PluginManager::class)->context('clicktime', null), ['3']));
+        app(Vorgesetzte::class)->ausQuelle((string) $andrea['id'], [(string) $andrea['id'], (string) $beat['id']], 'clicktime');
         $this->assertSame(['vorgesetzte' => [(string) $beat['id']], 'quelle' => 'clicktime'], app(Vorgesetzte::class)->fuer((string) $andrea['id']));
         $import = $liste->firstWhere('datum', '2026-10-01');
         $this->assertSame(['clicktime', 'ct_arbeitszeit', 'ct:Arbeitszeit', '07:30', '16:24', 8.4], [$import['quelle'], $import['buchungsart'], $import['kategorie'], $import['beginn'], $import['ende'], (float) $import['stunden']]);
