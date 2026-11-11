@@ -1,7 +1,7 @@
 {
     "key": "zeiterfassung",
     "name": "Zeiterfassung",
-    "version": "0.9.0",
+    "version": "0.10.0",
     "core": ">=0.32.0",
     "description": "Arbeitszeit mit Buchungsart (Arbeitszeit, Homeoffice, Ferien, Krankheit …), Tätigkeiten, Projekte und Abwesenheiten pro Monat erfassen; Monatsvisum durch die Schulleitung, Export für die Lohnbuchhaltung und Monatsblatt als PDF; visierte Monatsrapporte elektronisch unterschreiben (DeepSign).",
     "aktiv": true,
@@ -23,6 +23,10 @@
         },
         "visum-zeiterfassung": {
             "label": "Zeiterfassung aller einsehen, Monate visieren, Export Lohnbuchhaltung",
+            "roles": ["admin", "schulleitung"]
+        },
+        "oeffnen-zeiterfassung": {
+            "label": "Abgeschlossene Monate wieder öffnen",
             "roles": ["admin", "schulleitung"]
         },
         "config-zeiterfassung": {
@@ -257,6 +261,17 @@
                     "type": "datetime",
                     "required": false,
                     "label": "Zuletzt erinnert am (#33)"
+                },
+                "geoeffnet_at": {
+                    "type": "datetime",
+                    "required": false,
+                    "label": "Wieder geöffnet am (#206)"
+                },
+                "geoeffnet_by": {
+                    "type": "ref",
+                    "references": "users",
+                    "required": false,
+                    "label": "Wieder geöffnet von"
                 }
             }
         },
@@ -384,6 +399,7 @@
             "zeit.monat_eingereicht",
             "zeit.monat_visiert",
             "zeit.monat_zurueck",
+            "zeit.monat_geoeffnet",
             "zeit.monat_unterschrieben",
             "zeit.monat_abgeschlossen",
             "zeit.monat_nachbuchung",

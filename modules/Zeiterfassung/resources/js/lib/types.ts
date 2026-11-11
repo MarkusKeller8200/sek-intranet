@@ -26,6 +26,8 @@ export type Status = {
     /** In ClickTime abgeschlossen (#164) */
     abgeschlossen_at?: string | null;
     abgeschlossen_stellvertretend?: boolean | null;
+    /** Abgeschlossener Monat wieder geöffnet (#206) */
+    geoeffnet_at?: string | null;
     /** Nachbuchungen in ClickTime nach dem Abschluss (#164) */
     abweichung?: {
         anzahl: number;

@@ -6,6 +6,10 @@ Versionen des Moduls nach SemVer (module.json → «version»).
 
 ### Neu
 
+- **0.10.0 – Monat wieder öffnen (#206):** Recht `oeffnen-zeiterfassung`, Route
+  `POST zeiterfassung/visum/{person}/oeffnen` (Begründung Pflicht). Status «offen», Abschluss-Angaben zurückgesetzt,
+  neue Felder `geoeffnet_at`/`geoeffnet_by` in `zeit_monate`, Ereignis `zeit.monat_geoeffnet`. Hinweis «Monat wieder
+  geöffnet» in der eigenen Zeiterfassung.
 - **0.9.0 – Prüfhinweise einstellbar (#204):** Seite «Zeiterfassung – Einstellungen» (Recht `config-zeiterfassung`,
   Admin und Schulleitung), gespeichert in `zeit_einstellungen` (Datensatz `pruefungen`, Klasse `Pruefregeln`).
   `Zeitkonto::pruefungen` nimmt die Regeln entgegen; neu «Prüfen – Tagesist über hh:mm» und «Prüfen – keine
