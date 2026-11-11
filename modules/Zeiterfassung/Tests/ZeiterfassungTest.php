@@ -282,7 +282,7 @@ class ZeiterfassungTest extends TestCase
             ['id' => 'b', 'datum' => $tag, 'art' => 'arbeit', 'beginn' => '12:30', 'ende' => '18:00', 'stunden' => 5.5],
             ['id' => 'c', 'datum' => self::MONAT.'-07', 'art' => 'arbeit', 'beginn' => '07:00', 'ende' => '', 'stunden' => 0],
         ];
-        $soll = [$tag => 8.4, self::MONAT.'-07' => 8.4, self::MONAT.'-08' => 8.4];
+        $soll = [$tag => 8.4, self::MONAT.'-08' => 8.4];
         $texte = fn (array $p, string $t): array => array_column($p[$t] ?? [], 'text');
 
         // Vorgabe: wie bisher (keine Buchung, Gehen fehlt, Abweichung 20 %), Tagesist und Mittag aus
