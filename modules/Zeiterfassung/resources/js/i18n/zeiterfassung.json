@@ -273,5 +273,10 @@
         "Prüefe – Iitrittsbuechig fehlt"
     ],
     "Arbeitszeit prüfen": ["Check working time", "Arbeitsziit prüefe"],
-    "Monatsrapport (PDF)": ["Monthly report (PDF)", "Monetsrapport (PDF)"]
+    "Monatsrapport (PDF)": ["Monthly report (PDF)", "Monetsrapport (PDF)"],
+    "Genehmigungsstatus in ClickTime": [
+        "Approval status in ClickTime",
+        "Gnehmigungsstatus im ClickTime"
+    ],
+    "ohne Status": ["no status", "ohni Status"]
 }

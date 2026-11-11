@@ -76,7 +76,7 @@ final class Months
 
     /**
      * @param  array<string, mixed>  $row
-     * @return array{number: string, day: string, time_from: string, time_to: string, hours: float, type: string, type_name: string, category: string, activity: string, notes: string}
+     * @return array{number: string, day: string, time_from: string, time_to: string, hours: float, type: string, type_name: string, category: string, activity: string, notes: string, approval: string}
      */
     public static function normalize(array $row): array
     {
@@ -97,7 +97,26 @@ final class Months
             'category' => (string) ($row['entry_type_type'] ?? ''),
             'activity' => (string) ($row['activity_number'] ?? ''),
             'notes' => is_string($row['notes'] ?? null) ? trim($row['notes']) : '',
+            // Genehmigungsstatus (#200): Rohwert aus «approval_status», Bedeutung der Werte noch offen
+            'approval' => self::approval($row['approval_status'] ?? null),
         ];
+    }
+
+    /**
+     * «approval_status» als Text: Zeichenkette bzw. Zahl unverändert, Objekt als «status»/«name» oder JSON, leer = ''.
+     */
+    public static function approval(mixed $value): string
+    {
+        if (is_array($value)) {
+            $text = $value['status'] ?? $value['name'] ?? $value['de'] ?? null;
+
+            return is_scalar($text) ? trim((string) $text) : (string) json_encode($value, JSON_UNESCAPED_UNICODE);
+        }
+        if (is_bool($value)) {
+            return $value ? 'true' : 'false';
+        }
+
+        return is_scalar($value) ? trim((string) $value) : '';
     }
 
     /**

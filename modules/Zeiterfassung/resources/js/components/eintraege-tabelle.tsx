@@ -7,6 +7,7 @@ import {
     TriangleAlert,
 } from 'lucide-react';
 import { Fragment, useState } from 'react';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
     Table,
@@ -21,6 +22,7 @@ import type { Eintrag, Kategorien, Pruefung, Summen } from '../lib/types';
 import {
     angerechnet,
     buchungsartName,
+    freigaben,
     herkunft,
     hhmm,
     kategorieName,
@@ -307,9 +309,33 @@ function TagesZeile({
                 {delta === null ? '–' : hhmm(delta)}
             </TableCell>
             <TableCell colSpan={aktionen ? 3 : 2}>
-                <Hinweise pruefungen={pruefungen} />
+                <span className="flex flex-wrap items-center gap-2">
+                    <Freigabe liste={liste} />
+                    <Hinweise pruefungen={pruefungen} />
+                </span>
             </TableCell>
         </TableRow>
+    );
+}
+
+/** Genehmigungsstatus aus ClickTime (#200): Rohwert je Buchung, in der Tageszeile mit Anzahl. */
+function Freigabe({ liste }: { liste: Eintrag[] }) {
+    const werte = freigaben(liste);
+    if (werte.length === 0) {
+        return null;
+    }
+
+    return (
+        <span
+            className="inline-flex flex-wrap items-center gap-1 text-xs font-normal"
+            title="Genehmigungsstatus in ClickTime"
+        >
+            {werte.map(([wert, anzahl]) => (
+                <Badge key={wert} variant="outline" translate="no">
+                    {liste.length > 1 ? `${wert} (${anzahl})` : wert}
+                </Badge>
+            ))}
+        </span>
     );
 }
 
@@ -384,7 +410,12 @@ function BuchungsZeile({
                 {hhmm(e.stunden)}
             </TableCell>
             <TableCell />
-            <TableCell>{herkunft(e.quelle)}</TableCell>
+            <TableCell>
+                <span className="inline-flex flex-wrap items-center gap-1">
+                    {herkunft(e.quelle)}
+                    <Freigabe liste={[e]} />
+                </span>
+            </TableCell>
             <TableCell className="text-muted-foreground" translate="no">
                 {notizen(e)}
             </TableCell>

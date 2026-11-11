@@ -471,6 +471,9 @@ class PluginClicktimeTest extends TestCase
         $import = $liste->firstWhere('datum', '2026-10-01');
         $this->assertSame(['clicktime', 'ct_arbeitszeit', 'ct:Arbeitszeit', '07:30', '16:24', 8.4], [$import['quelle'], $import['buchungsart'], $import['kategorie'], $import['beginn'], $import['ende'], (float) $import['stunden']]);
         $this->assertSame('Arbeitszeit (clicktime)', app(Buchungsarten::class)->liste()['ct_arbeitszeit']['name']);
+        // Genehmigungsstatus aus ClickTime je Buchung (#200; Demo: erste Monatshälfte genehmigt)
+        $this->assertSame('APPROVED', $import['quelle_status']);
+        $this->assertNull($liste->firstWhere('datum', '2026-10-20')['quelle_status']);
         $this->assertStringContainsString('Arbeitszeit = ct_arbeitszeit', (string) app(PluginManager::class)->state('clicktime')['settings']['mapping']);
         $this->assertNotNull($liste->firstWhere('kategorie', 'verwaltung'), 'von Hand erfasst bleibt');
         // Sollzeit pro Tag (#103) gespeichert und an die Seite übergeben
