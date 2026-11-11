@@ -25,6 +25,7 @@ class ModuleServiceProvider extends ModuleProvider
         });
         $this->app->singleton(Buchungsarten::class, fn (): Buchungsarten => new Buchungsarten($this->store()));
         $this->app->singleton(Sollzeiten::class, fn (): Sollzeiten => new Sollzeiten($this->store()));
+        $this->app->singleton(Pruefregeln::class, fn (): Pruefregeln => new Pruefregeln($this->store()));
         $this->app->singleton(MonatRepository::class, fn (): MonatRepository => match ($this->storeType()) {
             'json' => new JsonMonatRepository($this->store()),
             default => throw new RuntimeException('Zeiterfassung: Speicher «'.$this->storeType().'» ist noch nicht umgesetzt.'),

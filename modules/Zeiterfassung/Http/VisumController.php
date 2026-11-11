@@ -21,6 +21,7 @@ use Modules\Zeiterfassung\Feiertage;
 use Modules\Zeiterfassung\Kategorien;
 use Modules\Zeiterfassung\Monatsabschluss;
 use Modules\Zeiterfassung\MonatsblattPdf;
+use Modules\Zeiterfassung\Pruefregeln;
 use Modules\Zeiterfassung\Sollzeiten;
 use Modules\Zeiterfassung\Unterschriften;
 use Modules\Zeiterfassung\Zeitkonto;
@@ -78,7 +79,7 @@ class VisumController extends Controller
             'clicktime' => ZeiterfassungController::clicktimeNr($person) !== null,
             'abgeschlossenVon' => isset($status['abgeschlossen_by']) ? (string) ($this->users->find((string) $status['abgeschlossen_by'])['name'] ?? '') : null,
             'fehlend' => Zeitkonto::fehlendeTage($monat, $liste, Feiertage::monat($monat), app(Sollzeiten::class)->monat($person, $monat)),
-            'pruefungen' => Zeitkonto::pruefungen($monat, $liste, app(Sollzeiten::class)->monat($person, $monat)),
+            'pruefungen' => Zeitkonto::pruefungen($monat, $liste, app(Sollzeiten::class)->monat($person, $monat), null, app(Pruefregeln::class)->regeln()),
         ]);
     }
 
@@ -373,6 +374,7 @@ class VisumController extends Controller
         }
         $feiertage = Feiertage::monat($monat);
         $soll = app(Sollzeiten::class);
+        $regeln = app(Pruefregeln::class)->regeln();
         $result = [];
         foreach ($proPerson as $id => $liste) {
             $user = $this->users->find((string) $id);
@@ -386,7 +388,7 @@ class VisumController extends Controller
                 // Vollständigkeit (#33): Arbeitstage ohne Eintrag bis heute
                 'fehlend' => count(Zeitkonto::fehlendeTage($monat, $liste, $feiertage, $soll->monat((string) $id, $monat))),
                 // Tage mit Fehlern bzw. Hinweisen (#167)
-                'pruefen' => self::pruefenZaehlen(Zeitkonto::pruefungen($monat, $liste, $soll->monat((string) $id, $monat))),
+                'pruefen' => self::pruefenZaehlen(Zeitkonto::pruefungen($monat, $liste, $soll->monat((string) $id, $monat), null, $regeln)),
                 'erinnert_at' => $erinnert[$id] ?? null,
             ];
         }

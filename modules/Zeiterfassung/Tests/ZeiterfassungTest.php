@@ -10,9 +10,11 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Testing\TestResponse;
 use Inertia\Testing\AssertableInertia as Assert;
+use InvalidArgumentException;
 use Modules\Zeiterfassung\Buchungsarten;
 use Modules\Zeiterfassung\Data\Contracts\EintragRepository;
 use Modules\Zeiterfassung\Feiertage;
+use Modules\Zeiterfassung\Pruefregeln;
 use Modules\Zeiterfassung\Zeitkonto;
 use Tests\TestCase;
 
@@ -270,5 +272,60 @@ class ZeiterfassungTest extends TestCase
 
         $nurAbwesenheit = [['key' => 'ferien', 'name' => 'Ferien', 'art' => 'abwesenheit', 'aktiv' => true]];
         $this->put('/zeiterfassung/buchungsarten', ['zeilen' => $nurAbwesenheit])->assertSessionHasErrors('zeilen');
+    }
+
+    public function test_check_rules_are_configurable(): void
+    {
+        $tag = self::MONAT.'-06';
+        $eintraege = [
+            ['id' => 'a', 'datum' => $tag, 'art' => 'arbeit', 'beginn' => '07:00', 'ende' => '12:30', 'stunden' => 5.5],
+            ['id' => 'b', 'datum' => $tag, 'art' => 'arbeit', 'beginn' => '12:30', 'ende' => '18:00', 'stunden' => 5.5],
+            ['id' => 'c', 'datum' => self::MONAT.'-07', 'art' => 'arbeit', 'beginn' => '07:00', 'ende' => '', 'stunden' => 0],
+        ];
+        $soll = [$tag => 8.4, self::MONAT.'-08' => 8.4];
+        $texte = fn (array $p, string $t): array => array_column($p[$t] ?? [], 'text');
+
+        // Vorgabe: wie bisher (keine Buchung, Gehen fehlt, Abweichung 20 %), Tagesist und Mittag aus
+        $p = Zeitkonto::pruefungen(self::MONAT, $eintraege, $soll, self::MONAT.'-31');
+        $this->assertSame(['Arbeitszeit prüfen'], $texte($p, $tag));
+        $this->assertSame(['Prüfen – Austrittsbuchung fehlt'], $texte($p, self::MONAT.'-07'));
+        $this->assertSame(['Prüfen – keine Buchung'], $texte($p, self::MONAT.'-08'));
+
+        // alles umgestellt
+        $regeln = Pruefregeln::pruefen(['gehen_fehlt' => false, 'keine_buchung' => false, 'abweichung_prozent' => 50,
+            'tagesist' => true, 'tagesist_max' => '10:00', 'mittag' => true] + Pruefregeln::VORGABE);
+        $p = Zeitkonto::pruefungen(self::MONAT, $eintraege, $soll, self::MONAT.'-31', $regeln);
+        $this->assertSame(['Prüfen – Tagesist über 10:00', 'Prüfen – keine Mittagsbuchung'], $texte($p, $tag));
+        $this->assertArrayNotHasKey(self::MONAT.'-07', $p);
+        $this->assertArrayNotHasKey(self::MONAT.'-08', $p);
+
+        // Lücke von 45 Minuten im Fenster bzw. erfasste Pause gilt als Mittagsbuchung
+        $mitLuecke = [$eintraege[0], ['ende' => '18:00', 'beginn' => '13:15'] + $eintraege[1]];
+        $this->assertArrayNotHasKey($tag, Zeitkonto::pruefungen(self::MONAT, $mitLuecke, [], self::MONAT.'-31', ['tagesist' => false] + $regeln));
+        $mitPause = [['ende' => '18:00', 'pause_min' => 30] + $eintraege[0]];
+        $this->assertArrayNotHasKey($tag, Zeitkonto::pruefungen(self::MONAT, $mitPause, [], self::MONAT.'-31', ['tagesist' => false] + $regeln));
+
+        $this->expectException(InvalidArgumentException::class);
+        Pruefregeln::pruefen(['mittag_von' => '14:00', 'mittag_bis' => '12:00'] + Pruefregeln::VORGABE);
+    }
+
+    public function test_settings_page_saves_rules_and_needs_right(): void
+    {
+        $this->signInAs('lehrperson');
+        $this->get('/zeiterfassung/einstellungen')->assertForbidden();
+
+        $this->signInAs('schulleitung');
+        $this->get('/zeiterfassung/einstellungen')->assertOk()
+            ->assertInertia(fn (Assert $page) => $page->component('Zeiterfassung::einstellungen')
+                ->where('regeln.abweichung_prozent', 20)->where('regeln.mittag', false));
+
+        $neu = ['abweichung_prozent' => 10, 'mittag' => true, 'tagesist_max' => '9:30'] + Pruefregeln::VORGABE;
+        $this->put('/zeiterfassung/einstellungen', $neu)->assertSessionHasNoErrors();
+        $regeln = app(Pruefregeln::class)->regeln();
+        $this->assertSame(10, $regeln['abweichung_prozent']);
+        $this->assertTrue($regeln['mittag']);
+        $this->assertSame('09:30', $regeln['tagesist_max']);
+
+        $this->put('/zeiterfassung/einstellungen', ['tagesist_max' => '25:00'] + $neu)->assertSessionHasErrors('regeln');
     }
 }

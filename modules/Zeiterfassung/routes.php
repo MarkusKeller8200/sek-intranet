@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Modules\Zeiterfassung\Http\EinstellungenController;
 use Modules\Zeiterfassung\Http\VisumController;
 use Modules\Zeiterfassung\Http\ZeiterfassungController;
 
@@ -30,4 +31,10 @@ Route::middleware('can:visum-zeiterfassung')->group(function () {
     Route::post('zeiterfassung/visum/{person}/abschliessen', [VisumController::class, 'abschliessen'])->middleware('throttle:10,1')->name('zeiterfassung.abschliessen-stellvertretend');
     Route::post('zeiterfassung/visum/{person}/vergleichen', [VisumController::class, 'vergleichen'])->middleware('throttle:10,1')->name('zeiterfassung.vergleichen');
     Route::post('zeiterfassung/visum/{person}/unterschrift', [VisumController::class, 'unterschrift'])->middleware('throttle:20,1')->name('zeiterfassung.unterschrift');
+});
+
+// Einstellungen der Zeiterfassung (#204): Prüfhinweise
+Route::middleware('can:config-zeiterfassung')->group(function () {
+    Route::get('zeiterfassung/einstellungen', [EinstellungenController::class, 'index'])->name('zeiterfassung.einstellungen');
+    Route::put('zeiterfassung/einstellungen', [EinstellungenController::class, 'update'])->name('zeiterfassung.einstellungen.update');
 });

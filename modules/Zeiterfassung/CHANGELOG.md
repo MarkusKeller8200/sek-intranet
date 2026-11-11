@@ -6,6 +6,10 @@ Versionen des Moduls nach SemVer (module.json → «version»).
 
 ### Neu
 
+- **0.9.0 – Prüfhinweise einstellbar (#204):** Seite «Zeiterfassung – Einstellungen» (Recht `config-zeiterfassung`,
+  Admin und Schulleitung), gespeichert in `zeit_einstellungen` (Datensatz `pruefungen`, Klasse `Pruefregeln`).
+  `Zeitkonto::pruefungen` nimmt die Regeln entgegen; neu «Prüfen – Tagesist über hh:mm» und «Prüfen – keine
+  Mittagsbuchung». Bei ClickTime ist die Karte «Eintrag erfassen» eingeklappt, mit rotem Hinweis.
 - **0.8.1 – Genehmigungsstatus aus ClickTime (#200):** Neues Feld `quelle_status` je Eintrag; aufgeklappte Buchungen
   zeigen den Status bei «Herkunft», die Tageszeile den Status der ClickTime-Buchungen mit Anzahl.
 - **Kompensation nicht angerechnet (#169, 0.8.0):** Wie ClickTime zählt Kompensation im Ist nicht (Tages-Ist 0:00,

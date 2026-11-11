@@ -278,5 +278,81 @@
         "Approval status in ClickTime",
         "Gnehmigungsstatus im ClickTime"
     ],
-    "ohne Status": ["no status", "ohni Status"]
+    "ohne Status": ["no status", "ohni Status"],
+    "Prüfhinweise": ["Check notices", "Prüefhiwiis"],
+    "Gilt für alle Personen, auch für Buchungen aus ClickTime.": [
+        "Applies to everyone, including entries from ClickTime.",
+        "Gilt für alli Persone, au für Buechige us ClickTime."
+    ],
+    "Grenze": ["Limit", "Gränze"],
+    "% Abweichung": ["% deviation", "% Abwiichig"],
+    "Min. Pause": ["min. break", "Min. Pause"],
+    "Zeiterfassung – Einstellungen": [
+        "Time tracking – settings",
+        "Zytuufschriibig – Iistellige"
+    ],
+    "Prüfhinweise je Tag in «Meine Zeiterfassung» und im Visum ein- und ausschalten.": [
+        "Turn daily check notices in “My time tracking” and the approval view on or off.",
+        "Prüefhiwiis pro Tag i «Mini Zytuufschriibig» und im Visum ii- und uusschalte."
+    ],
+    "Grenze Tagesist": ["Daily actual limit", "Gränze Tagesist"],
+    "Abweichung in Prozent": ["Deviation in percent", "Abwiichig in Prozänt"],
+    "Mittag von": ["Lunch from", "Mittag vo"],
+    "Mittag bis": ["Lunch until", "Mittag bis"],
+    "Mindestpause in Minuten": [
+        "Minimum break in minutes",
+        "Mindestpause in Minute"
+    ],
+    "Kommen-Buchung fehlt anzeigen": [
+        "Show missing clock-in",
+        "Fählendi Cho-Buechig aazeige"
+    ],
+    "Eintrag mit Ende, aber ohne Beginn.": [
+        "Entry with an end but no start.",
+        "Iitrag mit Ändi, aber ohni Aafang."
+    ],
+    "Gehen-Buchung fehlt anzeigen": [
+        "Show missing clock-out",
+        "Fählendi Gah-Buechig aazeige"
+    ],
+    "Eintrag mit Beginn, aber ohne Ende.": [
+        "Entry with a start but no end.",
+        "Iitrag mit Aafang, aber ohni Ändi."
+    ],
+    "Keine Buchung vorhanden anzeigen": [
+        "Show days without entries",
+        "Kei Buechig vorhande aazeige"
+    ],
+    "Arbeitstag mit Sollzeit bis heute ohne Eintrag.": [
+        "Working day with target time up to today without an entry.",
+        "Arbetstag mit Sollzyt bis hüt ohni Iitrag."
+    ],
+    "Tagesist über Grenze anzeigen": [
+        "Show daily actual above limit",
+        "Tagesist über Gränze aazeige"
+    ],
+    "Angerechnete Arbeitszeit eines Tages liegt über der Grenze.": [
+        "Credited working time of a day is above the limit.",
+        "Aagrächneti Arbetszyt vomene Tag liit über de Gränze."
+    ],
+    "Tagesdifferenz anzeigen": [
+        "Show daily difference",
+        "Tagesdifferänz aazeige"
+    ],
+    "Tagesist weicht stärker vom Soll ab (ohne Kompensationstage).": [
+        "Daily actual deviates more from the target (excluding compensation days).",
+        "Tagesist wiicht stärcher vom Soll ab (ohni Kompensationstäg)."
+    ],
+    "Keine Mittagsbuchung anzeigen": [
+        "Show missing lunch break",
+        "Kei Mittagsbuechig aazeige"
+    ],
+    "Gearbeitet über das Mittagsfenster ohne Lücke oder Pause von mindestens der Mindestpause.": [
+        "Worked through the lunch window without a gap or break of at least the minimum break.",
+        "Gschaffet über s Mittagsfänschter ohni Lücke oder Pause vo mindestens de Mindestpause."
+    ],
+    "ClickTime aktiv – keine manuellen Einträge möglich": [
+        "ClickTime active – no manual entries possible",
+        "ClickTime aktiv – kei manuelli Iiträg möglich"
+    ]
 }
