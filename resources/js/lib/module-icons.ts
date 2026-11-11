@@ -106,6 +106,7 @@ import {
     Code,
     ShieldAlert,
     IdCard,
+    Wrench,
 } from 'lucide-react';
 
 /**
@@ -218,6 +219,7 @@ const icons: Record<string, LucideIcon> = {
     Code,
     ShieldAlert,
     IdCard,
+    Wrench,
 };
 
 export function moduleIcon(name: string): LucideIcon {

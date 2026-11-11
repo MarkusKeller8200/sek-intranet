@@ -433,5 +433,148 @@
     "Mutationen und Mängelübersicht": [
         "Asset changes and defect overview",
         "Mutatione und Mängelübersicht"
-    ]
+    ],
+    "Hardware": ["Hardware", "Hardware"],
+    "Zimmerausrüstung": ["Classroom equipment", "Zimmerusrüschtig"],
+    "Standardausrüstung der Schulzimmer bestellen oder ersetzen: Beamer, Leinwand, Bildschirm, AV-Receiver, Apple TV, Lautsprecher, Drucker.": [
+        "Order or replace standard classroom equipment: projector, screen, display, AV receiver, Apple TV, speakers, printer.",
+        "Standardusrüschtig vo de Schuelzimmer bstelle oder ersetze: Beamer, Liiwand, Bildschirm, AV-Receiver, Apple TV, Luutsprächer, Drucker."
+    ],
+    "Persönliche Ausrüstung – Lehrpersonen": [
+        "Personal equipment – teachers",
+        "Persönlichi Usrüschtig – Lehrpersone"
+    ],
+    "Persönliche Geräte für Lehrpersonen: MacBook, iPad und Zubehör.": [
+        "Personal devices for teachers: MacBook, iPad and accessories.",
+        "Persönlichi Grät für Lehrpersone: MacBook, iPad und Zuebehör."
+    ],
+    "Persönliche Ausrüstung – Schüler:innen": [
+        "Personal equipment – students",
+        "Persönlichi Usrüschtig – Schüelerinne und Schüeler"
+    ],
+    "Persönliche Geräte für Schüler:innen beim Eintritt in die Sekundarschule: iPad und Zubehör.": [
+        "Personal devices for students starting secondary school: iPad and accessories.",
+        "Persönlichi Grät für Schüelerinne und Schüeler bim Iitritt i d Sekundarschuel: iPad und Zuebehör."
+    ],
+    "Persönliche Ausrüstung – Schulverwaltung": [
+        "Personal equipment – school administration",
+        "Persönlichi Usrüschtig – Schuelverwaltig"
+    ],
+    "Persönliche Geräte für die Schulverwaltung: Notebook, Bildschirm, Docking und Zubehör.": [
+        "Personal devices for the school administration: notebook, monitor, docking station and accessories.",
+        "Persönlichi Grät für d Schuelverwaltig: Notebook, Bildschirm, Docking und Zuebehör."
+    ],
+    "Persönliche Ausrüstung – Hausdienst": [
+        "Personal equipment – caretaking",
+        "Persönlichi Usrüschtig – Huusdienscht"
+    ],
+    "Persönliche Geräte für den Hausdienst: Notebook, iPad und Zubehör.": [
+        "Personal devices for caretaking staff: notebook, iPad and accessories.",
+        "Persönlichi Grät für de Huusdienscht: Notebook, iPad und Zuebehör."
+    ],
+    "Richtpreise aus der letzten Ausschreibung": [
+        "Guide prices from the last tender",
+        "Richtpriis us de letschte Usschriibig"
+    ],
+    "Ersatz bei Verlust oder Defekt": [
+        "Replacement after loss or defect",
+        "Ersatz bi Verluscht oder Defekt"
+    ],
+    "Plattformen": ["Platforms", "Plattforme"],
+    "Plattformen im Schulunterricht": [
+        "Platforms for teaching",
+        "Plattforme im Schuelunterricht"
+    ],
+    "Für den Unterricht freigegebene Anwendungen, Plattformen und digitale Lehrmittel bestellen.": [
+        "Order applications, platforms and digital teaching materials approved for teaching.",
+        "Für de Unterricht freigäbni Aawändige, Plattforme und digitali Lehrmittel bstelle."
+    ],
+    "Katalog mit Bestellnummern": [
+        "Catalogue with order numbers",
+        "Katalog mit Bstellnummere"
+    ],
+    "Kostenstufe je Anwendung": [
+        "Cost level per application",
+        "Choschtestufe pro Aawändig"
+    ],
+    "Bestellung und Lizenzierung durch die Fachstelle ICT": [
+        "Ordering and licensing by the ICT office",
+        "Bstellig und Lizänzierig dur d Fachstell ICT"
+    ],
+    "Plattformen in der Schuladministration": [
+        "Platforms in school administration",
+        "Plattforme i de Schueladministration"
+    ],
+    "Für Schulverwaltung und Schulleitung freigegebene Anwendungen und Plattformen bestellen.": [
+        "Order applications and platforms approved for school administration and school management.",
+        "Für Schuelverwaltig und Schuelleitig freigäbni Aawändige und Plattforme bstelle."
+    ],
+    "Nutzerkreis je Anwendung": [
+        "User group per application",
+        "Nutzerchreis pro Aawändig"
+    ],
+    "Plattformen der Fachstelle ICT": [
+        "Platforms of the ICT office",
+        "Plattforme vo de Fachstell ICT"
+    ],
+    "Anwendungen und Systeme für Betrieb, Support und Verwaltung der ICT-Infrastruktur.": [
+        "Applications and systems for operating, supporting and managing the ICT infrastructure.",
+        "Aawändige und Système für Betrieb, Support und Verwaltig vo de ICT-Infrastruktur."
+    ],
+    "Einführung und Änderung nur durch die Fachstelle ICT": [
+        "Introduction and changes only by the ICT office",
+        "Iifüehrig und Änderig nur dur d Fachstell ICT"
+    ],
+    "Fachanwendungen – Schulbetrieb": [
+        "Specialist applications – school operations",
+        "Fachaawändige – Schuelbetrieb"
+    ],
+    "Im Schulbetrieb eingesetzte Fachanwendungen mit Anleitungen.": [
+        "Specialist applications used in school operations, with guides.",
+        "Im Schuelbetrieb iigsetzti Fachaawändige mit Aaleitige."
+    ],
+    "Anleitungen im ICT-Wiki": [
+        "Guides in the ICT wiki",
+        "Aaleitige im ICT-Wiki"
+    ],
+    "Zugang beantragen": ["Request access", "Zuegang beaatrage"],
+    "Fachanwendungen – Schulverwaltung": [
+        "Specialist applications – school administration",
+        "Fachaawändige – Schuelverwaltig"
+    ],
+    "In der Schulverwaltung eingesetzte Fachanwendungen mit Anleitungen.": [
+        "Specialist applications used in the school administration, with guides.",
+        "I de Schuelverwaltig iigsetzti Fachaawändige mit Aaleitige."
+    ],
+    "Software – Apps": ["Software – apps", "Software – Apps"],
+    "Mobile Apps": ["Mobile apps", "Mobili Apps"],
+    "Apps für iPad und Apple TV beantragen, die über Jamf verteilt werden.": [
+        "Request apps for iPad and Apple TV that are distributed via Jamf.",
+        "Apps für iPad und Apple TV beaatrage, wo über Jamf verteilt wärded."
+    ],
+    "Liste freigegebener Apps nach Kategorie": [
+        "List of approved apps by category",
+        "Lischte vo freigäbne Apps nach Kategorie"
+    ],
+    "Lizenzanzahl und Verteilung": [
+        "Number of licences and distribution",
+        "Aazahl Lizänze und Verteilig"
+    ],
+    "Material – PICTS / TICTS": [
+        "Material – PICTS / TICTS",
+        "Material – PICTS / TICTS"
+    ],
+    "Unterrichtsmaterial der PICTS und von der Fachstelle ICT betreute Geräte je Schulhaus, mit Zuständigkeit und Zugang.": [
+        "Teaching material managed by PICTS and devices supported by the ICT office per school building, with responsibility and access.",
+        "Unterrichtsmaterial vo de PICTS und vo de Fachstell ICT betreuti Grät pro Schuelhuus, mit Zueständigkeit und Zuegang."
+    ],
+    "Materialliste je Schulhaus": [
+        "Material list per school building",
+        "Materiallischte pro Schuelhuus"
+    ],
+    "Zuständigkeit PICTS oder TICTS": [
+        "Responsibility PICTS or TICTS",
+        "Zueständigkeit PICTS oder TICTS"
+    ],
+    "Ausleihe über Booked": ["Borrowing via Booked", "Uslehne über Booked"]
 }

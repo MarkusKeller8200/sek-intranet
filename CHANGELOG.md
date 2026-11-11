@@ -9,6 +9,15 @@ laufend unter **Unveröffentlicht**. Ab 0.32.0 entsteht eine Version nur bei ein
 
 ## [Unveröffentlicht]
 
+### Neu
+
+- **Bestellen: Menüpunkte für die Kataloge (#197):** Das Menü «Bestellen» ist nach den Listen im ICT-Wiki
+  gegliedert: Hardware (Zimmerausrüstung; persönliche Ausrüstung für Lehrpersonen, Schüler:innen, Schulverwaltung,
+  Hausdienst), Plattformen (Schulunterricht, Schuladministration, Fachstelle ICT, Fachanwendungen Schulbetrieb und
+  Schulverwaltung), Software – Apps (Mobile Apps) sowie Material – PICTS / TICTS. Vorerst Platzhalterseiten; die
+  bisherigen Platzhalter «Persönliche Ausrüstung (HW)», «Schulplattformen» und «Fachanwendungen» gehen darin auf.
+  Die Listen selbst folgen nach Prüfung (#198).
+
 ## [0.39.0] – 2026-11-10
 
 ### Für Mitarbeitende

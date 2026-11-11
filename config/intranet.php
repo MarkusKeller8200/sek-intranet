@@ -726,20 +726,99 @@ return [
             'color' => 'orange',
             'icon' => 'ShoppingCart',
             'can' => 'order',
+            // Kataloge aus dem ICT-Wiki (Confluence), #197; Inhalte der Listen folgen nach Prüfung (#198)
             'items' => [
-                'persoenliche-ausruestung' => [
-                    'title' => 'Persönliche Ausrüstung (HW)',
+                'hardware' => [
+                    'title' => 'Hardware',
                     'icon' => 'Laptop',
-                    'description' => 'Persönliche Geräte für Mitarbeitende bestellen: Notebook, iPad, Zubehör.',
-                    'features' => ['Katalog mit Standardgeräten', 'Bestellung mit Begründung', 'Freigabe durch Schulleitung', 'Status bis zur Ausgabe'],
-                    'plugin' => 'ida',
+                    'items' => [
+                        'zimmer-ausruestung' => [
+                            'title' => 'Zimmerausrüstung',
+                            'icon' => 'Projector',
+                            'description' => 'Standardausrüstung der Schulzimmer bestellen oder ersetzen: Beamer, Leinwand, Bildschirm, AV-Receiver, Apple TV, Lautsprecher, Drucker.',
+                            'features' => ['Katalog mit Standardgeräten', 'Auswahl nach Zimmer', 'Bestehende Ausrüstung aus dem Inventar', 'Defekt melden und Ersatz bestellen'],
+                            'plugin' => 'inventory360',
+                        ],
+                        'ausruestung-lehrpersonen' => [
+                            'title' => 'Persönliche Ausrüstung – Lehrpersonen',
+                            'icon' => 'GraduationCap',
+                            'description' => 'Persönliche Geräte für Lehrpersonen: MacBook, iPad und Zubehör.',
+                            'features' => ['Katalog mit Standardgeräten', 'Richtpreise aus der letzten Ausschreibung', 'Bestellung mit Begründung', 'Status bis zur Ausgabe'],
+                        ],
+                        'ausruestung-schuelerinnen' => [
+                            'title' => 'Persönliche Ausrüstung – Schüler:innen',
+                            'icon' => 'Tablet',
+                            'description' => 'Persönliche Geräte für Schüler:innen beim Eintritt in die Sekundarschule: iPad und Zubehör.',
+                            'features' => ['Katalog mit Standardgeräten', 'Richtpreise aus der letzten Ausschreibung', 'Ersatz bei Verlust oder Defekt'],
+                        ],
+                        'ausruestung-schulverwaltung' => [
+                            'title' => 'Persönliche Ausrüstung – Schulverwaltung',
+                            'icon' => 'Landmark',
+                            'description' => 'Persönliche Geräte für die Schulverwaltung: Notebook, Bildschirm, Docking und Zubehör.',
+                            'features' => ['Katalog mit Standardgeräten', 'Richtpreise aus der letzten Ausschreibung', 'Bestellung mit Begründung', 'Status bis zur Ausgabe'],
+                        ],
+                        'ausruestung-hausdienst' => [
+                            'title' => 'Persönliche Ausrüstung – Hausdienst',
+                            'icon' => 'Wrench',
+                            'description' => 'Persönliche Geräte für den Hausdienst: Notebook, iPad und Zubehör.',
+                            'features' => ['Katalog mit Standardgeräten', 'Richtpreise aus der letzten Ausschreibung', 'Bestellung mit Begründung', 'Status bis zur Ausgabe'],
+                        ],
+                    ],
                 ],
-                'zimmer-ausruestung' => [
-                    'title' => 'Zimmerausrüstung (HW)',
-                    'icon' => 'Projector',
-                    'description' => 'Ausrüstung für Schulzimmer bestellen oder ersetzen: Beamer, Dokumentenkamera, Lautsprecher.',
-                    'features' => ['Auswahl nach Zimmer', 'Bestehende Ausrüstung aus dem Inventar', 'Defekt melden und Ersatz bestellen'],
-                    'plugin' => 'inventory360',
+                'plattformen' => [
+                    'title' => 'Plattformen',
+                    'icon' => 'Globe',
+                    'items' => [
+                        'plattformen-unterricht' => [
+                            'title' => 'Plattformen im Schulunterricht',
+                            'icon' => 'School',
+                            'description' => 'Für den Unterricht freigegebene Anwendungen, Plattformen und digitale Lehrmittel bestellen.',
+                            'features' => ['Katalog mit Bestellnummern', 'Kostenstufe je Anwendung', 'Bestellung und Lizenzierung durch die Fachstelle ICT'],
+                        ],
+                        'plattformen-administration' => [
+                            'title' => 'Plattformen in der Schuladministration',
+                            'icon' => 'Building2',
+                            'description' => 'Für Schulverwaltung und Schulleitung freigegebene Anwendungen und Plattformen bestellen.',
+                            'features' => ['Katalog mit Bestellnummern', 'Nutzerkreis je Anwendung', 'Bestellung und Lizenzierung durch die Fachstelle ICT'],
+                        ],
+                        'plattformen-ict' => [
+                            'title' => 'Plattformen der Fachstelle ICT',
+                            'icon' => 'ShieldCheck',
+                            'description' => 'Anwendungen und Systeme für Betrieb, Support und Verwaltung der ICT-Infrastruktur.',
+                            'features' => ['Katalog mit Bestellnummern', 'Einführung und Änderung nur durch die Fachstelle ICT'],
+                        ],
+                        'fachanwendungen-schulbetrieb' => [
+                            'title' => 'Fachanwendungen – Schulbetrieb',
+                            'icon' => 'AppWindow',
+                            'description' => 'Im Schulbetrieb eingesetzte Fachanwendungen mit Anleitungen.',
+                            'features' => ['Liste freigegebener Anwendungen', 'Anleitungen im ICT-Wiki', 'Zugang beantragen'],
+                        ],
+                        'fachanwendungen-schulverwaltung' => [
+                            'title' => 'Fachanwendungen – Schulverwaltung',
+                            'icon' => 'FileStack',
+                            'description' => 'In der Schulverwaltung eingesetzte Fachanwendungen mit Anleitungen.',
+                            'features' => ['Liste freigegebener Anwendungen', 'Anleitungen im ICT-Wiki', 'Zugang beantragen'],
+                        ],
+                    ],
+                ],
+                'software-apps' => [
+                    'title' => 'Software – Apps',
+                    'icon' => 'Store',
+                    'items' => [
+                        'mobile-apps' => [
+                            'title' => 'Mobile Apps',
+                            'icon' => 'MonitorSmartphone',
+                            'description' => 'Apps für iPad und Apple TV beantragen, die über Jamf verteilt werden.',
+                            'features' => ['Liste freigegebener Apps nach Kategorie', 'Lizenzanzahl und Verteilung', 'Verteilung auf Geräte über Jamf'],
+                            'plugin' => 'jamf',
+                        ],
+                    ],
+                ],
+                'material-picts-ticts' => [
+                    'title' => 'Material – PICTS / TICTS',
+                    'icon' => 'Boxes',
+                    'description' => 'Unterrichtsmaterial der PICTS und von der Fachstelle ICT betreute Geräte je Schulhaus, mit Zuständigkeit und Zugang.',
+                    'features' => ['Materialliste je Schulhaus', 'Zuständigkeit PICTS oder TICTS', 'Ausleihe über Booked'],
                 ],
                 'lehrmittel' => [
                     'title' => 'Lehrmittel',
@@ -747,20 +826,6 @@ return [
                     'description' => 'Lehrmittel für Klassen bestellen, gedruckt und digital.',
                     'features' => ['Bestellung je Klasse und Fach', 'Digitale Lizenzen für Schülerinnen und Schüler', 'Sammelbestellung zum Schuljahresbeginn'],
                     'plugin' => 'ida',
-                ],
-                'schulplattformen' => [
-                    'title' => 'Schulplattformen',
-                    'icon' => 'Globe',
-                    'description' => 'Zugänge zu Lernplattformen für Klassen beantragen.',
-                    'features' => ['Plattformen mit Datenschutz-Freigabe', 'Zugänge je Klasse', 'Automatische Benutzeranlage über IDA'],
-                    'plugin' => 'ida',
-                ],
-                'fachanwendungen' => [
-                    'title' => 'Fachanwendungen',
-                    'icon' => 'AppWindow',
-                    'description' => 'Software für einzelne Fächer oder Funktionen beantragen.',
-                    'features' => ['Liste freigegebener Anwendungen', 'Lizenzanzahl und Laufzeit', 'Verteilung auf Geräte über Jamf'],
-                    'plugin' => 'jamf',
                 ],
                 'antrag-hw-sw' => [
                     'title' => 'Antrag neue HW/SW',
