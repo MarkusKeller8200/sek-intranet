@@ -1,8 +1,5 @@
 {
-    "Zeiterfassung": [
-        "Time tracking",
-        "Ziiterfassig"
-    ],
+    "Zeiterfassung": ["Time tracking", "Ziiterfassig"],
     "Zeiterfassung – Visum": [
         "Time tracking – approval",
         "Ziiterfassig – Visum"
@@ -11,58 +8,22 @@
         "There are no entries for this month yet.",
         "För dä Monet gits no kei Iiträg."
     ],
-    "Stunden": [
-        "Hours",
-        "Stunde"
-    ],
-    "Projekt / Notiz": [
-        "Project / note",
-        "Projekt / Notiz"
-    ],
-    "Arbeit": [
-        "Work",
-        "Arbet"
-    ],
-    "Abwesenheit": [
-        "Absence",
-        "Abwäseheit"
-    ],
-    "Total": [
-        "Total",
-        "Total"
-    ],
-    "Eintrag löschen": [
-        "Delete entry",
-        "Iitrag lösche"
-    ],
-    "Vorheriger Monat": [
-        "Previous month",
-        "Vorige Monet"
-    ],
-    "Nächster Monat": [
-        "Next month",
-        "Nächscht Monet"
-    ],
-    "Monatsblatt (PDF)": [
-        "Monthly sheet (PDF)",
-        "Monetsblatt (PDF)"
-    ],
-    "Visieren": [
-        "Approve",
-        "Visiere"
-    ],
+    "Stunden": ["Hours", "Stunde"],
+    "Projekt / Notiz": ["Project / note", "Projekt / Notiz"],
+    "Arbeit": ["Work", "Arbet"],
+    "Abwesenheit": ["Absence", "Abwäseheit"],
+    "Total": ["Total", "Total"],
+    "Eintrag löschen": ["Delete entry", "Iitrag lösche"],
+    "Vorheriger Monat": ["Previous month", "Vorige Monet"],
+    "Nächster Monat": ["Next month", "Nächscht Monet"],
+    "Monatsblatt (PDF)": ["Monthly sheet (PDF)", "Monetsblatt (PDF)"],
+    "Visieren": ["Approve", "Visiere"],
     "Zurückgegeben mit Bemerkung": [
         "Returned with comment",
         "Zruggäh mit Bemerkig"
     ],
-    "Zurück an die Person": [
-        "Back to the person",
-        "Zrugg a d Person"
-    ],
-    "Zurückgeben": [
-        "Return",
-        "Zruggäh"
-    ],
+    "Zurück an die Person": ["Back to the person", "Zrugg a d Person"],
+    "Zurückgeben": ["Return", "Zruggäh"],
     "Monatsblatt für das Visum": [
         "Monthly sheet for approval",
         "Monetsblatt fürs Visum"
@@ -71,14 +32,8 @@
         "What needs to be corrected? *",
         "Was mues korrigiert werde? *"
     ],
-    "Visum": [
-        "Approval",
-        "Visum"
-    ],
-    "Monat einreichen": [
-        "Submit month",
-        "Monet iiräiche"
-    ],
+    "Visum": ["Approval", "Visum"],
+    "Monat einreichen": ["Submit month", "Monet iiräiche"],
     "Zurück von der Schulleitung": [
         "Returned by the school management",
         "Zrugg vo de Schuelleitig"
@@ -87,230 +42,89 @@
         "Entries can no longer be changed. For corrections, the school management returns the month.",
         "Iiträg chönd nüme gänderet werde. För Korrekture git d Schuelleitig de Monet zrugg."
     ],
-    "Eintrag erfassen": [
-        "Add entry",
-        "Iitrag erfasse"
-    ],
+    "Eintrag erfassen": ["Add entry", "Iitrag erfasse"],
     "Beginn und Ende (mit Pause) oder direkt die Stunden angeben.": [
         "Enter start and end (with break) or the hours directly.",
         "Aafang und Änd (mit Pause) oder diräkt d Stunde aagäh."
     ],
-    "Datum *": [
-        "Date *",
-        "Datum *"
-    ],
-    "Art *": [
-        "Type *",
-        "Art *"
-    ],
-    "Kategorie *": [
-        "Category *",
-        "Kategorie *"
-    ],
-    "Projekt / Einsatz": [
-        "Project / assignment",
-        "Projekt / Iisatz"
-    ],
-    "Pause (Minuten)": [
-        "Break (minutes)",
-        "Pause (Minute)"
-    ],
-    "oder Stunden": [
-        "or hours",
-        "oder Stunde"
-    ],
-    "Notiz": [
-        "Note",
-        "Notiz"
-    ],
-    "Monat visiert": [
-        "Month approved",
-        "Monet visiert"
-    ],
-    "Monat eingereicht": [
-        "Month submitted",
-        "Monet iigräicht"
-    ],
+    "Datum *": ["Date *", "Datum *"],
+    "Art *": ["Type *", "Art *"],
+    "Kategorie *": ["Category *", "Kategorie *"],
+    "Projekt / Einsatz": ["Project / assignment", "Projekt / Iisatz"],
+    "Pause (Minuten)": ["Break (minutes)", "Pause (Minute)"],
+    "oder Stunden": ["or hours", "oder Stunde"],
+    "Notiz": ["Note", "Notiz"],
+    "Monat visiert": ["Month approved", "Monet visiert"],
+    "Monat eingereicht": ["Month submitted", "Monet iigräicht"],
     "Export Lohnbuchhaltung (CSV)": [
         "Payroll export (CSV)",
         "Export Lohnbuechhaltig (CSV)"
     ],
-    "Alle Einträge (CSV)": [
-        "All entries (CSV)",
-        "Alli Iiträg (CSV)"
-    ],
+    "Alle Einträge (CSV)": ["All entries (CSV)", "Alli Iiträg (CSV)"],
     "In diesem Monat hat noch niemand Zeit erfasst.": [
         "Nobody has recorded time this month yet.",
         "I dem Monet hät no niemer Ziit erfasst."
     ],
-    "Einträge": [
-        "Entries",
-        "Iiträg"
-    ],
+    "Einträge": ["Entries", "Iiträg"],
     "Eingereichte Monate prüfen und visieren. Der Export für die Lohnbuchhaltung enthält standardmässig nur visierte Monate.": [
         "Check and approve submitted months. By default, the payroll export only contains approved months.",
         "Iigräichti Monet prüefe und visiere. De Export för d Lohnbuechhaltig hät standardmässig nur visierti Monet."
     ],
-    "{n} zu visieren": [
-        "{n} to approve",
-        "{n} z visiere"
-    ],
-    "Speichern": [
-        "Save",
-        "Speichere"
-    ],
-    "Beginn": [
-        "Start",
-        "Aafang"
-    ],
-    "Ende": [
-        "End",
-        "Änd"
-    ],
-    "Datum": [
-        "Date",
-        "Datum"
-    ],
-    "Tag": [
-        "Day",
-        "Tag"
-    ],
+    "{n} zu visieren": ["{n} to approve", "{n} z visiere"],
+    "Speichern": ["Save", "Speichere"],
+    "Beginn": ["Start", "Aafang"],
+    "Ende": ["End", "Änd"],
+    "Datum": ["Date", "Datum"],
+    "Tag": ["Day", "Tag"],
     "Ihre Zeiten werden in ClickTime erfasst. Eigene Einträge sind hier nicht möglich – mit «Aus ClickTime übernehmen» holen Sie den Monat.": [
         "Your times are recorded in ClickTime. Own entries are not possible here – use “Import from ClickTime” to get the month.",
         "Ihri Ziite wärded im ClickTime erfasst. Eigeti Iiträg sind da nöd möglich – mit «Us ClickTime übernäh» holed Sie de Monet."
     ],
-    "Soll": [
-        "Target",
-        "Soll"
-    ],
-    "Ist": [
-        "Actual",
-        "Ist"
-    ],
-    "Delta": [
-        "Difference",
-        "Differänz"
-    ],
-    "Notizen": [
-        "Notes",
-        "Notize"
-    ],
+    "Soll": ["Target", "Soll"],
+    "Ist": ["Actual", "Ist"],
+    "Delta": ["Difference", "Differänz"],
+    "Notizen": ["Notes", "Notize"],
     "Delta (Ist − Soll)": [
         "Difference (actual − target)",
         "Differänz (Ist − Soll)"
     ],
-    "Buchungen anzeigen": [
-        "Show bookings",
-        "Buechige aazeige"
-    ],
-    "Buchungen ausblenden": [
-        "Hide bookings",
-        "Buechige uusblände"
-    ],
-    "Alle aufklappen": [
-        "Expand all",
-        "Alli uufklappe"
-    ],
-    "Alle zuklappen": [
-        "Collapse all",
-        "Alli zueklappe"
-    ],
+    "Buchungen anzeigen": ["Show bookings", "Buechige aazeige"],
+    "Buchungen ausblenden": ["Hide bookings", "Buechige uusblände"],
+    "Alle aufklappen": ["Expand all", "Alli uufklappe"],
+    "Alle zuklappen": ["Collapse all", "Alli zueklappe"],
     "Pro Tag das Total; aufklappen zeigt die einzelnen Buchungen.": [
         "Total per day; expand to see the individual bookings.",
         "Pro Tag s Total; uufklappe zeigt di einzelne Buechige."
     ],
-    "Kategorie": [
-        "Category",
-        "Kategorie"
-    ],
-    "Zeit": [
-        "Time",
-        "Ziit"
-    ],
-    "Person": [
-        "Person",
-        "Person"
-    ],
-    "Status": [
-        "Status",
-        "Status"
-    ],
-    "Unterricht": [
-        "Teaching",
-        "Unterricht"
-    ],
-    "Schülerinnen und Schüler": [
-        "Students",
-        "Schüelerinne und Schüeler"
-    ],
-    "Schule": [
-        "School",
-        "Schuel"
-    ],
-    "Zusammenarbeit": [
-        "Collaboration",
-        "Zämearbet"
-    ],
-    "Weiterbildung": [
-        "Further training",
-        "Wiiterbildig"
-    ],
-    "Verwaltung": [
-        "Administration",
-        "Verwaltig"
-    ],
-    "Hauswartung": [
-        "Caretaking",
-        "Huuswartig"
-    ],
-    "ICT-Support": [
-        "ICT support",
-        "ICT-Support"
-    ],
-    "Andere Tätigkeit": [
-        "Other activity",
-        "Anderi Tätigkeit"
-    ],
-    "Ferien": [
-        "Holidays",
-        "Ferie"
-    ],
-    "Krankheit / Unfall": [
-        "Illness / accident",
-        "Chrankheit / Unfall"
-    ],
+    "Kategorie": ["Category", "Kategorie"],
+    "Zeit": ["Time", "Ziit"],
+    "Person": ["Person", "Person"],
+    "Status": ["Status", "Status"],
+    "Unterricht": ["Teaching", "Unterricht"],
+    "Schülerinnen und Schüler": ["Students", "Schüelerinne und Schüeler"],
+    "Schule": ["School", "Schuel"],
+    "Zusammenarbeit": ["Collaboration", "Zämearbet"],
+    "Weiterbildung": ["Further training", "Wiiterbildig"],
+    "Verwaltung": ["Administration", "Verwaltig"],
+    "Hauswartung": ["Caretaking", "Huuswartig"],
+    "ICT-Support": ["ICT support", "ICT-Support"],
+    "Andere Tätigkeit": ["Other activity", "Anderi Tätigkeit"],
+    "Ferien": ["Holidays", "Ferie"],
+    "Krankheit / Unfall": ["Illness / accident", "Chrankheit / Unfall"],
     "Weiterbildung (abwesend)": [
         "Further training (absent)",
         "Wiiterbildig (abwäsend)"
     ],
-    "Kompensation": [
-        "Compensation",
-        "Kompensation"
-    ],
+    "Kompensation": ["Compensation", "Kompensation"],
     "Militär / Zivildienst": [
         "Military / civilian service",
         "Militär / Zivildienscht"
     ],
-    "Andere Abwesenheit": [
-        "Other absence",
-        "Anderi Abwäseheit"
-    ],
-    "Offen": [
-        "Open",
-        "Offe"
-    ],
-    "Eingereicht": [
-        "Submitted",
-        "Iigräicht"
-    ],
-    "Visiert": [
-        "Approved",
-        "Visiert"
-    ],
-    "Zurück an Person": [
-        "Returned to person",
-        "Zrugg a Person"
-    ],
+    "Andere Abwesenheit": ["Other absence", "Anderi Abwäseheit"],
+    "Offen": ["Open", "Offe"],
+    "Eingereicht": ["Submitted", "Iigräicht"],
+    "Visiert": ["Approved", "Visiert"],
+    "Zurück an Person": ["Returned to person", "Zrugg a Person"],
     "Elektronische Unterschrift": [
         "Electronic signature",
         "Elektronischi Unterschrift"
@@ -319,10 +133,7 @@
         "The approved monthly report is sent as a PDF to the person and to the school management. The signed PDF is then stored here automatically.",
         "De visierti Monetsrapport gaht als PDF a d Person und a d Schuelleitig. S unterschriibnige PDF wird nachher automatisch da abgleit."
     ],
-    "Unterschriebenes PDF": [
-        "Signed PDF",
-        "Unterschriibnigs PDF"
-    ],
+    "Unterschriebenes PDF": ["Signed PDF", "Unterschriibnigs PDF"],
     "Kein Anbieter eingerichtet. Die Administration schaltet unter Prototyp → Plugins das Plugin DeepSign ein.": [
         "No provider configured. The administration enables the DeepSign plugin under Prototype → Plugins.",
         "Kein Aabieter iigrichtet. D Administration schaltet under Prototyp → Plugins s Plugin DeepSign ii."
@@ -335,10 +146,7 @@
         "First the school management, then the person",
         "Zerscht d Schuelleitig, dänn d Person"
     ],
-    "Gleichzeitig": [
-        "At the same time",
-        "Glichziitig"
-    ],
+    "Gleichzeitig": ["At the same time", "Glichziitig"],
     "Demo-Modus: Es geht nichts an DeepSign. Die Unterschriften lassen sich unter Verwaltung → Unterschriften simulieren.": [
         "Demo mode: nothing is sent to DeepSign. Signatures can be simulated under Administration → Signatures.",
         "Demo-Modus: Es gaht nüt a DeepSign. D Unterschrifte chasch under Verwaltig → Unterschrifte simuliere."
@@ -355,22 +163,13 @@
         "E.g. HR: sees the document, does not sign.",
         "Z. B. Personalabteilig: gseht s Dokumänt, unterschriibt nöd."
     ],
-    "Zur Unterschrift": [
-        "For signature",
-        "Zur Unterschrift"
-    ],
-    "Teilweise unterschrieben": [
-        "Partly signed",
-        "Teilwiis unterschriibe"
-    ],
+    "Zur Unterschrift": ["For signature", "Zur Unterschrift"],
+    "Teilweise unterschrieben": ["Partly signed", "Teilwiis unterschriibe"],
     "Elektronische Unterschrift:": [
         "Electronic signature:",
         "Elektronischi Unterschrift:"
     ],
-    "Unterschrift (Status)": [
-        "Signature (status)",
-        "Unterschrift (Status)"
-    ],
+    "Unterschrift (Status)": ["Signature (status)", "Unterschrift (Status)"],
     "Unterschrift: Auftrag (signature_requests)": [
         "Signature: request (signature_requests)",
         "Unterschrift: Uftrag (signature_requests)"
@@ -379,38 +178,14 @@
         "Signed PDF (module storage)",
         "Unterschriibnigs PDF (Ablag vom Modul)"
     ],
-    "Abgelehnt": [
-        "Rejected",
-        "Abglehnt"
-    ],
-    "Zurückgezogen": [
-        "Withdrawn",
-        "Zruggzoge"
-    ],
-    "Abgelaufen": [
-        "Expired",
-        "Abgloffe"
-    ],
-    "Unterschrieben": [
-        "Signed",
-        "Unterschriibe"
-    ],
-    "Buchungsart": [
-        "Booking type",
-        "Buechigsart"
-    ],
-    "Buchungsart *": [
-        "Booking type *",
-        "Buechigsart *"
-    ],
-    "Buchungsarten": [
-        "Booking types",
-        "Buechigsarte"
-    ],
-    "Buchungsart hinzufügen": [
-        "Add booking type",
-        "Buechigsart dezuefüege"
-    ],
+    "Abgelehnt": ["Rejected", "Abglehnt"],
+    "Zurückgezogen": ["Withdrawn", "Zruggzoge"],
+    "Abgelaufen": ["Expired", "Abgloffe"],
+    "Unterschrieben": ["Signed", "Unterschriibe"],
+    "Buchungsart": ["Booking type", "Buechigsart"],
+    "Buchungsart *": ["Booking type *", "Buechigsart *"],
+    "Buchungsarten": ["Booking types", "Buechigsarte"],
+    "Buchungsart hinzufügen": ["Add booking type", "Buechigsart dezuefüege"],
     "Arten für die Zeiterfassung, z. B. Arbeitszeit, Homeoffice, Ferien, Krankheit. Die Zuordnung zu ClickTime steht im Plugin ClickTime.": [
         "Types for time tracking, e.g. working time, home office, holidays, illness. The mapping to ClickTime is in the ClickTime plugin.",
         "Arte für d Ziiterfassig, z. B. Arbetsziit, Homeoffice, Ferie, Chrankheit. D Zuordnig zu ClickTime staht im Plugin ClickTime."
@@ -423,10 +198,7 @@
         "Import from ClickTime",
         "Us ClickTime übernäh"
     ],
-    "Abgelegtes Monatsblatt": [
-        "Filed monthly sheet",
-        "Abgleits Monetsblatt"
-    ],
+    "Abgelegtes Monatsblatt": ["Filed monthly sheet", "Abgleits Monetsblatt"],
     "Mit ClickTime vergleichen": [
         "Compare with ClickTime",
         "Mit ClickTime verglyche"
@@ -467,10 +239,7 @@
         "Month closed in ClickTime?",
         "Monet i ClickTime abgschlosse?"
     ],
-    "Alles eingetragen?": [
-        "Everything entered?",
-        "Alles iitreit?"
-    ],
+    "Alles eingetragen?": ["Everything entered?", "Alles iitreit?"],
     "Bitte zuerst den Monat in ClickTime abschliessen. Danach übernimmt das Intranet die Buchungen ein letztes Mal, sperrt den Monat und legt das Monatsblatt ab.": [
         "Please close the month in ClickTime first. The intranet then imports the bookings one last time, locks the month and files the monthly sheet.",
         "Bitte zerscht de Monet i ClickTime abschlüsse. Dänn übernimmt s Intranet d Buechige es letschts Mal, sperrt de Monet und leit s Monetsblatt ab."
@@ -483,14 +252,8 @@
         "Yes, closed in ClickTime",
         "Ja, i ClickTime abgschlosse"
     ],
-    "Ja, alles eingetragen": [
-        "Yes, everything entered",
-        "Ja, alles iitreit"
-    ],
-    "Ich ergänze noch": [
-        "I'll add more",
-        "Ich ergänz no"
-    ],
+    "Ja, alles eingetragen": ["Yes, everything entered", "Ja, alles iitreit"],
+    "Ich ergänze noch": ["I'll add more", "Ich ergänz no"],
     "Monat in ClickTime abgeschlossen": [
         "Month closed in ClickTime",
         "Monet i ClickTime abgschlosse"
@@ -499,14 +262,8 @@
         "Review and approve submitted months. People with ClickTime close the month in ClickTime. By default the payroll export contains only approved and closed months.",
         "Iigreichti Mönet prüefe und visiere. Persone mit ClickTime schlüssed de Monet i ClickTime ab. De Export für d Lohnbuechhaltig hät standardmässig nur visierti und abgschlossni Mönet."
     ],
-    "erinnert": [
-        "reminded",
-        "erinneret"
-    ],
-    "Prüfen – keine Buchung": [
-        "Check – no booking",
-        "Prüefe – kei Buechig"
-    ],
+    "erinnert": ["reminded", "erinneret"],
+    "Prüfen – keine Buchung": ["Check – no booking", "Prüefe – kei Buechig"],
     "Prüfen – Austrittsbuchung fehlt": [
         "Check – clock-out missing",
         "Prüefe – Uustrittsbuechig fehlt"
@@ -515,42 +272,21 @@
         "Check – clock-in missing",
         "Prüefe – Iitrittsbuechig fehlt"
     ],
-    "Arbeitszeit prüfen": [
-        "Check working time",
-        "Arbeitsziit prüefe"
-    ],
-    "Monatsrapport (PDF)": [
-        "Monthly report (PDF)",
-        "Monetsrapport (PDF)"
-    ],
+    "Arbeitszeit prüfen": ["Check working time", "Arbeitsziit prüefe"],
+    "Monatsrapport (PDF)": ["Monthly report (PDF)", "Monetsrapport (PDF)"],
     "Genehmigungsstatus in ClickTime": [
         "Approval status in ClickTime",
         "Gnehmigungsstatus im ClickTime"
     ],
-    "ohne Status": [
-        "no status",
-        "ohni Status"
-    ],
-    "Prüfhinweise": [
-        "Check notices",
-        "Prüefhiwiis"
-    ],
+    "ohne Status": ["no status", "ohni Status"],
+    "Prüfhinweise": ["Check notices", "Prüefhiwiis"],
     "Gilt für alle Personen, auch für Buchungen aus ClickTime.": [
         "Applies to everyone, including entries from ClickTime.",
         "Gilt für alli Persone, au für Buechige us ClickTime."
     ],
-    "Grenze": [
-        "Limit",
-        "Gränze"
-    ],
-    "% Abweichung": [
-        "% deviation",
-        "% Abwiichig"
-    ],
-    "Min. Pause": [
-        "min. break",
-        "Min. Pause"
-    ],
+    "Grenze": ["Limit", "Gränze"],
+    "% Abweichung": ["% deviation", "% Abwiichig"],
+    "Min. Pause": ["min. break", "Min. Pause"],
     "Zeiterfassung – Einstellungen": [
         "Time tracking – settings",
         "Zytuufschriibig – Iistellige"
@@ -559,22 +295,10 @@
         "Turn daily check notices in “My time tracking” and the approval view on or off.",
         "Prüefhiwiis pro Tag i «Mini Zytuufschriibig» und im Visum ii- und uusschalte."
     ],
-    "Grenze Tagesist": [
-        "Daily actual limit",
-        "Gränze Tagesist"
-    ],
-    "Abweichung in Prozent": [
-        "Deviation in percent",
-        "Abwiichig in Prozänt"
-    ],
-    "Mittag von": [
-        "Lunch from",
-        "Mittag vo"
-    ],
-    "Mittag bis": [
-        "Lunch until",
-        "Mittag bis"
-    ],
+    "Grenze Tagesist": ["Daily actual limit", "Gränze Tagesist"],
+    "Abweichung in Prozent": ["Deviation in percent", "Abwiichig in Prozänt"],
+    "Mittag von": ["Lunch from", "Mittag vo"],
+    "Mittag bis": ["Lunch until", "Mittag bis"],
     "Mindestpause in Minuten": [
         "Minimum break in minutes",
         "Mindestpause in Minute"
@@ -631,20 +355,11 @@
         "ClickTime active – no manual entries possible",
         "ClickTime aktiv – kei manuelli Iiträg möglich"
     ],
-    "Monat wieder öffnen": [
-        "Reopen month",
-        "Monet wieder ufmache"
-    ],
+    "Monat wieder öffnen": ["Reopen month", "Monet wieder ufmache"],
     "Der Monat wird wieder offen: Die Person kann die Zeiten erneut übernehmen und den Monat abschliessen. Sie wird benachrichtigt und sieht die Begründung.": [
         "The month is reopened: the person can import the times again and close the month. They are notified and see the reason.",
         "De Monet isch wieder offe: D Person cha d Zyte nomal übernäh und de Monet abschliesse. Si wird benachrichtigt und gseht d Begründig."
     ],
-    "Begründung *": [
-        "Reason *",
-        "Begründig *"
-    ],
-    "Monat wieder geöffnet": [
-        "Month reopened",
-        "Monet wieder ufgmacht"
-    ]
+    "Begründung *": ["Reason *", "Begründig *"],
+    "Monat wieder geöffnet": ["Month reopened", "Monet wieder ufgmacht"]
 }
