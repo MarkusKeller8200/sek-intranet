@@ -4,6 +4,7 @@ import {
     CheckCircle2,
     Download,
     GitCompare,
+    LockOpen,
     Printer,
     Undo2,
 } from 'lucide-react';
@@ -46,6 +47,8 @@ type Props = {
     /** ClickTime führt die Zeiten der Person (#164) */
     clicktime?: boolean;
     abgeschlossenVon?: string | null;
+    /** Recht oeffnen-zeiterfassung (#206) */
+    darfOeffnen?: boolean;
     /** Prüfhinweise je Tag (#167) */
     pruefungen?: Record<string, Pruefung[]>;
     /** Arbeitstage ohne Eintrag (#33) */
@@ -56,6 +59,15 @@ type Props = {
 export default function ZeiterfassungPerson(props: Props) {
     const { monat, person, eintraege, status, summen, kategorien } = props;
     const form = useForm({ monat, bemerkung: '' });
+
+    const oeffnenForm = useForm({ monat, grund: '' });
+    const oeffnen = (e: FormEvent) => {
+        e.preventDefault();
+        oeffnenForm.post(`/zeiterfassung/visum/${person.id}/oeffnen`, {
+            preserveScroll: true,
+            onSuccess: () => oeffnenForm.reset('grund'),
+        });
+    };
 
     const zurueck = (e: FormEvent) => {
         e.preventDefault();
@@ -219,25 +231,31 @@ export default function ZeiterfassungPerson(props: Props) {
                         />
                     </CardContent>
                 </Card>
-                {istGesperrt(status.status) && (
+                {status.status === 'abgeschlossen' && props.darfOeffnen && (
                     <Card>
                         <CardHeader>
-                            <CardTitle>Zurück an die Person</CardTitle>
+                            <CardTitle>Monat wieder öffnen</CardTitle>
                         </CardHeader>
                         <CardContent>
-                            <form onSubmit={zurueck} className="grid gap-3">
+                            <form onSubmit={oeffnen} className="grid gap-3">
+                                <p className="text-sm text-muted-foreground">
+                                    Der Monat wird wieder offen: Die Person kann
+                                    die Zeiten erneut übernehmen und den Monat
+                                    abschliessen. Sie wird benachrichtigt und
+                                    sieht die Begründung.
+                                </p>
                                 <FormField
-                                    id="z-bemerkung"
-                                    label="Was soll korrigiert werden? *"
-                                    error={form.errors.bemerkung}
+                                    id="z-grund"
+                                    label="Begründung *"
+                                    error={oeffnenForm.errors.grund}
                                 >
                                     <Textarea
-                                        id="z-bemerkung"
+                                        id="z-grund"
                                         rows={2}
-                                        value={form.data.bemerkung}
+                                        value={oeffnenForm.data.grund}
                                         onChange={(e) =>
-                                            form.setData(
-                                                'bemerkung',
+                                            oeffnenForm.setData(
+                                                'grund',
                                                 e.target.value,
                                             )
                                         }
@@ -247,15 +265,53 @@ export default function ZeiterfassungPerson(props: Props) {
                                     <Button
                                         type="submit"
                                         variant="outline"
-                                        disabled={form.processing}
+                                        disabled={oeffnenForm.processing}
                                     >
-                                        <Undo2 /> Zurückgeben
+                                        <LockOpen /> Monat wieder öffnen
                                     </Button>
                                 </div>
                             </form>
                         </CardContent>
                     </Card>
                 )}
+                {istGesperrt(status.status) &&
+                    status.status !== 'abgeschlossen' && (
+                        <Card>
+                            <CardHeader>
+                                <CardTitle>Zurück an die Person</CardTitle>
+                            </CardHeader>
+                            <CardContent>
+                                <form onSubmit={zurueck} className="grid gap-3">
+                                    <FormField
+                                        id="z-bemerkung"
+                                        label="Was soll korrigiert werden? *"
+                                        error={form.errors.bemerkung}
+                                    >
+                                        <Textarea
+                                            id="z-bemerkung"
+                                            rows={2}
+                                            value={form.data.bemerkung}
+                                            onChange={(e) =>
+                                                form.setData(
+                                                    'bemerkung',
+                                                    e.target.value,
+                                                )
+                                            }
+                                        />
+                                    </FormField>
+                                    <div>
+                                        <Button
+                                            type="submit"
+                                            variant="outline"
+                                            disabled={form.processing}
+                                        >
+                                            <Undo2 /> Zurückgeben
+                                        </Button>
+                                    </div>
+                                </form>
+                            </CardContent>
+                        </Card>
+                    )}
             </div>
         </>
     );

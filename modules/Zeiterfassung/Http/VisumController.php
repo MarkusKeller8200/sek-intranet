@@ -9,6 +9,7 @@ use App\Support\Notifications;
 use App\Support\Signatures;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
@@ -77,6 +78,8 @@ class VisumController extends Controller
             // Monatsblatt (#34), ClickTime-Abschluss (#164)
             'monatsblatt' => ZeiterfassungController::monatsblatt($person, $monat, $status),
             'clicktime' => ZeiterfassungController::clicktimeNr($person) !== null,
+            // Recht zum Wiederöffnen abgeschlossener Monate (#206)
+            'darfOeffnen' => Gate::allows('oeffnen-zeiterfassung'),
             'abgeschlossenVon' => isset($status['abgeschlossen_by']) ? (string) ($this->users->find((string) $status['abgeschlossen_by'])['name'] ?? '') : null,
             'fehlend' => Zeitkonto::fehlendeTage($monat, $liste, Feiertage::monat($monat), app(Sollzeiten::class)->monat($person, $monat)),
             'pruefungen' => Zeitkonto::pruefungen($monat, $liste, app(Sollzeiten::class)->monat($person, $monat), null, app(Pruefregeln::class)->regeln()),
@@ -200,11 +203,42 @@ class VisumController extends Controller
 
             return back();
         }
+        // abgeschlossene Monate nur mit eigenem Recht (#206)
+        if ($status === 'abgeschlossen' && Gate::denies('oeffnen-zeiterfassung')) {
+            $this->toast('Abgeschlossene Monate darf nur wieder öffnen, wer das Recht dazu hat.', 'error');
+
+            return back();
+        }
         $by = (string) $request->user()?->getAuthIdentifier();
         $this->monate->setzen($person, $monat, ['status' => 'zurueck', 'bemerkung' => trim($data['bemerkung']), 'visiert_by' => null, 'visiert_at' => null,
             'abgeschlossen_at' => null, 'abgeschlossen_by' => null, 'abgeschlossen_stellvertretend' => null, 'abweichung' => null]);
         $this->notifications->toUsers([$person], 'zeit.monat_zurueck', "Zeiterfassung {$monat}: bitte korrigieren", mb_substr(trim($data['bemerkung']), 0, 200), "/zeiterfassung?monat={$monat}", $by);
         $this->toast('Zurück an die Person – sie ist benachrichtigt.');
+
+        return back();
+    }
+
+    /**
+     * Abgeschlossenen Monat wieder öffnen (#206, Recht oeffnen-zeiterfassung): Status «offen», Abschluss-Angaben
+     * zurückgesetzt, wer und wann geöffnet hat sowie die Begründung bleiben vermerkt. Die Person wird benachrichtigt.
+     */
+    public function oeffnen(Request $request, string $person): RedirectResponse
+    {
+        $data = $request->validate(['monat' => ['required', 'string'], 'grund' => ['required', 'string', 'max:1000']], ['grund.required' => 'Bitte begründen, warum der Monat wieder geöffnet wird.']);
+        $monat = self::monatAus($data['monat']);
+        abort_if($this->users->find($person) === null, 404);
+        if (($this->monate->status($person, $monat)['status'] ?? 'offen') !== 'abgeschlossen') {
+            $this->toast('Nur abgeschlossene Monate können wieder geöffnet werden.', 'error');
+
+            return back();
+        }
+        $by = (string) $request->user()?->getAuthIdentifier();
+        $grund = trim($data['grund']);
+        $this->monate->setzen($person, $monat, ['status' => 'offen', 'bemerkung' => $grund, 'visiert_by' => null, 'visiert_at' => null,
+            'abgeschlossen_at' => null, 'abgeschlossen_by' => null, 'abgeschlossen_stellvertretend' => null, 'abweichung' => null,
+            'geoeffnet_at' => now()->toIso8601String(), 'geoeffnet_by' => $by]);
+        $this->notifications->toUsers([$person], 'zeit.monat_geoeffnet', "Zeiterfassung {$monat}: wieder geöffnet", mb_substr($grund, 0, 200), "/zeiterfassung?monat={$monat}", $by);
+        $this->toast('Monat wieder geöffnet – die Person ist benachrichtigt.');
 
         return back();
     }

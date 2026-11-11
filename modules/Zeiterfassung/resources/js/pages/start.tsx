@@ -292,6 +292,16 @@ export default function ZeiterfassungStart(props: Props) {
                     </Alert>
                 )}
 
+                {status.status === 'offen' &&
+                    status.geoeffnet_at &&
+                    status.bemerkung && (
+                        <Alert>
+                            <AlertTitle>Monat wieder geöffnet</AlertTitle>
+                            <AlertDescription>
+                                <span translate="no">{status.bemerkung}</span>
+                            </AlertDescription>
+                        </Alert>
+                    )}
                 {status.status === 'zurueck' && status.bemerkung && (
                     <Alert variant="destructive">
                         <AlertTitle>Zurück von der Schulleitung</AlertTitle>

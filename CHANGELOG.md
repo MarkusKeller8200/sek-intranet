@@ -11,6 +11,11 @@ laufend unter **Unveröffentlicht**. Ab 0.32.0 entsteht eine Version nur bei ein
 
 ### Neu
 
+- **Zeiterfassung: abgeschlossenen Monat wieder öffnen (#206):** Neues Recht `oeffnen-zeiterfassung` (Vorgabe Admin,
+  Schulleitung). Im Visum erscheint bei abgeschlossenen Monaten «Monat wieder öffnen» mit Begründung; der Monat wird
+  wieder offen, die Person wird benachrichtigt und sieht die Begründung. «Zurückgeben» gilt bei abgeschlossenen
+  Monaten nur noch mit diesem Recht (Modul 0.10.0).
+
 - **Zeiterfassung: Erfassung bei ClickTime eingeklappt, Prüfhinweise einstellbar (#204):** Führt ClickTime die
   Zeiten, ist «Eintrag erfassen» eingeklappt und rot als «ClickTime aktiv – keine manuellen Einträge möglich»
   markiert. Neue Seite «Zeiterfassung – Einstellungen» (Recht `config-zeiterfassung`): Kommen-/Gehen-Buchung fehlt,

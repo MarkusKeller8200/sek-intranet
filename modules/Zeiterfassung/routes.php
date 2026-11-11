@@ -38,3 +38,8 @@ Route::middleware('can:config-zeiterfassung')->group(function () {
     Route::get('zeiterfassung/einstellungen', [EinstellungenController::class, 'index'])->name('zeiterfassung.einstellungen');
     Route::put('zeiterfassung/einstellungen', [EinstellungenController::class, 'update'])->name('zeiterfassung.einstellungen.update');
 });
+
+// Abgeschlossenen Monat wieder öffnen (#206): eigenes Recht, Seite im Visum
+Route::middleware('can:oeffnen-zeiterfassung')->group(function () {
+    Route::post('zeiterfassung/visum/{person}/oeffnen', [VisumController::class, 'oeffnen'])->middleware('throttle:20,1')->name('zeiterfassung.oeffnen');
+});

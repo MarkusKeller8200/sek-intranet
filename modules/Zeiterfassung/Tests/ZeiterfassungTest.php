@@ -13,6 +13,7 @@ use Inertia\Testing\AssertableInertia as Assert;
 use InvalidArgumentException;
 use Modules\Zeiterfassung\Buchungsarten;
 use Modules\Zeiterfassung\Data\Contracts\EintragRepository;
+use Modules\Zeiterfassung\Data\Contracts\MonatRepository;
 use Modules\Zeiterfassung\Feiertage;
 use Modules\Zeiterfassung\Pruefregeln;
 use Modules\Zeiterfassung\Zeitkonto;
@@ -327,5 +328,33 @@ class ZeiterfassungTest extends TestCase
         $this->assertSame('09:30', $regeln['tagesist_max']);
 
         $this->put('/zeiterfassung/einstellungen', ['tagesist_max' => '25:00'] + $neu)->assertSessionHasErrors('regeln');
+    }
+
+    public function test_closed_month_can_be_reopened_with_right(): void
+    {
+        $lp = $this->signInAs('lehrperson');
+        $person = (string) $lp->getAuthIdentifier();
+        $monate = app(MonatRepository::class);
+        $monate->setzen($person, self::MONAT, ['status' => 'abgeschlossen', 'abgeschlossen_at' => '2026-11-02T08:00:00+01:00', 'abgeschlossen_by' => $person]);
+
+        // ohne Recht abgelehnt
+        $this->post("/zeiterfassung/visum/{$person}/oeffnen", ['monat' => self::MONAT, 'grund' => 'Nachbuchung'])->assertForbidden();
+
+        // Schulleitung hat das Recht (Vorgabe)
+        $this->signInAs('schulleitung');
+        $this->get("/zeiterfassung/visum/{$person}?monat=".self::MONAT)
+            ->assertInertia(fn (Assert $page) => $page->where('darfOeffnen', true));
+        $this->post("/zeiterfassung/visum/{$person}/oeffnen", ['monat' => self::MONAT, 'grund' => ''])->assertSessionHasErrors('grund');
+        $this->post("/zeiterfassung/visum/{$person}/oeffnen", ['monat' => self::MONAT, 'grund' => 'Nachbuchung Weiterbildung'])->assertSessionHasNoErrors();
+
+        $status = $monate->status($person, self::MONAT);
+        $this->assertSame('offen', $status['status']);
+        $this->assertSame('Nachbuchung Weiterbildung', $status['bemerkung']);
+        $this->assertNull($status['abgeschlossen_at'] ?? null);
+        $this->assertNotEmpty($status['geoeffnet_at'] ?? null);
+
+        // ein offener Monat wird nicht nochmals geöffnet
+        $this->post("/zeiterfassung/visum/{$person}/oeffnen", ['monat' => self::MONAT, 'grund' => 'nochmals'])->assertRedirect();
+        $this->assertSame('Nachbuchung Weiterbildung', $monate->status($person, self::MONAT)['bemerkung']);
     }
 }

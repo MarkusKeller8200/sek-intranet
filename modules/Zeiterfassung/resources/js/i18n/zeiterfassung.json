@@ -354,5 +354,12 @@
     "ClickTime aktiv – keine manuellen Einträge möglich": [
         "ClickTime active – no manual entries possible",
         "ClickTime aktiv – kei manuelli Iiträg möglich"
-    ]
+    ],
+    "Monat wieder öffnen": ["Reopen month", "Monet wieder ufmache"],
+    "Der Monat wird wieder offen: Die Person kann die Zeiten erneut übernehmen und den Monat abschliessen. Sie wird benachrichtigt und sieht die Begründung.": [
+        "The month is reopened: the person can import the times again and close the month. They are notified and see the reason.",
+        "De Monet isch wieder offe: D Person cha d Zyte nomal übernäh und de Monet abschliesse. Si wird benachrichtigt und gseht d Begründig."
+    ],
+    "Begründung *": ["Reason *", "Begründig *"],
+    "Monat wieder geöffnet": ["Month reopened", "Monet wieder ufgmacht"]
 }
