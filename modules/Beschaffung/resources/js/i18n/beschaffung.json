@@ -1,0 +1,99 @@
+{
+    "Alle Kataloge": ["All catalogues", "Alli Katalög"],
+    "Alle Listen haben denselben Aufbau. Bearbeiten direkt in der Tabelle; fehlende Angaben sind mit «Prüfen» markiert.": [
+        "All lists have the same structure. Edit directly in the table; missing details are marked «Check».",
+        "Alli Lischte händ de glich Ufbau. Diräkt i de Tabälle bearbeite; fehlendi Aagabe sind mit «Prüefe» markiert."
+    ],
+    "Aus diesen Confluence-Seiten wurde die Liste übernommen. Gepflegt wird ab jetzt hier.": [
+        "The list was taken from these Confluence pages. From now on it is maintained here.",
+        "Us dene Confluence-Siite isch d Lischte übernoh worde. Pflegt wird ab jetzt da."
+    ],
+    "Beschreibung im ICT-Wiki": [
+        "Description in the ICT wiki",
+        "Beschriibig im ICT-Wiki"
+    ],
+    "Bestellen im Prototyp umsetzen und testen": [
+        "Build and test ordering in the prototype",
+        "Bstelle im Prototyp umsetze und teschte"
+    ],
+    "Bestellen – Kataloge": ["Ordering – catalogues", "Bstelle – Katalög"],
+    "Bestellnummer": ["Order number", "Bstellnummere"],
+    "Bezeichnung, Modell, Gruppe …": [
+        "Name, model, group …",
+        "Bezeichnig, Modell, Gruppe …"
+    ],
+    "Bild": ["Image", "Bild"],
+    "Bild entfernen": ["Remove image", "Bild entferne"],
+    "Bild entfernt.": ["Image removed.", "Bild entfernt."],
+    "Bild ersetzen …": ["Replace image …", "Bild ersetze …"],
+    "Bild für den Eintrag wählen": [
+        "Choose an image for the entry",
+        "Bild für de Iitrag wähle"
+    ],
+    "Bild gespeichert.": ["Image saved.", "Bild gspeicheret."],
+    "Bild hochladen …": ["Upload image …", "Bild uelade …"],
+    "Bild konnte nicht entfernt werden.": [
+        "Image could not be removed.",
+        "Bild het nöd chöne entfernt wärde."
+    ],
+    "Bild konnte nicht gespeichert werden.": [
+        "Image could not be saved.",
+        "Bild het nöd chöne gspeicheret wärde."
+    ],
+    "Die Liste kann bereits gepflegt werden; das Bestellen selbst folgt später.": [
+        "The list can already be maintained; ordering itself follows later.",
+        "D Lischte cha scho pflegt wärde; s Bstelle sälber chunt spöter."
+    ],
+    "Erster Entwurf – wird mit dem Kollegium geschärft, bevor das Bestellen gebaut wird.": [
+        "First draft – refined with the staff before ordering is built.",
+        "Erschte Entwurf – wird mit em Kollegium gschärft, bevor s Bstelle baut wird."
+    ],
+    "Gruppe / Kategorie": ["Group / category", "Gruppe / Kategorie"],
+    "Hinweis zum Preis": ["Note on price", "Hiwiis zum Priis"],
+    "Hinweis zur Prüfung": ["Note for checking", "Hiwiis zur Prüefig"],
+    "Hochgeladene Bilder werden mit gelöscht.": [
+        "Uploaded images are deleted as well.",
+        "Uegladeni Bilder wärded mitglöscht."
+    ],
+    "ICT-Wiki": ["ICT wiki", "ICT-Wiki"],
+    "Im ICT-Wiki öffnen": ["Open in the ICT wiki", "Im ICT-Wiki öffne"],
+    "Kostenstufe": ["Cost level", "Choschtestufe"],
+    "Liste prüfen und ergänzen": [
+        "Check and complete the list",
+        "Lischte prüefe und ergänze"
+    ],
+    "Lizenzen / Geräte": ["Licences / devices", "Lizänze / Grät"],
+    "Material": ["Material", "Material"],
+    "Menge": ["Quantity", "Mängi"],
+    "Modell / Produkt": ["Model / product", "Modell / Produkt"],
+    "Noch kein Bild": ["No image yet", "Na kei Bild"],
+    "Nutzerkreis / Zuweisung": [
+        "Users / assignment",
+        "Nutzerchreis / Zuewiisig"
+    ],
+    "Persönliche Geräte für den Hausdienst: Notebook (Lenovo), iPad und Zubehör.": [
+        "Personal devices for caretaking staff: notebook (Lenovo), iPad and accessories.",
+        "Persönlichi Grät für de Huusdienscht: Notebook (Lenovo), iPad und Zuebehör."
+    ],
+    "Preis CHF": ["Price CHF", "Priis CHF"],
+    "Quellen im ICT-Wiki": ["Sources in the ICT wiki", "Quälle im ICT-Wiki"],
+    "Später mit dem Plugin": ["Later with the plugin", "Spöter mit em Plugin"],
+    "Standardausrüstung, Plattformen, Apps und Material der Schule.": [
+        "Standard equipment, platforms, apps and material of the school.",
+        "Standardusrüschtig, Plattforme, Apps und Material vo de Schuel."
+    ],
+    "Standort / Schulhaus": [
+        "Location / school building",
+        "Standort / Schuelhuus"
+    ],
+    "Webseite öffnen": ["Open website", "Websiite öffne"],
+    "Zubehör": ["Accessories", "Zuebehör"],
+    "Zugang / Ausleihe": ["Access / borrowing", "Zuegang / Uslehne"],
+    "ausstehend": ["pending", "usstehend"],
+    "gestrichen": ["discontinued", "gstriche"],
+    "hoch": ["high", "höch"],
+    "kostenlos": ["free", "gratis"],
+    "moderat": ["moderate", "moderat"],
+    "niedrig": ["low", "tüüf"],
+    "variabel": ["variable", "variabel"]
+}
