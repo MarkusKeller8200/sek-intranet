@@ -12,6 +12,7 @@ use App\Plugins\PluginManager;
 use App\Support\DocumentAccess;
 use App\Support\Notifications;
 use App\Support\PersonLinks;
+use App\Support\PersonTypes;
 use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Cache;
 use Modules\Zeiterfassung\Buchungsarten;
@@ -98,6 +99,7 @@ class Plugin extends BasePlugin implements DemoResponder
             'departments' => $this->departments($ctx),
             'employees' => $this->employees($ctx),
             'match' => $this->match($ctx, $options),
+            'person-mapping' => $this->personMapping($ctx, $options),
             'employee-create' => $this->employeeCreate($ctx, $options),
             'lookup' => $this->lookup($ctx, trim((string) ($options['email'] ?? ''))),
             'balances' => $this->balances($ctx, $options),
@@ -156,6 +158,87 @@ class Plugin extends BasePlugin implements DemoResponder
             ['key' => 'managers', 'label' => 'Vorgesetzte'],
             ['key' => 'person', 'label' => 'Intranet-Person'],
         ], $rows);
+    }
+
+    /**
+     * Mapping der Personen (#202): Intranet-Person (Name, ID) ↔ ClickTime (Name, Nr.) aus der Datenherkunft.
+     * Anfangs nur Personen mit Zuordnung; mit «Alle anzeigen» auch ClickTime-Mitarbeitende ohne Intranet-Person und
+     * Intranet-Personal ohne ClickTime. Es wird nichts geändert.
+     *
+     * @param  array<string, mixed>  $options
+     */
+    private function personMapping(PluginContext $ctx, array $options): ActionResult
+    {
+        $all = in_array($options['all'] ?? false, [true, 1, '1', 'true'], true);
+        $people = [];
+        foreach (app(UserRepository::class)->all() as $u) {
+            $people[(string) $u['id']] = $u;
+        }
+        $employees = [];
+        foreach ($this->allEmployees($ctx) as $e) {
+            $no = (string) ($e['employee_no'] ?? '');
+            if ($no !== '') {
+                $employees[$no] = $e;
+            }
+        }
+
+        $rows = [];
+        $linkedPeople = [];
+        $linkedNos = [];
+        foreach (app(PersonLinks::class)->all() as $link) {
+            if (($link['system'] ?? null) !== self::SYSTEM || ($link['direction'] ?? 'source') !== 'source') {
+                continue;
+            }
+            $no = (string) ($link['external_id'] ?? '');
+            $personId = (string) ($link['person_id'] ?? '');
+            if ($no === '' || $personId === '') {
+                continue;
+            }
+            $person = $people[$personId] ?? null;
+            $employee = $employees[$no] ?? null;
+            $rows[] = [
+                'person' => $person !== null ? (string) ($person['name'] ?? '') : '–',
+                'person_id' => $personId,
+                'employee' => $employee !== null ? self::fullName($employee) : '–',
+                'no' => $no,
+                'status' => match (true) {
+                    $person === null => 'Intranet-Person fehlt',
+                    $employee === null => 'in ClickTime nicht gefunden',
+                    default => 'zugeordnet',
+                },
+            ];
+            $linkedPeople[$personId] = true;
+            $linkedNos[$no] = true;
+        }
+        $linked = count($rows);
+
+        if ($all) {
+            foreach ($employees as $no => $employee) {
+                if (! isset($linkedNos[(string) $no])) {
+                    $rows[] = ['person' => '–', 'person_id' => '', 'employee' => self::fullName($employee), 'no' => (string) $no, 'status' => 'ohne Intranet-Person'];
+                }
+            }
+            foreach ($people as $personId => $person) {
+                $staff = in_array(PersonTypes::of($person), ['lehrperson', 'schulleitung', 'mitarbeitende'], true);
+                if (isset($linkedPeople[$personId]) || ! $staff || ($person['active'] ?? true) === false) {
+                    continue;
+                }
+                $rows[] = ['person' => (string) ($person['name'] ?? ''), 'person_id' => (string) $personId, 'employee' => '–', 'no' => '', 'status' => 'ohne ClickTime'];
+            }
+        }
+        usort($rows, fn (array $a, array $b): int => strnatcasecmp($a['person'] !== '–' ? $a['person'] : $a['employee'], $b['person'] !== '–' ? $b['person'] : $b['employee']));
+
+        $counts = array_count_values(array_column($rows, 'status'));
+        $details = implode(', ', array_map(fn (string $k, int $n): string => "{$n} {$k}", array_keys($counts), $counts));
+
+        return ActionResult::table(($ctx->demo() ? 'Demo-Modus: ' : '')."{$linked} Zuordnungen".($details !== '' ? " ({$details})" : '').'.'
+            .($all ? '' : ' Häkchen «Alle anzeigen» zeigt auch Personen ohne Zuordnung.'), [
+                ['key' => 'person', 'label' => 'Intranet-Person'],
+                ['key' => 'person_id', 'label' => 'Intranet-ID'],
+                ['key' => 'employee', 'label' => 'ClickTime-Person'],
+                ['key' => 'no', 'label' => 'ClickTime-Nr.'],
+                ['key' => 'status', 'label' => 'Status'],
+            ], $rows);
     }
 
     /**
