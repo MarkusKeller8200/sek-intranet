@@ -359,7 +359,7 @@ export default function BeschaffungKatalog({
                                         {z.bezeichnung}
                                     </span>
                                     {z.preis && (
-                                        <span className="text-sm tabular-nums text-muted-foreground">
+                                        <span className="text-sm text-muted-foreground tabular-nums">
                                             {chf(z.preis)}
                                         </span>
                                     )}
