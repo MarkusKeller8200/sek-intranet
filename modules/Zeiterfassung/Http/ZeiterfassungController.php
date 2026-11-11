@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use App\Plugins\PluginManager;
 use App\Support\Notifications;
 use App\Support\PersonLinks;
+use App\Support\Signatures;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
@@ -23,12 +24,15 @@ use Modules\Zeiterfassung\Data\Contracts\MonatRepository;
 use Modules\Zeiterfassung\Feiertage;
 use Modules\Zeiterfassung\Kategorien;
 use Modules\Zeiterfassung\Monatsabschluss;
+use Modules\Zeiterfassung\MonatsblattPdf;
 use Modules\Zeiterfassung\Pruefregeln;
 use Modules\Zeiterfassung\Sollzeiten;
 use Modules\Zeiterfassung\Unterschriften;
+use Modules\Zeiterfassung\Vorgesetzte;
 use Modules\Zeiterfassung\Zeitkonto;
 use Plugins\Clicktime\Importer;
 use Plugins\Clicktime\Plugin;
+use RuntimeException;
 use Symfony\Component\HttpFoundation\Response as HttpResponse;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Throwable;
@@ -71,7 +75,69 @@ class ZeiterfassungController extends Controller
             'clicktime' => self::clicktime($request, $person),
             // ClickTime führt (#154): keine eigenen Einträge erfassen oder bearbeiten
             'clicktimeFuehrt' => self::clicktimeNr($person) !== null,
+            // Monatsrapport an die vorgesetzte Person unterschreiben (#208)
+            'vorgesetzte' => array_map(fn (string $id): array => ['id' => $id, 'name' => $this->name($id)], app(Vorgesetzte::class)->fuer($person)['vorgesetzte']),
+            'signaturAktiv' => app(Signatures::class)->provider() !== null,
         ]);
+    }
+
+    /**
+     * Monatsrapport unterschreiben (#208): die Person startet selbst, zuerst unterschreibt sie, danach die hinterlegte
+     * vorgesetzte Person (aus ClickTime oder von Hand). Nur visierte oder in ClickTime abgeschlossene Monate.
+     */
+    public function rapportUnterschreiben(Request $request): RedirectResponse
+    {
+        $person = self::person($request);
+        $data = $request->validate(['monat' => ['required', 'string'], 'vorgesetzte' => ['nullable', 'string', 'max:64']]);
+        $monat = self::monatAus($data['monat']);
+        $status = $this->monate->status($person, $monat);
+        if (! in_array($status['status'] ?? null, ['visiert', 'abgeschlossen'], true)) {
+            $this->toast('Unterschreiben ist erst möglich, wenn der Monat visiert bzw. in ClickTime abgeschlossen ist.', 'error');
+
+            return back();
+        }
+        $signatures = app(Signatures::class);
+        foreach ($signatures->forReference('zeiterfassung', Unterschriften::bezug($person, $monat)) as $auftrag) {
+            if (in_array($auftrag['status'], ['entwurf', ...Signatures::OPEN, 'unterschrieben'], true)) {
+                $this->toast('Für diesen Monat läuft bereits eine Unterschrift.', 'error');
+
+                return back();
+            }
+        }
+        $liste = app(Vorgesetzte::class)->fuer($person)['vorgesetzte'];
+        $chefId = isset($data['vorgesetzte']) && in_array($data['vorgesetzte'], $liste, true) ? (string) $data['vorgesetzte'] : ($liste[0] ?? null);
+        $chef = $chefId !== null ? $this->users->find($chefId) : null;
+        $ich = $this->users->find($person);
+        if ($chef === null || trim((string) ($chef['email'] ?? '')) === '' || $ich === null) {
+            $this->toast('Keine vorgesetzte Person hinterlegt – bitte bei der Schulleitung melden.', 'error');
+
+            return back();
+        }
+        $user = $request->user();
+        $dokument = app(Monatsabschluss::class)->pdf($person, $monat, ['person' => (string) $ich['name'], 'schulleitung' => (string) $chef['name'], 'rolle' => 'Vorgesetzte:r']);
+        try {
+            $auftrag = $signatures->create([
+                'module' => 'zeiterfassung',
+                'reference' => Unterschriften::bezug($person, $monat),
+                'title' => 'Monatsrapport '.MonatsblattPdf::monatName($monat).' – '.(string) $ich['name'],
+                'file_name' => 'Monatsrapport-'.$monat.'-'.preg_replace('/[^A-Za-z0-9]+/', '-', (string) $ich['name']).'.pdf',
+                'comment' => 'Bitte den Monatsrapport '.MonatsblattPdf::monatName($monat).' unterschreiben.',
+                'signees' => [
+                    ['person_id' => $person, 'name' => (string) $ich['name'], 'email' => (string) ($ich['email'] ?? ''), 'order' => 0, 'position' => $dokument['felder']['person']],
+                    ['person_id' => (string) $chefId, 'name' => (string) $chef['name'], 'email' => (string) $chef['email'], 'order' => 1, 'position' => $dokument['felder']['schulleitung']],
+                ],
+                'observers' => [],
+            ], $dokument['pdf'], $user instanceof IntranetUser ? $user : null);
+        } catch (InvalidArgumentException|RuntimeException $e) {
+            $this->toast($e->getMessage(), 'error');
+
+            return back();
+        }
+        $this->monate->setzen($person, $monat, ['unterschrift_status' => (string) $auftrag['status'], 'unterschrift_id' => (string) $auftrag['id'],
+            'unterschrift_at' => null, 'unterschrift_pdf' => null, 'unterschrift_vorgesetzte' => $chefId, 'dossier_status' => null, 'dossier_at' => null]);
+        $this->toast('Zur Unterschrift gesendet – du erhältst eine E-Mail von DeepSign, danach unterschreibt '.(string) $chef['name'].'.');
+
+        return back();
     }
 
     /**
@@ -206,9 +272,12 @@ class ZeiterfassungController extends Controller
      */
     public function unterschriftPdf(Request $request, string $person, string $monat): StreamedResponse
     {
-        abort_unless($person === self::person($request) || Gate::allows('visum-zeiterfassung'), 403);
         $monat = self::monatAus($monat);
-        $pfad = $this->monate->status($person, $monat)['unterschrift_pdf'] ?? null;
+        $status = $this->monate->status($person, $monat);
+        // eigene Person, Visum oder die vorgesetzte Person, die mitunterschrieben hat (#208)
+        abort_unless($person === self::person($request) || Gate::allows('visum-zeiterfassung')
+            || (($status['unterschrift_vorgesetzte'] ?? null) !== null && $status['unterschrift_vorgesetzte'] === self::person($request)), 403);
+        $pfad = $status['unterschrift_pdf'] ?? null;
         abort_unless(is_string($pfad) && $pfad === Unterschriften::datei($person, $monat) && Storage::disk('local')->exists($pfad), 404);
 
         return Storage::disk('local')->download($pfad, "Monatsrapport-{$monat}-unterschrieben.pdf", ['Content-Type' => 'application/pdf']);
@@ -216,13 +285,15 @@ class ZeiterfassungController extends Controller
 
     /**
      * @param  array<string, mixed>  $status
-     * @return array{status: mixed, pdf: string|null}
+     * @return array{status: mixed, pdf: string|null, dossier: mixed}
      */
     private static function unterschrift(string $person, string $monat, array $status): array
     {
         return [
             'status' => $status['unterschrift_status'] ?? null,
             'pdf' => isset($status['unterschrift_pdf']) ? "/zeiterfassung/unterschrift/{$person}/{$monat}" : null,
+            // Kopie ins Dossier (CMI, #208)
+            'dossier' => $status['dossier_status'] ?? null,
         ];
     }
 

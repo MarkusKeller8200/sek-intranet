@@ -6,6 +6,7 @@ import {
     ClipboardCheck,
     CloudDownload,
     Download,
+    FileSignature,
     Lock,
     Printer,
     Send,
@@ -39,7 +40,7 @@ import type {
     Summen,
     Unterschrift,
 } from '../lib/types';
-import { istGesperrt, monatName, tageListe } from '../lib/types';
+import { DOSSIER, istGesperrt, monatName, tageListe } from '../lib/types';
 
 type Props = {
     monat: string;
@@ -64,6 +65,10 @@ type Props = {
     pruefungen?: Record<string, Pruefung[]>;
     /** Arbeitstage ohne Eintrag bis heute (#33) */
     fehlend?: string[];
+    /** Hinterlegte vorgesetzte Personen (#208) */
+    vorgesetzte?: { id: string; name: string }[];
+    /** Unterschrift-Anbieter eingerichtet (#208) */
+    signaturAktiv?: boolean;
 };
 
 /** Eigene Zeiterfassung eines Monats: erfassen, Übersicht, einreichen, Monatsblatt als PDF. */
@@ -101,6 +106,24 @@ export default function ZeiterfassungStart(props: Props) {
     // Eintrag bearbeiten (#102): nur von Hand erfasste, das Formular wird damit gefüllt
     const [bearbeite, setBearbeite] = useState<string | null>(null);
     const formularRef = useRef<HTMLDivElement>(null);
+    // Monatsrapport an die vorgesetzte Person unterschreiben (#208)
+    const vorgesetzte = props.vorgesetzte ?? [];
+    const rapportForm = useForm({
+        monat,
+        vorgesetzte: vorgesetzte[0]?.id ?? '',
+    });
+    const unterschreibbar =
+        (status.status === 'visiert' || status.status === 'abgeschlossen') &&
+        (!props.unterschrift.status ||
+            ['abgelehnt', 'zurueckgezogen', 'abgelaufen'].includes(
+                props.unterschrift.status,
+            ));
+    const rapportSenden = (e: FormEvent) => {
+        e.preventDefault();
+        rapportForm.post('/zeiterfassung/rapport-unterschreiben', {
+            preserveScroll: true,
+        });
+    };
     // ClickTime führt (#204): Erfassung eingeklappt, da hier nichts erfasst werden kann
     const [formOffen, setFormOffen] = useState(!fuehrt);
     const art =
@@ -321,7 +344,88 @@ export default function ZeiterfassungStart(props: Props) {
                                 </a>
                             </Button>
                         )}
+                        {props.unterschrift.dossier && (
+                            <span className="text-muted-foreground">
+                                CMI-Dossier:{' '}
+                                {DOSSIER[props.unterschrift.dossier] ??
+                                    props.unterschrift.dossier}
+                            </span>
+                        )}
                     </div>
+                )}
+                {unterschreibbar && (
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>Monatsrapport unterschreiben</CardTitle>
+                            <CardDescription>
+                                Zuerst unterschreibst du, danach die vorgesetzte
+                                Person. Der unterschriebene Rapport wird bei dir
+                                abgelegt.
+                            </CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            {!props.signaturAktiv ? (
+                                <p className="text-sm text-muted-foreground">
+                                    Elektronische Unterschrift ist nicht
+                                    eingerichtet.
+                                </p>
+                            ) : vorgesetzte.length === 0 ? (
+                                <p className="text-sm text-destructive">
+                                    Keine vorgesetzte Person hinterlegt – bitte
+                                    bei der Schulleitung melden.
+                                </p>
+                            ) : (
+                                <form
+                                    onSubmit={rapportSenden}
+                                    className="flex flex-wrap items-end gap-3"
+                                >
+                                    {vorgesetzte.length > 1 ? (
+                                        <FormField
+                                            id="z-vorgesetzte"
+                                            label="Vorgesetzte Person"
+                                        >
+                                            <NativeSelect
+                                                id="z-vorgesetzte"
+                                                value={
+                                                    rapportForm.data.vorgesetzte
+                                                }
+                                                onChange={(e) =>
+                                                    rapportForm.setData(
+                                                        'vorgesetzte',
+                                                        e.target.value,
+                                                    )
+                                                }
+                                            >
+                                                {vorgesetzte.map((v) => (
+                                                    <option
+                                                        key={v.id}
+                                                        value={v.id}
+                                                        translate="no"
+                                                    >
+                                                        {v.name}
+                                                    </option>
+                                                ))}
+                                            </NativeSelect>
+                                        </FormField>
+                                    ) : (
+                                        <p className="text-sm">
+                                            Vorgesetzte Person:{' '}
+                                            <span translate="no">
+                                                {vorgesetzte[0].name}
+                                            </span>
+                                        </p>
+                                    )}
+                                    <Button
+                                        type="submit"
+                                        disabled={rapportForm.processing}
+                                    >
+                                        <FileSignature /> Monatsrapport
+                                        unterschreiben
+                                    </Button>
+                                </form>
+                            )}
+                        </CardContent>
+                    </Card>
                 )}
                 {gesperrt && (
                     <Alert>

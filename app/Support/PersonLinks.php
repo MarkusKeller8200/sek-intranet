@@ -138,6 +138,18 @@ final class PersonLinks
         return $counts;
     }
 
+    /** ID der Person in einem System (erster Eintrag mit ID, z. B. CMI-Dossier, #208), sonst null. */
+    public function externalIdFor(string $personId, string $system): ?string
+    {
+        foreach ($this->all() as $l) {
+            if (($l['person_id'] ?? null) === $personId && ($l['system'] ?? null) === $system && trim((string) ($l['external_id'] ?? '')) !== '') {
+                return trim((string) $l['external_id']);
+            }
+        }
+
+        return null;
+    }
+
     /** Person zu einer ID/PK eines Systems (Duplikate beim Import vermeiden). */
     public function findPerson(string $system, string $externalId, string $direction = 'source'): ?string
     {

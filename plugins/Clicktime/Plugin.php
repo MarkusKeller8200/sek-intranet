@@ -751,8 +751,20 @@ class Plugin extends BasePlugin implements DemoResponder
      */
     private function managerPersons(PluginContext $ctx, array $employees): array
     {
+        return self::managerPersonsFor($ctx, $employees);
+    }
+
+    /**
+     * Intranet-Personen, die in ClickTime Vorgesetzte der Abteilungen dieser Mitarbeitenden sind (#208, auch für die
+     * Zeiterfassung beim Übernehmen). Nur Vorgesetzte mit Zuordnung in der Datenherkunft.
+     *
+     * @param  list<string>  $employees  ClickTime-Nummern
+     * @return list<string> Personen-IDs
+     */
+    public static function managerPersonsFor(PluginContext $ctx, array $employees): array
+    {
         $departments = [];
-        foreach ($this->allEmployees($ctx) as $e) {
+        foreach (self::list(self::expect($ctx->call('employees'))) as $e) {
             if (in_array((string) ($e['employee_no'] ?? ''), $employees, true) && (string) ($e['department_number'] ?? '') !== '') {
                 $departments[(string) $e['department_number']] = true;
             }

@@ -5,11 +5,13 @@ namespace Modules\Zeiterfassung\Http;
 use App\Auth\IntranetUser;
 use App\Data\Contracts\UserRepository;
 use App\Http\Controllers\Controller;
+use App\Support\Dossiers;
 use App\Support\Notifications;
 use App\Support\Signatures;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
@@ -80,6 +82,8 @@ class VisumController extends Controller
             'clicktime' => ZeiterfassungController::clicktimeNr($person) !== null,
             // Recht zum Wiederöffnen abgeschlossener Monate (#206)
             'darfOeffnen' => Gate::allows('oeffnen-zeiterfassung'),
+            // Kopie ins Dossier (CMI, #208): Status und ob die Schnittstelle aktiv ist
+            'dossier' => ['status' => $status['dossier_status'] ?? null, 'aktiv' => app(Dossiers::class)->active()],
             'abgeschlossenVon' => isset($status['abgeschlossen_by']) ? (string) ($this->users->find((string) $status['abgeschlossen_by'])['name'] ?? '') : null,
             'fehlend' => Zeitkonto::fehlendeTage($monat, $liste, Feiertage::monat($monat), app(Sollzeiten::class)->monat($person, $monat)),
             'pruefungen' => Zeitkonto::pruefungen($monat, $liste, app(Sollzeiten::class)->monat($person, $monat), null, app(Pruefregeln::class)->regeln()),
@@ -239,6 +243,27 @@ class VisumController extends Controller
             'geoeffnet_at' => now()->toIso8601String(), 'geoeffnet_by' => $by]);
         $this->notifications->toUsers([$person], 'zeit.monat_geoeffnet', "Zeiterfassung {$monat}: wieder geöffnet", mb_substr($grund, 0, 200), "/zeiterfassung?monat={$monat}", $by);
         $this->toast('Monat wieder geöffnet – die Person ist benachrichtigt.');
+
+        return back();
+    }
+
+    /** Unterschriebenen Monatsrapport (erneut) ins Dossier senden (#208), z. B. nachdem die CMI-Schnittstelle aktiv ist. */
+    public function dossier(Request $request, string $person): RedirectResponse
+    {
+        $monat = self::monatAus((string) $request->input('monat'));
+        $status = $this->monate->status($person, $monat);
+        $pfad = $status['unterschrift_pdf'] ?? null;
+        if (! is_string($pfad) || $pfad !== Unterschriften::datei($person, $monat) || ! Storage::disk('local')->exists($pfad)) {
+            $this->toast('Kein unterschriebener Monatsrapport vorhanden.', 'error');
+
+            return back();
+        }
+        $user = $request->user();
+        $name = (string) ($this->users->find($person)['name'] ?? '');
+        $r = app(Dossiers::class)->store($person, 'Monatsrapport '.MonatsblattPdf::monatName($monat).' – '.$name,
+            'Monatsrapport-'.$monat.'-'.preg_replace('/[^A-Za-z0-9]+/', '-', $name).'.pdf', (string) Storage::disk('local')->get($pfad), $user instanceof IntranetUser ? $user : null);
+        $this->monate->setzen($person, $monat, ['dossier_status' => $r['status'], 'dossier_at' => $r['status'] === 'abgelegt' ? now()->toIso8601String() : null]);
+        $this->toast($r['message'], $r['status'] === 'abgelegt' ? 'success' : 'error');
 
         return back();
     }

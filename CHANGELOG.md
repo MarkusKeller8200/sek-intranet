@@ -11,6 +11,16 @@ laufend unter **Unveröffentlicht**. Ab 0.32.0 entsteht eine Version nur bei ein
 
 ### Neu
 
+- **Zeiterfassung: Monatsrapport an Vorgesetzte unterschreiben (#208):** Die Person startet in «Meine Zeiterfassung»
+  die Unterschrift selbst; danach unterschreibt die hinterlegte vorgesetzte Person. Vorgesetzte kommen beim
+  Übernehmen aus ClickTime (Vorgesetzte der Abteilung, Plugin 0.11) und sind unter «Zeiterfassung – Einstellungen»
+  von Hand übersteuerbar. Der unterschriebene Rapport liegt in der Zeiterfassung und neu bei der Person (Personen →
+  Dokumente). Kopie ins CMI-Dossier, sobald eine Dossier-Schnittstelle aktiv ist und die Person eine Dossier-ID hat;
+  bis dahin «ausstehend», im Visum erneut sendbar (Modul 0.11.0).
+- **Kern: Dokumente bei der Person und Dossier-Schnittstelle (#208):** `App\Support\PersonDocuments` (Module melden
+  Dokumente einer Person, Sichtbarkeit je Modul) und `App\Support\Dossiers` mit Plugin-Vertrag
+  `App\Plugins\DossierProvider` (System `cmi`). Noch kein CMI-Plugin – Endpunkte erst nach Hersteller-Doku.
+
 - **Zeiterfassung: abgeschlossenen Monat wieder öffnen (#206):** Neues Recht `oeffnen-zeiterfassung` (Vorgabe Admin,
   Schulleitung). Im Visum erscheint bei abgeschlossenen Monaten «Monat wieder öffnen» mit Begründung; der Monat wird
   wieder offen, die Person wird benachrichtigt und sieht die Begründung. «Zurückgeben» gilt bei abgeschlossenen

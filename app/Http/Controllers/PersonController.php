@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Auth\IntranetUser;
 use App\Data\Contracts\UserRepository;
 use App\Support\AuditLog;
 use App\Support\GridViews;
+use App\Support\PersonDocuments;
 use App\Support\PersonFields;
 use App\Support\PersonLinks;
 use App\Support\PersonTypes;
@@ -85,6 +87,7 @@ class PersonController extends Controller
         $person = $this->users->findOrFail($id);
         abort_if(! $admin && ($person['active'] ?? false) !== true, 404);
         abort_if(PersonTypes::visibleFor([$person], $request->user()) === [], 404);
+        $viewer = $request->user();
 
         return Inertia::render('people/show', [
             'person' => PersonFields::visible($person, $admin),
@@ -94,6 +97,8 @@ class PersonController extends Controller
             'links' => $this->links->forPerson($id, $person),
             'systems' => PersonLinks::systems(),
             'canManageLinks' => $admin,
+            // Dokumente aus Modulen (#208), Sichtbarkeit entscheidet das Modul
+            'documents' => app(PersonDocuments::class)->forPerson($id, $viewer instanceof IntranetUser ? $viewer : null),
         ]);
     }
 

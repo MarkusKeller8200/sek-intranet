@@ -6,6 +6,10 @@ Versionen des Moduls nach SemVer (module.json → «version»).
 
 ### Neu
 
+- **0.11.0 – Monatsrapport an Vorgesetzte (#208):** `Vorgesetzte` (Sammlung `zeit_vorgesetzte`, aus ClickTime oder von
+  Hand), Route `POST zeiterfassung/rapport-unterschreiben` (Person zuerst, dann Vorgesetzte:r; Feld «Vorgesetzte:r» im
+  PDF), Felder `unterschrift_vorgesetzte`, `dossier_status`, `dossier_at` in `zeit_monate`. Dokumente bei der Person
+  über `PersonDocuments`; Kopie ins Dossier über `Dossiers`, im Visum «Ins Dossier senden».
 - **0.10.0 – Monat wieder öffnen (#206):** Recht `oeffnen-zeiterfassung`, Route
   `POST zeiterfassung/visum/{person}/oeffnen` (Begründung Pflicht). Status «offen», Abschluss-Angaben zurückgesetzt,
   neue Felder `geoeffnet_at`/`geoeffnet_by` in `zeit_monate`, Ereignis `zeit.monat_geoeffnet`. Hinweis «Monat wieder

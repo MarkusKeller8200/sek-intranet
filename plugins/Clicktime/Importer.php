@@ -9,8 +9,10 @@ use Modules\Zeiterfassung\Data\Contracts\EintragRepository;
 use Modules\Zeiterfassung\Data\Contracts\MonatRepository;
 use Modules\Zeiterfassung\Kategorien;
 use Modules\Zeiterfassung\Sollzeiten;
+use Modules\Zeiterfassung\Vorgesetzte;
 use Modules\Zeiterfassung\Zeitkonto;
 use RuntimeException;
+use Throwable;
 
 /**
  * Buchungen eines Monats aus ClickTime in die eigene Zeiterfassung übernehmen (#101).
@@ -59,6 +61,14 @@ final class Importer
         }
         if ($apply && $targets !== []) {
             app(Sollzeiten::class)->speichern($personId, $month, $targets, self::QUELLE);
+        }
+        // Vorgesetzte für die Unterschrift des Monatsrapports (#208); von Hand gesetzte bleiben
+        if ($apply) {
+            try {
+                app(Vorgesetzte::class)->ausQuelle($personId, Plugin::managerPersonsFor($this->ctx, [$employeeNo]), self::QUELLE);
+            } catch (Throwable $e) {
+                report($e);
+            }
         }
 
         // Unbekannte Buchungsarten: «Name (clicktime)» anlegen und in der Mapping-Tabelle ergänzen

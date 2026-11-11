@@ -361,5 +361,26 @@
         "De Monet isch wieder offe: D Person cha d Zyte nomal übernäh und de Monet abschliesse. Si wird benachrichtigt und gseht d Begründig."
     ],
     "Begründung *": ["Reason *", "Begründig *"],
-    "Monat wieder geöffnet": ["Month reopened", "Monet wieder ufgmacht"]
+    "Monat wieder geöffnet": ["Month reopened", "Monet wieder ufgmacht"],
+    "Fehler beim Ablegen": ["Error while filing", "Fähler bim Ablege"],
+    "Vorgesetzte": ["Supervisors", "Vorgsetzti"],
+    "Keine Personen.": ["No people.", "Kei Persone."],
+    "Ins Dossier senden": ["Send to dossier", "Is Dossier schicke"],
+    "Monatsrapport unterschreiben": [
+        "Sign monthly report",
+        "Monetsrapport unterschriibe"
+    ],
+    "Zuerst unterschreibst du, danach die vorgesetzte Person. Der unterschriebene Rapport wird bei dir abgelegt.": [
+        "You sign first, then your supervisor. The signed report is filed with you.",
+        "Zerscht unterschriibsch du, dänn di vorgsetzti Person. De unterschribni Rapport wird bi dir abgleit."
+    ],
+    "Elektronische Unterschrift ist nicht eingerichtet.": [
+        "Electronic signature is not set up.",
+        "Elektronischi Unterschrift isch nöd iigrichtet."
+    ],
+    "Keine vorgesetzte Person hinterlegt – bitte bei der Schulleitung melden.": [
+        "No supervisor on file – please contact the school management.",
+        "Kei vorgsetzti Person hinterleit – bitte bi de Schuelleitig mälde."
+    ],
+    "Vorgesetzte Person": ["Supervisor", "Vorgsetzti Person"]
 }
