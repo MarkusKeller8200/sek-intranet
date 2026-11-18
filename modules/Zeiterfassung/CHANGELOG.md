@@ -6,6 +6,9 @@ Versionen des Moduls nach SemVer (module.json → «version»).
 
 ### Neu
 
+- **0.12.0 – Stempeln und Korrektur (#214):** Routen `POST zeiterfassung/einstempeln|ausstempeln` (Stempelstatus in
+  `stempel`), `PUT zeiterfassung/eintraege/{id}/clicktime` mit Recht `korrigieren-zeiterfassung`. Logik in
+  `Plugins\Clicktime\Stamping`; nach jedem Schreiben Abgleich des Monats. Pause bleibt eine eigene ClickTime-Buchung.
 - **0.11.0 – Monatsrapport an Vorgesetzte (#208):** `Vorgesetzte` (Sammlung `zeit_vorgesetzte`, aus ClickTime oder von
   Hand), Route `POST zeiterfassung/rapport-unterschreiben` (Person zuerst, dann Vorgesetzte:r; Feld «Vorgesetzte:r» im
   PDF), Felder `unterschrift_vorgesetzte`, `dossier_status`, `dossier_at` in `zeit_monate`. Dokumente bei der Person

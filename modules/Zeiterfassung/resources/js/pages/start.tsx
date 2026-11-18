@@ -7,6 +7,8 @@ import {
     CloudDownload,
     Download,
     FileSignature,
+    LogIn,
+    LogOut,
     Lock,
     Printer,
     Send,
@@ -69,6 +71,15 @@ type Props = {
     vorgesetzte?: { id: string; name: string }[];
     /** Unterschrift-Anbieter eingerichtet (#208) */
     signaturAktiv?: boolean;
+    /** Ein-/Ausstempeln über ClickTime (#214), null = ohne ClickTime */
+    stempel?: {
+        eingestempelt: boolean;
+        seit: string | null;
+        schreiben: boolean;
+        fehler: string | null;
+    } | null;
+    /** Buchungen aus ClickTime korrigieren (#214, Recht) */
+    darfKorrigieren?: boolean;
 };
 
 /** Eigene Zeiterfassung eines Monats: erfassen, Übersicht, einreichen, Monatsblatt als PDF. */
@@ -157,8 +168,11 @@ export default function ZeiterfassungStart(props: Props) {
             'projekt',
             'notiz',
         );
+    // Korrektur einer ClickTime-Buchung (#214): nur Datum, Zeiten, Stunden und Notiz
+    const korrektur = fuehrt && bearbeite !== null;
     const bearbeiten = (e: Eintrag) => {
         setBearbeite(e.id);
+        setFormOffen(true);
         form.clearErrors();
         form.setData({
             datum: e.datum,
@@ -188,7 +202,12 @@ export default function ZeiterfassungStart(props: Props) {
                 leeren();
             },
         };
-        if (bearbeite) {
+        if (bearbeite && fuehrt) {
+            form.put(
+                `/zeiterfassung/eintraege/${bearbeite}/clicktime`,
+                nachher,
+            );
+        } else if (bearbeite) {
             form.put(`/zeiterfassung/eintraege/${bearbeite}`, nachher);
         } else {
             form.post('/zeiterfassung', nachher);
@@ -333,6 +352,62 @@ export default function ZeiterfassungStart(props: Props) {
                         </AlertDescription>
                     </Alert>
                 )}
+                {props.stempel && (
+                    <Card>
+                        <CardContent className="flex flex-wrap items-center gap-3 pt-6">
+                            <span className="text-sm font-medium">
+                                {props.stempel.eingestempelt
+                                    ? `Eingestempelt seit ${props.stempel.seit ?? ''}`
+                                    : 'Nicht eingestempelt'}
+                            </span>
+                            <Button
+                                disabled={
+                                    props.stempel.eingestempelt ||
+                                    !props.stempel.schreiben ||
+                                    props.stempel.fehler !== null
+                                }
+                                onClick={() =>
+                                    router.post(
+                                        '/zeiterfassung/einstempeln',
+                                        {},
+                                        { preserveScroll: true },
+                                    )
+                                }
+                            >
+                                <LogIn /> Einstempeln
+                            </Button>
+                            <Button
+                                variant="outline"
+                                disabled={
+                                    !props.stempel.eingestempelt ||
+                                    !props.stempel.schreiben ||
+                                    props.stempel.fehler !== null
+                                }
+                                onClick={() =>
+                                    router.post(
+                                        '/zeiterfassung/ausstempeln',
+                                        {},
+                                        { preserveScroll: true },
+                                    )
+                                }
+                            >
+                                <LogOut /> Ausstempeln
+                            </Button>
+                            {props.stempel.fehler ? (
+                                <span className="text-sm text-destructive">
+                                    {props.stempel.fehler}
+                                </span>
+                            ) : (
+                                !props.stempel.schreiben && (
+                                    <span className="text-sm text-muted-foreground">
+                                        Stempeln ist ausgeschaltet (Plugin
+                                        ClickTime: Schreiben nicht erlaubt).
+                                    </span>
+                                )
+                            )}
+                        </CardContent>
+                    </Card>
+                )}
                 {props.unterschrift.status && (
                     <div className="flex flex-wrap items-center gap-3 text-sm">
                         <span>Elektronische Unterschrift:</span>
@@ -448,7 +523,9 @@ export default function ZeiterfassungStart(props: Props) {
                     <Card ref={formularRef}>
                         <CardHeader>
                             <CardTitle className="flex flex-wrap items-center gap-2">
-                                {fuehrt ? (
+                                {korrektur ? (
+                                    'Buchung in ClickTime korrigieren'
+                                ) : fuehrt ? (
                                     <button
                                         type="button"
                                         className="inline-flex items-center gap-1 text-left"
@@ -474,7 +551,7 @@ export default function ZeiterfassungStart(props: Props) {
                                 ) : (
                                     'Eintrag erfassen'
                                 )}
-                                {fuehrt && (
+                                {fuehrt && !korrektur && (
                                     <Badge
                                         variant="outline"
                                         className="border-destructive text-destructive"
@@ -486,9 +563,11 @@ export default function ZeiterfassungStart(props: Props) {
                             </CardTitle>
                             {formOffen && (
                                 <CardDescription>
-                                    {fuehrt
-                                        ? 'Ihre Zeiten werden in ClickTime erfasst. Eigene Einträge sind hier nicht möglich – mit «Aus ClickTime übernehmen» holen Sie den Monat.'
-                                        : 'Beginn und Ende (mit Pause) oder direkt die Stunden angeben.'}
+                                    {korrektur
+                                        ? 'Die Änderung geht direkt an ClickTime. Buchungsart, Kategorie, Projekt und Pause bleiben wie in ClickTime.'
+                                        : fuehrt
+                                          ? 'Ihre Zeiten werden in ClickTime erfasst. Eigene Einträge sind hier nicht möglich – mit «Aus ClickTime übernehmen» holen Sie den Monat.'
+                                          : 'Beginn und Ende (mit Pause) oder direkt die Stunden angeben.'}
                                 </CardDescription>
                             )}
                         </CardHeader>
@@ -497,7 +576,7 @@ export default function ZeiterfassungStart(props: Props) {
                                 <form onSubmit={submit}>
                                     {/* ClickTime führt (#154): keine eigenen Einträge */}
                                     <fieldset
-                                        disabled={fuehrt}
+                                        disabled={fuehrt && !korrektur}
                                         className="grid gap-3 disabled:opacity-60 sm:grid-cols-2 lg:grid-cols-4"
                                     >
                                         <FormField
@@ -524,6 +603,7 @@ export default function ZeiterfassungStart(props: Props) {
                                         >
                                             <NativeSelect
                                                 id="z-buchungsart"
+                                                disabled={korrektur}
                                                 value={form.data.buchungsart}
                                                 onChange={(e) =>
                                                     form.setData(
@@ -543,6 +623,7 @@ export default function ZeiterfassungStart(props: Props) {
                                             >
                                                 <NativeSelect
                                                     id="z-kategorie"
+                                                    disabled={korrektur}
                                                     value={form.data.kategorie}
                                                     onChange={(e) =>
                                                         form.setData(
@@ -564,6 +645,7 @@ export default function ZeiterfassungStart(props: Props) {
                                         >
                                             <Input
                                                 id="z-projekt"
+                                                disabled={korrektur}
                                                 value={form.data.projekt}
                                                 onChange={(e) =>
                                                     form.setData(
@@ -610,6 +692,7 @@ export default function ZeiterfassungStart(props: Props) {
                                         >
                                             <Input
                                                 id="z-pause"
+                                                disabled={korrektur}
                                                 type="number"
                                                 min={0}
                                                 step={5}
@@ -698,7 +781,12 @@ export default function ZeiterfassungStart(props: Props) {
                             eintraege={eintraege}
                             summen={summen}
                             kategorien={kategorien}
-                            onEdit={gesperrt || fuehrt ? undefined : bearbeiten}
+                            onEdit={
+                                gesperrt || (fuehrt && !props.darfKorrigieren)
+                                    ? undefined
+                                    : bearbeiten
+                            }
+                            quelleBearbeiten={fuehrt && props.darfKorrigieren}
                             onDelete={
                                 gesperrt
                                     ? undefined

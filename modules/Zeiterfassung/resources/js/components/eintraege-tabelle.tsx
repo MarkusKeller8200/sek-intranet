@@ -39,6 +39,8 @@ import {
 type Aktionen = {
     /** nur für Einträge aus dem Intranet; aus Fremdsystemen nur löschen */
     onEdit?: (e: Eintrag) => void;
+    /** Buchungen aus ClickTime bearbeiten (Korrektur mit Recht, #214) */
+    quelleBearbeiten?: boolean;
     onDelete?: (e: Eintrag) => void;
 };
 
@@ -64,6 +66,7 @@ export default function EintraegeTabelle({
     soll = {},
     pruefungen = {},
     onEdit,
+    quelleBearbeiten = false,
     onDelete,
 }: Aktionen & {
     monat: string;
@@ -165,6 +168,7 @@ export default function EintraegeTabelle({
                                             )}
                                             kategorien={kategorien}
                                             onEdit={onEdit}
+                                            quelleBearbeiten={quelleBearbeiten}
                                             onDelete={onDelete}
                                         />
                                     ))}
@@ -376,6 +380,7 @@ function BuchungsZeile({
     kategorien,
     fehler,
     onEdit,
+    quelleBearbeiten = false,
     onDelete,
 }: Aktionen & { e: Eintrag; kategorien: Kategorien; fehler?: Pruefung }) {
     const name =
@@ -421,17 +426,19 @@ function BuchungsZeile({
             </TableCell>
             {(onEdit || onDelete) && (
                 <TableCell className="text-right whitespace-nowrap">
-                    {onEdit && !e.quelle && (
-                        <Button
-                            variant="ghost"
-                            size="icon"
-                            className="size-7"
-                            aria-label="Eintrag bearbeiten"
-                            onClick={() => onEdit(e)}
-                        >
-                            <Pencil />
-                        </Button>
-                    )}
+                    {onEdit &&
+                        (!e.quelle ||
+                            (quelleBearbeiten && e.quelle === 'clicktime')) && (
+                            <Button
+                                variant="ghost"
+                                size="icon"
+                                className="size-7"
+                                aria-label="Eintrag bearbeiten"
+                                onClick={() => onEdit(e)}
+                            >
+                                <Pencil />
+                            </Button>
+                        )}
                     {onDelete && (
                         <Button
                             variant="ghost"

@@ -11,6 +11,7 @@ use App\Plugins\PluginManager;
 use App\Support\PersonLinks;
 use App\Support\RolePins;
 use Illuminate\Http\Client\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
@@ -561,4 +562,57 @@ class PluginClicktimeTest extends TestCase
         $this->assertNull($liste['11']['pause_min']);
         $this->assertSame(['abwesenheit', 'ferien', 'ferien'], [$liste['14']['art'], $liste['14']['buchungsart'], $liste['14']['kategorie']]);
     }
+
+    public function test_clock_in_out_and_correct_entry(): void
+    {
+        Http::fake();
+        Carbon::setTestNow(Carbon::parse('2026-10-14 08:05', 'Europe/Zurich'));
+        $this->enable(['demo' => true, 'mapping' => "Pause = pause\nSollzeit = -"], true);
+        $andrea = collect(app(UserRepository::class)->all())->firstWhere('email', 'andrea.muster@sekbuelach.example');
+        app(PersonLinks::class)->recordSync((string) $andrea['id'], 'clicktime', 'source', '1');
+        $this->actingAs(new IntranetUser($andrea));
+
+        // nicht eingestempelt: nur «Einstempeln»
+        $this->get('/zeiterfassung?monat=2026-10')->assertInertia(fn (Assert $page) => $page
+            ->where('stempel.eingestempelt', false)->where('stempel.schreiben', true)->where('stempel.fehler', null));
+        $this->post('/zeiterfassung/ausstempeln')->assertRedirect();
+        $this->post('/zeiterfassung/einstempeln')->assertRedirect();
+        $this->get('/zeiterfassung?monat=2026-10')->assertInertia(fn (Assert $page) => $page
+            ->where('stempel.eingestempelt', true)->where('stempel.seit', '08:05'));
+        // offene Buchung im Abgleich (Beginn ohne Ende)
+        $offen = collect(app(EintragRepository::class)->fuerPersonMonat((string) $andrea['id'], '2026-10'))->firstWhere('beginn', '08:05');
+        $this->assertNotNull($offen);
+
+        Carbon::setTestNow(Carbon::parse('2026-10-14 12:00', 'Europe/Zurich'));
+        $this->post('/zeiterfassung/ausstempeln')->assertRedirect();
+        $this->get('/zeiterfassung?monat=2026-10')->assertInertia(fn (Assert $page) => $page->where('stempel.eingestempelt', false));
+        $geschlossen = collect(app(EintragRepository::class)->fuerPersonMonat((string) $andrea['id'], '2026-10'))->firstWhere('beginn', '08:05');
+        $this->assertSame(['12:00', 3.92], [$geschlossen['ende'], (float) $geschlossen['stunden']]);
+
+        // Korrektur einer Buchung aus ClickTime (PUT /entries), danach Abgleich
+        $this->get('/zeiterfassung?monat=2026-10')->assertInertia(fn (Assert $page) => $page->where('darfKorrigieren', true));
+        $erste = collect(app(EintragRepository::class)->fuerPersonMonat((string) $andrea['id'], '2026-10'))->firstWhere('datum', '2026-10-01');
+        $this->put('/zeiterfassung/eintraege/'.$erste['id'].'/clicktime', ['datum' => '2026-10-01', 'beginn' => '08:00', 'ende' => '12:00'])->assertSessionHasNoErrors();
+        $korrigiert = collect(app(EintragRepository::class)->fuerPersonMonat((string) $andrea['id'], '2026-10'))->firstWhere('datum', '2026-10-01');
+        $this->assertSame(['08:00', '12:00', 4.0], [$korrigiert['beginn'], $korrigiert['ende'], (float) $korrigiert['stunden']]);
+
+        // ohne Schreiben im Plugin: Knöpfe aus, kein Korrigieren
+        app(PluginManager::class)->saveSettings('clicktime', ['_allow_write' => false]);
+        $this->get('/zeiterfassung?monat=2026-10')->assertInertia(fn (Assert $page) => $page->where('stempel.schreiben', false)->where('darfKorrigieren', false));
+        $this->post('/zeiterfassung/einstempeln')->assertRedirect();
+        $this->assertNull(collect(app(EintragRepository::class)->fuerPersonMonat((string) $andrea['id'], '2026-10'))->firstWhere('beginn', '12:00'));
+        Http::assertNothingSent();
+        Carbon::setTestNow();
+    }
+
+    public function test_correction_needs_right(): void
+    {
+        Http::fake();
+        $this->enable(['demo' => true], true);
+        $lp = $this->signInAs('lehrperson');
+        app(PersonLinks::class)->recordSync((string) $lp->getAuthIdentifier(), 'clicktime', 'source', '3');
+        $this->get('/zeiterfassung?monat=2026-10')->assertInertia(fn (Assert $page) => $page->where('darfKorrigieren', false));
+        $this->put('/zeiterfassung/eintraege/x/clicktime', ['datum' => '2026-10-01', 'stunden' => 2])->assertForbidden();
+    }
 }
+

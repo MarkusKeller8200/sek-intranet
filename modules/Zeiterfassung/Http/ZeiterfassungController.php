@@ -32,6 +32,7 @@ use Modules\Zeiterfassung\Vorgesetzte;
 use Modules\Zeiterfassung\Zeitkonto;
 use Plugins\Clicktime\Importer;
 use Plugins\Clicktime\Plugin;
+use Plugins\Clicktime\Stamping;
 use RuntimeException;
 use Symfony\Component\HttpFoundation\Response as HttpResponse;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -78,7 +79,141 @@ class ZeiterfassungController extends Controller
             // Monatsrapport an die vorgesetzte Person unterschreiben (#208)
             'vorgesetzte' => array_map(fn (string $id): array => ['id' => $id, 'name' => $this->name($id)], app(Vorgesetzte::class)->fuer($person)['vorgesetzte']),
             'signaturAktiv' => app(Signatures::class)->provider() !== null,
+            // Ein-/Ausstempeln über ClickTime (#214), Korrektur von ClickTime-Buchungen mit Recht
+            'stempel' => self::stempelStatus($request, $person),
+            'darfKorrigieren' => self::clicktimeNr($person) !== null && Gate::allows('korrigieren-zeiterfassung') && self::clicktimeSchreiben(),
         ]);
+    }
+
+    /** Darf das Plugin ClickTime schreiben (Einstellung «Schreibende Aktionen erlauben»)? */
+    private static function clicktimeSchreiben(): bool
+    {
+        return app(PluginManager::class)->state('clicktime')['allow_write'];
+    }
+
+    /**
+     * Stempelstatus (#214): eingestempelt seit HH:MM oder nicht; null ohne ClickTime.
+     *
+     * @return array{eingestempelt: bool, seit: string|null, schreiben: bool, fehler: string|null}|null
+     */
+    private static function stempelStatus(Request $request, string $person): ?array
+    {
+        $nr = self::clicktimeNr($person);
+        if ($nr === null || ! class_exists(Stamping::class)) {
+            return null;
+        }
+        $user = $request->user();
+        try {
+            $status = (new Stamping(app(PluginManager::class)->context('clicktime', $user instanceof IntranetUser ? $user : null)))->status($nr);
+        } catch (Throwable $e) {
+            return ['eingestempelt' => false, 'seit' => null, 'schreiben' => false, 'fehler' => 'Stempelstatus nicht verfügbar: '.$e->getMessage()];
+        }
+
+        return ['eingestempelt' => $status['eingestempelt'], 'seit' => $status['seit'], 'schreiben' => self::clicktimeSchreiben(), 'fehler' => null];
+    }
+
+    /** Einstempeln in ClickTime (#214, POST /entries). */
+    public function einstempeln(Request $request): RedirectResponse
+    {
+        return $this->stempeln($request, true);
+    }
+
+    /** Ausstempeln in ClickTime (#214). */
+    public function ausstempeln(Request $request): RedirectResponse
+    {
+        return $this->stempeln($request, false);
+    }
+
+    private function stempeln(Request $request, bool $kommen): RedirectResponse
+    {
+        $person = self::person($request);
+        $nr = self::clicktimeNr($person);
+        abort_if($nr === null, 403);
+        $user = $request->user();
+        $user = $user instanceof IntranetUser ? $user : null;
+        try {
+            /** @var string $zeit */
+            $zeit = app(PluginManager::class)->runWith('clicktime', $user, $kommen ? 'Zeiterfassung: einstempeln' : 'Zeiterfassung: ausstempeln',
+                fn ($ctx): string => $kommen ? (new Stamping($ctx))->kommen($nr) : (new Stamping($ctx))->gehen($nr));
+        } catch (Throwable $e) {
+            $this->toast(($kommen ? 'Einstempeln' : 'Ausstempeln').' nicht möglich: '.$e->getMessage(), 'error');
+
+            return back();
+        }
+        $this->abgleichen($person, $nr, now(Stamping::TIME_ZONE)->format('Y-m'), $user);
+        $this->toast(($kommen ? 'Eingestempelt um ' : 'Ausgestempelt um ').$zeit.'.');
+
+        return back();
+    }
+
+    /**
+     * Buchung aus ClickTime korrigieren (#214, Recht korrigieren-zeiterfassung, PUT /entries): Datum, Beginn, Ende bzw.
+     * Stunden und Notiz. Die Pause führt ClickTime als eigene Buchung; sie bleibt unverändert. Danach Abgleich.
+     */
+    public function korrigieren(Request $request, string $id): RedirectResponse
+    {
+        abort_unless(Gate::allows('korrigieren-zeiterfassung'), 403);
+        $person = self::person($request);
+        $nr = self::clicktimeNr($person);
+        $alt = $this->eintraege->find($id);
+        abort_if($nr === null || $alt === null || ($alt['person_id'] ?? null) !== $person, 404);
+        if (($alt['quelle'] ?? null) !== 'clicktime' || (string) ($alt['quelle_id'] ?? '') === '') {
+            throw ValidationException::withMessages(['datum' => 'Nur Buchungen aus ClickTime können so korrigiert werden.']);
+        }
+        $data = $request->validate([
+            'datum' => ['required', 'date_format:Y-m-d'],
+            'beginn' => ['nullable', 'date_format:H:i'],
+            'ende' => ['nullable', 'date_format:H:i', 'required_with:beginn'],
+            'stunden' => ['nullable', 'numeric', 'min:0.25', 'max:24', 'required_without:beginn'],
+            'notiz' => ['nullable', 'string', 'max:500'],
+        ], [
+            'stunden.required_without' => 'Beginn und Ende oder die Anzahl Stunden angeben.',
+            'ende.required_with' => 'Bitte das Ende angeben.',
+        ]);
+        $this->entsperrt($person, (string) $alt['monat']);
+        $this->entsperrt($person, substr($data['datum'], 0, 7));
+        $stunden = (float) ($data['stunden'] ?? 0);
+        if (! empty($data['beginn'])) {
+            try {
+                $stunden = Zeitkonto::stunden($data['beginn'], (string) $data['ende']);
+            } catch (InvalidArgumentException $e) {
+                throw ValidationException::withMessages(['ende' => $e->getMessage()]);
+            }
+        }
+        $user = $request->user();
+        $user = $user instanceof IntranetUser ? $user : null;
+        try {
+            app(PluginManager::class)->runWith('clicktime', $user, 'Zeiterfassung: Buchung korrigieren',
+                fn ($ctx) => (new Stamping($ctx))->korrigieren($nr, (string) $alt['quelle_id'], (string) $alt['datum'], [
+                    'day' => $data['datum'],
+                    'time_from' => ! empty($data['beginn']) ? (string) $data['beginn'] : null,
+                    'time_to' => ! empty($data['beginn']) ? (string) $data['ende'] : null,
+                    'hours' => $stunden,
+                    'notes' => isset($data['notiz']) && trim((string) $data['notiz']) !== '' ? trim((string) $data['notiz']) : null,
+                ]));
+        } catch (Throwable $e) {
+            throw ValidationException::withMessages(['datum' => 'Korrektur in ClickTime nicht möglich: '.$e->getMessage()]);
+        }
+        foreach (array_unique([(string) $alt['monat'], substr($data['datum'], 0, 7)]) as $monat) {
+            $this->abgleichen($person, $nr, $monat, $user);
+        }
+        $this->toast('Buchung in ClickTime korrigiert.');
+
+        return redirect('/zeiterfassung?monat='.substr($data['datum'], 0, 7));
+    }
+
+    /** Monat nach dem Schreiben aus ClickTime nachführen (nicht bei gesperrtem Monat); Fehler nur protokollieren. */
+    private function abgleichen(string $person, string $nr, string $monat, ?IntranetUser $user): void
+    {
+        if (Zeitkonto::gesperrt((string) ($this->monate->status($person, $monat)['status'] ?? 'offen'))) {
+            return;
+        }
+        try {
+            app(PluginManager::class)->runWith('clicktime', $user, 'Zeiterfassung: Abgleich nach dem Stempeln',
+                fn ($ctx) => (new Importer($ctx))->run($person, $nr, $monat, true));
+        } catch (Throwable $e) {
+            report($e);
+        }
     }
 
     /**
