@@ -2,6 +2,16 @@ import type { Auth } from '@/types/auth';
 import type { Options } from '@/types/intranet';
 import type { ModuleNavGroup } from '@/types/navigation';
 
+/** Erscheinungsbild (#216): Wortmarke nach CI oder eigenes Logo. */
+export type Branding = {
+    marke: 'eduksx' | 'markussx' | 'eigene';
+    name: string;
+    wortmarke: 'education' | 'developer' | null;
+    logo: { hell: string; dunkel: string } | null;
+    signet: string;
+    version: string;
+};
+
 declare module '@inertiajs/core' {
     export interface InertiaConfig {
         sharedPageProps: {
@@ -22,6 +32,8 @@ declare module '@inertiajs/core' {
             };
             store: string;
             sidebarOpen: boolean;
+            /** Erscheinungsbild der Instanz (#216) */
+            branding?: Branding;
             [key: string]: unknown;
         };
     }

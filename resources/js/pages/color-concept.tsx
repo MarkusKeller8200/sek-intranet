@@ -1,5 +1,6 @@
 import { Head, usePage } from '@inertiajs/react';
 import { CircleAlert, CircleCheck, Info, TriangleAlert } from 'lucide-react';
+import AppLogoIcon from '@/components/app-logo-icon';
 import AppWordmark from '@/components/app-wordmark';
 import FontPicker from '@/components/font-picker';
 import { GlossaryTag } from '@/components/glossary-tags';
@@ -137,14 +138,13 @@ export default function ColorConcept({
                     <CardHeader>
                         <CardTitle>Logo</CardTitle>
                         <CardDescription>
-                            Offizieller Schriftzug, im Dunkelmodus mit heller
-                            Schrift. Signet für App-Symbol und Favicon.
+                            Logo der Instanz (Einstellungen → Erscheinungsbild),
+                            im Dunkelmodus mit heller Schrift, und Signet.
                         </CardDescription>
                     </CardHeader>
                     <CardContent className="flex flex-wrap items-center gap-8">
                         <AppWordmark className="w-80 max-w-full" />
-                        <img
-                            src="/images/sekbuelach-icon.svg"
+                        <AppLogoIcon
                             alt="Signet"
                             className="size-14 rounded-xl"
                         />

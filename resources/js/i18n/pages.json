@@ -552,5 +552,70 @@
     "Vor Wiederherstellung": ["Before restore", "Vor Widerherstellig"],
     "Wird geprüft …": ["Checking …", "Wird prüeft …"],
     "Hochladen und prüfen": ["Upload and check", "Uelade und prüefe"],
-    "Wird wiederhergestellt …": ["Restoring …", "Wird widerhergstellt …"]
+    "Wird wiederhergestellt …": ["Restoring …", "Wird widerhergstellt …"],
+    "© {n} developed by MarKusSXCH": [
+        "© {n} developed by MarKusSXCH",
+        "© {n} developed by MarKusSXCH"
+    ],
+    "Marke": ["Brand", "Marke"],
+    "Aktuell angezeigt:": ["Currently shown:", "Im Moment aazeigt:"],
+    "Name der Instanz": ["Instance name", "Name vo de Instanz"],
+    "Erscheint unter der Wortmarke und als Bildbeschreibung des eigenen Logos.": [
+        "Appears below the wordmark and as the image description of your own logo.",
+        "Erschiint under de Wortmarke und als Bildbeschriibig vom eigete Logo."
+    ],
+    "Eigenes Logo": ["Own logo", "Eigets Logo"],
+    "SVG, PNG, JPG oder WebP, höchstens {n} MB. SVG ohne Skripte und externe Verweise. Logo für dunkle Flächen und Signet sind freiwillig.": [
+        "SVG, PNG, JPG or WebP, at most {n} MB. SVG without scripts or external references. Logo for dark backgrounds and signet are optional.",
+        "SVG, PNG, JPG oder WebP, höchschtens {n} MB. SVG ohni Skripts und externi Verwiis. Logo für dunkli Flächene und Signet sind freiwillig."
+    ],
+    "Hochladen": ["Upload", "Uelade"],
+    "Aktiv:": ["Active:", "Aktiv:"],
+    "Farbkonzept wählen": ["Choose colour scheme", "Farbkonzept wähle"],
+    "Erscheinungsbild": ["Appearance", "Erschiinigsbild"],
+    "Logo links oben und auf der Anmeldeseite. Ohne eigenes Logo zeigt das Intranet die Marke EduKSX.": [
+        "Logo at the top left and on the sign-in page. Without your own logo the intranet shows the EduKSX brand.",
+        "Logo links obe und uf de Aamäldesiite. Ohni eigets Logo zeigt s Intranet d Marke EduKSX."
+    ],
+    "z. B. Sekundarschule Musterhausen": [
+        "e.g. Sekundarschule Musterhausen",
+        "z. B. Sekundarschuel Musterhuuse"
+    ],
+    "Hochgeladenes Logo": ["Uploaded logo", "Ueglades Logo"],
+    "Zuerst ein Logo hochladen": [
+        "Upload a logo first",
+        "Zerscht es Logo uelade"
+    ],
+    "Aktives eingebautes Farbkonzept (nur Datensatz «_eingebaut»)": [
+        "Active built-in colour scheme (record «_eingebaut» only)",
+        "Aktivs iibauts Farbkonzept (nur Datesatz «_eingebaut»)"
+    ],
+    "System: Erscheinungsbild": [
+        "System: appearance",
+        "System: Erschiinigsbild"
+    ],
+    "Name der Instanz (z. B. Schule)": [
+        "Instance name (e.g. school)",
+        "Name vo de Instanz (z. B. Schuel)"
+    ],
+    "Logo für helle Flächen (Pfad)": [
+        "Logo for light backgrounds (path)",
+        "Logo für hälli Flächene (Pfad)"
+    ],
+    "Logo für dunkle Flächen (Pfad)": [
+        "Logo for dark backgrounds (path)",
+        "Logo für dunkli Flächene (Pfad)"
+    ],
+    "Signet, quadratisch (Pfad)": [
+        "Signet, square (path)",
+        "Signet, quadratisch (Pfad)"
+    ],
+    "Eingebaut sind die Farbkonzepte EduKSX und MarKusSXCH; eigene Themes lassen sich anlegen oder kopieren.": [
+        "The colour schemes EduKSX and MarKusSXCH are built in; you can create or copy your own themes.",
+        "Iibaut sind d Farbkonzept EduKSX und MarKusSXCH; eigeti Themes chasch aalege oder kopiere."
+    ],
+    "Logo der Instanz (Einstellungen → Erscheinungsbild), im Dunkelmodus mit heller Schrift, und Signet.": [
+        "Instance logo (Settings → Appearance), with light lettering in dark mode, and signet.",
+        "Logo vo de Instanz (Iistellige → Erschiinigsbild), im Dunkelmodus mit hällere Schrift, und Signet."
+    ]
 }
