@@ -62,7 +62,7 @@ class BrandingTest extends TestCase
         $this->get('/branding/logo_hell')->assertOk()
             ->assertHeader('Content-Type', 'image/svg+xml')
             ->assertHeader('X-Content-Type-Options', 'nosniff')
-            ->assertHeader('Content-Security-Policy', "default-src 'none'; style-src 'unsafe-inline'; img-src data:; sandbox");
+            ->assertHeader('Content-Security-Policy', "default-src 'none'; style-src 'unsafe-inline'; img-src data:; sandbox; frame-ancestors 'self'");
         $this->get('/branding/signet')->assertOk()->assertHeader('Content-Type', 'image/png');
         $this->get('/branding/logo_dunkel')->assertNotFound();
         $this->get('/branding/irgendwas')->assertNotFound();

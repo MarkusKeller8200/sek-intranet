@@ -30,7 +30,9 @@ final class SecurityHeaders
         $headers = $response->headers;
 
         $headers->set('X-Frame-Options', 'SAMEORIGIN');
-        $headers->set('Content-Security-Policy', implode('; ', [
+        // Eine strengere Richtlinie der Antwort (z. B. hochgeladene SVG-Logos in einer Sandbox, #216) bleibt erhalten
+        $eigene = $headers->get('Content-Security-Policy');
+        $headers->set('Content-Security-Policy', is_string($eigene) && $eigene !== '' ? $eigene.(str_contains($eigene, 'frame-ancestors') ? '' : "; frame-ancestors 'self'") : implode('; ', [
             "frame-ancestors 'self'",
             'frame-src '.implode(' ', ["'self'", ...$this->frameSources()]),
             "object-src 'none'",
