@@ -615,4 +615,3 @@ class PluginClicktimeTest extends TestCase
         $this->put('/zeiterfassung/eintraege/x/clicktime', ['datum' => '2026-10-01', 'stunden' => 2])->assertForbidden();
     }
 }
-
