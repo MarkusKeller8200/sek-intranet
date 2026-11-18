@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\Data\Contracts\GlossaryRepository;
 use App\Data\Store\JsonStore;
+use App\Support\Branding;
 use App\Support\DemoStudents;
 use App\Support\GlossaryExamples;
 use App\Support\PersonFields;
@@ -96,6 +97,12 @@ class UpgradeIntranetDataCommand extends Command
             $this->components->info("Glossar: {$examples} Beispiel-Einträge ergänzt.");
         }
         $total += DemoStudents::addDemoLinks($store);
+
+        // White-Labeling (#216): bestehende Installationen behalten das Logo der Sekundarschule Bülach (einmalig)
+        if (app(Branding::class)->bestandUebernehmen()) {
+            $this->components->info('Erscheinungsbild: Logo der Sekundarschule Bülach als eigenes Logo übernommen.');
+            $total++;
+        }
 
         // Neuerungen des freigegebenen Releases einmal als Mitteilung (CHANGELOG «Für Mitarbeitende»)
         $version = (string) config('intranet.version', '0.0.0');

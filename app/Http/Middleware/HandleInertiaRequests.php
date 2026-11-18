@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use App\Support\AppVersion;
+use App\Support\Branding;
 use App\Support\ModuleNavigation;
 use App\Support\Notifications;
 use Illuminate\Http\Request;
@@ -57,6 +58,8 @@ class HandleInertiaRequests extends Middleware
             ],
             'navigation' => fn (): array => app(ModuleNavigation::class)->groups($user),
             'store' => config('intranet.store'),
+            // Erscheinungsbild der Instanz (#216): Wortmarke oder eigenes Logo, Signet, Name
+            'branding' => fn (): array => app(Branding::class)->anzeige(),
             'appVersion' => AppVersion::info(),
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
         ];

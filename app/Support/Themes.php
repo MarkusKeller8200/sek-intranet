@@ -9,6 +9,8 @@ use InvalidArgumentException;
  * Themes (Farbkonzepte): gespeicherte Farbsätze für hell und dunkel, die die Farbwerte aus
  * resources/css/app.css übersteuern. Das Theme «SekBülach (Standard)» ist app.css selbst und kann
  * nicht geändert werden. Ein Theme ist für alle aktiv (Administration wählt es im Farbkonzept).
+ * Eingebaute Farbkonzepte (EduKSX, MarKusSXCH; #216) stehen in BuiltinThemes und sind ebenfalls nicht änderbar;
+ * ist eines aktiv, steht das im Datensatz «_eingebaut».
  *
  * Gespeichert werden nur abweichende Farben (#rrggbb); fehlende Farben kommen aus der Vorgabe.
  */
@@ -17,6 +19,9 @@ final class Themes
     public const COLLECTION = 'themes';
 
     public const STANDARD = 'standard';
+
+    /** Datensatz, der das aktive eingebaute Farbkonzept festhält (#216). */
+    private const EINGEBAUT = '_eingebaut';
 
     /** Bearbeitbare Farbwerte nach Gruppe (Name in app.css ohne «--»). */
     public const GROUPS = [
@@ -90,6 +95,12 @@ final class Themes
         ], $this->stored());
         usort($stored, fn (array $a, array $b): int => strcasecmp($a['name'], $b['name']));
 
+        $builtin = [];
+        foreach (BuiltinThemes::all() as $id => $t) {
+            $builtin[] = ['id' => $id, 'name' => $t['name'], 'description' => $t['description'], 'light' => $t['light'], 'dark' => $t['dark'],
+                'builtin' => true, 'active' => $id === $active];
+        }
+
         return [[
             'id' => self::STANDARD,
             'name' => 'SekBülach (Standard)',
@@ -98,7 +109,7 @@ final class Themes
             'dark' => [],
             'builtin' => true,
             'active' => $active === self::STANDARD,
-        ], ...$stored];
+        ], ...$builtin, ...$stored];
     }
 
     /**
@@ -122,8 +133,14 @@ final class Themes
                 return (string) $t['id'];
             }
         }
+        $eingebaut = (string) ($this->store->find(self::COLLECTION, self::EINGEBAUT)['theme'] ?? '');
 
-        return self::STANDARD;
+        return isset(BuiltinThemes::all()[$eingebaut]) ? $eingebaut : self::STANDARD;
+    }
+
+    public static function isBuiltin(string $id): bool
+    {
+        return $id === self::STANDARD || isset(BuiltinThemes::all()[$id]);
     }
 
     /**
@@ -136,8 +153,8 @@ final class Themes
      */
     public function save(?string $id, string $name, string $description, array $light, array $dark, ?string $userId): array
     {
-        if ($id === self::STANDARD) {
-            throw new InvalidArgumentException('Das Standard-Theme lässt sich nicht ändern – als neues Theme speichern.');
+        if ($id !== null && self::isBuiltin($id)) {
+            throw new InvalidArgumentException('Eingebaute Themes lassen sich nicht ändern – als neues Theme speichern.');
         }
         $name = trim($name);
         if ($name === '') {
@@ -169,10 +186,19 @@ final class Themes
      */
     public function activate(string $id): array
     {
-        if ($id !== self::STANDARD && $this->store->find(self::COLLECTION, $id) === null) {
+        if (! self::isBuiltin($id) && ($id === self::EINGEBAUT || $this->store->find(self::COLLECTION, $id) === null)) {
             throw new InvalidArgumentException('Theme nicht gefunden.');
         }
         $changes = [];
+        // eingebautes Farbkonzept merken (Standard bzw. gespeichertes Theme: keines)
+        $alt = $this->store->find(self::COLLECTION, self::EINGEBAUT);
+        $neu = isset(BuiltinThemes::all()[$id]) ? $id : null;
+        if (($alt['theme'] ?? null) !== $neu) {
+            $after = $alt !== null
+                ? $this->store->update(self::COLLECTION, self::EINGEBAUT, ['theme' => $neu])
+                : $this->store->insert(self::COLLECTION, ['id' => self::EINGEBAUT, 'name' => 'Eingebautes Farbkonzept', 'light' => [], 'dark' => [], 'active' => false, 'theme' => $neu]);
+            $changes[] = ['before' => $alt ?? [], 'after' => (array) $after];
+        }
         foreach ($this->stored() as $t) {
             $should = $t['id'] === $id;
             if ((($t['active'] ?? false) === true) !== $should) {
@@ -188,8 +214,8 @@ final class Themes
      */
     public function delete(string $id): ?array
     {
-        if ($id === self::STANDARD) {
-            throw new InvalidArgumentException('Das Standard-Theme lässt sich nicht löschen.');
+        if (self::isBuiltin($id) || $id === self::EINGEBAUT) {
+            throw new InvalidArgumentException('Eingebaute Themes lassen sich nicht löschen.');
         }
         $before = $this->store->find(self::COLLECTION, $id);
         if ($before !== null) {
@@ -205,7 +231,7 @@ final class Themes
     public function activeCss(): string
     {
         $theme = $this->find($this->activeId());
-        if ($theme === null || $theme['builtin'] === true) {
+        if ($theme === null || $theme['id'] === self::STANDARD) {
             return '';
         }
 
@@ -275,6 +301,6 @@ final class Themes
      */
     private function stored(): array
     {
-        return $this->store->all(self::COLLECTION);
+        return array_values(array_filter($this->store->all(self::COLLECTION), fn (array $t): bool => ($t['id'] ?? null) !== self::EINGEBAUT));
     }
 }

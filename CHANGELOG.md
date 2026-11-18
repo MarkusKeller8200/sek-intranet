@@ -11,6 +11,13 @@ laufend unter **Unveröffentlicht**. Ab 0.32.0 entsteht eine Version nur bei ein
 
 ### Neu
 
+- **White-Labeling (#216):** Neue Seite Einstellungen → Erscheinungsbild: Marke EduKSX (Vorgabe, Wortmarke
+  «EduKSX-Intranet» mit Icon «Intranet»), MarKusSXCH oder eigenes Logo (hell, dunkel, Signet; SVG/PNG/JPG/WebP, SVG
+  ohne Skripte, Auslieferung in einer Sandbox) und Name der Instanz. Wortmarken nach CI-Manual MarKusSXCH v1.0 als
+  Text mit festen Farben (`--ci-*`). Farbkonzept um die eingebauten Themes «EduKSX» und «MarKusSXCH» ergänzt
+  (kontrastgeprüfte Abstufungen für Bedienelemente). Bestehende Installationen übernehmen beim Update einmalig das
+  Logo der Sekundarschule Bülach als eigenes Logo. Vermerk unter dem Logo: «developed by MarKusSXCH».
+
 - **Plugins: Protokollstufe einstellbar (#218):** Unter Plugin → Protokoll «Normal», «Details» oder «Debug»; die
   beiden letzten gelten 60 Minuten. Details zeigt bei Fehlern die Antwort des Dienstes, wichtige Kopfzeilen und die
   Berechtigungen (Scopes) des Zugriffstokens; Debug zusätzlich gesendete Daten und jede Antwort (gekürzt).

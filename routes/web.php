@@ -7,6 +7,7 @@ use App\Http\Controllers\ApiRecorderController;
 use App\Http\Controllers\ApiViewController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BackupController;
+use App\Http\Controllers\BrandingController;
 use App\Http\Controllers\BrowserExtensionController;
 use App\Http\Controllers\ConnectorController;
 use App\Http\Controllers\DashboardController;
@@ -42,6 +43,9 @@ Route::middleware('guest')->group(function () {
 });
 
 Route::post('abmelden', [AuthController::class, 'destroy'])->middleware('auth')->name('logout');
+
+// Logo und Signet der Instanz (#216): auch ohne Anmeldung (Anmeldeseite)
+Route::get('branding/{slot}', [BrandingController::class, 'show'])->whereIn('slot', ['logo_hell', 'logo_dunkel', 'signet'])->name('branding.show');
 
 Route::middleware('auth')->group(function () {
     Route::redirect('/', '/start')->name('home');
@@ -157,6 +161,11 @@ Route::middleware('auth')->group(function () {
         Route::delete('api-doku/tokens/{id}', [ApiDocsController::class, 'destroy'])->name('api-docs.tokens.destroy');
 
         // Plugins (Anbindung anderer Systeme per API)
+        // Erscheinungsbild (#216, White-Labeling)
+        Route::get('einstellungen/erscheinungsbild', [BrandingController::class, 'index'])->name('branding.index');
+        Route::put('einstellungen/erscheinungsbild', [BrandingController::class, 'update'])->name('branding.update');
+        Route::post('einstellungen/erscheinungsbild/{slot}', [BrandingController::class, 'upload'])->middleware('throttle:20,1')->name('branding.upload');
+        Route::delete('einstellungen/erscheinungsbild/{slot}', [BrandingController::class, 'destroy'])->name('branding.destroy');
         // Sicherung der ganzen Installation (#174)
         Route::get('einstellungen/sicherung', [BackupController::class, 'index'])->name('backup.index');
         Route::post('einstellungen/sicherung/herunterladen', [BackupController::class, 'download'])->middleware('throttle:10,1')->name('backup.download');

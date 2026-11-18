@@ -1,26 +1,56 @@
 {
-    "Aktuelle Mitteilungen": ["Latest announcements", "Aktuelli Mitteilige"],
+    "Aktuelle Mitteilungen": [
+        "Latest announcements",
+        "Aktuelli Mitteilige"
+    ],
     "Angeheftete zuerst, dann die neuesten": [
         "Pinned first, then the newest",
         "Aagheftet zerscht, dänn di neuschte"
     ],
-    "Nächste Termine": ["Upcoming events", "Nächschti Termin"],
-    "Keine kommenden Termine.": ["No upcoming events.", "Kei chömendi Termin."],
-    "Alle Termine": ["All events", "Alli Termin"],
+    "Nächste Termine": [
+        "Upcoming events",
+        "Nächschti Termin"
+    ],
+    "Keine kommenden Termine.": [
+        "No upcoming events.",
+        "Kei chömendi Termin."
+    ],
+    "Alle Termine": [
+        "All events",
+        "Alli Termin"
+    ],
     "Noch keine Links erfasst.": [
         "No links recorded yet.",
         "Nonig Links erfasst."
     ],
-    "Kommende Termine": ["Upcoming events", "Chömendi Termin"],
-    "Keine Mitteilungen": ["No announcements", "Kei Mitteilige"],
-    "Oben anheften": ["Pin to top", "Obe aahefte"],
-    "Veröffentlicht ab": ["Published from", "Veröffentlicht ab"],
+    "Kommende Termine": [
+        "Upcoming events",
+        "Chömendi Termin"
+    ],
+    "Keine Mitteilungen": [
+        "No announcements",
+        "Kei Mitteilige"
+    ],
+    "Oben anheften": [
+        "Pin to top",
+        "Obe aahefte"
+    ],
+    "Veröffentlicht ab": [
+        "Published from",
+        "Veröffentlicht ab"
+    ],
     "Liegt das Datum in der Zukunft, sieht nur die Redaktion die Mitteilung.": [
         "If the date is in the future, only the editors can see the announcement.",
         "Isch s Datum i de Zuekunft, gseht nur d Redaktion d Mitteilig."
     ],
-    "Mitteilung bearbeiten": ["Edit announcement", "Mitteilig bearbeite"],
-    "Neue Mitteilung": ["New announcement", "Neui Mitteilig"],
+    "Mitteilung bearbeiten": [
+        "Edit announcement",
+        "Mitteilig bearbeite"
+    ],
+    "Neue Mitteilung": [
+        "New announcement",
+        "Neui Mitteilig"
+    ],
     "Suchbegriff oder Kategorie anpassen.": [
         "Adjust search term or category.",
         "Suechbegriff oder Kategorie aapasse."
@@ -37,10 +67,22 @@
         "No announcements found",
         "Kei Mitteilige gfunde"
     ],
-    "Angeheftet": ["Pinned", "Aagheftet"],
-    "Alle Kategorien": ["All categories", "Alli Kategorie"],
-    "Alle Mitteilungen": ["All announcements", "Alli Mitteilige"],
-    "Mitteilung löschen?": ["Delete announcement?", "Mitteilig lösche?"],
+    "Angeheftet": [
+        "Pinned",
+        "Aagheftet"
+    ],
+    "Alle Kategorien": [
+        "All categories",
+        "Alli Kategorie"
+    ],
+    "Alle Mitteilungen": [
+        "All announcements",
+        "Alli Mitteilige"
+    ],
+    "Mitteilung löschen?": [
+        "Delete announcement?",
+        "Mitteilig lösche?"
+    ],
     "Anmeldung nicht eingerichtet": [
         "Sign-in not set up",
         "Aamäldig nöd iigrichtet"
@@ -53,24 +95,42 @@
         "Prototype: demo people with invented data. Later sign-in with the school account.",
         "Prototyp: Demo-Persone mit erfundne Date. Spöter Aamäldig mit em Schuelkonto."
     ],
-    "Anmelden": ["Sign in", "Aamälde"],
+    "Anmelden": [
+        "Sign in",
+        "Aamälde"
+    ],
     "Als welche Person möchtest du den Prototyp testen?": [
         "Which person would you like to test the prototype as?",
         "Als weli Person wottsch de Prototyp teschte?"
     ],
-    "Art": ["Type", "Art"],
+    "Art": [
+        "Type",
+        "Art"
+    ],
     "Beschreibung (optional)": [
         "Description (optional)",
         "Beschriibig (freiwillig)"
     ],
-    "Eintrag bearbeiten": ["Edit entry", "Iitrag bearbeite"],
-    "Neuer Eintrag": ["New entry", "Neue Iitrag"],
+    "Eintrag bearbeiten": [
+        "Edit entry",
+        "Iitrag bearbeite"
+    ],
+    "Neuer Eintrag": [
+        "New entry",
+        "Neue Iitrag"
+    ],
     "Neues Dokument oder Link": [
         "New document or link",
         "Neus Dokumänt oder Link"
     ],
-    "Link auf Webseite": ["Link to website", "Link uf e Websiite"],
-    "Datei hochladen": ["Upload file", "Datei uelade"],
+    "Link auf Webseite": [
+        "Link to website",
+        "Link uf e Websiite"
+    ],
+    "Datei hochladen": [
+        "Upload file",
+        "Datei uelade"
+    ],
     "Max. {n} MB. Keine Personendaten hochladen (Prototyp).": [
         "Max. {n} MB. Do not upload personal data (prototype).",
         "Max. {n} MB. Kei Personedate uelade (Prototyp)."
@@ -79,18 +139,42 @@
         "Regulations, forms, guides and important websites",
         "Reglemänt, Formular, Aaleitige und wichtigi Websiite"
     ],
-    "Dokumente durchsuchen": ["Search documents", "Dokumänt dursueche"],
-    "Keine Einträge gefunden": ["No entries found", "Kei Iiträg gfunde"],
-    "Eintrag löschen?": ["Delete entry?", "Iitrag lösche?"],
+    "Dokumente durchsuchen": [
+        "Search documents",
+        "Dokumänt dursueche"
+    ],
+    "Keine Einträge gefunden": [
+        "No entries found",
+        "Kei Iiträg gfunde"
+    ],
+    "Eintrag löschen?": [
+        "Delete entry?",
+        "Iitrag lösche?"
+    ],
     "Der Eintrag und die hochgeladene Datei werden endgültig gelöscht.": [
         "The entry and the uploaded file will be deleted permanently.",
         "De Iitrag und di ueglade Datei wärded für immer glöscht."
     ],
-    "Ganztägig": ["All day", "De ganz Tag"],
-    "Beginn": ["Start", "Aafang"],
-    "Ende (optional)": ["End (optional)", "Änd (freiwillig)"],
-    "Termin bearbeiten": ["Edit event", "Termin bearbeite"],
-    "Neuer Termin": ["New event", "Neue Termin"],
+    "Ganztägig": [
+        "All day",
+        "De ganz Tag"
+    ],
+    "Beginn": [
+        "Start",
+        "Aafang"
+    ],
+    "Ende (optional)": [
+        "End (optional)",
+        "Änd (freiwillig)"
+    ],
+    "Termin bearbeiten": [
+        "Edit event",
+        "Termin bearbeite"
+    ],
+    "Neuer Termin": [
+        "New event",
+        "Neue Termin"
+    ],
     "Vergangene Termine anzeigen": [
         "Show past events",
         "Vergangeni Termin aazeige"
@@ -99,26 +183,50 @@
         "Events, conferences, training and holidays",
         "Aaläss, Konferänze, Wiiterbildige und Ferie"
     ],
-    "Keine Termine": ["No events", "Kei Termin"],
-    "Termin löschen?": ["Delete event?", "Termin lösche?"],
+    "Keine Termine": [
+        "No events",
+        "Kei Termin"
+    ],
+    "Termin löschen?": [
+        "Delete event?",
+        "Termin lösche?"
+    ],
     "Was sich im Intranet geändert hat. Versionen nach Semantic Versioning (MAJOR.MINOR.PATCH).": [
         "What has changed in the intranet. Versions follow Semantic Versioning (MAJOR.MINOR.PATCH).",
         "Was sich im Intranet gänderet hät. Versione nach Semantic Versioning (MAJOR.MINOR.PATCH)."
     ],
-    "Logo": ["Logo", "Logo"],
+    "Logo": [
+        "Logo",
+        "Logo"
+    ],
     "Offizieller Schriftzug, im Dunkelmodus mit heller Schrift. Signet für App-Symbol und Favicon.": [
         "Official wordmark, with light lettering in dark mode. Emblem for app icon and favicon.",
         "Offizielle Schriftzug, im Dunkelmodus mit heller Schrift. Signet für s App-Symbol und Favicon."
     ],
-    "Grundfarben": ["Base colours", "Grundfarbe"],
+    "Grundfarben": [
+        "Base colours",
+        "Grundfarbe"
+    ],
     "Definiert in resources/css/app.css (hell und dunkel).": [
         "Defined in resources/css/app.css (light and dark).",
         "Definiert in resources/css/app.css (hell und dunkel)."
     ],
-    "Bedienelemente": ["Controls", "Bedienelemänt"],
-    "Sekundär": ["Secondary", "Sekundär"],
-    "Statusfarben": ["Status colours", "Statusfarbe"],
-    "Farben je Auswahlwert": ["Colours per option", "Farbe pro Uswahlwert"],
+    "Bedienelemente": [
+        "Controls",
+        "Bedienelemänt"
+    ],
+    "Sekundär": [
+        "Secondary",
+        "Sekundär"
+    ],
+    "Statusfarben": [
+        "Status colours",
+        "Statusfarbe"
+    ],
+    "Farben je Auswahlwert": [
+        "Colours per option",
+        "Farbe pro Uswahlwert"
+    ],
     "Zuordnung in config/intranet.php → colors. Neue Werte dort eintragen, sonst erscheinen sie grau.": [
         "Mapping in config/intranet.php → colors. Add new values there, otherwise they appear grey.",
         "Zuewiisig in config/intranet.php → colors. Neui Wärt det iitrage, susch chömed s grau."
@@ -135,30 +243,66 @@
         "Each sidebar area has a colour and an icon: coloured header, icons and active-page marker in the area colour. Mapping in config/intranet.php → modules (color, icon).",
         "Jede Bereich vo de Siiteleischte hät e Farb und es Symbol: farbigi Flächi für de Chopf, Symbol und Markierig vo de aktive Siite i de Bereichsfarb. Zuewiisig in config/intranet.php → modules (color, icon)."
     ],
-    "Schrift": ["Typeface", "Schrift"],
+    "Schrift": [
+        "Typeface",
+        "Schrift"
+    ],
     "Standard ist Open Sans wie auf sekbuelach.ch. Jede Person kann die Schrift unter Einstellungen → Darstellung umstellen (gilt pro Browser).": [
         "The default is Open Sans as on sekbuelach.ch. Everyone can change the font under Settings → Appearance (per browser).",
         "Standard isch Open Sans wie uf sekbuelach.ch. Jedi Person cha d Schrift unter Iistellige → Darstellig umstelle (gilt pro Browser)."
     ],
-    "Schulhäuser": ["School buildings", "Schuelhüüser"],
+    "Schulhäuser": [
+        "School buildings",
+        "Schuelhüüser"
+    ],
     "Kategorien Mitteilungen": [
         "Announcement categories",
         "Kategorie Mitteilige"
     ],
-    "Arten von Terminen": ["Event types", "Arte vo Termin"],
-    "Kategorien Dokumente": ["Document categories", "Kategorie Dokumänt"],
-    "Zielgruppen": ["Audiences", "Zielgruppe"],
-    "Rollen": ["Roles", "Rolle"],
+    "Arten von Terminen": [
+        "Event types",
+        "Arte vo Termin"
+    ],
+    "Kategorien Dokumente": [
+        "Document categories",
+        "Kategorie Dokumänt"
+    ],
+    "Zielgruppen": [
+        "Audiences",
+        "Zielgruppe"
+    ],
+    "Rollen": [
+        "Roles",
+        "Rolle"
+    ],
     "Abgeleitet aus dem Auftritt von sekbuelach.ch. Schrift: Open Sans (umstellbar).": [
         "Derived from the sekbuelach.ch website. Font: Open Sans (changeable).",
         "Abgleitet vom Uftritt vo sekbuelach.ch. Schrift: Open Sans (umstellbar)."
     ],
-    "Signet": ["Emblem", "Signet"],
-    "Primär": ["Primary", "Primär"],
-    "Logo-Blau": ["Logo blue", "Logo-Blau"],
-    "Cyan": ["Cyan", "Cyan"],
-    "Anthrazit": ["Anthracite", "Anthrazit"],
-    "Fläche": ["Surface", "Flächi"],
+    "Signet": [
+        "Emblem",
+        "Signet"
+    ],
+    "Primär": [
+        "Primary",
+        "Primär"
+    ],
+    "Logo-Blau": [
+        "Logo blue",
+        "Logo-Blau"
+    ],
+    "Cyan": [
+        "Cyan",
+        "Cyan"
+    ],
+    "Anthrazit": [
+        "Anthracite",
+        "Anthrazit"
+    ],
+    "Fläche": [
+        "Surface",
+        "Flächi"
+    ],
     "Buttons, Links, aktive Navigation. Kontrast AA ({n}:{n} hell, {n}:{n} dunkel).": [
         "Buttons, links, active navigation. Contrast AA ({n}:{n} light, {n}:{n} dark).",
         "Chnöpf, Links, aktivi Navigation. Kontrascht AA ({n}:{n} hell, {n}:{n} dunkel)."
@@ -199,46 +343,106 @@
         "Collections without schema",
         "Sammlige ohni Schema"
     ],
-    "Alle aufklappen": ["Expand all", "Alli uufklappe"],
-    "Alle zuklappen": ["Collapse all", "Alli zueklappe"],
+    "Alle aufklappen": [
+        "Expand all",
+        "Alli uufklappe"
+    ],
+    "Alle zuklappen": [
+        "Collapse all",
+        "Alli zueklappe"
+    ],
     "Felder ausserhalb des Schemas": [
         "Fields outside the schema",
         "Fälder usserhalb vom Schema"
     ],
-    "Feld": ["Field", "Fäld"],
-    "Bezeichnung": ["Label", "Bezeichnig"],
-    "Typ": ["Type", "Typ"],
+    "Feld": [
+        "Field",
+        "Fäld"
+    ],
+    "Bezeichnung": [
+        "Label",
+        "Bezeichnig"
+    ],
+    "Typ": [
+        "Type",
+        "Typ"
+    ],
     "PostgreSQL (Vorschlag)": [
         "PostgreSQL (suggestion)",
         "PostgreSQL (Vorschlag)"
     ],
-    "Pflicht": ["Required", "Pflicht"],
-    "Gruppe": ["Group", "Gruppe"],
-    "Gefüllt": ["Filled", "Gfüllt"],
+    "Pflicht": [
+        "Required",
+        "Pflicht"
+    ],
+    "Gruppe": [
+        "Group",
+        "Gruppe"
+    ],
+    "Gefüllt": [
+        "Filled",
+        "Gfüllt"
+    ],
     "Was der Prototyp speichert – Grundlage für das spätere PostgreSQL-Datenmodell": [
         "What the prototype stores – basis for the later PostgreSQL data model",
         "Was de Prototyp spicheret – Grundlag für s spöter PostgreSQL-Datemodell"
     ],
-    "{n} Datensätze": ["{n} records", "{n} Datesätz"],
-    "{n} Felder": ["{n} fields", "{n} Fälder"],
-    "{n} unbekannt": ["{n} unknown", "{n} unbekannt"],
-    "berechnet": ["computed", "berächnet"],
-    "Nicht geladene Plugins": ["Plugins not loaded", "Nöd gladeni Plugins"],
+    "{n} Datensätze": [
+        "{n} records",
+        "{n} Datesätz"
+    ],
+    "{n} Felder": [
+        "{n} fields",
+        "{n} Fälder"
+    ],
+    "{n} unbekannt": [
+        "{n} unknown",
+        "{n} unbekannt"
+    ],
+    "berechnet": [
+        "computed",
+        "berächnet"
+    ],
+    "Nicht geladene Plugins": [
+        "Plugins not loaded",
+        "Nöd gladeni Plugins"
+    ],
     "Plugins liegen im Ordner plugins/ (siehe PLUGINS.md).": [
         "Plugins are in the plugins/ folder (see PLUGINS.md).",
         "Plugins liged im Ordner plugins/ (lueg PLUGINS.md)."
     ],
-    "Eingeschaltet": ["Enabled", "Iigschaltet"],
-    "Einrichten und testen": ["Set up and test", "Iirichte und teschte"],
+    "Eingeschaltet": [
+        "Enabled",
+        "Iigschaltet"
+    ],
+    "Einrichten und testen": [
+        "Set up and test",
+        "Iirichte und teschte"
+    ],
     "Anbindung anderer Systeme per API. Plugins kommen aus dem Repository und werden hier ein- und ausgeschaltet.": [
         "Connecting other systems via API. Plugins come from the repository and are switched on and off here.",
         "Aabindig vo andere System per API. Plugins chömed usem Repository und wärded da ii- und usgschaltet."
     ],
-    "Keine Plugins gefunden": ["No plugins found", "Kei Plugins gfunde"],
-    "Alle Plugins": ["All plugins", "Alli Plugins"],
-    "Testen": ["Test", "Teschte"],
-    "API-Doku": ["API docs", "API-Doku"],
-    "Protokoll": ["Log", "Protokoll"],
+    "Keine Plugins gefunden": [
+        "No plugins found",
+        "Kei Plugins gfunde"
+    ],
+    "Alle Plugins": [
+        "All plugins",
+        "Alli Plugins"
+    ],
+    "Testen": [
+        "Test",
+        "Teschte"
+    ],
+    "API-Doku": [
+        "API docs",
+        "API-Doku"
+    ],
+    "Protokoll": [
+        "Log",
+        "Protokoll"
+    ],
     "Schreibende Aktionen erlauben": [
         "Allow write actions",
         "Schriibendi Aktione erlaube"
@@ -259,17 +463,38 @@
         "Enable and set up first.",
         "Zerscht iischalte und iirichte."
     ],
-    "Ja, ausführen": ["Yes, run", "Ja, usfüere"],
-    "Endpunkt": ["Endpoint", "Ändpunkt"],
-    "Aufruf": ["Call", "Ufruef"],
-    "Stand": ["Status", "Stand"],
-    "Verwendung": ["Use", "Verwändig"],
-    "Berechtigung": ["Permission", "Berächtigung"],
+    "Ja, ausführen": [
+        "Yes, run",
+        "Ja, usfüere"
+    ],
+    "Endpunkt": [
+        "Endpoint",
+        "Ändpunkt"
+    ],
+    "Aufruf": [
+        "Call",
+        "Ufruef"
+    ],
+    "Stand": [
+        "Status",
+        "Stand"
+    ],
+    "Verwendung": [
+        "Use",
+        "Verwändig"
+    ],
+    "Berechtigung": [
+        "Permission",
+        "Berächtigung"
+    ],
     "Ruft jeden lesenden Endpunkt einmal auf (nur GET).": [
         "Calls each read endpoint once (GET only).",
         "Rüeft jede läsende Ändpunkt eimal uf (nur GET)."
     ],
-    "API-Tester": ["API tester", "API-Tester"],
+    "API-Tester": [
+        "API tester",
+        "API-Tester"
+    ],
     "Ruft einen Endpunkt mit den gespeicherten Zugangsdaten auf. Zugangsdaten in der Antwort werden geschwärzt.": [
         "Calls an endpoint with the stored credentials. Credentials in the response are redacted.",
         "Rüeft en Ändpunkt mit de gspicherete Zuegangsdate uf. Zuegangsdate i de Antwort wärded gschwärzt."
@@ -286,13 +511,22 @@
         "Send writing call?",
         "Schriibende Ufruef schicke?"
     ],
-    "Senden": ["Send", "Schicke"],
-    "Noch keine Läufe.": ["No runs yet.", "Nonig Läuf."],
+    "Senden": [
+        "Send",
+        "Schicke"
+    ],
+    "Noch keine Läufe.": [
+        "No runs yet.",
+        "Nonig Läuf."
+    ],
     "Zugangsdaten werden verschlüsselt gespeichert und nie angezeigt.": [
         "Credentials are stored encrypted and never shown.",
         "Zuegangsdate wärded verschlüsslet gspicheret und nie aazeigt."
     ],
-    "Vorschau anzeigen": ["Show preview", "Vorschau aazeige"],
+    "Vorschau anzeigen": [
+        "Show preview",
+        "Vorschau aazeige"
+    ],
     "Die ausgewählten Einträge werden im Intranet angelegt bzw. geändert. Gelöscht wird nichts.": [
         "The selected entries will be created or changed in the intranet. Nothing is deleted.",
         "Di uusgwählte Iiträg wärded im Intranet aagleit oder gänderet. Glöscht wird nüt."
@@ -301,26 +535,74 @@
         "This action changes data in the connected system.",
         "Die Aktion änderet Date im aagschlossne System."
     ],
-    "Prüft …": ["Checking …", "Prüeft …"],
-    "Zugriff prüfen": ["Check access", "Zuegriff prüefe"],
-    "Sendet …": ["Sending …", "Schickt …"],
-    "Ausführen": ["Run", "Usfüere"],
-    "Einstellungen speichern": ["Save settings", "Iistellige spichere"],
-    "Aktionen": ["Actions", "Aktione"],
-    "Zugänge (API-Tokens)": ["Access (API tokens)", "Zuegäng (API-Tokens)"],
+    "Prüft …": [
+        "Checking …",
+        "Prüeft …"
+    ],
+    "Zugriff prüfen": [
+        "Check access",
+        "Zuegriff prüefe"
+    ],
+    "Sendet …": [
+        "Sending …",
+        "Schickt …"
+    ],
+    "Ausführen": [
+        "Run",
+        "Usfüere"
+    ],
+    "Einstellungen speichern": [
+        "Save settings",
+        "Iistellige spichere"
+    ],
+    "Aktionen": [
+        "Actions",
+        "Aktione"
+    ],
+    "Zugänge (API-Tokens)": [
+        "Access (API tokens)",
+        "Zuegäng (API-Tokens)"
+    ],
     "Ein Token handelt im Namen der gewählten Person und hat deren Rechte. Gespeichert wird nur ein Hash – das Token wird genau einmal angezeigt.": [
         "A token acts on behalf of the chosen person and has their permissions. Only a hash is stored – the token is shown exactly once.",
         "Es Token handlet im Name vo de gwählte Person und hät ihri Rächt. Gspicheret wird nur en Hash – s Token wird gnau eimal aazeigt."
     ],
-    "Im Namen von": ["On behalf of", "Im Name vo"],
-    "mir": ["me", "mir"],
-    "Gültig": ["Valid", "Gültig"],
-    "{n} Tag": ["{n} day", "{n} Tag"],
-    "{n} Tage": ["{n} days", "{n} Täg"],
-    "{n} Jahr": ["{n} year", "{n} Johr"],
-    "unbegrenzt": ["unlimited", "unbegränzt"],
-    "darf schreiben": ["may write", "törf schriibe"],
-    "Token erstellen": ["Create token", "Token erstelle"],
+    "Im Namen von": [
+        "On behalf of",
+        "Im Name vo"
+    ],
+    "mir": [
+        "me",
+        "mir"
+    ],
+    "Gültig": [
+        "Valid",
+        "Gültig"
+    ],
+    "{n} Tag": [
+        "{n} day",
+        "{n} Tag"
+    ],
+    "{n} Tage": [
+        "{n} days",
+        "{n} Täg"
+    ],
+    "{n} Jahr": [
+        "{n} year",
+        "{n} Johr"
+    ],
+    "unbegrenzt": [
+        "unlimited",
+        "unbegränzt"
+    ],
+    "darf schreiben": [
+        "may write",
+        "törf schriibe"
+    ],
+    "Token erstellen": [
+        "Create token",
+        "Token erstelle"
+    ],
     "Neues Token – jetzt kopieren, es wird nicht mehr angezeigt:": [
         "New token – copy it now, it will not be shown again:",
         "Neus Token – jetzt kopiere, es wird nümme aazeigt:"
@@ -329,17 +611,38 @@
         "It has already been inserted in the tester below.",
         "Im Tester une isch es scho iigsetzt."
     ],
-    "Noch keine Tokens.": ["No tokens yet.", "Nonig Tokens."],
-    "Widerrufen": ["Revoke", "Widerrüefe"],
-    "Body (JSON)": ["Body (JSON)", "Body (JSON)"],
-    "Als curl kopieren": ["Copy as curl", "Als curl kopiere"],
+    "Noch keine Tokens.": [
+        "No tokens yet.",
+        "Nonig Tokens."
+    ],
+    "Widerrufen": [
+        "Revoke",
+        "Widerrüefe"
+    ],
+    "Body (JSON)": [
+        "Body (JSON)",
+        "Body (JSON)"
+    ],
+    "Als curl kopieren": [
+        "Copy as curl",
+        "Als curl kopiere"
+    ],
     "Kein Token gesetzt – die Antwort wird {n} sein.": [
         "No token set – the response will be {n}.",
         "Kei Token gsetzt – d Antwort wird {n} sii."
     ],
-    "Tester": ["Tester", "Tester"],
-    "API-Token": ["API token", "API-Token"],
-    "z. B. Abgleich IDA": ["e.g. IDA sync", "z. B. Abgliich IDA"],
+    "Tester": [
+        "Tester",
+        "Tester"
+    ],
+    "API-Token": [
+        "API token",
+        "API-Token"
+    ],
+    "z. B. Abgleich IDA": [
+        "e.g. IDA sync",
+        "z. B. Abgliich IDA"
+    ],
     "REST-API mit OpenAPI-Beschreibung. Endpunkte direkt hier ausprobieren.": [
         "REST API with OpenAPI description. Try endpoints right here.",
         "REST-API mit OpenAPI-Beschriibig. Ändpünkt grad da uusprobiere."
@@ -352,31 +655,70 @@
         "The body is not valid JSON.",
         "De Body isch kes gültigs JSON."
     ],
-    "Token nicht erstellt.": ["Token not created.", "Token nöd erstellt."],
-    "Token kopiert.": ["Token copied.", "Token kopiert."],
-    "Gültig bis": ["Valid until", "Gültig bis"],
-    "Zurück zum Eintrag": ["Back to entry", "Zrugg zum Iitrag"],
-    "Zum Glossar": ["To the glossary", "Zum Glossar"],
+    "Token nicht erstellt.": [
+        "Token not created.",
+        "Token nöd erstellt."
+    ],
+    "Token kopiert.": [
+        "Token copied.",
+        "Token kopiert."
+    ],
+    "Gültig bis": [
+        "Valid until",
+        "Gültig bis"
+    ],
+    "Zurück zum Eintrag": [
+        "Back to entry",
+        "Zrugg zum Iitrag"
+    ],
+    "Zum Glossar": [
+        "To the glossary",
+        "Zum Glossar"
+    ],
     "Aktiv – inaktive Einträge sehen nur Pflegende, sie werden im Text nicht markiert": [
         "Active – inactive entries are visible to editors only and are not highlighted in texts",
         "Aktiv – inaktivi Iiträg gsehnd nur Pflegendi, si wärded im Text nöd markiert"
     ],
-    "Zuletzt verwendet": ["Last used", "Zletscht bruucht"],
-    "Token": ["Token", "Token"],
-    "Rechte": ["Permissions", "Rächt"],
-    "nie": ["never", "nie"],
-    "Pfad": ["path", "Pfad"],
-    "Abfrage": ["query", "Abfrog"],
+    "Zuletzt verwendet": [
+        "Last used",
+        "Zletscht bruucht"
+    ],
+    "Token": [
+        "Token",
+        "Token"
+    ],
+    "Rechte": [
+        "Permissions",
+        "Rächt"
+    ],
+    "nie": [
+        "never",
+        "nie"
+    ],
+    "Pfad": [
+        "path",
+        "Pfad"
+    ],
+    "Abfrage": [
+        "query",
+        "Abfrog"
+    ],
     ". Das Token bleibt nur in diesem Browser-Tab gespeichert.": [
         ". The token is only kept in this browser tab.",
         ". S Token bliibt nur i dem Browser-Tab gspicheret."
     ],
-    "Basis-URL": ["Base URL", "Basis-URL"],
+    "Basis-URL": [
+        "Base URL",
+        "Basis-URL"
+    ],
     "Excel vollständig (alle Daten)": [
         "Excel complete (all data)",
         "Excel vollständig (alli Date)"
     ],
-    "Excel-Export": ["Excel export", "Excel-Export"],
+    "Excel-Export": [
+        "Excel export",
+        "Excel-Export"
+    ],
     "Excel-Datei für den Import der Liste wählen": [
         "Choose Excel file to import the list",
         "Excel-Datei für de Import vo de Lischte uswähle"
@@ -385,7 +727,10 @@
         "From the EduKSX Glossary: official values, categories, descriptions, origin, status and validity come from the sync and are locked here. Own abbreviation and designation, alias, “Used internally in”, search terms and note stay in the intranet.",
         "Us em EduKSX-Glossary: offizielli Wärt, Kategorie, Beschriibige, Herkunft, Status und Gültigkeit chömed us em Sync und sind da gsperrt. Eigeti Abchürzig und Bezeichnig, Alias, «Intern brucht i», Suechbegriff und Notiz bliibed im Intranet."
     ],
-    "aus EduKSX-Glossary": ["from EduKSX Glossary", "us em EduKSX-Glossary"],
+    "aus EduKSX-Glossary": [
+        "from EduKSX Glossary",
+        "us em EduKSX-Glossary"
+    ],
     "im Glossary zurückgezogen": [
         "withdrawn in the Glossary",
         "im Glossary zruggzoge"
@@ -394,12 +739,18 @@
         "merged in the Glossary",
         "im Glossary zämegfüehrt"
     ],
-    "EduKSX-Glossary": ["EduKSX Glossary", "EduKSX-Glossary"],
+    "EduKSX-Glossary": [
+        "EduKSX Glossary",
+        "EduKSX-Glossary"
+    ],
     "Vorschläge sind noch nicht möglich: Im Plugin «EduKSX-Glossary» fehlen das Token des Servicekontos oder die Freigabe für schreibende Aktionen.": [
         "Proposals are not possible yet: the “EduKSX-Glossary” plugin lacks the service account token or the permission for write actions.",
         "Vorschläg gönd no nöd: Im Plugin «EduKSX-Glossary» fehlt s Token vom Servicekonto oder d Freigab für schriibendi Aktione."
     ],
-    "Vorschlag senden …": ["Send proposal …", "Vorschlag schicke …"],
+    "Vorschlag senden …": [
+        "Send proposal …",
+        "Vorschlag schicke …"
+    ],
     "Der Vorschlag geht an die Moderation des EduKSX-Glossary und wird erst nach der Prüfung veröffentlicht. Gesendet werden nur die Fachdaten unten – eigene Formen, «Intern genutzt in» und Notiz bleiben im Intranet. Keine Personendaten eintragen.": [
         "The proposal goes to the moderation of the EduKSX Glossary and is only published after review. Only the content below is sent – own forms, “Used internally in” and note stay in the intranet. Do not enter personal data.",
         "De Vorschlag gaht a d Moderation vom EduKSX-Glossary und wird erscht nach de Prüefig veröffentlicht. Gschickt werded nur d Fachdate unde – eigeti Forme, «Intern brucht i» und Notiz bliibed im Intranet. Kei Persone-Date iitrage."
@@ -408,9 +759,18 @@
         "Only categories that exist in the EduKSX Glossary",
         "Nur Kategorie, wos im EduKSX-Glossary git"
     ],
-    "Begründung": ["Reason", "Begründig"],
-    "Vorschlag senden?": ["Send proposal?", "Vorschlag schicke?"],
-    "Korrektur vorschlagen": ["Propose correction", "Korrektur vorschlah"],
+    "Begründung": [
+        "Reason",
+        "Begründig"
+    ],
+    "Vorschlag senden?": [
+        "Send proposal?",
+        "Vorschlag schicke?"
+    ],
+    "Korrektur vorschlagen": [
+        "Propose correction",
+        "Korrektur vorschlah"
+    ],
     "Dem EduKSX-Glossary vorschlagen": [
         "Propose to the EduKSX Glossary",
         "Em EduKSX-Glossary vorschlah"
@@ -427,13 +787,22 @@
         "Proposals to the EduKSX Glossary",
         "Vorschläg as EduKSX-Glossary"
     ],
-    "noch nicht eingerichtet": ["not set up yet", "no nöd iigrichtet"],
+    "noch nicht eingerichtet": [
+        "not set up yet",
+        "no nöd iigrichtet"
+    ],
     "Sync noch nicht eingerichtet. Die Administration schaltet das Plugin «EduKSX-Glossary» ein, sobald die Plattform erreichbar ist.": [
         "Sync not set up yet. The administration turns on the “EduKSX-Glossary” plugin as soon as the platform is reachable.",
         "Sync no nöd iigrichtet. D Administration schaltet s Plugin «EduKSX-Glossary» ii, sobald d Plattform erreichbar isch."
     ],
-    "Plugin einrichten": ["Set up plugin", "Plugin iirichte"],
-    "Synchronisieren": ["Synchronise", "Synchronisiere"],
+    "Plugin einrichten": [
+        "Set up plugin",
+        "Plugin iirichte"
+    ],
+    "Synchronisieren": [
+        "Synchronise",
+        "Synchronisiere"
+    ],
     "Zuerst den Probelauf prüfen: Er zeigt, was sich ändern würde, und speichert nichts.": [
         "Check the dry run first: it shows what would change and saves nothing.",
         "Zerscht de Probelauf aaluege: Er zeigt, was sich würd ändere, und speicheret nüt."
@@ -442,19 +811,34 @@
         "Reload full data (otherwise only changes)",
         "Vollstand neu lade (suscht nur Änderige)"
     ],
-    "Probelauf": ["Dry run", "Probelauf"],
+    "Probelauf": [
+        "Dry run",
+        "Probelauf"
+    ],
     "Mit EduKSX-Glossary synchronisieren": [
         "Synchronise with EduKSX Glossary",
         "Mit em EduKSX-Glossary synchronisiere"
     ],
-    "Ergebnis des Probelaufs": ["Dry run result", "Resultat vom Probelauf"],
+    "Ergebnis des Probelaufs": [
+        "Dry run result",
+        "Resultat vom Probelauf"
+    ],
     "Glossar: EduKSX-Glossary": [
         "Glossary: EduKSX Glossary",
         "Glossar: EduKSX-Glossary"
     ],
-    "Letzter Sync": ["Last sync", "Letschte Sync"],
-    "Vorschläge": ["Proposals", "Vorschläg"],
-    "Sicherung herunterladen": ["Download backup", "Sicherig abelade"],
+    "Letzter Sync": [
+        "Last sync",
+        "Letschte Sync"
+    ],
+    "Vorschläge": [
+        "Proposals",
+        "Vorschläg"
+    ],
+    "Sicherung herunterladen": [
+        "Download backup",
+        "Sicherig abelade"
+    ],
     "Alle Daten, Dokumente und Dateien als eine Datei – zum Ablegen auf dem eigenen Rechner.": [
         "All data, documents and files as one file – to keep on your own computer.",
         "Alli Date, Dokumänt und Dateie als ei Datei – zum uf em eigete Rächner ablegge."
@@ -467,7 +851,10 @@
         "The file also contains the plugin credentials. Without the password it cannot be opened or restored – keep the password in a password manager.",
         "D Datei hät au d Zuegangsdate vo de Plugins. Ohni s Passwort chame si nöd öffne und nöd widerherstelle – Passwort im Passwort-Manager ablegge."
     ],
-    "Auf dem Server": ["On the server", "Uf em Server"],
+    "Auf dem Server": [
+        "On the server",
+        "Uf em Server"
+    ],
     "Vor jeder Wiederherstellung wird der aktuelle Stand hier automatisch gesichert. Zugangsdaten bleiben mit dem Schlüssel dieses Servers verschlüsselt.": [
         "Before every restore, the current state is backed up here automatically. Credentials stay encrypted with this server's key.",
         "Vor jedere Widerherstellig wird de aktuelli Stand da automatisch gsicheret. Zuegangsdate bliibed mit em Schlüssel vo dem Server verschlüsslet."
@@ -476,11 +863,26 @@
         "No backups on the server yet.",
         "No kei Sicherige uf em Server."
     ],
-    "Erstellt": ["Created", "Erstellt"],
-    "Grösse": ["Size", "Grössi"],
-    "Wiederherstellen …": ["Restore …", "Widerherstelle …"],
-    "Sicherung geprüft": ["Backup checked", "Sicherig prüeft"],
-    "In der Sicherung": ["In the backup", "I de Sicherig"],
+    "Erstellt": [
+        "Created",
+        "Erstellt"
+    ],
+    "Grösse": [
+        "Size",
+        "Grössi"
+    ],
+    "Wiederherstellen …": [
+        "Restore …",
+        "Widerherstelle …"
+    ],
+    "Sicherung geprüft": [
+        "Backup checked",
+        "Sicherig prüeft"
+    ],
+    "In der Sicherung": [
+        "In the backup",
+        "I de Sicherig"
+    ],
     "Alle Daten werden ersetzt": [
         "All data will be replaced",
         "Alli Date werdet ersetzt"
@@ -493,14 +895,26 @@
         "The backup is checked first (checksums, version, content) – nothing changes until you confirm.",
         "Zerscht wird d Sicherig prüeft (Prüefsumme, Version, Inhalt) – gänderet wird erscht nach de Bestätigung."
     ],
-    "Passwort (optional)": ["Password (optional)", "Passwort (freiwillig)"],
-    "Passwort wiederholen": ["Repeat password", "Passwort widerhole"],
-    "Sicherung löschen?": ["Delete backup?", "Sicherig lösche?"],
+    "Passwort (optional)": [
+        "Password (optional)",
+        "Passwort (freiwillig)"
+    ],
+    "Passwort wiederholen": [
+        "Repeat password",
+        "Passwort widerhole"
+    ],
+    "Sicherung löschen?": [
+        "Delete backup?",
+        "Sicherig lösche?"
+    ],
     "Die Sicherung wird vom Server entfernt und lässt sich nicht zurückholen.": [
         "The backup is removed from the server and cannot be recovered.",
         "D Sicherig wird vom Server entfernt und chan nöd zruggholt werde."
     ],
-    "Sicherungsdatei": ["Backup file", "Sicherigsdatei"],
+    "Sicherungsdatei": [
+        "Backup file",
+        "Sicherigsdatei"
+    ],
     "Passwort (bei verschlüsselter Sicherung)": [
         "Password (for an encrypted backup)",
         "Passwort (bi verschlüsslete Sicherig)"
@@ -509,17 +923,26 @@
         "Type «WIEDERHERSTELLEN» to confirm",
         "Zur Bestätigung «WIEDERHERSTELLEN» iitippe"
     ],
-    "Jetzt wiederherstellen?": ["Restore now?", "Jetzt widerherstelle?"],
+    "Jetzt wiederherstellen?": [
+        "Restore now?",
+        "Jetzt widerherstelle?"
+    ],
     "Alle Daten werden durch die Sicherung ersetzt. Der aktuelle Stand wird vorher auf dem Server gesichert.": [
         "All data will be replaced by the backup. The current state is backed up on the server first.",
         "Alli Date werdet dur d Sicherig ersetzt. De aktuelli Stand wird vorher uf em Server gsicheret."
     ],
-    "Sicherung": ["Backup", "Sicherig"],
+    "Sicherung": [
+        "Backup",
+        "Sicherig"
+    ],
     "Ganze Installation sichern und wiederherstellen: alle Sammlungen, Dokumente und Dateien. Nicht enthalten sind der Schlüssel des Servers, Logs und Sitzungen.": [
         "Back up and restore the whole installation: all collections, documents and files. Not included: the server key, logs and sessions.",
         "Di ganz Installation sichere und widerherstelle: alli Sammlige, Dokumänt und Dateie. Nöd debii sind de Schlüssel vom Server, Logs und Sitzige."
     ],
-    "Sicherung heruntergeladen.": ["Backup downloaded.", "Sicherig abeglade."],
+    "Sicherung heruntergeladen.": [
+        "Backup downloaded.",
+        "Sicherig abeglade."
+    ],
     "Enthalten (Sicherung mit Passwort) – werden mit dem Schlüssel dieses Servers neu verschlüsselt.": [
         "Included (backup with password) – re-encrypted with this server's key.",
         "Debii (Sicherig mit Passwort) – werdet mit em Schlüssel vo dem Server neu verschlüsslet."
@@ -544,13 +967,120 @@
         "Download encrypted",
         "Verschlüsslet abelade"
     ],
-    "Als ZIP herunterladen": ["Download as ZIP", "Als ZIP abelade"],
+    "Als ZIP herunterladen": [
+        "Download as ZIP",
+        "Als ZIP abelade"
+    ],
     "Jetzt auf dem Server sichern": [
         "Back up on the server now",
         "Jetzt uf em Server sichere"
     ],
-    "Vor Wiederherstellung": ["Before restore", "Vor Widerherstellig"],
-    "Wird geprüft …": ["Checking …", "Wird prüeft …"],
-    "Hochladen und prüfen": ["Upload and check", "Uelade und prüefe"],
-    "Wird wiederhergestellt …": ["Restoring …", "Wird widerhergstellt …"]
+    "Vor Wiederherstellung": [
+        "Before restore",
+        "Vor Widerherstellig"
+    ],
+    "Wird geprüft …": [
+        "Checking …",
+        "Wird prüeft …"
+    ],
+    "Hochladen und prüfen": [
+        "Upload and check",
+        "Uelade und prüefe"
+    ],
+    "Wird wiederhergestellt …": [
+        "Restoring …",
+        "Wird widerhergstellt …"
+    ],
+    "© {n} developed by MarKusSXCH": [
+        "© {n} developed by MarKusSXCH",
+        "© {n} developed by MarKusSXCH"
+    ],
+    "Marke": [
+        "Brand",
+        "Marke"
+    ],
+    "Aktuell angezeigt:": [
+        "Currently shown:",
+        "Im Moment aazeigt:"
+    ],
+    "Name der Instanz": [
+        "Instance name",
+        "Name vo de Instanz"
+    ],
+    "Erscheint unter der Wortmarke und als Bildbeschreibung des eigenen Logos.": [
+        "Appears below the wordmark and as the image description of your own logo.",
+        "Erschiint under de Wortmarke und als Bildbeschriibig vom eigete Logo."
+    ],
+    "Eigenes Logo": [
+        "Own logo",
+        "Eigets Logo"
+    ],
+    "SVG, PNG, JPG oder WebP, höchstens {n} MB. SVG ohne Skripte und externe Verweise. Logo für dunkle Flächen und Signet sind freiwillig.": [
+        "SVG, PNG, JPG or WebP, at most {n} MB. SVG without scripts or external references. Logo for dark backgrounds and signet are optional.",
+        "SVG, PNG, JPG oder WebP, höchschtens {n} MB. SVG ohni Skripts und externi Verwiis. Logo für dunkli Flächene und Signet sind freiwillig."
+    ],
+    "Hochladen": [
+        "Upload",
+        "Uelade"
+    ],
+    "Aktiv:": [
+        "Active:",
+        "Aktiv:"
+    ],
+    "Farbkonzept wählen": [
+        "Choose colour scheme",
+        "Farbkonzept wähle"
+    ],
+    "Erscheinungsbild": [
+        "Appearance",
+        "Erschiinigsbild"
+    ],
+    "Logo links oben und auf der Anmeldeseite. Ohne eigenes Logo zeigt das Intranet die Marke EduKSX.": [
+        "Logo at the top left and on the sign-in page. Without your own logo the intranet shows the EduKSX brand.",
+        "Logo links obe und uf de Aamäldesiite. Ohni eigets Logo zeigt s Intranet d Marke EduKSX."
+    ],
+    "z. B. Sekundarschule Musterhausen": [
+        "e.g. Sekundarschule Musterhausen",
+        "z. B. Sekundarschuel Musterhuuse"
+    ],
+    "Hochgeladenes Logo": [
+        "Uploaded logo",
+        "Ueglades Logo"
+    ],
+    "Zuerst ein Logo hochladen": [
+        "Upload a logo first",
+        "Zerscht es Logo uelade"
+    ],
+    "Aktives eingebautes Farbkonzept (nur Datensatz «_eingebaut»)": [
+        "Active built-in colour scheme (record «_eingebaut» only)",
+        "Aktivs iibauts Farbkonzept (nur Datesatz «_eingebaut»)"
+    ],
+    "System: Erscheinungsbild": [
+        "System: appearance",
+        "System: Erschiinigsbild"
+    ],
+    "Name der Instanz (z. B. Schule)": [
+        "Instance name (e.g. school)",
+        "Name vo de Instanz (z. B. Schuel)"
+    ],
+    "Logo für helle Flächen (Pfad)": [
+        "Logo for light backgrounds (path)",
+        "Logo für hälli Flächene (Pfad)"
+    ],
+    "Logo für dunkle Flächen (Pfad)": [
+        "Logo for dark backgrounds (path)",
+        "Logo für dunkli Flächene (Pfad)"
+    ],
+    "Signet, quadratisch (Pfad)": [
+        "Signet, square (path)",
+        "Signet, quadratisch (Pfad)"
+    ],
+    "Eingebaut sind die Farbkonzepte EduKSX und MarKusSXCH; eigene Themes lassen sich anlegen oder kopieren.": [
+        "The colour schemes EduKSX and MarKusSXCH are built in; you can create or copy your own themes.",
+        "Iibaut sind d Farbkonzept EduKSX und MarKusSXCH; eigeti Themes chasch aalege oder kopiere."
+    ],
+    "Logo der Instanz (Einstellungen → Erscheinungsbild), im Dunkelmodus mit heller Schrift, und Signet.": [
+        "Instance logo (Settings → Appearance), with light lettering in dark mode, and signet.",
+        "Logo vo de Instanz (Iistellige → Erschiinigsbild), im Dunkelmodus mit hällere Schrift, und Signet."
+    ]
 }
