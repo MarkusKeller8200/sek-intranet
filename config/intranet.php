@@ -1152,6 +1152,8 @@ return [
                 'allow_write' => ['type' => 'bool', 'required' => true, 'label' => 'Schreibende Aktionen erlaubt'],
                 'settings' => ['type' => 'json', 'required' => false, 'label' => 'Einstellungen'],
                 'secrets' => ['type' => 'json', 'required' => false, 'label' => 'Zugangsdaten (verschlüsselt)'],
+                'log_level' => ['type' => 'string', 'required' => false, 'label' => 'Protokollstufe (normal, details, debug)'],
+                'log_until' => ['type' => 'datetime', 'required' => false, 'label' => 'Protokollstufe gilt bis'],
             ],
         ],
 

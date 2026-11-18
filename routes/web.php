@@ -181,6 +181,7 @@ Route::middleware('auth')->group(function () {
         Route::put('plugins/{id}/einstellungen', [PluginController::class, 'settings'])->name('plugins.settings');
         Route::post('plugins/{id}/personendaten', [PluginController::class, 'unlockPersonal'])->middleware('throttle:10,1')->name('plugins.personal.unlock');
         Route::delete('plugins/{id}/personendaten', [PluginController::class, 'lockPersonal'])->name('plugins.personal.lock');
+        Route::post('plugins/{id}/protokollstufe', [PluginController::class, 'logLevel'])->name('plugins.log-level');
         Route::middleware('throttle:60,1')->group(function () {
             Route::post('plugins/{id}/test', [PluginController::class, 'test'])->name('plugins.test');
             Route::post('plugins/{id}/aktion/{action}', [PluginController::class, 'action'])->name('plugins.action');

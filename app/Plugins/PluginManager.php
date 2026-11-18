@@ -108,6 +108,42 @@ final class PluginManager
         ];
     }
 
+    /**
+     * Protokollstufe (#218): «details» und «debug» gelten befristet (60 min), danach wieder «normal».
+     *
+     * @return array{level: string, until: string|null}
+     */
+    public function logLevel(string $id): array
+    {
+        $record = $this->store->find(self::STATES, $id) ?? [];
+        $level = (string) ($record['log_level'] ?? 'normal');
+        $until = is_string($record['log_until'] ?? null) ? $record['log_until'] : null;
+        if ($level === 'normal' || ! isset(PluginContext::LOG_LEVELS[$level]) || $until === null || now()->greaterThan($until)) {
+            return ['level' => 'normal', 'until' => null];
+        }
+
+        return ['level' => $level, 'until' => $until];
+    }
+
+    /**
+     * @return array{level: string, until: string|null}
+     */
+    public function setLogLevel(string $id, string $level, int $minutes = 60): array
+    {
+        if (! isset(PluginContext::LOG_LEVELS[$level])) {
+            throw new InvalidArgumentException('Unbekannte Protokollstufe.');
+        }
+        $this->manifest($id);
+        $data = ['log_level' => $level, 'log_until' => $level === 'normal' ? null : now()->addMinutes($minutes)->toIso8601String()];
+        if ($this->store->find(self::STATES, $id) === null) {
+            $this->store->insert(self::STATES, ['id' => $id, 'enabled' => false, 'allow_write' => false, 'settings' => [], 'secrets' => []] + $data);
+        } else {
+            $this->store->update(self::STATES, $id, $data);
+        }
+
+        return $this->logLevel($id);
+    }
+
     public function isConfigured(string $id): bool
     {
         $state = $this->state($id);
@@ -200,6 +236,7 @@ final class PluginManager
         }
 
         $ctx = new PluginContext($this->manifest($id), $state['settings'], $secrets, $state['allow_write'], $user, $this->users);
+        $ctx->useLogLevel($this->logLevel($id)['level']);
         $plugin = $this->all()[$id]['plugin'] ?? null;
         if ($plugin instanceof DemoResponder && $plugin->demoActive($ctx)) {
             $ctx->useDemo($plugin);
@@ -497,19 +534,21 @@ final class PluginManager
         $ctx = $this->context($id, $user);
         $start = microtime(true);
 
+        $error = null;
         try {
             $result = $callback($ctx);
         } catch (Throwable $e) {
             $result = ['ok' => false, 'status' => 'error', 'message' => $ctx->redact($e->getMessage())];
             Log::warning("Plugin {$id} ({$label}): ".$result['message']);
-
-            if ($rethrow) {
-                throw $e;
-            }
+            $error = $e;
         }
 
+        // auch fehlgeschlagene Läufe protokollieren, bevor der Fehler weitergereicht wird (#218)
         $result['log'] = $ctx->lines();
         $this->recordRun($id, $user, $label, $result, (int) round((microtime(true) - $start) * 1000));
+        if ($rethrow && $error !== null) {
+            throw $error;
+        }
 
         return $result;
     }

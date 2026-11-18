@@ -103,8 +103,14 @@ class ZeiterfassungController extends Controller
             return null;
         }
         $user = $request->user();
+        $user = $user instanceof IntranetUser ? $user : null;
+        $plugins = app(PluginManager::class);
         try {
-            $status = (new Stamping(app(PluginManager::class)->context('clicktime', $user instanceof IntranetUser ? $user : null)))->status($nr);
+            // mit erhöhter Protokollstufe (#218) als Lauf protokollieren, sonst ohne Eintrag (bei jedem Seitenaufruf)
+            /** @var array{eingestempelt: bool, seit: string|null, number: string|null} $status */
+            $status = $plugins->logLevel('clicktime')['level'] !== 'normal'
+                ? $plugins->runWith('clicktime', $user, 'Zeiterfassung: Stempelstatus', fn ($ctx): array => (new Stamping($ctx))->status($nr))
+                : (new Stamping($plugins->context('clicktime', $user)))->status($nr);
         } catch (Throwable $e) {
             return ['eingestempelt' => false, 'seit' => null, 'schreiben' => false, 'fehler' => 'Stempelstatus nicht verfügbar: '.$e->getMessage()];
         }

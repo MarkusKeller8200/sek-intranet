@@ -161,7 +161,13 @@ final class Stamping
     private static function expect(Response $response, string $what): Response
     {
         if (! $response->successful()) {
-            throw new RuntimeException("{$what}: ClickTime antwortet mit HTTP {$response->status()}.");
+            // Meldung von ClickTime mitgeben (#218); bei 403 auf die Schreibberechtigung hinweisen
+            $detail = $response->json('message') ?? $response->json('error_description') ?? $response->json('error') ?? $response->json('title') ?? null;
+            $detail = is_scalar($detail) ? mb_substr(trim((string) $detail), 0, 200) : '';
+            $hint = $response->status() === 403 && $what !== 'Buchungen lesen'
+                ? ' Vermutlich fehlt dem ClickTime-Client die Berechtigung ENTRIES_WRITE oder ClickTime hat das Schreiben von Buchungen noch nicht freigeschaltet.'
+                : '';
+            throw new RuntimeException("{$what}: ClickTime antwortet mit HTTP {$response->status()}".($detail !== '' ? " ({$detail})" : '').'.'.$hint.' Details im Protokoll des Plugins (Protokollstufe «Details»).');
         }
 
         return $response;

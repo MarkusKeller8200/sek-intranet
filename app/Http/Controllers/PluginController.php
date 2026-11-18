@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Auth\IntranetUser;
 use App\Plugins\PersonalDataUnlock;
+use App\Plugins\PluginContext;
 use App\Plugins\PluginManager;
 use App\Support\ApiDocs;
 use App\Support\RolePins;
@@ -12,6 +13,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 use Inertia\Response;
 use InvalidArgumentException;
@@ -72,6 +74,9 @@ class PluginController extends Controller
             'values' => $values,
             'secretsSet' => array_values(array_filter($secretKeys, fn (string $k): bool => ($state['secrets'][$k] ?? '') !== '')),
             'runs' => $this->plugins->runs($id, 30),
+            // Protokollstufe (#218)
+            'logLevel' => $this->plugins->logLevel($id),
+            'logLevels' => PluginContext::LOG_LEVELS,
             // Mit dem API-Recorder aufgezeichnete APIs, die diesem Plugin zugewiesen sind
             'recordings' => array_map(fn (array $doc): array => [
                 'id' => $doc['id'],
@@ -102,6 +107,16 @@ class PluginController extends Controller
             return back()->withErrors(['pin' => $e->getMessage()]);
         }
         $this->toast('Personendaten für den Test freigeschaltet bis '.date('H:i', (int) strtotime($until)).'.');
+
+        return back();
+    }
+
+    /** Protokollstufe setzen (#218): Details und Debug für 60 Minuten. */
+    public function logLevel(Request $request, string $id): RedirectResponse
+    {
+        $data = $request->validate(['level' => ['required', Rule::in(array_keys(PluginContext::LOG_LEVELS))]]);
+        $r = $this->plugins->setLogLevel($id, (string) $data['level']);
+        $this->toast($r['level'] === 'normal' ? 'Protokollstufe: Normal.' : 'Protokollstufe: '.PluginContext::LOG_LEVELS[$r['level']].' bis '.date('H:i', (int) strtotime((string) $r['until'])).'.');
 
         return back();
     }

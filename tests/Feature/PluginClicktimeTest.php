@@ -614,4 +614,50 @@ class PluginClicktimeTest extends TestCase
         $this->get('/zeiterfassung?monat=2026-10')->assertInertia(fn (Assert $page) => $page->where('darfKorrigieren', false));
         $this->put('/zeiterfassung/eintraege/x/clicktime', ['datum' => '2026-10-01', 'stunden' => 2])->assertForbidden();
     }
+
+    public function test_log_level_shows_clicktime_answer_on_403(): void
+    {
+        $jwt = 'eyJhbGciOiJSUzI1NiJ9.'.rtrim(strtr(base64_encode((string) json_encode(['azp' => 'intranet-client-1', 'scope' => 'ENTRIES_READ EMPLOYEES_READ', 'exp' => time() + 3600])), '+/', '-_'), '=').'.signatur';
+        Http::fake(function (Request $r) use ($jwt) {
+            if ($r->url() === self::TOKEN_URL) {
+                return Http::response(['access_token' => $jwt, 'expires_in' => 3600]);
+            }
+            if (str_contains($r->url(), '/entries') && $r->method() === 'POST') {
+                return Http::response(['message' => 'insufficient_scope'], 403, ['WWW-Authenticate' => 'Bearer error="insufficient_scope"']);
+            }
+
+            return Http::response([]);
+        });
+        config(['intranet.server_in_switzerland' => true]);
+        $this->enable(['demo' => false, 'endtest' => false, 'customer' => '12345', 'client_id' => 'intranet-client-1', 'client_secret' => 'geheimes-secret-987'], true);
+        $andrea = collect(app(UserRepository::class)->all())->firstWhere('email', 'andrea.muster@sekbuelach.example');
+        app(PersonLinks::class)->recordSync((string) $andrea['id'], 'clicktime', 'source', '1');
+        $this->actingAs(new IntranetUser($andrea));
+
+        // Normal: nur Methode, Pfad, Status
+        $this->post('/zeiterfassung/einstempeln')->assertRedirect();
+        $run = app(PluginManager::class)->runs('clicktime', 1)[0];
+        $this->assertSame('error', $run['status']);
+        $this->assertStringNotContainsString('Antwort:', implode("\n", $run['log']));
+
+        // Debug (befristet): Anfrage, Antwort von ClickTime, Token-Scopes – nie das Token selbst
+        $this->post('/plugins/clicktime/protokollstufe', ['level' => 'debug'])->assertRedirect();
+        $this->assertSame('debug', app(PluginManager::class)->logLevel('clicktime')['level']);
+        $this->post('/zeiterfassung/einstempeln')->assertRedirect()->assertInertiaFlash('toast.type', 'error');
+        $run = app(PluginManager::class)->runs('clicktime', 1)[0];
+        $this->assertStringContainsString('HTTP 403 (insufficient_scope)', $run['message']);
+        $this->assertStringContainsString('ENTRIES_WRITE', $run['message']);
+        $log = implode("\n", $run['log']);
+        $this->assertStringContainsString('Gesendet:', $log);
+        $this->assertStringContainsString('Antwort: {"message":"insufficient_scope"}', $log);
+        $this->assertStringContainsString('WWW-Authenticate: Bearer error="insufficient_scope"', $log);
+        $this->assertStringContainsString('Berechtigungen: ENTRIES_READ EMPLOYEES_READ', $log);
+        $this->assertStringNotContainsString($jwt, $log);
+        $this->assertStringNotContainsString('geheimes-secret-987', $log);
+
+        // nach 60 Minuten wieder Normal
+        Carbon::setTestNow(now()->addMinutes(61));
+        $this->assertSame('normal', app(PluginManager::class)->logLevel('clicktime')['level']);
+        Carbon::setTestNow();
+    }
 }
