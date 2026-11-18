@@ -11,6 +11,13 @@ laufend unter **Unveröffentlicht**. Ab 0.32.0 entsteht eine Version nur bei ein
 
 ### Neu
 
+- **Plugins: Protokollstufe einstellbar (#218):** Unter Plugin → Protokoll «Normal», «Details» oder «Debug»; die
+  beiden letzten gelten 60 Minuten. Details zeigt bei Fehlern die Antwort des Dienstes, wichtige Kopfzeilen und die
+  Berechtigungen (Scopes) des Zugriffstokens; Debug zusätzlich gesendete Daten und jede Antwort (gekürzt).
+  Zugangsdaten und Token werden nie protokolliert. Einstempeln (ClickTime 0.13, Zeiterfassung 0.12.1): Fehlermeldung
+  mit der Meldung von ClickTime und bei HTTP 403 Hinweis auf die Berechtigung ENTRIES_WRITE; mit erhöhter Stufe wird
+  auch der Stempelstatus als Lauf protokolliert.
+
 - **Zeiterfassung: Ein-/Ausstempeln über ClickTime, Korrektur mit Berechtigung (#214):** In «Meine Zeiterfassung»
   zeigt eine Leiste, ob die Person eingestempelt ist; aktiv ist je nachdem «Einstempeln» (`POST /entries`, Beginn =
   jetzt) oder «Ausstempeln» (offene Buchung mit Ende ergänzen, `PUT /entries`; per Einstellung als `POST` mit Ende).

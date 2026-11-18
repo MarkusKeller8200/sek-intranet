@@ -103,5 +103,18 @@
         "Gspicheret Aasichte (Filter, Sortierig, Spalte, Gruppierig) pro Tabälle; persönlich oder für alli."
     ],
     "Tabelle": ["Table", "Tabälle"],
-    "Erstellt von": ["Created by", "Erstellt vo"]
+    "Erstellt von": ["Created by", "Erstellt vo"],
+    "Protokollstufe": ["Log level", "Protokollstufe"],
+    "Details: bei Fehlern die Antwort des Dienstes und die Berechtigungen des Zugriffstokens. Debug: zusätzlich gesendete Daten und jede Antwort – enthält Personendaten, nur zur Fehlersuche. Zugangsdaten werden nie protokolliert.": [
+        "Details: on errors, the service's response and the access token's permissions. Debug: additionally the data sent and every response – contains personal data, for troubleshooting only. Credentials are never logged.",
+        "Details: bi Fähler d Antwort vom Dienscht und d Berächtigunge vom Zuegriffstoke. Debug: zuesätzlich gschickti Date und jedi Antwort – enthaltet Persoonedate, nur zur Fählersuechi. Zuegangsdate wärded nie protokolliert."
+    ],
+    "Protokollstufe (normal, details, debug)": [
+        "Log level (normal, details, debug)",
+        "Protokollstufe (normal, details, debug)"
+    ],
+    "Protokollstufe gilt bis": [
+        "Log level valid until",
+        "Protokollstufe gilt bis"
+    ]
 }

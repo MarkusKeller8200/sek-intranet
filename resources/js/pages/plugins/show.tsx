@@ -98,6 +98,8 @@ export default function PluginShow({
     serverInSwitzerland,
     recordings = [],
     personalData,
+    logLevel = { level: 'normal', until: null },
+    logLevels = {},
 }: {
     plugin: PluginInfo;
     values: FieldValues;
@@ -106,6 +108,9 @@ export default function PluginShow({
     serverInSwitzerland: boolean;
     recordings?: Recording[];
     personalData?: PersonalData;
+    /** Protokollstufe (#218) */
+    logLevel?: { level: string; until: string | null };
+    logLevels?: Record<string, string>;
 }) {
     const [section, setSection] = useState<Section>('settings');
     const [testResult, setTestResult] = useState<PluginResult | null>(null);
@@ -291,7 +296,14 @@ export default function PluginShow({
                         <EndpointsSection plugin={plugin} ready={ready} />
                     </>
                 )}
-                {section === 'log' && <LogSection runs={runs} />}
+                {section === 'log' && (
+                    <LogSection
+                        runs={runs}
+                        pluginId={plugin.id}
+                        logLevel={logLevel}
+                        logLevels={logLevels}
+                    />
+                )}
             </div>
         </>
     );
@@ -1206,18 +1218,74 @@ function ApiTester({
     );
 }
 
-function LogSection({ runs }: { runs: PluginRun[] }) {
+function LogSection({
+    runs,
+    pluginId,
+    logLevel,
+    logLevels,
+}: {
+    runs: PluginRun[];
+    pluginId: string;
+    logLevel: { level: string; until: string | null };
+    logLevels: Record<string, string>;
+}) {
     const [open, setOpen] = useState<string | null>(null);
-
-    if (runs.length === 0) {
-        return (
-            <p className="text-sm text-muted-foreground">Noch keine Läufe.</p>
-        );
-    }
 
     return (
         <Card>
             <CardContent className="grid gap-2 pt-6">
+                {/* Protokollstufe (#218): Details/Debug befristet zur Fehlersuche */}
+                <div className="grid gap-1 rounded-md border bg-muted/40 p-3 text-sm">
+                    <div className="flex flex-wrap items-center gap-2">
+                        <span className="font-medium">Protokollstufe</span>
+                        <ToggleGroup
+                            type="single"
+                            variant="outline"
+                            size="sm"
+                            value={logLevel.level}
+                            onValueChange={(level) =>
+                                level &&
+                                router.post(
+                                    `/plugins/${pluginId}/protokollstufe`,
+                                    { level },
+                                    { preserveScroll: true },
+                                )
+                            }
+                            aria-label="Protokollstufe"
+                        >
+                            {Object.entries(logLevels).map(([key, label]) => (
+                                <ToggleGroupItem key={key} value={key}>
+                                    {label}
+                                </ToggleGroupItem>
+                            ))}
+                        </ToggleGroup>
+                        {logLevel.until && (
+                            <span className="text-xs text-muted-foreground">
+                                {`bis ${formatDateTime(logLevel.until)}, danach wieder Normal`}
+                            </span>
+                        )}
+                        <Button
+                            variant="ghost"
+                            size="sm"
+                            className="ml-auto"
+                            onClick={() => router.reload({ only: ['runs'] })}
+                        >
+                            Aktualisieren
+                        </Button>
+                    </div>
+                    <p className="text-xs text-muted-foreground">
+                        Details: bei Fehlern die Antwort des Dienstes und die
+                        Berechtigungen des Zugriffstokens. Debug: zusätzlich
+                        gesendete Daten und jede Antwort – enthält
+                        Personendaten, nur zur Fehlersuche. Zugangsdaten werden
+                        nie protokolliert.
+                    </p>
+                </div>
+                {runs.length === 0 && (
+                    <p className="text-sm text-muted-foreground">
+                        Noch keine Läufe.
+                    </p>
+                )}
                 {runs.map((run) => (
                     <div
                         key={run.id}
@@ -1257,7 +1325,7 @@ function LogSection({ runs }: { runs: PluginRun[] }) {
                             </span>
                         </button>
                         {open === run.id && run.log.length > 0 && (
-                            <pre className="max-h-64 overflow-auto rounded bg-muted p-2 text-xs">
+                            <pre className="max-h-96 overflow-auto rounded bg-muted p-2 text-xs whitespace-pre-wrap">
                                 {run.log.join('\n')}
                             </pre>
                         )}

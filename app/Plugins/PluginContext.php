@@ -30,6 +30,14 @@ final class PluginContext
 
     private ?DemoResponder $demo = null;
 
+    /** Protokollstufen (#218): normal = Methode, Pfad, Status; details = + Fehlerantworten, Kopfzeilen, Token-Scopes;
+     * debug = + gesendete Abfrage/Daten und jede Antwort (gekürzt). Zugangsdaten werden immer geschwärzt. */
+    public const LOG_LEVELS = ['normal' => 'Normal', 'details' => 'Details', 'debug' => 'Debug'];
+
+    private string $logLevel = 'normal';
+
+    private bool $tokenLogged = false;
+
     /**
      * @param  array<string, mixed>  $settings
      * @param  array<string, string>  $secrets
@@ -89,6 +97,75 @@ final class PluginContext
     public function log(string $line): void
     {
         $this->lines[] = $this->redact($line);
+    }
+
+    public function useLogLevel(string $level): void
+    {
+        $this->logLevel = isset(self::LOG_LEVELS[$level]) ? $level : 'normal';
+    }
+
+    public function logLevel(): string
+    {
+        return $this->logLevel;
+    }
+
+    /** Protokolliert nur ab der Stufe (details bzw. debug). */
+    private function logAt(string $level, string $line): void
+    {
+        $rank = ['normal' => 0, 'details' => 1, 'debug' => 2];
+        if ($rank[$this->logLevel] >= $rank[$level]) {
+            $this->log($line);
+        }
+    }
+
+    /** Text gekürzt und auf eine Zeile gebracht. */
+    private static function excerpt(string $text, int $max = 1500): string
+    {
+        $text = trim((string) preg_replace('/\s+/', ' ', $text));
+
+        return mb_strlen($text) > $max ? mb_substr($text, 0, $max).' … ('.mb_strlen($text).' Zeichen)' : $text;
+    }
+
+    /** Antwort je nach Stufe protokollieren: Kopfzeilen und Inhalt bei Fehlern (details) bzw. immer (debug). */
+    private function logResponse(Response $response): void
+    {
+        $level = $response->successful() ? 'debug' : 'details';
+        $headers = [];
+        foreach (['WWW-Authenticate', 'Content-Type', 'X-Request-Id', 'X-Correlation-Id', 'Retry-After'] as $name) {
+            if ($response->header($name) !== '') {
+                $headers[] = $name.': '.$response->header($name);
+            }
+        }
+        if ($headers !== []) {
+            $this->logAt($level, '  Kopfzeilen: '.implode(' | ', $headers));
+        }
+        $body = $response->body();
+        if ($body !== '') {
+            $this->logAt($level, '  Antwort: '.self::excerpt($body));
+        }
+    }
+
+    /** Berechtigungen (Scopes) des Zugriffstokens aus dem JWT lesen – ohne das Token selbst zu protokollieren. */
+    private function logToken(string $token): void
+    {
+        if ($this->tokenLogged || $this->logLevel === 'normal') {
+            return;
+        }
+        $this->tokenLogged = true;
+        $parts = explode('.', $token);
+        $claims = count($parts) === 3 ? json_decode((string) base64_decode(strtr($parts[1], '-_', '+/')), true) : null;
+        if (! is_array($claims)) {
+            $this->log('  Token: kein JWT, Berechtigungen nicht lesbar.');
+
+            return;
+        }
+        $scope = $claims['scope'] ?? $claims['scp'] ?? null;
+        $scope = is_array($scope) ? implode(' ', array_map('strval', $scope)) : (is_scalar($scope) ? (string) $scope : '–');
+        $roles = $claims['realm_access']['roles'] ?? $claims['roles'] ?? [];
+        $client = $claims['azp'] ?? $claims['client_id'] ?? '–';
+        $exp = is_numeric($claims['exp'] ?? null) ? date('H:i', (int) $claims['exp']) : '–';
+        $this->log('  Token: Client '.(is_scalar($client) ? (string) $client : '–').', gültig bis '.$exp.', Berechtigungen: '.$scope
+            .(is_array($roles) && $roles !== [] ? ', Rollen: '.implode(' ', array_map(fn (mixed $r): string => is_scalar($r) ? (string) $r : '', $roles)) : ''));
     }
 
     /**
@@ -226,6 +303,10 @@ final class PluginContext
             $json = array_key_exists('json', $answer) ? (string) json_encode($answer['json'], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) : '';
             $response = new Response(new Psr7Response($answer['status'], $json === '' ? [] : ['Content-Type' => 'application/json'], $json));
             $this->log("→ HTTP {$response->status()} (Demo)");
+            if ($body !== null) {
+                $this->logAt('debug', '  Gesendet: '.self::excerpt((string) json_encode($body, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES), 2000));
+            }
+            $this->logResponse($response);
 
             return $response;
         }
@@ -241,6 +322,12 @@ final class PluginContext
         }
 
         $this->log("{$method} {$path}");
+        if ($query !== []) {
+            $this->logAt('debug', '  Abfrage: '.self::excerpt((string) json_encode($query, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES), 800));
+        }
+        if ($body !== null) {
+            $this->logAt('debug', '  Gesendet: '.self::excerpt((string) json_encode($body, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES), 2000));
+        }
         $host = isset($endpoint['host']) ? (string) $endpoint['host'] : null;
         $repeated = array_filter($query, 'is_array');
         if ($repeated !== []) {
@@ -271,6 +358,7 @@ final class PluginContext
         }
 
         $this->log("→ HTTP {$response->status()}");
+        $this->logResponse($response);
 
         return $response;
     }
@@ -312,7 +400,7 @@ final class PluginContext
                 (string) $this->setting((string) $auth['username_setting'], ''),
                 $this->required((string) $auth['password_setting']),
             ),
-            'oauth2_client_credentials' => $request->withToken($this->oauthToken($auth)),
+            'oauth2_client_credentials' => $request->withToken($this->tokenMitProtokoll($this->oauthToken($auth))),
             // Passwort-Anmeldung (z. B. KLARA/ePost); ist ein API-Schlüssel hinterlegt, gilt dieser
             'oauth2_password' => match (true) {
                 $this->apiKey($auth) === null => $request->withToken($this->oauthToken($auth)),
@@ -415,6 +503,7 @@ final class PluginContext
         $token = $response->json('access_token');
 
         if (! $response->successful() || ! is_string($token) || $token === '') {
+            $this->logAt('details', '  Token-Abruf: HTTP '.$response->status().' '.self::excerpt($this->redact($response->body()), 500));
             $detail = $response->json('error_description') ?? $response->json('error') ?? $response->status();
             throw new RuntimeException('Anmeldung beim Dienst fehlgeschlagen: '.$this->redact(is_scalar($detail) ? (string) $detail : 'unbekannt'));
         }
@@ -422,6 +511,13 @@ final class PluginContext
         $ttl = max(60, (int) $response->json('expires_in', 3600) - 120);
         Cache::put($cacheKey, $token, $ttl);
         $this->log('Zugriffstoken erhalten (gültig ca. '.intdiv($ttl, 60).' min).');
+
+        return $token;
+    }
+
+    private function tokenMitProtokoll(string $token): string
+    {
+        $this->logToken($token);
 
         return $token;
     }
