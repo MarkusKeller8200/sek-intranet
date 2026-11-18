@@ -1,7 +1,7 @@
 {
     "id": "clicktime",
     "name": "ClickTime",
-    "version": "0.11",
+    "version": "0.12",
     "api": 1,
     "category": "other",
     "author": "SekBülach Intranet",
@@ -1316,6 +1316,17 @@
             "label": "Mitarbeitende dürfen ihren Monat selbst aus ClickTime übernehmen",
             "default": false,
             "help": "Knopf «Aus ClickTime übernehmen» in der eigenen Zeiterfassung. Die Administration sieht ihn immer (zum Testen)."
+        },
+        {
+            "key": "stamp_type",
+            "type": "text",
+            "label": "Buchungsart beim Einstempeln (entry_type_number, leer = ClickTime-Vorgabe)"
+        },
+        {
+            "key": "stamp_out_post",
+            "type": "check",
+            "label": "Ausstempeln als neue Buchung mit Ende senden (POST) statt die offene Buchung zu ergänzen (PUT)",
+            "default": false
         }
     ],
     "actions": [

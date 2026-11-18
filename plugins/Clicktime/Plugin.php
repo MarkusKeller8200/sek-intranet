@@ -1123,6 +1123,9 @@ class Plugin extends BasePlugin implements DemoResponder
         if ($id === 'employees-create') {
             return self::demoCreateEmployee($body ?? []);
         }
+        if (in_array($id, ['entries-create', 'entries-update'], true)) {
+            self::demoStamp($id, $body ?? []);
+        }
         if ($method !== 'GET') {
             // Schreiben im Demo-Modus: wie angenommen, gesendete Daten zurück
             return ['status' => 200, 'json' => $body ?? []];
@@ -1274,8 +1277,47 @@ class Plugin extends BasePlugin implements DemoResponder
             }
             $entries = [...$entries, ...$mine];
         }
+        // Ein-/Ausstempeln im Demo-Modus (#214): gemerkte Buchungen im Zeitraum, korrigierte ersetzen die erfundenen
+        $stamps = (array) Cache::get(self::DEMO_CACHE.'stamps', []);
+        $entries = array_values(array_filter($entries, fn (array $e): bool => ! isset($stamps[(string) $e['number']])));
+        foreach ($stamps as $stamp) {
+            if (is_array($stamp) && (string) $stamp['day'] >= $from && (string) $stamp['day'] <= date('Y-m-d', $end)) {
+                $entries[] = $stamp;
+            }
+        }
 
         return $entries;
+    }
+
+    /**
+     * Demo (#214): gestempelte bzw. korrigierte Buchungen einen Tag lang merken. POST mit Beginn = neue offene
+     * Buchung, POST nur mit Ende = offene Buchung schliessen, PUT = Buchung (auch eine erfundene) ersetzen.
+     *
+     * @param  array<int|string, mixed>  $body
+     */
+    private static function demoStamp(string $id, array $body): void
+    {
+        $stamps = (array) Cache::get(self::DEMO_CACHE.'stamps', []);
+        foreach ($body as $entry) {
+            if (! is_array($entry)) {
+                continue;
+            }
+            $base = ['entry_type_number' => null, 'entry_type_name' => ['de' => 'Arbeitszeit', 'en' => 'Working hours'], 'entry_type_type' => 'WORK',
+                'source' => 'PC', 'deleted' => false, 'approval_status' => null, 'hours' => 0, 'time_zone' => 'Europe/Zurich'];
+            if ($id === 'entries-update') {
+                $stamps[(string) $entry['number']] = $entry + $base;
+            } elseif (($entry['time_from'] ?? null) !== null) {
+                $number = (string) (900000 + count($stamps) + 1);
+                $stamps[$number] = ['number' => (int) $number] + $entry + $base;
+            } else {
+                foreach ($stamps as $k => $s) {
+                    if ($s['day'] === ($entry['day'] ?? null) && (string) $s['employee_no'] === (string) ($entry['employee_no'] ?? '') && ($s['time_to'] ?? null) === null) {
+                        $stamps[$k]['time_to'] = $entry['time_to'] ?? null;
+                    }
+                }
+            }
+        }
+        Cache::put(self::DEMO_CACHE.'stamps', $stamps, now()->addDay());
     }
 
     /**

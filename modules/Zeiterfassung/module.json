@@ -1,7 +1,7 @@
 {
     "key": "zeiterfassung",
     "name": "Zeiterfassung",
-    "version": "0.11.0",
+    "version": "0.12.0",
     "core": ">=0.32.0",
     "description": "Arbeitszeit mit Buchungsart (Arbeitszeit, Homeoffice, Ferien, Krankheit …), Tätigkeiten, Projekte und Abwesenheiten pro Monat erfassen; Monatsvisum durch die Schulleitung, Export für die Lohnbuchhaltung und Monatsblatt als PDF; visierte Monatsrapporte elektronisch unterschreiben (DeepSign).",
     "aktiv": true,
@@ -20,6 +20,10 @@
                 "lehrperson",
                 "mitarbeitende"
             ]
+        },
+        "korrigieren-zeiterfassung": {
+            "label": "Buchungen aus ClickTime korrigieren (an ClickTime senden)",
+            "roles": ["admin", "schulleitung"]
         },
         "visum-zeiterfassung": {
             "label": "Zeiterfassung aller einsehen, Monate visieren, Export Lohnbuchhaltung",

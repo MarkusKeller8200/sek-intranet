@@ -382,5 +382,20 @@
         "No supervisor on file – please contact the school management.",
         "Kei vorgsetzti Person hinterleit – bitte bi de Schuelleitig mälde."
     ],
-    "Vorgesetzte Person": ["Supervisor", "Vorgsetzti Person"]
+    "Vorgesetzte Person": ["Supervisor", "Vorgsetzti Person"],
+    "Einstempeln": ["Clock in", "Iistämple"],
+    "Ausstempeln": ["Clock out", "Usstämple"],
+    "Stempeln ist ausgeschaltet (Plugin ClickTime: Schreiben nicht erlaubt).": [
+        "Clocking is turned off (ClickTime plugin: writing not allowed).",
+        "Stämple isch usgschaltet (Plugin ClickTime: Schriibe nöd erlaubt)."
+    ],
+    "Nicht eingestempelt": ["Not clocked in", "Nöd iigstämplet"],
+    "Buchung in ClickTime korrigieren": [
+        "Correct entry in ClickTime",
+        "Buechig in ClickTime korrigiere"
+    ],
+    "Die Änderung geht direkt an ClickTime. Buchungsart, Kategorie, Projekt und Pause bleiben wie in ClickTime.": [
+        "The change goes directly to ClickTime. Entry type, category, project and break stay as in ClickTime.",
+        "D Änderig gaht diräkt a ClickTime. Buechigsart, Kategorie, Projekt und Pause bliibed wie in ClickTime."
+    ]
 }

@@ -13,6 +13,9 @@ Route::middleware('can:use-zeiterfassung')->group(function () {
     Route::delete('zeiterfassung/eintraege/{id}', [ZeiterfassungController::class, 'destroy'])->name('zeiterfassung.destroy');
     Route::post('zeiterfassung/einreichen', [ZeiterfassungController::class, 'einreichen'])->name('zeiterfassung.einreichen');
     Route::post('zeiterfassung/aus-clicktime', [ZeiterfassungController::class, 'ausClicktime'])->middleware('throttle:10,1')->name('zeiterfassung.clicktime');
+    Route::post('zeiterfassung/einstempeln', [ZeiterfassungController::class, 'einstempeln'])->middleware('throttle:20,1')->name('zeiterfassung.einstempeln');
+    Route::post('zeiterfassung/ausstempeln', [ZeiterfassungController::class, 'ausstempeln'])->middleware('throttle:20,1')->name('zeiterfassung.ausstempeln');
+    Route::put('zeiterfassung/eintraege/{id}/clicktime', [ZeiterfassungController::class, 'korrigieren'])->middleware(['can:korrigieren-zeiterfassung', 'throttle:30,1'])->name('zeiterfassung.korrigieren');
     Route::post('zeiterfassung/rapport-unterschreiben', [ZeiterfassungController::class, 'rapportUnterschreiben'])->middleware('throttle:10,1')->name('zeiterfassung.rapport-unterschreiben');
     Route::post('zeiterfassung/abschliessen', [ZeiterfassungController::class, 'abschliessen'])->middleware('throttle:10,1')->name('zeiterfassung.abschliessen');
     Route::get('zeiterfassung/monatsblatt/{person}/{monat}', [ZeiterfassungController::class, 'monatsblattPdf'])->name('zeiterfassung.monatsblatt');

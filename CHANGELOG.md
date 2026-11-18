@@ -11,6 +11,13 @@ laufend unter **Unveröffentlicht**. Ab 0.32.0 entsteht eine Version nur bei ein
 
 ### Neu
 
+- **Zeiterfassung: Ein-/Ausstempeln über ClickTime, Korrektur mit Berechtigung (#214):** In «Meine Zeiterfassung»
+  zeigt eine Leiste, ob die Person eingestempelt ist; aktiv ist je nachdem «Einstempeln» (`POST /entries`, Beginn =
+  jetzt) oder «Ausstempeln» (offene Buchung mit Ende ergänzen, `PUT /entries`; per Einstellung als `POST` mit Ende).
+  Mit dem neuen Recht `korrigieren-zeiterfassung` (Vorgabe Admin, Schulleitung) lassen sich Buchungen aus ClickTime im
+  Formular korrigieren (`PUT /entries`); danach wird der Monat abgeglichen. Nur mit «Schreibende Aktionen erlauben»
+  im Plugin ClickTime (0.12); Schreiben schaltet ClickTime erst nach Rücksprache frei (Modul 0.12.0).
+
 - **Zeiterfassung: Monatsrapport an Vorgesetzte unterschreiben (#208):** Die Person startet in «Meine Zeiterfassung»
   die Unterschrift selbst; danach unterschreibt die hinterlegte vorgesetzte Person. Vorgesetzte kommen beim
   Übernehmen aus ClickTime (Vorgesetzte der Abteilung, Plugin 0.11) und sind unter «Zeiterfassung – Einstellungen»
