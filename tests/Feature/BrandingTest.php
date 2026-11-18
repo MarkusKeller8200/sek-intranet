@@ -19,7 +19,7 @@ class BrandingTest extends TestCase
     public function test_default_is_eduksx_wordmark(): void
     {
         $this->signInAs('lehrperson');
-        $this->get('/')->assertInertia(fn (Assert $page) => $page
+        $this->get('/start')->assertInertia(fn (Assert $page) => $page
             ->where('branding.marke', 'eduksx')
             ->where('branding.wortmarke', 'education')
             ->where('branding.logo', null)
@@ -49,7 +49,7 @@ class BrandingTest extends TestCase
         $this->post('/einstellungen/erscheinungsbild/signet', ['datei' => UploadedFile::fake()->createWithContent('signet.png', self::PNG)])->assertSessionHasNoErrors();
         $this->put('/einstellungen/erscheinungsbild', ['marke' => 'eigene', 'name' => 'Sekundarschule Musterhausen'])->assertSessionHasNoErrors();
 
-        $this->get('/')->assertInertia(fn (Assert $page) => $page
+        $this->get('/start')->assertInertia(fn (Assert $page) => $page
             ->where('branding.marke', 'eigene')
             ->where('branding.wortmarke', null)
             ->where('branding.name', 'Sekundarschule Musterhausen')

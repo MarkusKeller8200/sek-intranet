@@ -170,7 +170,7 @@ final class Branding
      * Bestehende Installationen (#216): Daten von vor dem White-Labeling behalten das Logo der Sekundarschule Bülach
      * als eigenes Logo. Neue Installationen zeigen EduKSX. Einmalig (nur ohne Datensatz).
      */
-    public function bestandUebernehmen(string $stichtag = '2026-11-19'): bool
+    public function bestandUebernehmen(string $stichtag = '2026-11-18'): bool
     {
         if ($this->store->find(self::COLLECTION, self::ID) !== null) {
             return false;
