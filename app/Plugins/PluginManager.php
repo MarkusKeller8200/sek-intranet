@@ -534,19 +534,21 @@ final class PluginManager
         $ctx = $this->context($id, $user);
         $start = microtime(true);
 
+        $error = null;
         try {
             $result = $callback($ctx);
         } catch (Throwable $e) {
             $result = ['ok' => false, 'status' => 'error', 'message' => $ctx->redact($e->getMessage())];
             Log::warning("Plugin {$id} ({$label}): ".$result['message']);
-
-            if ($rethrow) {
-                throw $e;
-            }
+            $error = $e;
         }
 
+        // auch fehlgeschlagene Läufe protokollieren, bevor der Fehler weitergereicht wird (#218)
         $result['log'] = $ctx->lines();
         $this->recordRun($id, $user, $label, $result, (int) round((microtime(true) - $start) * 1000));
+        if ($rethrow && $error !== null) {
+            throw $error;
+        }
 
         return $result;
     }
