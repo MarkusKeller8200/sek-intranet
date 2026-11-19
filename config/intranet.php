@@ -524,7 +524,7 @@ return [
             'color' => 'sky',
             'icon' => 'MessagesSquare',
             'items' => [
-                'start' => ['title' => 'Start', 'icon' => 'LayoutGrid', 'href' => '/start'],
+                'start' => ['title' => 'Start', 'icon' => 'EduksxIntranet', 'href' => '/start'],
                 'mitteilungen' => ['title' => 'Mitteilungen', 'icon' => 'Megaphone', 'href' => '/mitteilungen'],
                 'termine' => ['title' => 'Termine', 'icon' => 'CalendarDays', 'href' => '/termine'],
                 'pinnwand' => [
@@ -545,7 +545,7 @@ return [
         'fachanwendungen' => [
             'title' => 'Fachanwendungen',
             'color' => 'brand',
-            'icon' => 'AppWindow',
+            'icon' => 'EduksxPortal',
             'collapse_sidebar' => true,
             'items' => [
                 'cmi' => [
@@ -594,7 +594,7 @@ return [
             'icon' => 'Library',
             'items' => [
                 'dokumente' => ['title' => 'Dokumente & Links', 'icon' => 'FileText', 'href' => '/dokumente'],
-                'glossar' => ['title' => 'Glossar', 'icon' => 'BookA', 'href' => '/glossar', 'can' => 'view-glossary'],
+                'glossar' => ['title' => 'Glossar', 'icon' => 'EduksxGlossary', 'href' => '/glossar', 'can' => 'view-glossary'],
                 'handbuch' => [
                     'title' => 'Handbuch',
                     'icon' => 'BookOpen',
@@ -620,7 +620,7 @@ return [
             'color' => 'teal',
             'icon' => 'Building2',
             'items' => [
-                'personen' => ['title' => 'Personen', 'icon' => 'Users', 'href' => '/personen'],
+                'personen' => ['title' => 'Personen', 'icon' => 'EduksxIdent', 'href' => '/personen'],
                 'schueler' => ['title' => 'Schüler:innen', 'icon' => 'GraduationCap', 'href' => '/schueler', 'can' => 'view-students'],
                 'klassen' => [
                     'title' => 'Klassen & Gruppen',
@@ -631,7 +631,7 @@ return [
                 ],
                 'abwesenheiten' => [
                     'title' => 'Abwesenheiten & Vertretungen',
-                    'icon' => 'CalendarOff',
+                    'icon' => 'EduksxStaffing',
                     'description' => 'Abwesenheiten von Mitarbeitenden melden und Vertretungen planen.',
                     'features' => ['Meldung durch Mitarbeitende', 'Vertretungsplan je Tag', 'Übersicht für die Schulleitung'],
                 ],
@@ -651,7 +651,7 @@ return [
             'items' => [
                 'stundenplan' => [
                     'title' => 'Stundenpläne',
-                    'icon' => 'CalendarClock',
+                    'icon' => 'EduksxTimetable',
                     'description' => 'Stundenpläne von Klassen, Lehrpersonen und Räumen anzeigen.',
                     'features' => ['Ansicht je Klasse, Person und Raum', 'Stundenplanänderungen', 'Import aus dem Stundenplanprogramm'],
                 ],
@@ -695,7 +695,7 @@ return [
                 ],
                 'lizenzen' => [
                     'title' => 'Lizenzen',
-                    'icon' => 'KeyRound',
+                    'icon' => 'EduksxLicence',
                     'description' => 'Software-Lizenzen und Bestellungen, später aus IDA.',
                     'features' => ['Übersicht je Person und Klasse', 'Bestellung beantragen', 'Anbindung über das IDA-Plugin'],
                     'plugin' => 'ida',
@@ -724,7 +724,7 @@ return [
         'bestellen' => [
             'title' => 'Bestellen',
             'color' => 'orange',
-            'icon' => 'ShoppingCart',
+            'icon' => 'EduksxShop',
             'can' => 'order',
             // Einträge kommen aus dem Modul Beschaffung (modules/Beschaffung/module.json): Kataloge, Lehrmittel, Antrag (#197, #198)
             'items' => [],
@@ -748,7 +748,7 @@ return [
                 ],
                 'unterschriften' => [
                     'title' => 'Unterschriften',
-                    'icon' => 'Signature',
+                    'icon' => 'EduksxSign',
                     'href' => '/unterschriften',
                     'can' => 'manage-signatures',
                     'description' => 'Elektronische Unterschriften (DeepSign): offene und abgeschlossene Aufträge, erinnern, zurückziehen.',
@@ -828,10 +828,10 @@ return [
         'einstellungen' => [
             'title' => 'Einstellungen',
             'color' => 'slate',
-            'icon' => 'Settings',
+            'icon' => 'EduksxServices',
             'can' => 'manage-users',
             'items' => [
-                'einstellungen-fachanwendungen' => ['title' => 'Fachanwendungen', 'icon' => 'AppWindow', 'href' => '/einstellungen/fachanwendungen'],
+                'einstellungen-fachanwendungen' => ['title' => 'Fachanwendungen', 'icon' => 'EduksxPortal', 'href' => '/einstellungen/fachanwendungen'],
                 'einstellungen-einbindungen' => ['title' => 'Weitere Einbindungen', 'icon' => 'Globe', 'href' => '/einstellungen/einbindungen'],
                 'browser-erweiterung' => ['title' => 'Browser-Erweiterung', 'icon' => 'Puzzle', 'href' => '/einstellungen/browser-erweiterung'],
                 'modulverwaltung' => ['title' => 'Module', 'icon' => 'Boxes', 'href' => '/einstellungen/module'],
@@ -846,7 +846,7 @@ return [
             'icon' => 'FlaskConical',
             'can' => 'manage-users',
             'items' => [
-                'plugins' => ['title' => 'Plugins', 'icon' => 'Plug', 'href' => '/plugins'],
+                'plugins' => ['title' => 'Plugins', 'icon' => 'EduksxConnect', 'href' => '/plugins'],
                 'datenstrukturen' => ['title' => 'Datenstrukturen', 'icon' => 'Database', 'href' => '/datenstrukturen'],
                 'farbkonzept' => ['title' => 'Farbkonzept', 'icon' => 'Palette', 'href' => '/farbkonzept'],
                 'api' => ['title' => 'API', 'icon' => 'Braces', 'href' => '/api-doku'],

@@ -84,6 +84,14 @@ class BrandingController extends Controller
         return back();
     }
 
+    /** Web-App-Manifest nach dem Erscheinungsbild (#216). */
+    public function manifest(): HttpResponse
+    {
+        $farbe = Themes::resolved((array) $this->themes->find($this->themes->activeId()))['light']['primary'] ?? '#a85400';
+
+        return response()->json($this->branding->manifest($farbe), 200, ['Content-Type' => 'application/manifest+json', 'Cache-Control' => 'no-cache'], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+    }
+
     /** Bild ausliefern (ohne Anmeldung, für die Anmeldeseite). SVG in einer Sandbox ohne Skripte. */
     public function show(string $slot): HttpResponse
     {

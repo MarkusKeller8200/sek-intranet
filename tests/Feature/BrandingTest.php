@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Data\Store\JsonStore;
 use App\Support\Branding;
 use App\Support\Themes;
 use Illuminate\Http\UploadedFile;
@@ -74,23 +75,26 @@ class BrandingTest extends TestCase
         Storage::disk('local')->assertMissing('branding/logo_hell.svg');
     }
 
-    public function test_existing_installation_keeps_school_logo(): void
+    public function test_school_logo_is_replaced_by_eduksx_but_own_upload_stays(): void
     {
         Storage::fake('local');
+        $store = app(JsonStore::class);
         $branding = app(Branding::class);
-        // Daten von «vor» dem Stichtag (hier: Stichtag in der Zukunft)
-        $this->assertTrue($branding->bestandUebernehmen('2999-01-01'));
-        $this->assertSame('eigene', $branding->einstellung()['marke']);
-        $this->assertSame('Sekundarschule Bülach', $branding->einstellung()['name']);
-        Storage::disk('local')->assertExists('branding/logo_hell.svg');
-        // nur einmal
-        $this->assertFalse($branding->bestandUebernehmen('2999-01-01'));
-    }
+        // Stand nach dem ersten Update: SekBülach-Logo als «eigenes» Logo übernommen
+        Storage::disk('local')->put('branding/logo_hell.svg', (string) file_get_contents(public_path('images/sekbuelach-logo.svg')));
+        Storage::disk('local')->put('branding/signet.svg', (string) file_get_contents(public_path('images/sekbuelach-icon.svg')));
+        $store->insert(Branding::COLLECTION, ['id' => Branding::ID, 'marke' => 'eigene', 'name' => 'Sekundarschule Bülach', 'logo_hell' => 'branding/logo_hell.svg', 'signet' => 'branding/signet.svg']);
 
-    public function test_new_installation_keeps_eduksx(): void
-    {
-        $this->assertFalse(app(Branding::class)->bestandUebernehmen('2000-01-01'));
-        $this->assertSame('eduksx', app(Branding::class)->einstellung()['marke']);
+        $this->assertTrue($branding->sekbuelachErsetzen());
+        $this->assertSame(['eduksx', 'Sekundarschule Bülach', null, null], [$branding->einstellung()['marke'], $branding->einstellung()['name'], $branding->einstellung()['logo_hell'], $branding->einstellung()['signet']]);
+        Storage::disk('local')->assertMissing('branding/logo_hell.svg');
+        $this->assertFalse($branding->sekbuelachErsetzen());
+
+        // ein selbst hochgeladenes Logo bleibt
+        Storage::disk('local')->put('branding/logo_hell.svg', '<svg xmlns="http://www.w3.org/2000/svg"/>');
+        $store->update(Branding::COLLECTION, Branding::ID, ['marke' => 'eigene', 'logo_hell' => 'branding/logo_hell.svg']);
+        $this->assertFalse($branding->sekbuelachErsetzen());
+        $this->assertSame('eigene', $branding->einstellung()['marke']);
     }
 
     public function test_builtin_color_schemes(): void

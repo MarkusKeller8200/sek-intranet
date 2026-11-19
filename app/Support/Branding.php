@@ -80,6 +80,39 @@ final class Branding
         ];
     }
 
+    /** Titel für Browser-Tab und App (#216): eigenes Logo → Name der Instanz, sonst «EduKSX-Intranet». */
+    public function titel(): string
+    {
+        $e = $this->einstellung();
+        if ($e['marke'] === 'eigene' && $e['logo_hell'] !== null) {
+            return $e['name'] !== '' ? $e['name'] : (string) config('app.name', 'Intranet');
+        }
+
+        return $e['marke'] === 'markussx' ? 'MarKusSXCH Intranet' : 'EduKSX-Intranet';
+    }
+
+    /**
+     * Web-App-Manifest (#216): Name und Symbole nach dem Erscheinungsbild, Farbe aus dem aktiven Farbkonzept.
+     *
+     * @return array<string, mixed>
+     */
+    public function manifest(string $farbe): array
+    {
+        $statisch = json_decode((string) @file_get_contents(public_path('manifest.webmanifest')), true);
+        $m = is_array($statisch) ? $statisch : [];
+        $anzeige = $this->anzeige();
+        $m['name'] = $this->titel();
+        $m['short_name'] = 'Intranet';
+        $m['description'] = $this->titel();
+        $m['theme_color'] = $farbe;
+        if ($anzeige['marke'] === 'eigene' && str_starts_with($anzeige['signet'], '/branding/')) {
+            $bild = $this->bild('signet');
+            $m['icons'] = [['src' => $anzeige['signet'], 'sizes' => $bild !== null && $bild['typ'] === 'image/svg+xml' ? 'any' : '512x512', 'type' => $bild['typ'] ?? 'image/png', 'purpose' => 'any']];
+        }
+
+        return $m;
+    }
+
     /**
      * Marke und Name speichern.
      *
@@ -167,36 +200,25 @@ final class Branding
     }
 
     /**
-     * Bestehende Installationen (#216): Daten von vor dem White-Labeling behalten das Logo der Sekundarschule Bülach
-     * als eigenes Logo. Neue Installationen zeigen EduKSX. Einmalig (nur ohne Datensatz).
+     * Umstellung (#216): Das beim ersten Update übernommene Logo der Sekundarschule Bülach wird durch EduKSX ersetzt
+     * (Entscheid 19.11.2026). Nur wenn die gespeicherten Bilder genau die mitgelieferten SekBülach-Dateien sind – ein von
+     * Hand hochgeladenes Logo bleibt. Der Name der Instanz bleibt. Einmalig wirksam (danach ist «eduksx» gesetzt).
      */
-    public function bestandUebernehmen(string $stichtag = '2026-11-18'): bool
+    public function sekbuelachErsetzen(): bool
     {
-        if ($this->store->find(self::COLLECTION, self::ID) !== null) {
+        $e = $this->einstellung();
+        $quelle = public_path('images/sekbuelach-logo.svg');
+        if ($e['marke'] !== 'eigene' || $e['logo_hell'] === null || ! is_file($quelle)
+            || ! Storage::disk('local')->exists($e['logo_hell'])
+            || Storage::disk('local')->get($e['logo_hell']) !== file_get_contents($quelle)) {
             return false;
         }
-        $aelteste = null;
-        foreach ($this->store->all('users') as $u) {
-            $t = (string) ($u['created_at'] ?? '');
-            if ($t !== '' && ($aelteste === null || $t < $aelteste)) {
-                $aelteste = $t;
+        foreach (array_keys(self::SLOTS) as $slot) {
+            if ($e[$slot] !== null) {
+                Storage::disk('local')->delete($e[$slot]);
             }
         }
-        if ($aelteste === null || substr($aelteste, 0, 10) >= $stichtag) {
-            return false;
-        }
-        $daten = ['id' => self::ID, 'marke' => 'eigene', 'name' => 'Sekundarschule Bülach', 'updated_by' => null];
-        foreach (['logo_hell' => 'sekbuelach-logo.svg', 'logo_dunkel' => 'sekbuelach-logo-dark.svg', 'signet' => 'sekbuelach-icon.svg'] as $slot => $datei) {
-            $quelle = public_path('images/'.$datei);
-            if (is_file($quelle)) {
-                Storage::disk('local')->put(self::ORDNER.'/'.$slot.'.svg', (string) file_get_contents($quelle));
-                $daten[$slot] = self::ORDNER.'/'.$slot.'.svg';
-            }
-        }
-        if (! isset($daten['logo_hell'])) {
-            return false;
-        }
-        $this->store->insert(self::COLLECTION, $daten);
+        $this->setzen(['marke' => 'eduksx', 'logo_hell' => null, 'logo_dunkel' => null, 'signet' => null, 'updated_by' => null]);
 
         return true;
     }

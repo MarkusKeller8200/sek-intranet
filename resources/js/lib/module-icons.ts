@@ -1,4 +1,5 @@
 import type { LucideIcon } from 'lucide-react';
+import { EDUKSX_ICONS } from '@/lib/eduksx-icons';
 import {
     Apple,
     Clock,
@@ -222,6 +223,7 @@ const icons: Record<string, LucideIcon> = {
     Wrench,
 };
 
+/** Lucide-Icon oder freigegebenes EduKSX-Icon («EduksxTime» usw., #216). */
 export function moduleIcon(name: string): LucideIcon {
-    return icons[name] ?? Circle;
+    return icons[name] ?? EDUKSX_ICONS[name] ?? Circle;
 }

@@ -70,11 +70,14 @@ class ModuleNavigationTest extends TestCase
     public function test_every_module_icon_exists_in_the_frontend_icon_map(): void
     {
         $map = (string) file_get_contents(resource_path('js/lib/module-icons.ts'));
+        // freigegebene EduKSX-Icons (#216) stehen in eduksx-icons.ts
+        $eduksx = (string) file_get_contents(resource_path('js/lib/eduksx-icons.ts'));
+        $known = fn (string $icon): bool => preg_match('/^\s+'.$icon.',$/m', $map) === 1 || preg_match('/^export const '.$icon.': LucideIcon/m', $eduksx) === 1;
 
         foreach (config('intranet.modules') as $groupKey => $group) {
-            $this->assertMatchesRegularExpression('/^\s+'.$group['icon'].',$/m', $map, "Symbol {$group['icon']} für Bereich {$groupKey} fehlt in module-icons.ts");
+            $this->assertTrue($known($group['icon']), "Symbol {$group['icon']} für Bereich {$groupKey} fehlt in module-icons.ts");
             foreach ($group['items'] as $key => $module) {
-                $this->assertMatchesRegularExpression('/^\s+'.$module['icon'].',$/m', $map, "Symbol {$module['icon']} für Modul {$key} fehlt in module-icons.ts");
+                $this->assertTrue($known($module['icon']), "Symbol {$module['icon']} für Modul {$key} fehlt in module-icons.ts");
             }
         }
     }

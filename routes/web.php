@@ -45,6 +45,7 @@ Route::middleware('guest')->group(function () {
 Route::post('abmelden', [AuthController::class, 'destroy'])->middleware('auth')->name('logout');
 
 // Logo und Signet der Instanz (#216): auch ohne Anmeldung (Anmeldeseite)
+Route::get('app.webmanifest', [BrandingController::class, 'manifest'])->name('branding.manifest');
 Route::get('branding/{slot}', [BrandingController::class, 'show'])->whereIn('slot', ['logo_hell', 'logo_dunkel', 'signet'])->name('branding.show');
 
 Route::middleware('auth')->group(function () {
