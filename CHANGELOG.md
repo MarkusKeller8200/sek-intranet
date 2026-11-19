@@ -16,7 +16,8 @@ laufend unter **Unveröffentlicht**. Ab 0.32.0 entsteht eine Version nur bei ein
   bleiben). Freigegebene EduKSX-Icons als Menüsymbole (Start, Zeiterfassung, Glossar, Unterschriften, Lizenzen,
   Stundenpläne, Abwesenheiten, Personen, Plugins, Bestellen, Fachanwendungen, Einstellungen). Favicon, App-Symbole
   und Manifest «EduKSX-Intranet»; Manifest (`/app.webmanifest`), Titel und Favicon folgen dem Erscheinungsbild
-  (Modul Zeiterfassung 0.12.2).
+  (Modul Zeiterfassung 0.12.2). White-Label: unter Erscheinungsbild einstellbar sind zusätzlich App-Name, Symbole im
+  Menü (EduKSX- oder Standard-Symbole; Einträge mit `icon_eduksx`) und ob die Entwicklersignatur erscheint.
 
 - **White-Labeling (#216):** Neue Seite Einstellungen → Erscheinungsbild: Marke EduKSX (Vorgabe, Wortmarke
   «EduKSX-Intranet» mit Icon «Intranet»), MarKusSXCH oder eigenes Logo (hell, dunkel, Signet; SVG/PNG/JPG/WebP, SVG

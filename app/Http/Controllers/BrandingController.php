@@ -35,6 +35,7 @@ class BrandingController extends Controller
         return Inertia::render('settings/branding', [
             'einstellung' => $this->branding->einstellung(),
             'marken' => Branding::MARKEN,
+            'symbole' => Branding::SYMBOLE,
             'slots' => Branding::SLOTS,
             'theme' => ['id' => (string) ($theme['id'] ?? Themes::STANDARD), 'name' => (string) ($theme['name'] ?? '')],
         ]);
@@ -45,9 +46,13 @@ class BrandingController extends Controller
         $data = $request->validate([
             'marke' => ['required', Rule::in(array_keys(Branding::MARKEN))],
             'name' => ['nullable', 'string', 'max:80'],
+            'titel' => ['nullable', 'string', 'max:60'],
+            'symbole' => ['required', Rule::in(array_keys(Branding::SYMBOLE))],
+            'signatur' => ['required', 'boolean'],
         ]);
         try {
-            $r = $this->branding->speichern((string) $data['marke'], (string) ($data['name'] ?? ''), (string) $request->user()?->getAuthIdentifier());
+            $r = $this->branding->speichern((string) $data['marke'], (string) ($data['name'] ?? ''), (string) $request->user()?->getAuthIdentifier(),
+                (string) ($data['titel'] ?? ''), (string) $data['symbole'], (bool) $data['signatur']);
         } catch (InvalidArgumentException $e) {
             throw ValidationException::withMessages(['marke' => $e->getMessage()]);
         }

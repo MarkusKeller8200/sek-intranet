@@ -15,6 +15,7 @@ import {
     CardTitle,
 } from '@/components/ui/card';
 import { FileDrop } from '@/components/ui/file-drop';
+import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { cn } from '@/lib/utils';
@@ -22,6 +23,9 @@ import { cn } from '@/lib/utils';
 type Einstellung = {
     marke: 'eduksx' | 'markussx' | 'eigene';
     name: string;
+    titel: string;
+    symbole: 'eduksx' | 'standard';
+    signatur: boolean;
     logo_hell: string | null;
     logo_dunkel: string | null;
     signet: string | null;
@@ -34,16 +38,24 @@ type Einstellung = {
 export default function BrandingSettings({
     einstellung,
     marken,
+    symbole,
     slots,
     theme,
 }: {
     einstellung: Einstellung;
     marken: Record<string, string>;
+    symbole: Record<string, string>;
     slots: Record<string, string>;
     theme: { id: string; name: string };
 }) {
     const { branding } = usePage().props;
-    const form = useForm({ marke: einstellung.marke, name: einstellung.name });
+    const form = useForm({
+        marke: einstellung.marke,
+        name: einstellung.name,
+        titel: einstellung.titel,
+        symbole: einstellung.symbole,
+        signatur: einstellung.signatur,
+    });
     const [dateien, setDateien] = useState<Record<string, File[]>>({});
     const [fehler, setFehler] = useState<Record<string, string>>({});
 
@@ -170,6 +182,66 @@ export default function BrandingSettings({
                             </p>
                             <InputError message={form.errors.name} />
                         </div>
+                        <div className="grid max-w-md gap-1.5">
+                            <Label htmlFor="b-titel">App-Name</Label>
+                            <Input
+                                id="b-titel"
+                                value={form.data.titel}
+                                maxLength={60}
+                                placeholder="leer = EduKSX-Intranet bzw. Name der Instanz"
+                                onChange={(e) =>
+                                    form.setData('titel', e.target.value)
+                                }
+                            />
+                            <p className="text-xs text-muted-foreground">
+                                Im Browser-Tab und als Name der installierten
+                                App.
+                            </p>
+                            <InputError message={form.errors.titel} />
+                        </div>
+                    </CardContent>
+                </Card>
+
+                <Card>
+                    <CardHeader>
+                        <CardTitle>Symbole und Signatur</CardTitle>
+                    </CardHeader>
+                    <CardContent className="grid gap-4">
+                        <fieldset className="grid gap-2">
+                            <legend className="mb-1 text-sm font-medium">
+                                Symbole im Menü
+                            </legend>
+                            {Object.entries(symbole).map(([key, label]) => (
+                                <label
+                                    key={key}
+                                    className="flex items-center gap-2 text-sm"
+                                >
+                                    <input
+                                        type="radio"
+                                        name="symbole"
+                                        value={key}
+                                        checked={form.data.symbole === key}
+                                        onChange={() =>
+                                            form.setData(
+                                                'symbole',
+                                                key as Einstellung['symbole'],
+                                            )
+                                        }
+                                    />
+                                    {label}
+                                </label>
+                            ))}
+                        </fieldset>
+                        <label className="flex items-center gap-2 text-sm">
+                            <Checkbox
+                                checked={form.data.signatur}
+                                onCheckedChange={(c) =>
+                                    form.setData('signatur', c === true)
+                                }
+                            />
+                            Entwicklersignatur «Developed by MarKusSXCH» unter
+                            dem Logo anzeigen
+                        </label>
                     </CardContent>
                 </Card>
 

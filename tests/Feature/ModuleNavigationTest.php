@@ -75,9 +75,12 @@ class ModuleNavigationTest extends TestCase
         $known = fn (string $icon): bool => preg_match('/^\s+'.$icon.',$/m', $map) === 1 || preg_match('/^export const '.$icon.': LucideIcon/m', $eduksx) === 1;
 
         foreach (config('intranet.modules') as $groupKey => $group) {
-            $this->assertTrue($known($group['icon']), "Symbol {$group['icon']} für Bereich {$groupKey} fehlt in module-icons.ts");
-            foreach ($group['items'] as $key => $module) {
-                $this->assertTrue($known($module['icon']), "Symbol {$module['icon']} für Modul {$key} fehlt in module-icons.ts");
+            foreach ([$groupKey => $group, ...$group['items']] as $key => $entry) {
+                foreach (['icon', 'icon_eduksx'] as $field) {
+                    if (isset($entry[$field])) {
+                        $this->assertTrue($known($entry[$field]), "Symbol {$entry[$field]} für {$key} fehlt in module-icons.ts bzw. eduksx-icons.ts");
+                    }
+                }
             }
         }
     }

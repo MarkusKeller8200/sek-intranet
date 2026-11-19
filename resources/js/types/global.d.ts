@@ -9,6 +9,8 @@ export type Branding = {
     wortmarke: 'education' | 'developer' | null;
     logo: { hell: string; dunkel: string } | null;
     signet: string;
+    /** Entwicklersignatur anzeigen (#220) */
+    signatur: boolean;
     version: string;
 };
 

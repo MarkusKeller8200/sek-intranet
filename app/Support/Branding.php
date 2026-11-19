@@ -36,21 +36,28 @@ final class Branding
 
     public const MAX_KB = 1024;
 
+    /** Symbolsatz im Menü (#220): freigegebene EduKSX-Icons oder Standard-Symbole. */
+    public const SYMBOLE = ['eduksx' => 'EduKSX-Symbole', 'standard' => 'Standard-Symbole'];
+
     public function __construct(private readonly JsonStore $store) {}
 
     /**
      * Gespeicherte Einstellung (ohne Datensatz: EduKSX).
      *
-     * @return array{marke: string, name: string, logo_hell: string|null, logo_dunkel: string|null, signet: string|null}
+     * @return array{marke: string, name: string, titel: string, symbole: string, signatur: bool, logo_hell: string|null, logo_dunkel: string|null, signet: string|null}
      */
     public function einstellung(): array
     {
         $r = $this->store->find(self::COLLECTION, self::ID) ?? [];
         $marke = (string) ($r['marke'] ?? 'eduksx');
+        $symbole = (string) ($r['symbole'] ?? 'eduksx');
 
         return [
             'marke' => isset(self::MARKEN[$marke]) ? $marke : 'eduksx',
             'name' => (string) ($r['name'] ?? ''),
+            'titel' => (string) ($r['titel'] ?? ''),
+            'symbole' => isset(self::SYMBOLE[$symbole]) ? $symbole : 'eduksx',
+            'signatur' => ($r['signatur'] ?? true) !== false,
             'logo_hell' => self::datei($r['logo_hell'] ?? null),
             'logo_dunkel' => self::datei($r['logo_dunkel'] ?? null),
             'signet' => self::datei($r['signet'] ?? null),
@@ -60,7 +67,7 @@ final class Branding
     /**
      * Für die Oberfläche (geteilte Inertia-Daten): Wortmarke oder Bild-URLs, Signet und Name der Instanz.
      *
-     * @return array{marke: string, name: string, wortmarke: string|null, logo: array{hell: string, dunkel: string}|null, signet: string, version: string}
+     * @return array{marke: string, name: string, wortmarke: string|null, logo: array{hell: string, dunkel: string}|null, signet: string, signatur: bool, version: string}
      */
     public function anzeige(): array
     {
@@ -76,6 +83,8 @@ final class Branding
             'wortmarke' => $eigen ? null : ($e['marke'] === 'markussx' ? 'developer' : 'education'),
             'logo' => $eigen ? ['hell' => $url('logo_hell'), 'dunkel' => $e['logo_dunkel'] !== null ? $url('logo_dunkel') : $url('logo_hell')] : null,
             'signet' => $eigen && $e['signet'] !== null ? $url('signet') : '/images/brands/eduksx-intranet-tile-light.svg',
+            // Entwicklersignatur «Developed by MarKusSXCH» unter dem Logo (#220), abschaltbar
+            'signatur' => $e['signatur'],
             'version' => $v,
         ];
     }
@@ -84,6 +93,9 @@ final class Branding
     public function titel(): string
     {
         $e = $this->einstellung();
+        if ($e['titel'] !== '') {
+            return $e['titel'];
+        }
         if ($e['marke'] === 'eigene' && $e['logo_hell'] !== null) {
             return $e['name'] !== '' ? $e['name'] : (string) config('app.name', 'Intranet');
         }
@@ -118,16 +130,17 @@ final class Branding
      *
      * @return array{before: array<string, mixed>|null, after: array<string, mixed>}
      */
-    public function speichern(string $marke, string $name, ?string $userId): array
+    public function speichern(string $marke, string $name, ?string $userId, string $titel = '', string $symbole = 'eduksx', bool $signatur = true): array
     {
-        if (! isset(self::MARKEN[$marke])) {
-            throw new InvalidArgumentException('Unbekannte Marke.');
+        if (! isset(self::MARKEN[$marke]) || ! isset(self::SYMBOLE[$symbole])) {
+            throw new InvalidArgumentException('Unbekannte Marke bzw. unbekannter Symbolsatz.');
         }
         if ($marke === 'eigene' && $this->einstellung()['logo_hell'] === null) {
             throw new InvalidArgumentException('Für «Eigenes Logo» zuerst ein Logo hochladen.');
         }
 
-        return $this->setzen(['marke' => $marke, 'name' => mb_substr(trim($name), 0, 80), 'updated_by' => $userId]);
+        return $this->setzen(['marke' => $marke, 'name' => mb_substr(trim($name), 0, 80), 'titel' => mb_substr(trim($titel), 0, 60),
+            'symbole' => $symbole, 'signatur' => $signatur, 'updated_by' => $userId]);
     }
 
     /**

@@ -617,5 +617,28 @@
     "Logo der Instanz (Einstellungen → Erscheinungsbild), im Dunkelmodus mit heller Schrift, und Signet.": [
         "Instance logo (Settings → Appearance), with light lettering in dark mode, and signet.",
         "Logo vo de Instanz (Iistellige → Erschiinigsbild), im Dunkelmodus mit hällere Schrift, und Signet."
+    ],
+    "App-Name": ["App name", "App-Name"],
+    "Im Browser-Tab und als Name der installierten App.": [
+        "In the browser tab and as the name of the installed app.",
+        "Im Browser-Tab und als Name vo de installierte App."
+    ],
+    "Symbole und Signatur": ["Icons and signature", "Symbol und Signatur"],
+    "Symbole im Menü": ["Icons in the menu", "Symbol im Menü"],
+    "Entwicklersignatur «Developed by MarKusSXCH» unter dem Logo anzeigen": [
+        "Show the developer signature «Developed by MarKusSXCH» below the logo",
+        "Entwicklersignatur «Developed by MarKusSXCH» under em Logo aazeige"
+    ],
+    "leer = EduKSX-Intranet bzw. Name der Instanz": [
+        "empty = EduKSX-Intranet or instance name",
+        "läär = EduKSX-Intranet bzw. Name vo de Instanz"
+    ],
+    "App-Name (Browser-Tab, installierte App)": [
+        "App name (browser tab, installed app)",
+        "App-Name (Browser-Tab, installierti App)"
+    ],
+    "Entwicklersignatur unter dem Logo anzeigen": [
+        "Show developer signature below the logo",
+        "Entwicklersignatur under em Logo aazeige"
     ]
 }

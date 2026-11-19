@@ -36,7 +36,7 @@ class BrandingTest extends TestCase
             ->assertInertia(fn (Assert $page) => $page->component('settings/branding')->where('einstellung.marke', 'eduksx'));
 
         // «Eigenes Logo» erst mit Logo
-        $this->put('/einstellungen/erscheinungsbild', ['marke' => 'eigene', 'name' => 'Sekundarschule Musterhausen'])->assertSessionHasErrors('marke');
+        $this->put('/einstellungen/erscheinungsbild', ['marke' => 'eigene', 'name' => 'Sekundarschule Musterhausen', 'symbole' => 'eduksx', 'signatur' => true])->assertSessionHasErrors('marke');
 
         // Bild am Inhalt erkannt; SVG mit Skript abgelehnt
         $this->post('/einstellungen/erscheinungsbild/logo_hell', ['datei' => UploadedFile::fake()->createWithContent('logo.png', 'kein Bild')])->assertSessionHasErrors('datei');
@@ -48,7 +48,7 @@ class BrandingTest extends TestCase
         $svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10 10"><rect width="10" height="10" fill="#007ebb"/></svg>';
         $this->post('/einstellungen/erscheinungsbild/logo_hell', ['datei' => UploadedFile::fake()->createWithContent('logo.svg', $svg)])->assertSessionHasNoErrors();
         $this->post('/einstellungen/erscheinungsbild/signet', ['datei' => UploadedFile::fake()->createWithContent('signet.png', self::PNG)])->assertSessionHasNoErrors();
-        $this->put('/einstellungen/erscheinungsbild', ['marke' => 'eigene', 'name' => 'Sekundarschule Musterhausen'])->assertSessionHasNoErrors();
+        $this->put('/einstellungen/erscheinungsbild', ['marke' => 'eigene', 'name' => 'Sekundarschule Musterhausen', 'symbole' => 'eduksx', 'signatur' => true])->assertSessionHasNoErrors();
 
         $this->get('/start')->assertInertia(fn (Assert $page) => $page
             ->where('branding.marke', 'eigene')
@@ -120,5 +120,25 @@ class BrandingTest extends TestCase
         $this->assertSame('', $themes->activeCss());
         // Datensatz für das eingebaute Farbkonzept erscheint nicht als Theme
         $this->assertNotContains('_eingebaut', array_column($themes->all(), 'id'));
+    }
+
+    public function test_icons_signature_and_title_are_configurable(): void
+    {
+        $this->signInAs('admin');
+        $icon = fn (array $groups, string $key): ?string => collect($groups)->flatMap(fn (array $g): array => $g['items'])->firstWhere('key', $key)['icon'] ?? null;
+
+        // Vorgabe: EduKSX-Symbole, Signatur, Titel EduKSX-Intranet
+        $this->get('/start')->assertInertia(fn (Assert $page) => $page
+            ->where('navigation', fn ($nav): bool => $icon(collect($nav)->toArray(), 'personen') === 'EduksxIdent')
+            ->where('branding.signatur', true));
+        $this->assertSame('EduKSX-Intranet', app(Branding::class)->titel());
+
+        $this->put('/einstellungen/erscheinungsbild', ['marke' => 'markussx', 'name' => '', 'titel' => 'Schul-Intranet', 'symbole' => 'standard', 'signatur' => false])->assertSessionHasNoErrors();
+        $this->get('/start')->assertInertia(fn (Assert $page) => $page
+            ->where('navigation', fn ($nav): bool => $icon(collect($nav)->toArray(), 'personen') === 'Users')
+            ->where('branding.signatur', false)
+            ->where('branding.wortmarke', 'developer'));
+        $this->assertSame('Schul-Intranet', app(Branding::class)->titel());
+        $this->get('/app.webmanifest')->assertJsonPath('name', 'Schul-Intranet');
     }
 }

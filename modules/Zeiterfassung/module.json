@@ -43,9 +43,10 @@
         "eintraege": {
             "meine": {
                 "title": "Zeiterfassung",
-                "icon": "EduksxTime",
+                "icon": "Clock",
                 "href": "/zeiterfassung",
-                "can": "use-zeiterfassung"
+                "can": "use-zeiterfassung",
+                "icon_eduksx": "EduksxTime"
             },
             "visum": {
                 "title": "Zeiterfassung – Visum",

@@ -8,14 +8,21 @@ import { cn } from '@/lib/utils';
  */
 export default function AppCredit({ className }: { className?: string }) {
     const { branding } = usePage().props;
+    const zeigeSignatur = branding?.signatur !== false;
+    const zeigeName = Boolean(branding?.name) && branding?.marke !== 'eigene';
+    if (!zeigeSignatur && !zeigeName) {
+        return null;
+    }
 
     return (
         <p className={cn('text-right text-[11px] leading-tight', className)}>
-            <span className="block text-muted-foreground" translate="no">
-                © 2026 Developed by{' '}
-                <BrandWordmark marke="developer" className="font-bold" />
-            </span>
-            {branding?.name && branding.marke !== 'eigene' && (
+            {zeigeSignatur && (
+                <span className="block text-muted-foreground" translate="no">
+                    © 2026 Developed by{' '}
+                    <BrandWordmark marke="developer" className="font-bold" />
+                </span>
+            )}
+            {zeigeName && branding && (
                 <span className="block text-muted-foreground" translate="no">
                     {branding.name}
                 </span>
