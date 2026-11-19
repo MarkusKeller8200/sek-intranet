@@ -245,7 +245,7 @@ final class Branding
         $before = $this->store->find(self::COLLECTION, self::ID);
         $after = $before !== null
             ? $this->store->update(self::COLLECTION, self::ID, $daten)
-            : $this->store->insert(self::COLLECTION, ['id' => self::ID, 'marke' => 'eduksx'] + $daten);
+            : $this->store->insert(self::COLLECTION, $daten + ['id' => self::ID, 'marke' => 'eduksx']);
 
         return ['before' => $before, 'after' => (array) $after];
     }

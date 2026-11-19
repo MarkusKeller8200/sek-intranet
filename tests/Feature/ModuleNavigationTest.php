@@ -14,7 +14,7 @@ class ModuleNavigationTest extends TestCase
 
         $this->get('/start')->assertOk()->assertInertia(fn (Assert $page) => $page
             ->where('navigation.0.key', 'kommunikation')
-            ->where('navigation.0.items.0', ['key' => 'start', 'title' => 'Start', 'icon' => 'LayoutGrid', 'href' => '/start', 'planned' => false, 'external' => null, 'open' => null])
+            ->where('navigation.0.items.0', ['key' => 'start', 'title' => 'Start', 'icon' => 'EduksxIntranet', 'href' => '/start', 'planned' => false, 'external' => null, 'open' => null])
             ->where('navigation.0.items.3.href', '/module/pinnwand')
             ->where('navigation.0.items.3.planned', true)
             ->where('navigation', fn ($groups): bool => ! collect($groups)->contains('key', 'prototyp')));
