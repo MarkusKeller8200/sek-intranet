@@ -36,21 +36,28 @@ final class Branding
 
     public const MAX_KB = 1024;
 
+    /** Symbolsatz im Menü (#220): freigegebene EduKSX-Icons oder Standard-Symbole. */
+    public const SYMBOLE = ['eduksx' => 'EduKSX-Symbole', 'standard' => 'Standard-Symbole'];
+
     public function __construct(private readonly JsonStore $store) {}
 
     /**
      * Gespeicherte Einstellung (ohne Datensatz: EduKSX).
      *
-     * @return array{marke: string, name: string, logo_hell: string|null, logo_dunkel: string|null, signet: string|null}
+     * @return array{marke: string, name: string, titel: string, symbole: string, signatur: bool, logo_hell: string|null, logo_dunkel: string|null, signet: string|null}
      */
     public function einstellung(): array
     {
         $r = $this->store->find(self::COLLECTION, self::ID) ?? [];
         $marke = (string) ($r['marke'] ?? 'eduksx');
+        $symbole = (string) ($r['symbole'] ?? 'eduksx');
 
         return [
             'marke' => isset(self::MARKEN[$marke]) ? $marke : 'eduksx',
             'name' => (string) ($r['name'] ?? ''),
+            'titel' => (string) ($r['titel'] ?? ''),
+            'symbole' => isset(self::SYMBOLE[$symbole]) ? $symbole : 'eduksx',
+            'signatur' => ($r['signatur'] ?? true) !== false,
             'logo_hell' => self::datei($r['logo_hell'] ?? null),
             'logo_dunkel' => self::datei($r['logo_dunkel'] ?? null),
             'signet' => self::datei($r['signet'] ?? null),
@@ -60,7 +67,7 @@ final class Branding
     /**
      * Für die Oberfläche (geteilte Inertia-Daten): Wortmarke oder Bild-URLs, Signet und Name der Instanz.
      *
-     * @return array{marke: string, name: string, wortmarke: string|null, logo: array{hell: string, dunkel: string}|null, signet: string, version: string}
+     * @return array{marke: string, name: string, wortmarke: string|null, logo: array{hell: string, dunkel: string}|null, signet: string, signatur: bool, version: string}
      */
     public function anzeige(): array
     {
@@ -76,8 +83,46 @@ final class Branding
             'wortmarke' => $eigen ? null : ($e['marke'] === 'markussx' ? 'developer' : 'education'),
             'logo' => $eigen ? ['hell' => $url('logo_hell'), 'dunkel' => $e['logo_dunkel'] !== null ? $url('logo_dunkel') : $url('logo_hell')] : null,
             'signet' => $eigen && $e['signet'] !== null ? $url('signet') : '/images/brands/eduksx-intranet-tile-light.svg',
+            // Entwicklersignatur «Developed by MarKusSXCH» unter dem Logo (#220), abschaltbar
+            'signatur' => $e['signatur'],
             'version' => $v,
         ];
+    }
+
+    /** Titel für Browser-Tab und App (#216): eigenes Logo → Name der Instanz, sonst «EduKSX-Intranet». */
+    public function titel(): string
+    {
+        $e = $this->einstellung();
+        if ($e['titel'] !== '') {
+            return $e['titel'];
+        }
+        if ($e['marke'] === 'eigene' && $e['logo_hell'] !== null) {
+            return $e['name'] !== '' ? $e['name'] : (string) config('app.name', 'Intranet');
+        }
+
+        return $e['marke'] === 'markussx' ? 'MarKusSXCH Intranet' : 'EduKSX-Intranet';
+    }
+
+    /**
+     * Web-App-Manifest (#216): Name und Symbole nach dem Erscheinungsbild, Farbe aus dem aktiven Farbkonzept.
+     *
+     * @return array<string, mixed>
+     */
+    public function manifest(string $farbe): array
+    {
+        $statisch = json_decode((string) @file_get_contents(public_path('manifest.webmanifest')), true);
+        $m = is_array($statisch) ? $statisch : [];
+        $anzeige = $this->anzeige();
+        $m['name'] = $this->titel();
+        $m['short_name'] = 'Intranet';
+        $m['description'] = $this->titel();
+        $m['theme_color'] = $farbe;
+        if ($anzeige['marke'] === 'eigene' && str_starts_with($anzeige['signet'], '/branding/')) {
+            $bild = $this->bild('signet');
+            $m['icons'] = [['src' => $anzeige['signet'], 'sizes' => $bild !== null && $bild['typ'] === 'image/svg+xml' ? 'any' : '512x512', 'type' => $bild['typ'] ?? 'image/png', 'purpose' => 'any']];
+        }
+
+        return $m;
     }
 
     /**
@@ -85,16 +130,17 @@ final class Branding
      *
      * @return array{before: array<string, mixed>|null, after: array<string, mixed>}
      */
-    public function speichern(string $marke, string $name, ?string $userId): array
+    public function speichern(string $marke, string $name, ?string $userId, string $titel = '', string $symbole = 'eduksx', bool $signatur = true): array
     {
-        if (! isset(self::MARKEN[$marke])) {
-            throw new InvalidArgumentException('Unbekannte Marke.');
+        if (! isset(self::MARKEN[$marke]) || ! isset(self::SYMBOLE[$symbole])) {
+            throw new InvalidArgumentException('Unbekannte Marke bzw. unbekannter Symbolsatz.');
         }
         if ($marke === 'eigene' && $this->einstellung()['logo_hell'] === null) {
             throw new InvalidArgumentException('Für «Eigenes Logo» zuerst ein Logo hochladen.');
         }
 
-        return $this->setzen(['marke' => $marke, 'name' => mb_substr(trim($name), 0, 80), 'updated_by' => $userId]);
+        return $this->setzen(['marke' => $marke, 'name' => mb_substr(trim($name), 0, 80), 'titel' => mb_substr(trim($titel), 0, 60),
+            'symbole' => $symbole, 'signatur' => $signatur, 'updated_by' => $userId]);
     }
 
     /**
@@ -167,36 +213,25 @@ final class Branding
     }
 
     /**
-     * Bestehende Installationen (#216): Daten von vor dem White-Labeling behalten das Logo der Sekundarschule Bülach
-     * als eigenes Logo. Neue Installationen zeigen EduKSX. Einmalig (nur ohne Datensatz).
+     * Umstellung (#216): Das beim ersten Update übernommene Logo der Sekundarschule Bülach wird durch EduKSX ersetzt
+     * (Entscheid 19.11.2026). Nur wenn die gespeicherten Bilder genau die mitgelieferten SekBülach-Dateien sind – ein von
+     * Hand hochgeladenes Logo bleibt. Der Name der Instanz bleibt. Einmalig wirksam (danach ist «eduksx» gesetzt).
      */
-    public function bestandUebernehmen(string $stichtag = '2026-11-18'): bool
+    public function sekbuelachErsetzen(): bool
     {
-        if ($this->store->find(self::COLLECTION, self::ID) !== null) {
+        $e = $this->einstellung();
+        $quelle = public_path('images/sekbuelach-logo.svg');
+        if ($e['marke'] !== 'eigene' || $e['logo_hell'] === null || ! is_file($quelle)
+            || ! Storage::disk('local')->exists($e['logo_hell'])
+            || Storage::disk('local')->get($e['logo_hell']) !== file_get_contents($quelle)) {
             return false;
         }
-        $aelteste = null;
-        foreach ($this->store->all('users') as $u) {
-            $t = (string) ($u['created_at'] ?? '');
-            if ($t !== '' && ($aelteste === null || $t < $aelteste)) {
-                $aelteste = $t;
+        foreach (array_keys(self::SLOTS) as $slot) {
+            if ($e[$slot] !== null) {
+                Storage::disk('local')->delete($e[$slot]);
             }
         }
-        if ($aelteste === null || substr($aelteste, 0, 10) >= $stichtag) {
-            return false;
-        }
-        $daten = ['id' => self::ID, 'marke' => 'eigene', 'name' => 'Sekundarschule Bülach', 'updated_by' => null];
-        foreach (['logo_hell' => 'sekbuelach-logo.svg', 'logo_dunkel' => 'sekbuelach-logo-dark.svg', 'signet' => 'sekbuelach-icon.svg'] as $slot => $datei) {
-            $quelle = public_path('images/'.$datei);
-            if (is_file($quelle)) {
-                Storage::disk('local')->put(self::ORDNER.'/'.$slot.'.svg', (string) file_get_contents($quelle));
-                $daten[$slot] = self::ORDNER.'/'.$slot.'.svg';
-            }
-        }
-        if (! isset($daten['logo_hell'])) {
-            return false;
-        }
-        $this->store->insert(self::COLLECTION, $daten);
+        $this->setzen(['marke' => 'eduksx', 'logo_hell' => null, 'logo_dunkel' => null, 'signet' => null, 'updated_by' => null]);
 
         return true;
     }
@@ -210,7 +245,7 @@ final class Branding
         $before = $this->store->find(self::COLLECTION, self::ID);
         $after = $before !== null
             ? $this->store->update(self::COLLECTION, self::ID, $daten)
-            : $this->store->insert(self::COLLECTION, ['id' => self::ID, 'marke' => 'eduksx'] + $daten);
+            : $this->store->insert(self::COLLECTION, $daten + ['id' => self::ID, 'marke' => 'eduksx']);
 
         return ['before' => $before, 'after' => (array) $after];
     }

@@ -1,8 +1,8 @@
 {
     "id": "/start",
-    "name": "SekBülach Intranet",
+    "name": "EduKSX-Intranet",
     "short_name": "Intranet",
-    "description": "Intranet der Sekundarschule Bülach",
+    "description": "EduKSX-Intranet",
     "lang": "de-CH",
     "dir": "ltr",
     "start_url": "/start?quelle=app",
@@ -10,8 +10,8 @@
     "display": "standalone",
     "display_override": ["window-controls-overlay", "standalone"],
     "orientation": "any",
-    "background_color": "#ffffff",
-    "theme_color": "#0299d7",
+    "background_color": "#f2f5f8",
+    "theme_color": "#a85400",
     "categories": ["education", "productivity"],
     "icons": [
         {
@@ -43,17 +43,32 @@
         {
             "name": "Mitteilungen",
             "url": "/mitteilungen",
-            "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }]
+            "icons": [
+                {
+                    "src": "/icons/icon-192.png",
+                    "sizes": "192x192"
+                }
+            ]
         },
         {
             "name": "Termine",
             "url": "/termine",
-            "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }]
+            "icons": [
+                {
+                    "src": "/icons/icon-192.png",
+                    "sizes": "192x192"
+                }
+            ]
         },
         {
             "name": "Personen",
             "url": "/personen",
-            "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }]
+            "icons": [
+                {
+                    "src": "/icons/icon-192.png",
+                    "sizes": "192x192"
+                }
+            ]
         }
     ]
 }

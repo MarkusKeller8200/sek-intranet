@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Data\Store\JsonStore;
 use App\Support\Branding;
 use App\Support\Themes;
 use Illuminate\Http\UploadedFile;
@@ -35,7 +36,7 @@ class BrandingTest extends TestCase
             ->assertInertia(fn (Assert $page) => $page->component('settings/branding')->where('einstellung.marke', 'eduksx'));
 
         // «Eigenes Logo» erst mit Logo
-        $this->put('/einstellungen/erscheinungsbild', ['marke' => 'eigene', 'name' => 'Sekundarschule Musterhausen'])->assertSessionHasErrors('marke');
+        $this->put('/einstellungen/erscheinungsbild', ['marke' => 'eigene', 'name' => 'Sekundarschule Musterhausen', 'symbole' => 'eduksx', 'signatur' => true])->assertSessionHasErrors('marke');
 
         // Bild am Inhalt erkannt; SVG mit Skript abgelehnt
         $this->post('/einstellungen/erscheinungsbild/logo_hell', ['datei' => UploadedFile::fake()->createWithContent('logo.png', 'kein Bild')])->assertSessionHasErrors('datei');
@@ -47,7 +48,7 @@ class BrandingTest extends TestCase
         $svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10 10"><rect width="10" height="10" fill="#007ebb"/></svg>';
         $this->post('/einstellungen/erscheinungsbild/logo_hell', ['datei' => UploadedFile::fake()->createWithContent('logo.svg', $svg)])->assertSessionHasNoErrors();
         $this->post('/einstellungen/erscheinungsbild/signet', ['datei' => UploadedFile::fake()->createWithContent('signet.png', self::PNG)])->assertSessionHasNoErrors();
-        $this->put('/einstellungen/erscheinungsbild', ['marke' => 'eigene', 'name' => 'Sekundarschule Musterhausen'])->assertSessionHasNoErrors();
+        $this->put('/einstellungen/erscheinungsbild', ['marke' => 'eigene', 'name' => 'Sekundarschule Musterhausen', 'symbole' => 'eduksx', 'signatur' => true])->assertSessionHasNoErrors();
 
         $this->get('/start')->assertInertia(fn (Assert $page) => $page
             ->where('branding.marke', 'eigene')
@@ -74,23 +75,26 @@ class BrandingTest extends TestCase
         Storage::disk('local')->assertMissing('branding/logo_hell.svg');
     }
 
-    public function test_existing_installation_keeps_school_logo(): void
+    public function test_school_logo_is_replaced_by_eduksx_but_own_upload_stays(): void
     {
         Storage::fake('local');
+        $store = app(JsonStore::class);
         $branding = app(Branding::class);
-        // Daten von «vor» dem Stichtag (hier: Stichtag in der Zukunft)
-        $this->assertTrue($branding->bestandUebernehmen('2999-01-01'));
-        $this->assertSame('eigene', $branding->einstellung()['marke']);
-        $this->assertSame('Sekundarschule Bülach', $branding->einstellung()['name']);
-        Storage::disk('local')->assertExists('branding/logo_hell.svg');
-        // nur einmal
-        $this->assertFalse($branding->bestandUebernehmen('2999-01-01'));
-    }
+        // Stand nach dem ersten Update: SekBülach-Logo als «eigenes» Logo übernommen
+        Storage::disk('local')->put('branding/logo_hell.svg', (string) file_get_contents(public_path('images/sekbuelach-logo.svg')));
+        Storage::disk('local')->put('branding/signet.svg', (string) file_get_contents(public_path('images/sekbuelach-icon.svg')));
+        $store->insert(Branding::COLLECTION, ['id' => Branding::ID, 'marke' => 'eigene', 'name' => 'Sekundarschule Bülach', 'logo_hell' => 'branding/logo_hell.svg', 'signet' => 'branding/signet.svg']);
 
-    public function test_new_installation_keeps_eduksx(): void
-    {
-        $this->assertFalse(app(Branding::class)->bestandUebernehmen('2000-01-01'));
-        $this->assertSame('eduksx', app(Branding::class)->einstellung()['marke']);
+        $this->assertTrue($branding->sekbuelachErsetzen());
+        $this->assertSame(['eduksx', 'Sekundarschule Bülach', null, null], [$branding->einstellung()['marke'], $branding->einstellung()['name'], $branding->einstellung()['logo_hell'], $branding->einstellung()['signet']]);
+        Storage::disk('local')->assertMissing('branding/logo_hell.svg');
+        $this->assertFalse($branding->sekbuelachErsetzen());
+
+        // ein selbst hochgeladenes Logo bleibt
+        Storage::disk('local')->put('branding/logo_hell.svg', '<svg xmlns="http://www.w3.org/2000/svg"/>');
+        $store->update(Branding::COLLECTION, Branding::ID, ['marke' => 'eigene', 'logo_hell' => 'branding/logo_hell.svg']);
+        $this->assertFalse($branding->sekbuelachErsetzen());
+        $this->assertSame('eigene', $branding->einstellung()['marke']);
     }
 
     public function test_builtin_color_schemes(): void
@@ -116,5 +120,25 @@ class BrandingTest extends TestCase
         $this->assertSame('', $themes->activeCss());
         // Datensatz für das eingebaute Farbkonzept erscheint nicht als Theme
         $this->assertNotContains('_eingebaut', array_column($themes->all(), 'id'));
+    }
+
+    public function test_icons_signature_and_title_are_configurable(): void
+    {
+        $this->signInAs('admin');
+        $icon = fn (array $groups, string $key): ?string => collect($groups)->flatMap(fn (array $g): array => $g['items'])->firstWhere('key', $key)['icon'] ?? null;
+
+        // Vorgabe: EduKSX-Symbole, Signatur, Titel EduKSX-Intranet
+        $this->get('/start')->assertInertia(fn (Assert $page) => $page
+            ->where('navigation', fn ($nav): bool => $icon(collect($nav)->toArray(), 'personen') === 'EduksxIdent')
+            ->where('branding.signatur', true));
+        $this->assertSame('EduKSX-Intranet', app(Branding::class)->titel());
+
+        $this->put('/einstellungen/erscheinungsbild', ['marke' => 'markussx', 'name' => '', 'titel' => 'Schul-Intranet', 'symbole' => 'standard', 'signatur' => false])->assertSessionHasNoErrors();
+        $this->get('/start')->assertInertia(fn (Assert $page) => $page
+            ->where('navigation', fn ($nav): bool => $icon(collect($nav)->toArray(), 'personen') === 'Users')
+            ->where('branding.signatur', false)
+            ->where('branding.wortmarke', 'developer'));
+        $this->assertSame('Schul-Intranet', app(Branding::class)->titel());
+        $this->get('/app.webmanifest')->assertJsonPath('name', 'Schul-Intranet');
     }
 }

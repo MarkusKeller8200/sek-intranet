@@ -67,16 +67,26 @@
             <style id="intranet-theme">{!! $themeCss !!}</style>
         @endif
 
-        <link rel="icon" href="/favicon.ico" sizes="any">
-        <link rel="icon" href="/favicon.svg" type="image/svg+xml">
-        <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+        {{-- Erscheinungsbild (#216): Symbole, Titel und Farbe nach Marke bzw. eigenem Signet --}}
+        @php($branding = app(\App\Support\Branding::class))
+        @php($brandingAnzeige = $branding->anzeige())
+        @php($themeFarbe = \App\Support\Themes::resolved((array) app(\App\Support\Themes::class)->find(app(\App\Support\Themes::class)->activeId()))['light']['primary'] ?? '#a85400')
+        @if ($brandingAnzeige['marke'] === 'eigene' && str_starts_with($brandingAnzeige['signet'], '/branding/'))
+            <link rel="icon" href="{{ $brandingAnzeige['signet'] }}">
+            <link rel="apple-touch-icon" href="{{ $brandingAnzeige['signet'] }}">
+        @else
+            <link rel="icon" href="/favicon.ico" sizes="any">
+            <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+            <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+        @endif
         {{-- PWA: als App installierbar (Manifest, Farben, iOS) --}}
-        <link rel="manifest" href="/manifest.webmanifest" crossorigin="use-credentials">
-        <meta name="theme-color" content="#0299d7">
+        <link rel="manifest" href="/app.webmanifest" crossorigin="use-credentials">
+        <meta name="theme-color" content="{{ $themeFarbe }}">
+        <meta name="app-title" content="{{ $branding->titel() }}">
         <meta name="app-build" content="{{ config('intranet.build') ?? 'dev' }}">
         <meta name="mobile-web-app-capable" content="yes">
         <meta name="apple-mobile-web-app-capable" content="yes">
-        <meta name="apple-mobile-web-app-title" content="Intranet">
+        <meta name="apple-mobile-web-app-title" content="{{ $branding->titel() }}">
         <meta name="apple-mobile-web-app-status-bar-style" content="default">
 
         @fonts
@@ -84,7 +94,7 @@
         @viteReactRefresh
         @vite(['resources/css/app.css', 'resources/js/app.tsx', "resources/js/pages/{$page['component']}.tsx"])
         <x-inertia::head>
-            <title>{{ config('app.name', 'Laravel') }}</title>
+            <title>{{ $branding->titel() }}</title>
         </x-inertia::head>
     </head>
     <body class="font-sans antialiased">

@@ -242,7 +242,7 @@ class PluginController extends Controller
         }
 
         $body = null;
-        if (($data['body'] ?? '') !== '' && $data['body'] !== null) {
+        if (is_string($data['body'] ?? null) && $data['body'] !== '') {
             $decoded = json_decode((string) $data['body'], true);
             if (! is_array($decoded)) {
                 return response()->json(['status' => 'error', 'message' => 'Body ist kein gültiges JSON-Objekt.'], 422);

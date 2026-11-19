@@ -11,6 +11,14 @@ laufend unter **Unveröffentlicht**. Ab 0.32.0 entsteht eine Version nur bei ein
 
 ### Neu
 
+- **Auftritt EduKSX (#220):** Signatur «© 2026 Developed by MarKusSXCH» mit der Wortmarke in den CI-Farben. Das beim
+  ersten Update übernommene Logo der Sekundarschule Bülach wird durch EduKSX ersetzt (selbst hochgeladene Logos
+  bleiben). Freigegebene EduKSX-Icons als Menüsymbole (Start, Zeiterfassung, Glossar, Unterschriften, Lizenzen,
+  Stundenpläne, Abwesenheiten, Personen, Plugins, Bestellen, Fachanwendungen, Einstellungen). Favicon, App-Symbole
+  und Manifest «EduKSX-Intranet»; Manifest (`/app.webmanifest`), Titel und Favicon folgen dem Erscheinungsbild
+  (Modul Zeiterfassung 0.12.2). White-Label: unter Erscheinungsbild einstellbar sind zusätzlich App-Name, Symbole im
+  Menü (EduKSX- oder Standard-Symbole; Einträge mit `icon_eduksx`) und ob die Entwicklersignatur erscheint.
+
 - **White-Labeling (#216):** Neue Seite Einstellungen → Erscheinungsbild: Marke EduKSX (Vorgabe, Wortmarke
   «EduKSX-Intranet» mit Icon «Intranet»), MarKusSXCH oder eigenes Logo (hell, dunkel, Signet; SVG/PNG/JPG/WebP, SVG
   ohne Skripte, Auslieferung in einer Sandbox) und Name der Instanz. Wortmarken nach CI-Manual MarKusSXCH v1.0 als

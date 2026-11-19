@@ -98,9 +98,9 @@ class UpgradeIntranetDataCommand extends Command
         }
         $total += DemoStudents::addDemoLinks($store);
 
-        // White-Labeling (#216): bestehende Installationen behalten das Logo der Sekundarschule Bülach (einmalig)
-        if (app(Branding::class)->bestandUebernehmen()) {
-            $this->components->info('Erscheinungsbild: Logo der Sekundarschule Bülach als eigenes Logo übernommen.');
+        // White-Labeling (#216): übernommenes Logo der Sekundarschule Bülach durch EduKSX ersetzen (einmalig)
+        if (app(Branding::class)->sekbuelachErsetzen()) {
+            $this->components->info('Erscheinungsbild: Logo der Sekundarschule Bülach durch EduKSX ersetzt.');
             $total++;
         }
 

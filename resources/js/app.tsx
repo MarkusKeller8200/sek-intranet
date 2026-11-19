@@ -9,7 +9,12 @@ import AppLayout from '@/layouts/app-layout';
 import AuthLayout from '@/layouts/auth-layout';
 import SettingsLayout from '@/layouts/settings/layout';
 
-const appName = import.meta.env.VITE_APP_NAME || 'SekBülach Intranet';
+// Titel der Instanz nach dem Erscheinungsbild (#216), vom Server im Kopf gesetzt
+const appName =
+    document.querySelector<HTMLMetaElement>('meta[name="app-title"]')
+        ?.content ||
+    import.meta.env.VITE_APP_NAME ||
+    'Intranet';
 
 // Seiten des Core (resources/js/pages) und der Module (modules/<Ordner>/resources/js/pages, Name «Ordner::seite»)
 const corePages = import.meta.glob('./pages/**/*.tsx');

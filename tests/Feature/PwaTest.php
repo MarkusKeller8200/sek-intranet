@@ -44,8 +44,15 @@ class PwaTest extends TestCase
         $this->signInAs('lehrperson');
         $html = (string) $this->get('/start')->getContent();
 
-        $this->assertStringContainsString('<link rel="manifest" href="/manifest.webmanifest"', $html);
+        // Manifest nach dem Erscheinungsbild (#216), Vorgabe EduKSX
+        $this->assertStringContainsString('<link rel="manifest" href="/app.webmanifest"', $html);
         $this->assertStringContainsString('<meta name="theme-color"', $html);
         $this->assertStringContainsString('<meta name="app-build"', $html);
+        $this->assertStringContainsString('EduKSX-Intranet</title>', $html);
+
+        $manifest = $this->get('/app.webmanifest')->assertOk()->assertHeader('Content-Type', 'application/manifest+json')->json();
+        $this->assertSame('EduKSX-Intranet', $manifest['name']);
+        $this->assertSame('/start?quelle=app', $manifest['start_url']);
+        $this->assertContains('maskable', array_column($manifest['icons'], 'purpose'));
     }
 }

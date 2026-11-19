@@ -23,6 +23,7 @@ class ModuleNavigation
     public function groups(?Authenticatable $user): array
     {
         $groups = [];
+        $this->eduksx = null;
 
         $restricted = self::restrictedGroups($user);
         foreach ($this->config() as $groupKey => $group) {
@@ -48,7 +49,7 @@ class ModuleNavigation
                         $items[] = [
                             'key' => (string) $key,
                             'title' => (string) ($module['title'] ?? $key),
-                            'icon' => (string) ($module['icon'] ?? 'Folder'),
+                            'icon' => $this->icon($module, 'Folder'),
                             'href' => $children[0]['href'],
                             'planned' => false,
                             'external' => null,
@@ -69,7 +70,7 @@ class ModuleNavigation
                     'key' => (string) $groupKey,
                     'title' => (string) ($group['title'] ?? $groupKey),
                     'color' => (string) ($group['color'] ?? 'slate'),
-                    'icon' => (string) ($group['icon'] ?? 'Folder'),
+                    'icon' => $this->icon($group, 'Folder'),
                     'items' => $items,
                 ];
             }
@@ -126,7 +127,7 @@ class ModuleNavigation
         return [
             'key' => $key,
             'title' => (string) ($module['title'] ?? $key),
-            'icon' => (string) ($module['icon'] ?? 'Circle'),
+            'icon' => $this->icon($module, 'Circle'),
             'href' => is_string($href) ? $href : '/module/'.$key,
             'planned' => ! is_string($href),
             'external' => $embed['url'] ?? null,
@@ -185,7 +186,7 @@ class ModuleNavigation
             $list[] = [
                 'key' => $key,
                 'title' => (string) ($module['title'] ?? $key),
-                'icon' => (string) ($module['icon'] ?? 'Circle'),
+                'icon' => $this->icon($module, 'Circle'),
                 'group' => $groupKey,
                 'group_title' => (string) ($group['title'] ?? $groupKey),
                 'default_url' => $default['url'],
@@ -220,7 +221,7 @@ class ModuleNavigation
             return [
                 'key' => $key,
                 'title' => (string) ($module['title'] ?? $key),
-                'icon' => (string) ($module['icon'] ?? 'Circle'),
+                'icon' => $this->icon($module, 'Circle'),
                 'group' => (string) ($group['title'] ?? ''),
                 'description' => (string) ($module['description'] ?? ''),
                 'features' => array_values(array_map('strval', (array) ($module['features'] ?? []))),
@@ -250,7 +251,7 @@ class ModuleNavigation
             return [
                 'key' => $key,
                 'title' => (string) ($module['title'] ?? $key),
-                'icon' => (string) ($module['icon'] ?? 'Circle'),
+                'icon' => $this->icon($module, 'Circle'),
                 'group' => (string) ($group['title'] ?? ''),
                 'color' => (string) ($group['color'] ?? 'slate'),
                 'description' => (string) ($module['description'] ?? ''),
@@ -320,6 +321,24 @@ class ModuleNavigation
         $modules = (array) config('intranet.modules', []);
 
         return $modules;
+    }
+
+    /** Symbolsatz des Erscheinungsbilds (#220): EduKSX-Symbole oder Standard (Lucide). */
+    private ?bool $eduksx = null;
+
+    /**
+     * Symbol eines Eintrags: mit Symbolsatz «EduKSX» das freigegebene EduKSX-Icon («icon_eduksx»), sonst «icon».
+     *
+     * @param  array<mixed>  $entry
+     */
+    private function icon(array $entry, string $fallback): string
+    {
+        $this->eduksx ??= app(Branding::class)->einstellung()['symbole'] === 'eduksx';
+        if ($this->eduksx && is_string($entry['icon_eduksx'] ?? null) && $entry['icon_eduksx'] !== '') {
+            return $entry['icon_eduksx'];
+        }
+
+        return is_string($entry['icon'] ?? null) ? $entry['icon'] : $fallback;
     }
 
     /**

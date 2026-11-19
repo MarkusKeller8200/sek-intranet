@@ -35,6 +35,7 @@ class BrandingController extends Controller
         return Inertia::render('settings/branding', [
             'einstellung' => $this->branding->einstellung(),
             'marken' => Branding::MARKEN,
+            'symbole' => Branding::SYMBOLE,
             'slots' => Branding::SLOTS,
             'theme' => ['id' => (string) ($theme['id'] ?? Themes::STANDARD), 'name' => (string) ($theme['name'] ?? '')],
         ]);
@@ -45,9 +46,13 @@ class BrandingController extends Controller
         $data = $request->validate([
             'marke' => ['required', Rule::in(array_keys(Branding::MARKEN))],
             'name' => ['nullable', 'string', 'max:80'],
+            'titel' => ['nullable', 'string', 'max:60'],
+            'symbole' => ['required', Rule::in(array_keys(Branding::SYMBOLE))],
+            'signatur' => ['required', 'boolean'],
         ]);
         try {
-            $r = $this->branding->speichern((string) $data['marke'], (string) ($data['name'] ?? ''), (string) $request->user()?->getAuthIdentifier());
+            $r = $this->branding->speichern((string) $data['marke'], (string) ($data['name'] ?? ''), (string) $request->user()?->getAuthIdentifier(),
+                (string) ($data['titel'] ?? ''), (string) $data['symbole'], (bool) $data['signatur']);
         } catch (InvalidArgumentException $e) {
             throw ValidationException::withMessages(['marke' => $e->getMessage()]);
         }
@@ -82,6 +87,14 @@ class BrandingController extends Controller
         $this->toast(Branding::SLOTS[$slot].' entfernt.');
 
         return back();
+    }
+
+    /** Web-App-Manifest nach dem Erscheinungsbild (#216). */
+    public function manifest(): HttpResponse
+    {
+        $farbe = Themes::resolved((array) $this->themes->find($this->themes->activeId()))['light']['primary'] ?? '#a85400';
+
+        return response()->json($this->branding->manifest($farbe), 200, ['Content-Type' => 'application/manifest+json', 'Cache-Control' => 'no-cache'], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
     }
 
     /** Bild ausliefern (ohne Anmeldung, für die Anmeldeseite). SVG in einer Sandbox ohne Skripte. */
