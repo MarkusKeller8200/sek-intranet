@@ -15,8 +15,8 @@ laufend unter **Unveröffentlicht**. Ab 0.32.0 entsteht eine Version nur bei ein
   `resources/js/lib/eduksx-icons.ts` zeichnet keine eigenen Pfade mehr, sondern nutzt `EduksxIcon` (Variante `mono`);
   die Namen «EduksxTime» usw. bleiben, neu sind auch Flow, Planner und die weiteren Icons des Sets verfügbar. Gefüllte
   Flächen erhalten keinen zusätzlichen Lucide-Rand mehr. Favicon, App-Icons (192/512, Apple) und Signet erzeugt
-  `scripts/eduksx-icons.mjs` vor `build`/`dev` aus dem Paket (nicht mehr im Repo). Noch eigene Dateien:
-  `favicon.ico` und die Maskable-Icons, bis EduKSX-UI diese Varianten liefert.
+  `scripts/eduksx-icons.mjs` vor `build`/`dev` aus dem Paket (nicht mehr im Repo), seit EduKSX-UI #55 auch
+  `favicon.ico` und die Maskable-Icons (192/512). Das Intranet hält keine eigenen Icon-Dateien mehr.
 
 ### Neu
 

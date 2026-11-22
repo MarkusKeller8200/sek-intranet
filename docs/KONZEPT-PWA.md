@@ -22,7 +22,8 @@ Stand: Version 0.15.0.
 
 - `public/manifest.webmanifest` (Name, `lang: de-CH`, `display: standalone`, Farben, Symbole 192/512 inkl.
   «maskable»), verlinkt in `resources/views/app.blade.php` mit `theme-color` und iOS-Angaben.
-- Symbole in `public/icons/` aus `favicon.svg` erzeugt.
+- Symbole (`public/icons/`, `favicon.svg`, `favicon.ico`, `apple-touch-icon.png`) kommen aus `@eduksx/ui` (Repo
+  EduKSX-UI) und werden von `scripts/eduksx-icons.mjs` vor `build`/`dev` kopiert; nicht im Repo.
 - `resources/js/lib/pwa.ts`: registriert `/sw.js?v=<build>`; jede neue Version (Build aus dem Deployment)
   bekommt einen eigenen Cache, alte werden beim Aktivieren gelöscht. Zusammen mit der Aktualisierungsmeldung lädt
   die App nach einem Deployment die neuen Dateien.

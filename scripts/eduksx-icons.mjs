@@ -20,6 +20,15 @@ const dateien = [
     ['png/192/eduksx-intranet-tile-light.png', 'public/icons/icon-192.png'],
     ['png/512/eduksx-intranet-tile-light.png', 'public/icons/icon-512.png'],
     ['png/192/eduksx-intranet-tile-light.png', 'public/apple-touch-icon.png'],
+    ['ico/eduksx-intranet.ico', 'public/favicon.ico'],
+    [
+        'png/192/eduksx-intranet-maskable-light.png',
+        'public/icons/icon-maskable-192.png',
+    ],
+    [
+        'png/512/eduksx-intranet-maskable-light.png',
+        'public/icons/icon-maskable-512.png',
+    ],
 ];
 
 for (const [quelle, ziel] of dateien) {
