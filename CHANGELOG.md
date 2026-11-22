@@ -9,6 +9,15 @@ laufend unter **Unveröffentlicht**. Ab 0.32.0 entsteht eine Version nur bei ein
 
 ## [Unveröffentlicht]
 
+### Geändert
+
+- **EduKSX-Icons nur noch aus EduKSX-UI (22.11.2026):** neue Abhängigkeit `@eduksx/ui` (Repo EduKSX-UI, MIT).
+  `resources/js/lib/eduksx-icons.ts` zeichnet keine eigenen Pfade mehr, sondern nutzt `EduksxIcon` (Variante `mono`);
+  die Namen «EduksxTime» usw. bleiben, neu sind auch Flow, Planner und die weiteren Icons des Sets verfügbar. Gefüllte
+  Flächen erhalten keinen zusätzlichen Lucide-Rand mehr. Favicon, App-Icons (192/512, Apple) und Signet erzeugt
+  `scripts/eduksx-icons.mjs` vor `build`/`dev` aus dem Paket (nicht mehr im Repo). Noch eigene Dateien:
+  `favicon.ico` und die Maskable-Icons, bis EduKSX-UI diese Varianten liefert.
+
 ### Neu
 
 - **Auftritt EduKSX (#220):** Signatur «© 2026 Developed by MarKusSXCH» mit der Wortmarke in den CI-Farben. Das beim
