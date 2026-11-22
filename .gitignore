@@ -49,3 +49,5 @@ yarn-error.log
 /public/icons/icon-192.png
 /public/icons/icon-512.png
 /public/apple-touch-icon.png
+/public/favicon.ico
+/public/icons/icon-maskable-*.png
