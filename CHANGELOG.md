@@ -11,6 +11,10 @@ laufend unter **Unveröffentlicht**. Ab 0.32.0 entsteht eine Version nur bei ein
 
 ### Geändert
 
+- **Stack (#226):** PHP 8.5 (bisher ^8.3), CI mit Node 26 (EduKSX-Architektur KONZEPT-STACK ST2).
+
+### Geändert
+
 - **EduKSX-Icons nur noch aus EduKSX-UI (22.11.2026):** neue Abhängigkeit `@eduksx/ui` (Repo EduKSX-UI, MIT).
   `resources/js/lib/eduksx-icons.ts` zeichnet keine eigenen Pfade mehr, sondern nutzt `EduksxIcon` (Variante `mono`);
   die Namen «EduksxTime» usw. bleiben, neu sind auch Flow, Planner und die weiteren Icons des Sets verfügbar. Gefüllte
