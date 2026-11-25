@@ -12,6 +12,8 @@ laufend unter **Unveröffentlicht**. Ab 0.32.0 entsteht eine Version nur bei ein
 ### Geändert
 
 - **Stack (#226):** PHP 8.5 (bisher ^8.3), CI mit Node 26 (EduKSX-Architektur KONZEPT-STACK ST2).
+- **`@eduksx/ui` (#226):** Bezug über das gebaute Paket am Release (`eduksx-ui-0.1.0.tgz`) statt als git-Abhängigkeit
+  (EduKSX-UI #62).
 
 ### Geändert
 
