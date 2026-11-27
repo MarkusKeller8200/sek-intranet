@@ -28,6 +28,14 @@ laufend unter **Unveröffentlicht**. Ab 0.32.0 entsteht eine Version nur bei ein
 
 ### Neu
 
+- **ClickTime: Genehmigungen über `/approvals` (#228, #200):** Neuer Endpunkt «Genehmigungen der Buchungen» (Plugin 0.14,
+  Status `partial`, Scope `APPROVALS_READ`). Buchungen kommen weiter aus `/entries`, die Genehmigungen aus `/approvals`;
+  abgeglichen wird über die Buchungsnummer (`number`). Je Nummer zählt der jüngste Datensatz (`last_update`),
+  zurückgenommene (`deleted`) gelten als offen. Monatsblatt mit Spalte «Genehmigung» (genehmigende Person und Datum)
+  bzw. «Genehmigt» (Anzahl je Person), Import in die Zeiterfassung mit Status «Genehmigt»/«Offen». Solange ClickTime
+  den Endpunkt nicht freigeschaltet hat, bleibt der Status leer und das Monatsblatt meldet es. Der geratene Wert
+  `approval_status` in den Demo-Buchungen entfällt. Test mit echten Daten, sobald die Rechte vorliegen.
+
 - **Auftritt EduKSX (#220):** Signatur «© 2026 Developed by MarKusSXCH» mit der Wortmarke in den CI-Farben. Das beim
   ersten Update übernommene Logo der Sekundarschule Bülach wird durch EduKSX ersetzt (selbst hochgeladene Logos
   bleiben). Freigegebene EduKSX-Icons als Menüsymbole (Start, Zeiterfassung, Glossar, Unterschriften, Lizenzen,

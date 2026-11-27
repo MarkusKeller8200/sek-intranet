@@ -56,7 +56,7 @@ class PluginClicktimeTest extends TestCase
     public function test_manifest_with_all_endpoints_and_examples(): void
     {
         $manifest = app(PluginManager::class)->manifest('clicktime');
-        $this->assertCount(51, $manifest->endpoints(), '51 Endpunkte aus der OpenAPI-Beschreibung von ClickTime');
+        $this->assertCount(52, $manifest->endpoints(), '51 Endpunkte aus der OpenAPI-Beschreibung von ClickTime und /approvals (#200)');
         $this->assertSame('oauth2_client_credentials', $manifest->auth()['type']);
         $this->assertEqualsCanonicalizing(['client_id', 'client_secret'], $manifest->secretKeys());
 
@@ -231,14 +231,19 @@ class PluginClicktimeTest extends TestCase
         // eine Person: Tage mit Lücke (3. Arbeitstag = Mo 05.10.2026) und Summen
         $one = $this->postJson('/plugins/clicktime/aktion/month', ['options' => ['month' => '2026-10', 'person' => 'daniel.probe@sekbuelach.example']])->assertOk();
         $this->assertStringContainsString('1 Arbeitstage ohne Buchung', (string) $one->json('message'));
-        $this->assertContains(['day' => '05.10.2026', 'time' => '', 'hours' => '', 'type' => '', 'note' => 'keine Buchung'], $one->json('rows'));
+        $this->assertContains(['day' => '05.10.2026', 'time' => '', 'hours' => '', 'type' => '', 'approval' => '', 'note' => 'keine Buchung'], $one->json('rows'));
         $this->assertSame('Arbeitszeit', $one->json('rows.0.type'));
+        // Genehmigung aus /approvals (#200; Demo: erste Monatshälfte, durch Nr. 2 am Folgetag)
+        $this->assertSame('Genehmigt – Beat Beispiel, 02.10.2026', $one->json('rows.0.approval'));
+        $this->assertSame('Offen', collect($one->json('rows'))->firstWhere('day', '20.10.2026')['approval']);
 
         // alle: Übersicht, PDF je Person nur einmal abgelegt
         $all = $this->postJson('/plugins/clicktime/aktion/month', ['options' => ['month' => '2026-10', 'pdf' => true]])->assertOk();
         $this->assertCount(5, $all->json('rows'));
         // Kumulative im Aufbau der echten Antwort (cumulative_values, Sollzeit = Nummer 0, sonst Name)
         $this->assertSame('184.80', $all->json('rows.0.target'));
+        // Andrea: 21 Buchungen, 10 genehmigt, die Genehmigung vom 15.10. zurückgenommen
+        $this->assertSame(['9 / 21', '10 / 21', '0 / 0'], [$all->json('rows.0.approved'), $all->json('rows.2.approved'), $all->json('rows.3.approved')]);
         $this->assertStringContainsString('Ferien 8.40 h', (string) $one->json('message'));
         $this->assertStringContainsString('5 Monatsblätter', (string) $all->json('message'));
         $doc = collect(app(DocumentRepository::class)->all())->firstWhere('source', 'clicktime:monatsblatt:2026-10:3');
@@ -306,7 +311,7 @@ class PluginClicktimeTest extends TestCase
         $this->post('/plugins/clicktime/personendaten', ['pin' => '24681357'])->assertForbidden();
         $this->signInAs('admin');
         $this->get('/plugins/clicktime')->assertInertia(fn (Assert $page) => $page
-            ->where('personalData.until', null)->where('personalData.canUnlock', true)->where('personalData.endpoints', 38));
+            ->where('personalData.until', null)->where('personalData.canUnlock', true)->where('personalData.endpoints', 39));
         $this->post('/plugins/clicktime/personendaten', ['pin' => '11112222'])->assertSessionHasErrors('pin');
         $this->assertFalse(app(PersonalDataUnlock::class)->active('clicktime'));
 
@@ -351,6 +356,50 @@ class PluginClicktimeTest extends TestCase
         $this->realAccount();
         $entries = (new Months(app(PluginManager::class)->context('clicktime', null)))->entries('2026-10');
         $this->assertSame(['1', '2'], array_map('strval', array_keys($entries['9'])), 'gelöschte Buchung fehlt');
+    }
+
+    public function test_approvals_matched_by_entry_number(): void
+    {
+        // Felder wie von ClickTime angekündigt (27.11.2026), erfundene Werte: Buchung 1 genehmigt, Buchung 2
+        // genehmigt und danach zurückgenommen (jüngerer Datensatz mit deleted), Buchung 3 ohne Genehmigung
+        $entries = [
+            ['number' => 1, 'employee_no' => 9, 'day' => '2026-10-01', 'hours' => 8.4, 'entry_type_name' => ['de' => 'Arbeitszeit'], 'deleted' => false],
+            ['number' => 2, 'employee_no' => 9, 'day' => '2026-10-02', 'hours' => 8.4, 'entry_type_name' => ['de' => 'Arbeitszeit'], 'deleted' => false],
+            ['number' => 3, 'employee_no' => 9, 'day' => '2026-10-05', 'hours' => 8.4, 'entry_type_name' => ['de' => 'Arbeitszeit'], 'deleted' => false],
+        ];
+        $approvals = [
+            ['number' => 1, 'day' => '2026-10-01', 'entry_type_number' => 1000, 'approved_1_by' => 7, 'approved_1_at' => '2026-10-02 09:00:00', 'deleted' => false, 'last_update' => '2026-10-02 09:00:00'],
+            ['number' => 2, 'day' => '2026-10-02', 'entry_type_number' => 1000, 'approved_1_by' => 7, 'approved_1_at' => '2026-10-03 09:00:00', 'deleted' => true, 'last_update' => '2026-10-04 10:00:00'],
+            ['number' => 2, 'day' => '2026-10-02', 'entry_type_number' => 1000, 'approved_1_by' => 7, 'approved_1_at' => '2026-10-03 09:00:00', 'deleted' => false, 'last_update' => '2026-10-03 09:00:00'],
+        ];
+        $this->assertSame(['1' => ['by' => '7', 'at' => '2026-10-02 09:00:00', 'type' => '1000']], Months::latestApprovals($approvals));
+
+        Http::fake([
+            self::TOKEN_URL => Http::response(['access_token' => 'token-abc-123456', 'expires_in' => 3600]),
+            self::API.'/entries*' => Http::response($entries),
+            self::API.'/approvals*' => Http::response($approvals),
+        ]);
+        $this->realAccount();
+        $months = new Months(app(PluginManager::class)->context('clicktime', null));
+        $list = $months->entries('2026-10')['9'];
+        $this->assertTrue($months->approvalsAvailable());
+        $this->assertSame(['Genehmigt', '7', '2026-10-02 09:00:00'], [$list['1']['approval'], $list['1']['approved_by'], $list['1']['approved_at']]);
+        $this->assertSame(['Offen', 'Offen'], [$list['2']['approval'], $list['3']['approval']]);
+        Http::assertSent(fn (Request $r): bool => str_contains($r->url(), '/approvals') && str_contains(urldecode($r->url()), 'filters=day::GE::2026-10-01'));
+    }
+
+    public function test_entries_without_approvals_endpoint(): void
+    {
+        // /approvals noch nicht freigeschaltet: Buchungen trotzdem, Genehmigungsstatus leer
+        Http::fake([
+            self::TOKEN_URL => Http::response(['access_token' => 'token-abc-123456', 'expires_in' => 3600]),
+            self::API.'/entries*' => Http::response([['number' => 1, 'employee_no' => 9, 'day' => '2026-10-01', 'hours' => 8.4, 'deleted' => false]]),
+            self::API.'/approvals*' => Http::response(['message' => 'Forbidden'], 403),
+        ]);
+        $this->realAccount();
+        $months = new Months(app(PluginManager::class)->context('clicktime', null));
+        $this->assertSame('', $months->entries('2026-10')['9']['1']['approval']);
+        $this->assertFalse($months->approvalsAvailable());
     }
 
     public function test_mapping_suggestions_are_saved(): void
@@ -508,9 +557,10 @@ class PluginClicktimeTest extends TestCase
         $import = $liste->firstWhere('datum', '2026-10-01');
         $this->assertSame(['clicktime', 'ct_arbeitszeit', 'ct:Arbeitszeit', '07:30', '16:24', 8.4], [$import['quelle'], $import['buchungsart'], $import['kategorie'], $import['beginn'], $import['ende'], (float) $import['stunden']]);
         $this->assertSame('Arbeitszeit (clicktime)', app(Buchungsarten::class)->liste()['ct_arbeitszeit']['name']);
-        // Genehmigungsstatus aus ClickTime je Buchung (#200; Demo: erste Monatshälfte genehmigt)
-        $this->assertSame('APPROVED', $import['quelle_status']);
-        $this->assertNull($liste->firstWhere('datum', '2026-10-20')['quelle_status']);
+        // Genehmigungsstatus aus /approvals je Buchung (#200; Demo: erste Monatshälfte genehmigt, 15.10. zurückgenommen)
+        $this->assertSame('Genehmigt', $import['quelle_status']);
+        $this->assertSame('Offen', $liste->firstWhere('datum', '2026-10-15')['quelle_status']);
+        $this->assertSame('Offen', $liste->firstWhere('datum', '2026-10-20')['quelle_status']);
         $this->assertStringContainsString('Arbeitszeit = ct_arbeitszeit', (string) app(PluginManager::class)->state('clicktime')['settings']['mapping']);
         $this->assertNotNull($liste->firstWhere('kategorie', 'verwaltung'), 'von Hand erfasst bleibt');
         // Sollzeit pro Tag (#103) gespeichert und an die Seite übergeben

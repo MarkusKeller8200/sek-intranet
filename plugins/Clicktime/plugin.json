@@ -1,11 +1,11 @@
 {
     "id": "clicktime",
     "name": "ClickTime",
-    "version": "0.13",
+    "version": "0.14",
     "api": 1,
     "category": "other",
     "author": "SekBülach Intranet",
-    "description": "Zeiterfassung ClickTime (Schweiz, API V3): Mitarbeitende, Abteilungen und Vorgesetzte, Buchungen, Kumulative, Salden, Feiertage, Spesen sowie Projekte, Kunden, Adressen und Aufträge – alle 51 Endpunkte im API-Tester mit Beispielwerten. Ergänzt die eigene Zeiterfassung, die auch ohne ClickTime funktioniert. Mit Demo-Modus.",
+    "description": "Zeiterfassung ClickTime (Schweiz, API V3): Mitarbeitende, Abteilungen und Vorgesetzte, Buchungen, Kumulative, Salden, Feiertage, Spesen sowie Projekte, Kunden, Adressen und Aufträge sowie Genehmigungen – alle 52 Endpunkte im API-Tester mit Beispielwerten. Ergänzt die eigene Zeiterfassung, die auch ohne ClickTime funktioniert. Mit Demo-Modus.",
     "data_notice": "Arbeitszeiten, Salden und Angaben zu Mitarbeitenden sind Personendaten. Auf einem Server ausserhalb der Schweiz nur Demo-Modus; mit «Endtest» dort nur Aufrufe ohne Personendaten (Verbindung, Abteilungen, Feiertage, Projekte). Personendaten erst auf dem Schweizer Server.",
     "service": {
         "name": "ClickTime API V3",
@@ -17,7 +17,7 @@
             "client_id_setting": "client_id",
             "client_secret_setting": "client_secret"
         },
-        "auth_note": "In ClickTime unter Einstellungen › OpenAPI Clients einen Client nur mit den Scopes anlegen, die das Intranet braucht: EMPLOYEES_READ, DEPARTMENTS_READ, ENTRIES_READ, CUMULATIVES_READ, BALANCES_READ, PUBLIC_HOLIDAY_CALENDARS_READ; für «Mitarbeitende anlegen» zusätzlich EMPLOYEES_WRITE. Übrige Scopes nicht vergeben. client_id und client_secret werden verschlüsselt gespeichert und nie angezeigt; das Token (1 Stunde) wird zwischengespeichert.",
+        "auth_note": "In ClickTime unter Einstellungen › OpenAPI Clients einen Client nur mit den Scopes anlegen, die das Intranet braucht: EMPLOYEES_READ, DEPARTMENTS_READ, ENTRIES_READ, CUMULATIVES_READ, BALANCES_READ, PUBLIC_HOLIDAY_CALENDARS_READ, APPROVALS_READ (Genehmigungen, sobald freigeschaltet); für «Mitarbeitende anlegen» zusätzlich EMPLOYEES_WRITE. Übrige Scopes nicht vergeben. client_id und client_secret werden verschlüsselt gespeichert und nie angezeigt; das Token (1 Stunde) wird zwischengespeichert.",
         "endpoints": [
             {
                 "id": "departments",
@@ -170,6 +170,25 @@
                 ],
                 "note": "Höchstens ein Monat pro Abfrage. Weitere Filter: entry_type::IN::1000,2000, last_update::GE::2026-10-01_00:00:00, deleted::EQ::true, activity_number::IN::2000, source::IN::PC,A (PC = Web, A = Mobile, T = Terminal).",
                 "scope": "ENTRIES_READ"
+            },
+            {
+                "id": "approvals",
+                "method": "GET",
+                "path": "/approvals",
+                "label": "Genehmigungen der Buchungen",
+                "status": "partial",
+                "use": "Monatsdaten (Genehmigung durch Vorgesetzte)",
+                "scope": "APPROVALS_READ",
+                "personal_data": true,
+                "params": [
+                    {
+                        "name": "filters",
+                        "repeat": true,
+                        "example": "day::GE::2026-10-01|day::LE::2026-10-31",
+                        "help": "Filter feld::OP::wert (OP: EQ, IN, LIKE, GE, LE); mehrere mit «|» trennen."
+                    }
+                ],
+                "note": "Angekündigt von ClickTime (27.11.2026), noch nicht freigeschaltet. Je Buchung: number (wie in /entries), day, entry_type_number, approved_1_by (Personalnummer der genehmigenden Person), approved_1_at, deleted (Genehmigung zurückgenommen), last_update. Abgleich mit /entries über number. Filter und Scope-Name (APPROVALS_READ) noch zu bestätigen."
             },
             {
                 "id": "cumulatives",

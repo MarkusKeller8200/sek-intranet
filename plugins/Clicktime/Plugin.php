@@ -555,6 +555,8 @@ class Plugin extends BasePlugin implements DemoResponder
         $cumulatives = $months->cumulatives($month, $filter);
         $balances = $months->balances(Months::range($month)[1], $filter);
         $holidays = $months->holidays((int) substr($month, 0, 4));
+        // Genehmigungen (#200): erst sichtbar, wenn ClickTime /approvals freigeschaltet hat
+        $approvalNote = $months->approvalsAvailable() === false ? ' Genehmigungen: noch nicht abrufbar (/approvals).' : '';
 
         $stored = 0;
         if (($options['pdf'] ?? false) === true) {
@@ -569,10 +571,11 @@ class Plugin extends BasePlugin implements DemoResponder
                 $stored++;
             }
         }
-        $suffix = $stored > 0 ? " {$stored} Monatsblätter in «Dokumente & Links» abgelegt." : '';
+        $suffix = ($stored > 0 ? " {$stored} Monatsblätter in «Dokumente & Links» abgelegt." : '').$approvalNote;
 
         if (count($people) === 1) {
             $no = (string) array_key_first($people);
+            $approvers = $months->approvalsAvailable() === true ? $this->people($ctx, '') : [];
             $gaps = Months::gaps($month, $entries[$no] ?? [], $holidays);
             $rows = [];
             $byDay = [];
@@ -592,6 +595,7 @@ class Plugin extends BasePlugin implements DemoResponder
                         'time' => ($e['time_from'] ?? '') !== '' ? $e['time_from'].'–'.$e['time_to'] : '',
                         'hours' => $e !== [] ? Months::hours((float) $e['hours']) : '',
                         'type' => (string) ($e['type_name'] ?? $e['type'] ?? ''),
+                        'approval' => $e !== [] ? self::approvalText($e, $approvers) : '',
                         'note' => $note,
                     ];
                 }
@@ -605,6 +609,7 @@ class Plugin extends BasePlugin implements DemoResponder
                     ['key' => 'time', 'label' => 'Zeit'],
                     ['key' => 'hours', 'label' => 'Stunden'],
                     ['key' => 'type', 'label' => 'Art'],
+                    ['key' => 'approval', 'label' => 'Genehmigung'],
                     ['key' => 'note', 'label' => 'Hinweis'],
                 ], $rows);
         }
@@ -619,6 +624,9 @@ class Plugin extends BasePlugin implements DemoResponder
                 'target' => isset($c[0]) ? Months::hours($c[0]['hours']) : '–',
                 'balances' => implode(', ', array_map(fn (array $b): string => $b['name'].' '.Months::hours($b['value']).' '.$b['unit'], $balances[$no] ?? [])),
                 'gaps' => (string) count(Months::gaps($month, $entries[$no] ?? [], $holidays)),
+                'approved' => $months->approvalsAvailable() === true
+                    ? count(array_filter($entries[$no] ?? [], fn (array $e): bool => ($e['approval'] ?? '') === Months::APPROVED)).' / '.count($entries[$no] ?? [])
+                    : '–',
             ];
         }
 
@@ -629,7 +637,29 @@ class Plugin extends BasePlugin implements DemoResponder
             ['key' => 'target', 'label' => 'Soll (h)'],
             ['key' => 'balances', 'label' => 'Salden Monatsende'],
             ['key' => 'gaps', 'label' => 'Tage ohne Buchung'],
+            ['key' => 'approved', 'label' => 'Genehmigt'],
         ], $rows);
+    }
+
+    /**
+     * Genehmigung einer Buchung als Text (#200): «Genehmigt – Name, TT.MM.JJJJ», «Offen» oder leer (unbekannt).
+     *
+     * @param  array<string, mixed>  $entry
+     * @param  array<string, string>  $people  Nr. → Name
+     */
+    private static function approvalText(array $entry, array $people): string
+    {
+        $status = (string) ($entry['approval'] ?? '');
+        if ($status !== Months::APPROVED) {
+            return $status;
+        }
+        $by = (string) ($entry['approved_by'] ?? '');
+        $at = (string) ($entry['approved_at'] ?? '');
+        $who = $by !== '' ? ($people[$by] ?? "Nr. {$by}") : '';
+        $when = $at !== '' && strtotime($at) !== false ? date('d.m.Y', (int) strtotime($at)) : '';
+        $detail = implode(', ', array_filter([$who, $when], fn (string $v): bool => $v !== ''));
+
+        return $detail !== '' ? $status.' – '.$detail : $status;
     }
 
     // ---------- Monatsabschluss und Änderungen (#97) ----------
@@ -1143,6 +1173,7 @@ class Plugin extends BasePlugin implements DemoResponder
             'employee-permission-groups' => self::demoOne($no) + ['json' => [['number' => 10, 'name' => 'Mitarbeitende']]],
             'employee-roles' => self::demoOne($no) + ['json' => [['number' => 1, 'name' => $no === 2 ? 'Vorgesetzte' : 'Benutzer']]],
             'entries' => ['status' => 200, 'json' => self::demoEntries($filters, $employees)],
+            'approvals' => ['status' => 200, 'json' => self::demoApprovals($filters)],
             'cumulatives' => ['status' => 200, 'json' => self::demoCumulatives($employees, $filters)],
             'balances' => ['status' => 200, 'json' => self::demoBalances($employees, $filters['balance_at'][1] ?? '2026-10-31')],
             'expenses' => ['status' => 200, 'json' => []],
@@ -1260,9 +1291,7 @@ class Plugin extends BasePlugin implements DemoResponder
                     // wie die echte Antwort: Nummer leer, Name mehrsprachig, Kategorie in entry_type_type
                     'entry_type_number' => null, 'entry_type_name' => ['de' => 'Arbeitszeit', 'en' => 'Working hours'],
                     'entry_type_short' => null, 'entry_type_type' => 'WORK', 'activity_number' => null, 'source' => 'PC',
-                    'notes' => null, 'deleted' => false,
-                    // Werte geraten (#200): erste Monatshälfte genehmigt, danach leer
-                    'approval_status' => (int) date('j', $t) <= 15 ? 'APPROVED' : null, 'last_update' => date('Y-m-d H:i:s', $t + 64800),
+                    'notes' => null, 'deleted' => false, 'last_update' => date('Y-m-d H:i:s', $t + 64800),
                 ];
                 if ($workday === 3 && ! ($corrected && $no === 1)) {
                     continue;
@@ -1287,6 +1316,36 @@ class Plugin extends BasePlugin implements DemoResponder
         }
 
         return $entries;
+    }
+
+    /**
+     * Genehmigungen im Demo-Modus (#200, Felder wie von ClickTime angekündigt): Buchungen der ersten Monatshälfte
+     * genehmigt (durch Nr. 2, bei Nr. 2 durch Nr. 1); bei Person 1 wurde die Genehmigung des 15. zurückgenommen
+     * (jüngerer Datensatz mit deleted).
+     *
+     * @param  array<string, array{0: string, 1: string}>  $filters
+     * @return list<array<string, mixed>>
+     */
+    private static function demoApprovals(array $filters): array
+    {
+        $approvals = [];
+        foreach (self::demoEntries($filters, self::DEMO_EMPLOYEES) as $e) {
+            $day = (string) $e['day'];
+            if ((int) substr($day, 8, 2) > 15 || ! isset($e['entry_type_name'])) {
+                continue;
+            }
+            $by = (int) $e['employee_no'] === 2 ? 1 : 2;
+            $at = date('Y-m-d H:i:s', (int) strtotime($day.' +1 day 09:00'));
+            $row = ['number' => $e['number'], 'day' => $day, 'entry_type_number' => $e['entry_type_number'] ?? null,
+                'approved_1_by' => $by, 'approved_1_at' => $at, 'deleted' => false, 'last_update' => $at];
+            $approvals[] = $row;
+            if ((int) $e['employee_no'] === 1 && substr($day, 8, 2) === '15') {
+                $later = date('Y-m-d H:i:s', (int) strtotime($day.' +2 days 10:00'));
+                $approvals[] = ['deleted' => true, 'last_update' => $later] + $row;
+            }
+        }
+
+        return $approvals;
     }
 
     /**

@@ -319,5 +319,6 @@ Für Antworten mit unbekannten Feldern baut `Support\Tabular::from($datensätze,
   Scopes (Abgleich 10.11.2026 mit der Auswahl in ClickTime): jeder Endpunkt trägt seinen Scope (`<RESSOURCE>_READ`
   bzw. `_WRITE`). Für Scopes ohne Endpunkt im Manifest fehlt die Dokumentation: `BALANCES_WRITE`, `DEPARTMENTS_WRITE`,
   `EXPENSES_WRITE` (#196). Das Intranet braucht nur `EMPLOYEES_READ`, `DEPARTMENTS_READ`, `ENTRIES_READ`,
-  `CUMULATIVES_READ`, `BALANCES_READ`, `PUBLIC_HOLIDAY_CALENDARS_READ` und für «Mitarbeitende anlegen» `EMPLOYEES_WRITE`.
+  `CUMULATIVES_READ`, `BALANCES_READ`, `PUBLIC_HOLIDAY_CALENDARS_READ`, `APPROVALS_READ` (Genehmigungen, sobald
+  ClickTime `/approvals` freischaltet) und für «Mitarbeitende anlegen» `EMPLOYEES_WRITE`.
 - **IDA:** Sobald die IDA-API steht, Endpunkte von `planned` auf `full` setzen und Personen/Lizenzen anbinden.

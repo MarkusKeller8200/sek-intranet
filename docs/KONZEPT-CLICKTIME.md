@@ -1,7 +1,7 @@
 # Konzept ClickTime
 
 Plugin `plugins/Clicktime` (Meilenstein «ClickTime – Integration», #27). Quelle: OpenAPI-Export der Postman-Sammlung
-von dev.clicktime.ch (05.11.2026), 51 Endpunkte.
+von dev.clicktime.ch (05.11.2026), 51 Endpunkte; dazu `/approvals` (angekündigt 27.11.2026).
 
 ## Grundsätze
 
@@ -40,6 +40,20 @@ von dev.clicktime.ch (05.11.2026), 51 Endpunkte.
   Arbeitsblock. Nur offene/zurückgegebene Monate. Knopf in der Zeiterfassung für die Administration, Mitarbeitende
   mit Einstellung `import_self`; später Zeitplan möglich.
 - Offen: Export Zeiterfassung → ClickTime.
+
+## Genehmigungen (#228, #200)
+
+- Vorschlag ClickTime (27.11.2026): Buchungen über `/entries`, Genehmigungen über `/approvals`, Abgleich über die
+  Eintragsnummer. Felder je Zeiteintrag: `number` (wie in `/entries`), `day`, `entry_type_number`, `approved_1_by`
+  (Personalnummer der/des Vorgesetzten), `approved_1_at`, `deleted` (Genehmigung zurückgenommen), `last_update`.
+- Umsetzung: `Months::entries()` ruft nach den Buchungen `approvals` für denselben Monat ab (`day::GE`/`day::LE`) und
+  setzt je Buchung `approval` («Genehmigt»/«Offen»), `approved_by`, `approved_at`. Mehrere Datensätze je Nummer: der
+  mit der jüngsten `last_update` gilt. Antwortet `/approvals` nicht (noch nicht freigeschaltet, Scope fehlt), bleibt
+  `approval` leer – Buchungen, Abschluss und Import funktionieren unverändert.
+- Anzeige: Monatsblatt (eine Person: «Genehmigt – Name, Datum»; alle: «genehmigt / Buchungen»), Zeiterfassung über
+  `quelle_status`. Der Monatsabschluss vergleicht die Genehmigung nicht (nur die Buchungsfelder).
+- Zu prüfen beim ersten echten Aufruf: Filter von `/approvals`, Name des Scopes, Format von `approved_1_at`, ob
+  `deleted` als eigener Datensatz oder als Zustand desselben Datensatzes kommt (beides wird verarbeitet).
 
 ## Offen (#28)
 

@@ -24,7 +24,7 @@ use Throwable;
  * - Pause (eigene Buchung, negative Stunden) → Pause des längsten Arbeitsblocks am Tag.
  * - Sollzeit pro Tag (#103): je Tag eine Abfrage der Kumulative, gespeichert für Soll und Delta der Tagestotale.
  * - Nur Monate «offen» oder «zurück»; gesperrte Monate nur als Vergleich (Nachbuchungen, #164).
- * - Genehmigungsstatus (approval_status) je Buchung als «quelle_status» (#200).
+ * - Genehmigungsstatus je Buchung als «quelle_status» (#200): «Genehmigt»/«Offen» aus `/approvals`.
  */
 final class Importer
 {

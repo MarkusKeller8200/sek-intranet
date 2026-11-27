@@ -13,6 +13,8 @@ use RuntimeException;
  *
  * - Monat: Buchungen (`entries`, höchstens ein Monat pro Abfrage), Kumulative, Salden am Monatsende, Feiertage.
  * - Vollständigkeit: Arbeitstage (Mo–Fr) ohne Buchung, Feiertage ausgenommen.
+ * - Genehmigung (#200): Buchungen aus `entries`, Genehmigungen aus `approvals`, Abgleich über die Buchungsnummer
+ *   (`number`). Solange ClickTime `/approvals` nicht freigeschaltet hat, bleibt der Status leer.
  * - Abschluss: Stand der Buchungen je Person (Nummer, Tag, Zeit, Stunden, Art, Tätigkeit – ohne Notizen) als Datei
  *   unter storage/app/private/plugins/clicktime/abschluss/<JJJJ-MM>.json. Danach zeigt der Vergleich mit dem
  *   aktuellen Stand, was neu, geändert oder gelöscht ist.
@@ -23,6 +25,14 @@ final class Months
 
     /** Verglichene Felder einer Buchung. */
     public const FIELDS = ['day', 'time_from', 'time_to', 'hours', 'type', 'activity'];
+
+    /** Genehmigungsstatus einer Buchung, wenn `/approvals` antwortet (#200). */
+    public const APPROVED = 'Genehmigt';
+
+    public const OPEN = 'Offen';
+
+    /** Ob `/approvals` beim letzten Abruf geantwortet hat (null = noch nicht abgefragt). */
+    private ?bool $approvalsAvailable = null;
 
     public function __construct(private readonly PluginContext $ctx) {}
 
@@ -71,12 +81,110 @@ final class Months
         }
         ksort($result);
 
+        // Genehmigungen (#200): eigener Endpunkt, Abgleich über die Buchungsnummer
+        $approvals = $this->approvals($month);
+        if ($approvals !== null) {
+            foreach ($result as $no => $list) {
+                foreach ($list as $number => $entry) {
+                    $result[$no][$number] = self::withApproval($entry, $approvals[(string) $number] ?? null);
+                }
+            }
+        }
+
+        return $result;
+    }
+
+    /** Hat `/approvals` beim letzten Abruf von entries() geantwortet? null = nicht abgefragt. */
+    public function approvalsAvailable(): ?bool
+    {
+        return $this->approvalsAvailable;
+    }
+
+    /**
+     * Genehmigungen des Monats je Buchungsnummer (ClickTime, angekündigt 27.11.2026). Je Nummer zählt der Datensatz mit
+     * der jüngsten Änderung (`last_update`); zurückgenommene (`deleted`) und solche ohne `approved_1_at` gelten als
+     * nicht genehmigt und fehlen. null = Endpunkt nicht verfügbar (noch nicht freigeschaltet, Scope fehlt, Fehler) –
+     * dann bleiben die Buchungen ohne Genehmigungsstatus.
+     *
+     * @return array<string, array{by: string, at: string, type: string}>|null
+     */
+    public function approvals(string $month): ?array
+    {
+        [$from, $to] = self::range($month);
+        try {
+            $response = $this->ctx->call('approvals', ['filters' => ["day::GE::{$from}", "day::LE::{$to}"]]);
+        } catch (\Exception $e) {
+            $this->ctx->log('Genehmigungen nicht abrufbar: '.$e->getMessage());
+            $this->approvalsAvailable = false;
+
+            return null;
+        }
+        if (! $response->successful()) {
+            $this->ctx->log('Genehmigungen nicht abrufbar: HTTP '.$response->status().' (Endpunkt /approvals freigeschaltet, Scope APPROVALS_READ vergeben?).');
+            $this->approvalsAvailable = false;
+
+            return null;
+        }
+        $this->approvalsAvailable = true;
+
+        return self::latestApprovals(self::rows($response));
+    }
+
+    /**
+     * Gültige Genehmigungen aus den Datensätzen von `/approvals`: je Nummer der jüngste (`last_update`), nur nicht
+     * zurückgenommene mit Zeitpunkt.
+     *
+     * @param  list<array<string, mixed>>  $rows
+     * @return array<string, array{by: string, at: string, type: string}>
+     */
+    public static function latestApprovals(array $rows): array
+    {
+        $latest = [];
+        foreach ($rows as $row) {
+            $number = (string) ($row['number'] ?? '');
+            if ($number === '') {
+                continue;
+            }
+            $update = (string) ($row['last_update'] ?? '');
+            if (! isset($latest[$number]) || strcmp($update, (string) ($latest[$number]['last_update'] ?? '')) >= 0) {
+                $latest[$number] = $row;
+            }
+        }
+        $result = [];
+        foreach ($latest as $number => $row) {
+            $at = is_scalar($row['approved_1_at'] ?? null) ? trim((string) $row['approved_1_at']) : '';
+            if (in_array($row['deleted'] ?? false, [true, 'true', 1, '1'], true) || $at === '') {
+                continue;
+            }
+            $result[(string) $number] = [
+                'by' => is_scalar($row['approved_1_by'] ?? null) ? (string) $row['approved_1_by'] : '',
+                'at' => $at,
+                'type' => is_scalar($row['entry_type_number'] ?? null) ? (string) $row['entry_type_number'] : '',
+            ];
+        }
+
         return $result;
     }
 
     /**
+     * Genehmigung in eine Buchung übernehmen: «Genehmigt» mit Person und Zeitpunkt, sonst «Offen».
+     *
+     * @param  array<string, mixed>  $entry
+     * @param  array{by: string, at: string, type: string}|null  $approval
+     * @return array<string, mixed>
+     */
+    public static function withApproval(array $entry, ?array $approval): array
+    {
+        return [
+            'approval' => $approval !== null ? self::APPROVED : self::OPEN,
+            'approved_by' => $approval['by'] ?? '',
+            'approved_at' => $approval['at'] ?? '',
+        ] + $entry;
+    }
+
+    /**
      * @param  array<string, mixed>  $row
-     * @return array{number: string, day: string, time_from: string, time_to: string, hours: float, type: string, type_name: string, category: string, activity: string, notes: string, approval: string}
+     * @return array{number: string, day: string, time_from: string, time_to: string, hours: float, type: string, type_name: string, category: string, activity: string, notes: string, approval: string, approved_by: string, approved_at: string}
      */
     public static function normalize(array $row): array
     {
@@ -97,8 +205,11 @@ final class Months
             'category' => (string) ($row['entry_type_type'] ?? ''),
             'activity' => (string) ($row['activity_number'] ?? ''),
             'notes' => is_string($row['notes'] ?? null) ? trim($row['notes']) : '',
-            // Genehmigungsstatus (#200): Rohwert aus «approval_status», Bedeutung der Werte noch offen
+            // Genehmigungsstatus (#200): aus /approvals (withApproval); «approval_status» nur als Rückfall, falls
+            // ClickTime ihn je Buchung mitliefert
             'approval' => self::approval($row['approval_status'] ?? null),
+            'approved_by' => '',
+            'approved_at' => '',
         ];
     }
 
