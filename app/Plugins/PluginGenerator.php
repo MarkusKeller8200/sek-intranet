@@ -17,11 +17,10 @@ final class PluginGenerator
     private const METHODS = ['get', 'post', 'put', 'patch', 'delete'];
 
     /**
-     * OpenAPI → Bausteine eines Manifests.
+     * OpenAPI → Bausteine eines Manifests. Akzeptiert auch die Plugin-Beschreibung einer API aus EduKSX-Connectors
+     * (GET /plugin.json, sek-intranet#229).
      *
      * @param  array<string, mixed>  $spec
-     * Akzeptiert auch die Plugin-Beschreibung einer API aus EduKSX-Connectors (GET /plugin.json, sek-intranet#229).
-     *
      * @return array{title: string, description: string, base_url: string, auth: array<string, mixed>, auth_settings: list<array<string, mixed>>, endpoints: list<array<string, mixed>>, connector?: array<string, mixed>}
      */
     public static function describe(array $spec): array
