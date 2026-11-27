@@ -1,0 +1,199 @@
+{
+  "id": "eduksx-cmi",
+  "name": "CMI-API",
+  "version": "0.9.0",
+  "api": 1,
+  "category": "school",
+  "author": "EduKSX-Connectors",
+  "description": "CMI Schule / CMI Cloud (CM Informatik AG): Kontakte synchronisieren, Schüler-, Personal- und Klassendossiers, Klassen ein- und umteilen, Dokumente und Zeugnisse ablegen. Nicht live geprüft.",
+  "service": {
+    "name": "CMI-API 0.9.0 (EduKSX-Connectors)",
+    "docs": "/docs",
+    "auth": {
+      "type": "header",
+      "header": "X-API-Key",
+      "setting": "api_key"
+    },
+    "auth_note": "API-Key der Connector-API (Umgebungsvariable CMI_API_KEY auf dem Connector-Server), Kopfzeile X-API-Key.",
+    "endpoints": [
+      {
+        "id": "status",
+        "method": "GET",
+        "path": "/status",
+        "label": "Version, eingerichtet ja/nein, Schalter, Anzahl Aufrufe",
+        "status": "partial",
+        "group": "Status"
+      },
+      {
+        "id": "kontakte",
+        "method": "GET",
+        "path": "/kontakte",
+        "label": "Kontakte suchen (fremdkey, name, email oder TentaQl)",
+        "status": "partial",
+        "group": "Kontakte",
+        "params": [
+          {
+            "name": "fremdkey",
+            "example": "escola-650"
+          },
+          {
+            "name": "name",
+            "example": "Muster"
+          },
+          {
+            "name": "vorname",
+            "example": "Lea"
+          },
+          {
+            "name": "email",
+            "example": "lea.muster@sekbuelach.example"
+          },
+          {
+            "name": "tentaql",
+            "example": "name = \"Muster\""
+          },
+          {
+            "name": "format",
+            "default": "json",
+            "choices": [
+              "json",
+              "csv"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "kontakte-guid",
+        "method": "GET",
+        "path": "/kontakte/{guid}",
+        "label": "Ein Kontakt",
+        "status": "partial",
+        "group": "Kontakte",
+        "params": [
+          {
+            "name": "guid",
+            "in": "path",
+            "required": true
+          }
+        ]
+      },
+      {
+        "id": "post-kontakte-sync",
+        "method": "POST",
+        "path": "/kontakte/sync",
+        "label": "Kontakte abgleichen: fehlende anlegen, geänderte Felder nachführen (Schlüssel: fremdkey)",
+        "status": "partial",
+        "group": "Kontakte",
+        "probelauf": true,
+        "body": {
+          "kontakte": [
+            {
+              "fremdkey": "escola-650",
+              "name": "Muster",
+              "vorname": "Lea",
+              "email": "lea.muster@sekbuelach.example",
+              "email2": "lea.muster@sekbuelach.example",
+              "geburtsdatum": "2012-03-04",
+              "subjektart": "Natürlich"
+            }
+          ]
+        },
+        "fields": [
+          {
+            "name": "kontakte",
+            "type": "array",
+            "required": true,
+            "example": [
+              {
+                "fremdkey": "escola-650",
+                "name": "Muster",
+                "vorname": "Lea",
+                "email": "lea.muster@sekbuelach.example",
+                "email2": "lea.muster@sekbuelach.example",
+                "geburtsdatum": "2012-03-04",
+                "subjektart": "Natürlich"
+              }
+            ]
+          }
+        ],
+        "danger": true
+      },
+      {
+        "id": "post-zeugnisse",
+        "method": "POST",
+        "path": "/zeugnisse",
+        "label": "Zeugnis-PDFs gesammelt in die Lernendendossiers ablegen (Ordner Beurteilung)",
+        "status": "partial",
+        "group": "Dokumente",
+        "probelauf": true,
+        "form": [
+          {
+            "name": "dateien",
+            "type": "file",
+            "multiple": true,
+            "required": true,
+            "help": "PDF-Dateien"
+          },
+          {
+            "name": "zuordnung",
+            "type": "string",
+            "required": true,
+            "help": "JSON-Liste [{datei, fremdkey, schuljahr?, semester?, titel?}]",
+            "example": "[{\"datei\": \"lea.pdf\", \"fremdkey\": \"escola-650\"}]"
+          },
+          {
+            "name": "schuljahr",
+            "type": "string",
+            "help": "gemeinsam, z. B. «2026/27»",
+            "example": "2026/27"
+          },
+          {
+            "name": "semester",
+            "type": "integer",
+            "help": "gemeinsam: 1 oder 2",
+            "example": 1
+          },
+          {
+            "name": "dokumentdatum",
+            "type": "string",
+            "help": "Datum des Zeugnisses",
+            "example": "2026-08-17"
+          },
+          {
+            "name": "ordner",
+            "type": "string",
+            "help": "Standard CMI_ZEUGNIS_ORDNER"
+          }
+        ],
+        "file": {
+          "field": "dateien"
+        },
+        "danger": true
+      }
+    ]
+  },
+  "settings": [
+    {
+      "key": "base_url",
+      "type": "url",
+      "label": "Adresse der API",
+      "required": true,
+      "example": "http://127.0.0.1:8082"
+    },
+    {
+      "key": "api_key",
+      "type": "password",
+      "label": "API-Key (X-API-Key)",
+      "required": true
+    }
+  ],
+  "x-eduksx": {
+    "quelle": "EduKSX-Connectors",
+    "api": "cmi",
+    "port": 8082,
+    "sitzung": {
+      "header": "X-Demo-Session"
+    }
+  },
+  "data_notice": "Liefert und schreibt Personendaten (Kontakte, Dossiers) im CMI der Schule; schützenswerte Daten nur mit CMI_SCHUETZENSWERT=1."
+}

@@ -258,4 +258,102 @@ class PluginGeneratorTest extends TestCase
         $endpoint = PluginManifest::fromFile($this->dir.'/Lmvz/plugin.json')->endpoint('kurse-one');
         $this->assertSame('digital', $endpoint['host'] ?? null);
     }
+
+    /**
+     * Plugin-Beschreibung einer API aus EduKSX-Connectors (GET /plugin.json, sek-intranet#229). Erfundene Beispielwerte.
+     *
+     * @return array<string, mixed>
+     */
+    private function connector(): array
+    {
+        $data = json_decode((string) file_get_contents(base_path('tests/Fixtures/eduksx-connector-plugin.json')), true);
+        $this->assertIsArray($data);
+
+        /** @var array<string, mixed> $data */
+        return $data;
+    }
+
+    public function test_connector_description_keeps_labels_examples_and_danger(): void
+    {
+        $this->assertTrue(PluginGenerator::isConnectorManifest($this->connector()));
+        $this->assertFalse(PluginGenerator::isConnectorManifest($this->spec()));
+
+        $d = PluginGenerator::describe($this->connector());
+        $this->assertSame('CMI-API', $d['title']);
+        $this->assertSame(['type' => 'header', 'header' => 'X-API-Key', 'setting' => 'api_key'], $d['auth']);
+        $this->assertSame(['api_key'], array_column($d['auth_settings'], 'key'));
+        $e = array_column($d['endpoints'], null, 'id');
+
+        $this->assertSame('Kontakte suchen (fremdkey, name, email oder TentaQl)', $e['kontakte']['label']);
+        $this->assertSame('escola-650', $e['kontakte']['params'][0]['example']);
+        $this->assertArrayNotHasKey('danger', $e['kontakte']);
+
+        // Schreibend: danger, Beispiel-Body, Felder; Probelauf als Parameter mit Vorgabe «true»
+        $sync = $e['post-kontakte-sync'];
+        $this->assertTrue($sync['danger']);
+        $this->assertSame('escola-650', $sync['body']['kontakte'][0]['fremdkey']);
+        $this->assertSame(['name' => 'probelauf', 'default' => 'true'], array_intersect_key(end($sync['params']), ['name' => 1, 'default' => 1]));
+        $this->assertArrayNotHasKey('probelauf', $sync);
+
+        // Datei-Upload: Teil «dateien», Formularfelder im Hinweis
+        $this->assertSame(['field' => 'dateien'], $e['post-zeugnisse']['file']);
+        $this->assertStringContainsString('Formularfelder: dateien, zuordnung', $e['post-zeugnisse']['note']);
+        $this->assertArrayNotHasKey('form', $e['post-zeugnisse']);
+    }
+
+    public function test_connector_plugin_is_created_with_version_and_notice(): void
+    {
+        $file = $this->writeSpec($this->connector());
+        [$code, $out] = $this->generate(['quelle' => $file, '--neu' => 'EduksxCmi']);
+        $this->assertSame(0, $code, $out);
+        $this->assertStringContainsString('aus EduKSX-Connectors', $out);
+
+        $manifest = PluginManifest::fromFile($this->dir.'/EduksxCmi/plugin.json');
+        $this->assertSame('eduksx-cmi', $manifest->id());
+        $this->assertSame('0.9.0', $manifest->toArray()['version']);
+        $this->assertSame('school', $manifest->toArray()['category']);
+        $this->assertNotEmpty($manifest->toArray()['data_notice']);
+        $this->assertSame(['api_key'], $manifest->secretKeys());
+        $this->assertCount(5, $manifest->endpoints());
+        $this->assertStringContainsString('X-Demo-Session', (string) $manifest->toArray()['service']['auth_note']);
+        $this->assertStringContainsString('--plugin=eduksx-cmi', (string) file_get_contents($this->dir.'/EduksxCmi/README.md'));
+        // keine Adresse und kein Schlüssel als Wert im Manifest
+        $this->assertStringNotContainsString('127.0.0.1', (string) json_encode($manifest->toArray()['service']));
+    }
+
+    public function test_connector_update_adds_only_new_endpoints_and_reports_version(): void
+    {
+        $data = $this->connector();
+        $this->generate(['quelle' => $this->writeSpec($data), '--neu' => 'EduksxCmi']);
+        // Klasse des neuen Plugins laden (Arbeitsordner liegt ausserhalb des Autoloaders)
+        require_once $this->dir.'/EduksxCmi/Plugin.php';
+
+        $data['version'] = '0.10.0';
+        $data['service']['endpoints'][] = ['id' => 'neu', 'method' => 'GET', 'path' => '/neu', 'label' => 'Neu', 'status' => 'partial'];
+        $data['service']['endpoints'][0]['label'] = 'Geändert';
+        [$code, $out] = $this->generate(['quelle' => $this->writeSpec($data), '--plugin' => 'eduksx-cmi']);
+
+        $this->assertSame(0, $code, $out);
+        $this->assertStringContainsString('Version 0.10.0', $out);
+        $manifest = PluginManifest::fromFile($this->dir.'/EduksxCmi/plugin.json');
+        $this->assertCount(6, $manifest->endpoints());
+        $this->assertNotSame('Geändert', $manifest->endpoints()[0]['label']);
+    }
+
+    public function test_openapi_with_x_eduksx_is_honoured(): void
+    {
+        $spec = $this->spec();
+        $spec['paths']['/auth/login'] = ['post' => ['summary' => 'Anmelden', 'x-eduksx' => ['effect' => 'read', 'danger' => false]]];
+        $spec['paths']['/api/v1/kurse']['post']['parameters'] = [['name' => 'probelauf', 'in' => 'query', 'schema' => ['type' => 'boolean', 'default' => false]]];
+        $spec['paths']['/api/v1/kurse']['post']['x-eduksx'] = ['status' => 'full', 'use' => 'Kurs anlegen'];
+        $e = array_column(PluginGenerator::describe($spec)['endpoints'], null, 'id');
+
+        $this->assertArrayNotHasKey('danger', $e['post-auth-login']);
+        $this->assertSame('read', $e['post-auth-login']['effect']);
+        $this->assertSame('full', $e['post-kurse']['status']);
+        $this->assertSame('Kurs anlegen', $e['post-kurse']['use']);
+        $this->assertSame('true', $e['post-kurse']['params'][0]['default']);
+        // ohne x-eduksx bleibt alles wie bisher
+        $this->assertSame('partial', $e['kurse']['status']);
+    }
 }

@@ -71,6 +71,34 @@ php artisan intranet:plugin-from-openapi <datei.json|aufzeichnungs-id> [--plugin
 - Umsetzung: `App\Plugins\PluginGenerator`, `App\Console\Commands\PluginFromOpenApiCommand`, Tests
   `tests/Feature/PluginGeneratorTest.php`.
 
+## APIs aus EduKSX-Connectors (#229)
+
+Die Connector-APIs (Escola, CMI, SL-Planer …) beschreiben sich selbst: `GET /plugin.json` liefert ein Manifest im
+Format von `plugin.json` mit dem Zusatz `x-eduksx` (Entscheid EduKSX-Connectors#42, `shared/plugin_export.py`).
+
+```
+# in EduKSX-Connectors (ohne laufende API)
+python3 shared/plugin_export.py apis/cmi > cmi-plugin.json
+# hier
+php artisan intranet:plugin-from-openapi cmi-plugin.json --neu=EduksxCmi --dry-run
+php artisan intranet:plugin-from-openapi cmi-plugin.json --neu=EduksxCmi
+# später: nur neue Endpunkte, neue Version wird gemeldet
+php artisan intranet:plugin-from-openapi cmi-plugin.json --plugin=eduksx-cmi
+```
+
+- Übernommen werden `label`, `group`, `params` (mit `example`, `default`, `choices`), `body`, `fields`, `file`,
+  `danger`, `effect`, `status`, `use`, `permission`, `note` sowie `version`, `category`, `data_notice` und
+  `service.auth` (`header` `X-API-Key`, Einstellung `api_key`). Der Status kommt aus der Connector-API (die API ist
+  ihre eigene Hersteller-Doku); nicht live geprüfte APIs liefern `partial`.
+- `probelauf` wird zum Parameter mit Vorgabe `true`: der API-Tester zeigt zuerst nur den Plan.
+- Formulare mit mehreren Feldern (z. B. CMI-Zeugnisse): der Tester sendet nur die Datei (`file.field`); die
+  Feldnamen stehen im Hinweis, vollständig testen in der Testplattform von EduKSX-Connectors.
+- APIs mit Anmeldesitzung (Escola, `X-Escola-Session`): im Intranet noch nicht unterstützt; Hinweis in `auth_note`.
+- Basis-URL nur `https://` (Einstellung `base_url`); lokal laufende Connectors (`http://127.0.0.1`) sind im Intranet
+  nicht erreichbar.
+- Auch eine OpenAPI-Datei einer Connector-API (`/openapi.json`) wird gelesen; `x-eduksx` am Endpunkt übersteuert
+  Beschriftung, `danger`, `effect`, Status und Zweck.
+
 ## API-Ansicht (Scalar)
 
 Scalar API Reference (Open Source, MIT, npm `@scalar/api-reference`) zeigt OpenAPI-Beschreibungen interaktiv an:

@@ -9,6 +9,15 @@ laufend unter **Unveröffentlicht**. Ab 0.32.0 entsteht eine Version nur bei ein
 
 ## [Unveröffentlicht]
 
+### Hinzugefügt
+
+- **APIs aus EduKSX-Connectors als Plugin übernehmen (#229):** `intranet:plugin-from-openapi` liest die
+  Plugin-Beschreibung einer Connector-API (`GET /plugin.json` bzw. «plugin.json herunterladen» in deren
+  Testplattform) und übernimmt Beschriftungen, Gruppen, Beispielwerte, Felder, `danger`, Status, Kategorie,
+  Datenschutz-Hinweis und Version; Anmeldung per `X-API-Key` als verschlüsselte Einstellung. Schreibende Endpunkte
+  starten im API-Tester mit `probelauf=true`. Erneuter Lauf mit `--plugin` ergänzt nur neue Endpunkte und meldet eine
+  neue Connector-Version. OpenAPI-Dateien mit `x-eduksx` (EduKSX-Connectors#42) werden ebenfalls berücksichtigt.
+
 ### Geändert
 
 - **Stack (#226):** PHP 8.5 (bisher ^8.3), CI mit Node 26 (EduKSX-Architektur KONZEPT-STACK ST2).
