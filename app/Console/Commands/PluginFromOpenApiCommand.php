@@ -17,7 +17,7 @@ use JsonException;
 class PluginFromOpenApiCommand extends Command
 {
     protected $signature = 'intranet:plugin-from-openapi
-        {quelle : Pfad zu einer OpenAPI-Datei (JSON) oder ID einer Aufzeichnung im API-Recorder}
+        {quelle : Pfad zu einer OpenAPI-Datei (JSON), zur Plugin-Beschreibung einer EduKSX-Connectors-API (plugin.json) oder ID einer Aufzeichnung im API-Recorder}
         {--plugin= : Bestehendes Plugin (id) um fehlende Endpunkte ergänzen}
         {--neu= : Neues Plugin im Ordner plugins/<Ordner> anlegen (z. B. EscolaWeb)}
         {--host= : Mit --plugin: neue Endpunkte einer weiteren Adresse zuordnen (Schlüssel aus service.hosts)}
@@ -83,7 +83,7 @@ class PluginFromOpenApiCommand extends Command
     }
 
     /**
-     * @param  array{title: string, description: string, base_url: string, auth: array<string, mixed>, auth_settings: list<array<string, mixed>>, endpoints: list<array<string, mixed>>}  $described
+     * @param  array{title: string, description: string, base_url: string, auth: array<string, mixed>, auth_settings: list<array<string, mixed>>, endpoints: list<array<string, mixed>>, connector?: array<string, mixed>}  $described
      */
     private function extendPlugin(string $id, array $described, PluginManager $plugins): int
     {
@@ -116,6 +116,13 @@ class PluginFromOpenApiCommand extends Command
         foreach ($result['skipped'] as $line) {
             $this->line("  vorhanden: {$line}");
         }
+        // Beschreibung aus EduKSX-Connectors: neue Version der Connector-API melden (plugin.json von Hand nachführen)
+        $connector = $described['connector'] ?? null;
+        $neu = is_array($connector) ? (string) ($connector['version'] ?? '') : '';
+        $alt = is_scalar($manifest['version'] ?? null) ? (string) $manifest['version'] : '?';
+        if (is_array($connector) && $neu !== $alt) {
+            $this->components->warn("Connector-API in Version {$neu}, Plugin «{$id}» in Version {$alt}: «version» in plugin.json nachführen und geänderte Endpunkte von Hand abgleichen.");
+        }
         if ($result['added'] === []) {
             $this->components->info("Plugin «{$id}» kennt bereits alle Endpunkte. Nichts geändert.");
 
@@ -133,13 +140,15 @@ class PluginFromOpenApiCommand extends Command
         }
 
         file_put_contents($file, PluginGenerator::encode($result['manifest']));
-        $this->components->info(count($result['added'])." Endpunkte als «partial» ergänzt: {$file}. Mit der Hersteller-Doku prüfen, dann Pull-Request.");
+        $this->components->info(count($result['added']).(is_array($connector)
+            ? " Endpunkte aus EduKSX-Connectors ergänzt: {$file}. Pull-Request."
+            : " Endpunkte als «partial» ergänzt: {$file}. Mit der Hersteller-Doku prüfen, dann Pull-Request."));
 
         return self::SUCCESS;
     }
 
     /**
-     * @param  array{title: string, description: string, base_url: string, auth: array<string, mixed>, auth_settings: list<array<string, mixed>>, endpoints: list<array<string, mixed>>}  $described
+     * @param  array{title: string, description: string, base_url: string, auth: array<string, mixed>, auth_settings: list<array<string, mixed>>, endpoints: list<array<string, mixed>>, connector?: array<string, mixed>}  $described
      */
     private function createPlugin(string $folder, array $described, string $root): int
     {
@@ -158,7 +167,8 @@ class PluginFromOpenApiCommand extends Command
             return self::FAILURE;
         }
 
-        $this->components->info("Neues Plugin «{$scaffold['manifest']['id']}» mit ".count($described['endpoints']).' Endpunkten (Status partial).');
+        $this->components->info("Neues Plugin «{$scaffold['manifest']['id']}» mit ".count($described['endpoints']).(isset($described['connector'])
+            ? ' Endpunkten aus EduKSX-Connectors.' : ' Endpunkten (Status partial).'));
         foreach (array_keys($scaffold['files']) as $name) {
             $this->line("  plugins/{$folder}/{$name}");
         }

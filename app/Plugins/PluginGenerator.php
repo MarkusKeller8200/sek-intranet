@@ -20,10 +20,15 @@ final class PluginGenerator
      * OpenAPI → Bausteine eines Manifests.
      *
      * @param  array<string, mixed>  $spec
-     * @return array{title: string, description: string, base_url: string, auth: array<string, mixed>, auth_settings: list<array<string, mixed>>, endpoints: list<array<string, mixed>>}
+     * Akzeptiert auch die Plugin-Beschreibung einer API aus EduKSX-Connectors (GET /plugin.json, sek-intranet#229).
+     *
+     * @return array{title: string, description: string, base_url: string, auth: array<string, mixed>, auth_settings: list<array<string, mixed>>, endpoints: list<array<string, mixed>>, connector?: array<string, mixed>}
      */
     public static function describe(array $spec): array
     {
+        if (self::isConnectorManifest($spec)) {
+            return self::describeConnector($spec);
+        }
         if (! isset($spec['openapi']) && ! isset($spec['swagger'])) {
             throw new InvalidArgumentException('Keine OpenAPI-Beschreibung (Feld «openapi» fehlt).');
         }
@@ -57,6 +62,96 @@ final class PluginGenerator
             'auth' => $auth,
             'auth_settings' => $authSettings,
             'endpoints' => $endpoints,
+        ];
+    }
+
+    /**
+     * Plugin-Beschreibung aus EduKSX-Connectors? (GET /plugin.json einer Connector-API, Format wie plugin.json mit «x-eduksx»)
+     *
+     * @param  array<string, mixed>  $data
+     */
+    public static function isConnectorManifest(array $data): bool
+    {
+        $service = $data['service'] ?? null;
+
+        return ($data['api'] ?? null) === PluginManifest::API_VERSION
+            && is_array($data['x-eduksx'] ?? null)
+            && is_array($service) && is_array($service['endpoints'] ?? null);
+    }
+
+    /**
+     * Connector-Beschreibung → Bausteine eines Manifests. Beschriftungen, Beispielwerte, Felder, «danger» und Status
+     * kommen aus dem Code der Connector-API (Entscheid EduKSX-Connectors#42) und werden übernommen.
+     * «probelauf» wird zum Parameter mit Vorgabe «true», damit der API-Tester zuerst nur den Plan zeigt.
+     *
+     * @param  array<string, mixed>  $m
+     * @return array{title: string, description: string, base_url: string, auth: array<string, mixed>, auth_settings: list<array<string, mixed>>, endpoints: list<array<string, mixed>>, connector: array<string, mixed>}
+     */
+    public static function describeConnector(array $m): array
+    {
+        /** @var array<string, mixed> $service */
+        $service = $m['service'];
+        /** @var array<string, mixed> $x */
+        $x = $m['x-eduksx'];
+        $api = (string) ($x['api'] ?? $m['id'] ?? 'connector');
+        $version = (string) ($m['version'] ?? '');
+        $keep = ['id', 'method', 'path', 'label', 'status', 'use', 'permission', 'note', 'danger', 'effect', 'params', 'body', 'fields', 'file', 'group'];
+
+        $endpoints = [];
+        $used = [];
+        foreach ((array) $service['endpoints'] as $e) {
+            if (! is_array($e) || ! is_string($e['path'] ?? null)) {
+                continue;
+            }
+            $endpoint = array_intersect_key($e, array_flip($keep));
+            $endpoint['method'] = strtoupper((string) ($e['method'] ?? 'GET'));
+            $eid = $e['id'] ?? null;
+            $id = is_string($eid) && $eid !== '' && ! isset($used[$eid]) ? $eid : ApiDocs::endpointId($endpoint['method'], $e['path'], $used);
+            $used[$id] = true;
+            $endpoint['id'] = $id;
+            $endpoint['status'] = in_array($e['status'] ?? null, PluginManifest::ENDPOINT_STATUS, true) ? $e['status'] : 'partial';
+            $notes = array_filter([is_string($e['note'] ?? null) ? $e['note'] : null]);
+            if (($e['probelauf'] ?? false) === true) {
+                $params = is_array($endpoint['params'] ?? null) ? $endpoint['params'] : [];
+                $params[] = ['name' => 'probelauf', 'default' => 'true', 'choices' => ['true', 'false'],
+                    'help' => 'Probelauf: zeigt nur den Plan und ändert nichts. «false» schreibt (Schreibfreigabe der API nötig).'];
+                $endpoint['params'] = $params;
+            }
+            if (is_array($e['form'] ?? null)) {
+                $names = array_map(fn (mixed $f): string => is_array($f) ? (string) ($f['name'] ?? '') : '', $e['form']);
+                $notes[] = 'Formularfelder: '.implode(', ', array_filter($names)).'. Der API-Tester sendet nur die Datei; '
+                    .'alle Felder in der Testplattform von EduKSX-Connectors.';
+            }
+            $notes[] = "Aus EduKSX-Connectors ({$api} {$version}).";
+            $endpoint['note'] = implode("\n", $notes);
+            $endpoints[] = $endpoint;
+        }
+
+        $settings = array_values(array_filter((array) ($m['settings'] ?? []), fn (mixed $s): bool => is_array($s) && ($s['key'] ?? '') !== 'base_url'));
+        $example = '';
+        foreach ((array) ($m['settings'] ?? []) as $s) {
+            if (is_array($s) && ($s['key'] ?? '') === 'base_url') {
+                $example = (string) ($s['example'] ?? '');
+            }
+        }
+        $auth = is_array($service['auth'] ?? null) ? $service['auth'] : ['type' => 'header', 'header' => 'X-API-Key', 'setting' => 'api_key'];
+
+        return [
+            'title' => (string) ($m['name'] ?? $api),
+            'description' => (string) ($m['description'] ?? ''),
+            'base_url' => (string) ($service['base'] ?? $example),
+            'auth' => $auth,
+            'auth_settings' => $settings,
+            'endpoints' => $endpoints,
+            'connector' => [
+                'api' => $api,
+                'id' => (string) ($m['id'] ?? 'eduksx-'.$api),
+                'version' => $version,
+                'category' => in_array($m['category'] ?? null, ['identity', 'devices', 'inventory', 'school', 'other'], true) ? $m['category'] : 'other',
+                'data_notice' => is_string($m['data_notice'] ?? null) ? $m['data_notice'] : null,
+                'auth_note' => is_string($service['auth_note'] ?? null) ? $service['auth_note'] : null,
+                'sitzung' => is_array($x['sitzung'] ?? null) ? $x['sitzung'] : null,
+            ],
         ];
     }
 
@@ -117,7 +212,7 @@ final class PluginGenerator
     /**
      * Dateien für ein neues Plugin plugins/<Ordner>/.
      *
-     * @param  array{title: string, description: string, base_url: string, auth: array<string, mixed>, auth_settings: list<array<string, mixed>>, endpoints: list<array<string, mixed>>}  $described
+     * @param  array{title: string, description: string, base_url: string, auth: array<string, mixed>, auth_settings: list<array<string, mixed>>, endpoints: list<array<string, mixed>>, connector?: array<string, mixed>}  $described
      * @return array{manifest: array<string, mixed>, files: array<string, string>}
      */
     public static function scaffold(string $folder, array $described): array
@@ -127,6 +222,10 @@ final class PluginGenerator
         }
         $id = strtolower($folder);
         $hasAuth = ($described['auth']['type'] ?? 'none') !== 'none';
+        $connector = $described['connector'] ?? null;
+        if (is_array($connector)) {
+            return self::scaffoldConnector($folder, $described, $connector);
+        }
 
         $manifest = [
             'id' => $id,
@@ -210,6 +309,112 @@ final class PluginGenerator
     }
 
     /**
+     * Neues Plugin aus der Beschreibung einer Connector-API (EduKSX-Connectors, sek-intranet#229).
+     *
+     * @param  array{title: string, description: string, base_url: string, auth: array<string, mixed>, auth_settings: list<array<string, mixed>>, endpoints: list<array<string, mixed>>}  $described
+     * @param  array<string, mixed>  $connector
+     * @return array{manifest: array<string, mixed>, files: array<string, string>}
+     */
+    private static function scaffoldConnector(string $folder, array $described, array $connector): array
+    {
+        $id = (string) $connector['id'];
+        if (preg_match('/^[a-z][a-z0-9_-]{1,40}$/', $id) !== 1) {
+            $id = strtolower($folder);
+        }
+        $sitzung = is_array($connector['sitzung'] ?? null) ? $connector['sitzung'] : null;
+        $version = (string) ($connector['version'] ?? '');
+        $api = (string) ($connector['api'] ?? '');
+        $header = is_array($sitzung) ? (string) ($sitzung['header'] ?? '') : '';
+        $manifest = array_filter([
+            'id' => $id,
+            'name' => $described['title'],
+            'version' => $version,
+            'api' => PluginManifest::API_VERSION,
+            'category' => (string) $connector['category'],
+            'author' => 'EduKSX-Connectors (übernommen mit intranet:plugin-from-openapi)',
+            'description' => $described['description'],
+            'data_notice' => $connector['data_notice'] ?? null,
+            'service' => array_filter([
+                'name' => $described['title'].' (EduKSX-Connectors)',
+                'docs' => 'https://github.com/MarkusKeller8200/EduKSX-Connectors/tree/main/apis/'.rawurlencode($api),
+                'auth' => $described['auth'],
+                'auth_note' => trim((is_string($connector['auth_note'] ?? null) ? $connector['auth_note'] : '').($sitzung !== null
+                    ? " Diese API braucht zusätzlich eine Anmeldesitzung (Kopfzeile {$header}); im Intranet noch nicht unterstützt – Aufrufe ohne Sitzung antworten mit 401."
+                    : '')),
+                'endpoints' => $described['endpoints'],
+            ], fn (mixed $v): bool => $v !== null && $v !== ''),
+            'settings' => array_merge([[
+                'key' => 'base_url',
+                'type' => 'url',
+                'label' => 'Adresse von '.$described['title'],
+                'required' => true,
+                'placeholder' => 'https://',
+                'help' => 'Adresse der Connector-API (lokal z. B. '.($described['base_url'] !== '' ? $described['base_url'] : 'http://127.0.0.1:8080')
+                    .'); im Intranet nur https://.',
+            ]], $described['auth_settings']),
+        ], fn (mixed $v): bool => $v !== null && $v !== '');
+
+        PluginManifest::fromArray($manifest, $folder);
+
+        $php = <<<PHP
+        <?php
+
+        namespace Plugins\\{$folder};
+
+        use App\\Plugins\\BasePlugin;
+
+        /**
+         * {$described['title']} aus EduKSX-Connectors – übernommen mit intranet:plugin-from-openapi.
+         *
+         * Endpunkte, Beschriftungen und Beispielwerte kommen aus GET /plugin.json der Connector-API und werden mit
+         * `--plugin={$id}` aktualisiert (nur neue Endpunkte). «Testen» ruft den ersten GET-Endpunkt ohne Platzhalter
+         * auf. Schreibende Aufrufe nur über \$ctx->call() – sie verlangen die Freigabe «allow_write».
+         */
+        class Plugin extends BasePlugin {}
+
+        PHP;
+
+        $endpointLines = implode("\n", array_map(
+            fn (array $e): string => "| `{$e['method']}` | `{$e['path']}` | `{$e['id']}` | {$e['label']} | {$e['status']} |",
+            $described['endpoints'],
+        ));
+        $readme = <<<MD
+        # {$described['title']} (EduKSX-Connectors)
+
+        Übernommen aus der Plugin-Beschreibung der Connector-API `apis/{$api}` (Version {$version}) mit
+        `php artisan intranet:plugin-from-openapi <{$api}-plugin.json> --neu={$folder}`.
+
+        ## Aktualisieren
+
+        1. In EduKSX-Connectors: `python3 shared/plugin_export.py apis/{$api} > {$api}-plugin.json` (oder in der
+           Testplattform «plugin.json herunterladen»).
+        2. Hier: `php artisan intranet:plugin-from-openapi {$api}-plugin.json --plugin={$id}` – ergänzt nur neue
+           Endpunkte und meldet eine neue Connector-Version; dann `version` in `plugin.json` nachführen.
+
+        ## Einrichten
+
+        Adresse der Connector-API (`https://…`) und deren API-Key (`X-API-Key`) unter Einstellungen hinterlegen.
+        Schreibende Endpunkte starten im API-Tester mit `probelauf=true`.
+
+        ## Endpunkte
+
+        | Methode | Pfad | ID | Beschreibung | Status |
+        | --- | --- | --- | --- | --- |
+        {$endpointLines}
+
+        MD;
+
+        return [
+            'manifest' => $manifest,
+            'files' => [
+                'plugin.json' => self::encode($manifest),
+                'Plugin.php' => $php,
+                'README.md' => $readme,
+            ],
+        ];
+    }
+
+    /**
      * @param  array<string, mixed>  $data
      */
     public static function encode(array $data): string
@@ -227,11 +432,21 @@ final class PluginGenerator
     {
         $params = [];
         $seen = [];
+        // Ergänzungen aus EduKSX-Connectors (openapi_extra «x-eduksx»): Beschriftung, danger, effect, Status, Zweck
+        $x = is_array($op['x-eduksx'] ?? null) ? $op['x-eduksx'] : [];
         foreach (array_merge($shared, is_array($op['parameters'] ?? null) ? $op['parameters'] : []) as $p) {
             if (! is_array($p) || ! in_array($p['in'] ?? '', ['path', 'query'], true) || ! isset($p['name'])) {
                 continue;
             }
             $name = (string) $p['name'];
+            if ($name === 'probelauf' && $x !== []) {
+                // Connector-APIs: im Tester zuerst nur den Plan zeigen
+                $seen[$name] = true;
+                $params[$name] = ['name' => 'probelauf', 'default' => 'true', 'choices' => ['true', 'false'],
+                    'help' => 'Probelauf: zeigt nur den Plan und ändert nichts.'];
+
+                continue;
+            }
             $schema = is_array($p['schema'] ?? null) ? $p['schema'] : [];
             $seen[$name] = true;
             $params[$name] = array_filter([
@@ -249,18 +464,23 @@ final class PluginGenerator
             }
         }
 
-        $summary = trim((string) ($op['summary'] ?? ''));
+        $summary = trim((string) ($x['label'] ?? $op['summary'] ?? ''));
         $label = $summary !== '' ? $summary : (is_string($op['operationId'] ?? null) ? $op['operationId'] : "{$method} {$path}");
+        $effect = in_array($x['effect'] ?? null, ['read', 'write'], true) ? $x['effect'] : null;
+        $danger = is_bool($x['danger'] ?? null) ? $x['danger'] : ($effect !== null ? $effect === 'write' : $method !== 'GET');
+        $status = in_array($x['status'] ?? null, PluginManifest::ENDPOINT_STATUS, true) ? $x['status'] : 'partial';
 
         return array_filter([
             'id' => ApiDocs::endpointId($method, $path, $used),
             'method' => $method,
             'path' => $path,
             'label' => mb_substr($label, 0, 120),
-            'status' => 'partial',
-            'use' => 'API-Tester',
-            'note' => "Aus OpenAPI («{$title}») übernommen – mit der Hersteller-Doku prüfen.",
-            'danger' => $method !== 'GET' ? true : null,
+            'status' => $status,
+            'use' => is_string($x['use'] ?? null) ? $x['use'] : 'API-Tester',
+            'permission' => is_string($x['permission'] ?? null) ? $x['permission'] : null,
+            'effect' => $effect,
+            'note' => is_string($x['note'] ?? null) ? $x['note'] : "Aus OpenAPI («{$title}») übernommen – mit der Hersteller-Doku prüfen.",
+            'danger' => $danger ? true : null,
             'params' => $params === [] ? null : array_values($params),
         ], fn (mixed $v): bool => $v !== null);
     }

@@ -22,6 +22,10 @@ automatisch aus der Beschreibung.
 | LMVZ (inoffiziell)          | `plugins/Lmvz`           | Shop: Artikel nachschlagen (Titel, Artikelnummer, ISBN, Listenpreis); LMVZ Digital: Lizenzübersicht, Kachel, API-Tester (Benutzer, Gruppen)                                           | inoffiziell – aus Aufzeichnung, Token kurzlebig                    |
 | EduKSX-Glossary             | `plugins/EduksxGlossary` | Begriffe aus dem EduKSX-Glossary übernehmen und aktuell halten (Vollstand, danach Change-Feed), Listen abgleichen, Zeitplan `intranet:glossar-sync`, API-Tester (8 Endpunkte)         | nach API v1 und Referenzclient des Glossary                        |
 
+APIs aus **EduKSX-Connectors** (Escola, CMI, SL-Planer) lassen sich direkt aus ihrer Plugin-Beschreibung als Plugin
+anlegen: `php artisan intranet:plugin-from-openapi <name>-plugin.json --neu=<Ordner>` (siehe
+`docs/KONZEPT-API-ZU-PLUGIN.md` › «APIs aus EduKSX-Connectors», #229).
+
 ## Datenschutz
 
 Entra, Jamf und Inventory360 liefern **echte Personen- und Gerätedaten**. Solange das Intranet nicht
