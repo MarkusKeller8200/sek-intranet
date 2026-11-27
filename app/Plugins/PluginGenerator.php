@@ -341,7 +341,7 @@ final class PluginGenerator
                     ? " Diese API braucht zusätzlich eine Anmeldesitzung (Kopfzeile {$header}); im Intranet noch nicht unterstützt – Aufrufe ohne Sitzung antworten mit 401."
                     : '')),
                 'endpoints' => $described['endpoints'],
-            ], fn (mixed $v): bool => $v !== null && $v !== ''),
+            ], fn (mixed $v): bool => $v !== ''),
             'settings' => array_merge([[
                 'key' => 'base_url',
                 'type' => 'url',
